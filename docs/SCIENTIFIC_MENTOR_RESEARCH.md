@@ -560,9 +560,9 @@ $$
 | `john_three_quarter_design` | `factorial` | MATH_CPU |
 | `latin_square` | `factorial` | MATH_CPU |
 | `pbdesign` | `factorial` | SOURCE_MATH |
-| `extreme_vertices_design` | `mixture` | FAMILY_ONLY |
-| `mixture_axial_design` | `mixture` | FAMILY_ONLY |
-| `mixture_process_design` | `mixture` | FAMILY_ONLY |
+| `extreme_vertices_design` | `mixture` | MATH_CPU |
+| `mixture_axial_design` | `mixture` | MATH_CPU |
+| `mixture_process_design` | `mixture` | MATH_CPU |
 | `simplex_centroid_design` | `mixture` | SOURCE_MATH |
 | `simplex_lattice_design` | `mixture` | MATH_CPU |
 | `a_efficiency` | `optimal` | SOURCE_MATH |
@@ -598,44 +598,44 @@ $$
 | `small_composite_design` | `response_surface` | SOURCE_MATH |
 | `star` | `response_surface` | MATH_CPU |
 | `union` | `response_surface` | MATH_CPU |
-| `GaussianProcessRegressor` | `sequential` | FAMILY_ONLY |
+| `GaussianProcessRegressor` | `sequential` | MATH_CPU |
 | `expected_improvement` | `sequential` | MATH_CPU |
 | `probability_of_improvement` | `sequential` | SOURCE_MATH |
-| `sequential_design` | `sequential` | FAMILY_ONLY |
+| `sequential_design` | `sequential` | SOURCE_MATH |
 | `upper_confidence_bound` | `sequential` | SOURCE_MATH |
-| `cranley_patterson_shift` | `space_filling.quasi_random` | FAMILY_ONLY |
-| `faure_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
-| `halton_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
-| `hammersley_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
-| `korobov_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
-| `niederreiter_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
-| `rank1_lattice` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `cranley_patterson_shift` | `space_filling.quasi_random` | MATH_CPU |
+| `faure_sequence` | `space_filling.quasi_random` | MATH_CPU |
+| `halton_sequence` | `space_filling.quasi_random` | MATH_CPU |
+| `hammersley_sequence` | `space_filling.quasi_random` | MATH_CPU |
+| `korobov_sequence` | `space_filling.quasi_random` | MATH_CPU |
+| `niederreiter_sequence` | `space_filling.quasi_random` | MATH_CPU |
+| `rank1_lattice` | `space_filling.quasi_random` | MATH_CPU |
 | `sobol_sequence` | `space_filling.quasi_random` | SOURCE_MATH |
-| `sukharev_grid` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `sukharev_grid` | `space_filling.quasi_random` | MATH_CPU |
 | `lhs` | `space_filling.stochastic` | MATH_CPU |
 | `maximin_design` | `space_filling.stochastic` | MATH_CPU |
 | `maxpro_design` | `space_filling.stochastic` | MATH_CPU |
-| `minimax_design` | `space_filling.stochastic` | FAMILY_ONLY |
-| `nearly_orthogonal_lhs` | `space_filling.stochastic` | FAMILY_ONLY |
-| `nested_lhs` | `space_filling.stochastic` | FAMILY_ONLY |
+| `minimax_design` | `space_filling.stochastic` | MATH_CPU |
+| `nearly_orthogonal_lhs` | `space_filling.stochastic` | MATH_CPU |
+| `nested_lhs` | `space_filling.stochastic` | MATH_CPU |
 | `oa_lhd` | `space_filling.stochastic` | SOURCE_MATH |
-| `random_uniform` | `space_filling.stochastic` | FAMILY_ONLY |
-| `sliced_lhs` | `space_filling.stochastic` | FAMILY_ONLY |
+| `random_uniform` | `space_filling.stochastic` | MATH_CPU |
+| `sliced_lhs` | `space_filling.stochastic` | MATH_CPU |
 | `TaguchiObjective` | `taguchi` | SOURCE_MATH |
 | `compute_snr` | `taguchi` | MATH_CPU |
 | `get_orthogonal_array` | `taguchi` | MATH_CPU |
 | `list_orthogonal_arrays` | `taguchi` | SOURCE_MATH |
 | `taguchi_design` | `taguchi` | MATH_CPU |
-| `random_k_means` | `clustering` | FAMILY_ONLY |
+| `random_k_means` | `clustering` | MATH_CPU |
 | `morris_sampling` | `sensitivity_analysis` | SOURCE_MATH |
 | `saltelli_sampling` | `sensitivity_analysis` | MATH_CPU |
 | `doe_sparse_grid` | `sparse_grid` | SOURCE_MATH |
 | `sparse_grid_dimension` | `sparse_grid` | SOURCE_MATH |
 | `definitive_screening_design` | `specialized` | SOURCE_MATH |
 | `supersaturated_design` | `specialized` | MATH_CPU |
-| `iman_conover` | `utils` | FAMILY_ONLY |
-| `scale_samples` | `utils` | FAMILY_ONLY |
-| `var_regression_matrix` | `utils` | FAMILY_ONLY |
+| `iman_conover` | `utils` | MATH_CPU |
+| `scale_samples` | `utils` | MATH_CPU |
+| `var_regression_matrix` | `utils` | MATH_CPU |
 
 ### 17.1 本轮深入的数学结构 A：Latin Hypercube / MaxPro / Maximin 的局部评分更新
 
@@ -846,3 +846,88 @@ For \`supersaturated_design\`, k>n makes full linear-model rank impossible. Froz
 **CPU_CHECK** documents independent reference tensors/invariants, not execution of PyDOE/TorchOED end-to-end; no GPU/Colab or timing measurements. For DOE constructors, the best PyTorch representation is often integer grid/broadcast, index/scatter, bitsets and structured concatenation; not all algorithms should be forced into large GEMMs or CUDA. Avoid exponential output allocations without explicit bounds.
 
 **Mentor decision:** \`TARGETED_CONSTRUCTOR_RESEARCH_READY\` for modular Latin squares, GF(2) blocking theorem, BB/CCD/Taguchi independent oracles and the *negative* Doehlert Shell source audit; \`SOURCE_MATH\` for the rest of this batch. Next target only remaining **FAMILY_ONLY 22**: Mixture extreme/axial/process, sliced/nested/near-orthogonal LHS, further QMC sequences, GP/sequential/clustering/utilities; also separate genuine Smolyak study. Issue #1 M0 Engineer scope unchanged. No new Issue/PR, no algorithm implementation, no CUDA evidence.
+
+
+---
+
+## 19. Remaining 22 APIs: Mixture, LHS, QMC, GP, Clustering, Utilities (2026-10-28)
+
+### 19.0 Evidence definition and bottom line
+
+Frozen upstream: **PyDOE 1.6.0**, git commit \`866d3f411942cb662af8054562dc1f7e07372401\`. All 22 formerly \`FAMILY_ONLY\` public exports had their **actual function source read**, and source blob SHAs were recorded below. **21** received at least one independent PyTorch CPU mathematical invariant/proof or counterexample; **one** (\`sequential_design\`) received source/math analysis but no end-to-end adaptive evaluation. Therefore the current **91 public API research ledger** is:
+
+| Research evidence grade | Number | Honest interpretation |
+|---|---:|---|
+| MATH_CPU | **55** | Targeted independent math property/invariant/counterexample tested; **not** full function reproduction, all parameter paths, or TorchOED package PASS |
+| SOURCE_MATH | **36** | Actual source and numerical/mathematical structure examined, but no independent per-function CPU oracle |
+| FAMILY_ONLY | **0** | No API remains solely at original broad family classification |
+| **TOTAL** | **91** | Includes helpers and metadata classes; not 91 implementations |
+
+**Important:** The grade is about *scientific coverage*, not correctness of the upstream algorithm or end-to-end implementation. In particular, \`MATH_CPU\` applies to **negative** evidence for \`niederreiter_sequence\`, non-coprime \`rank1_lattice\`, integer \`scale_samples\`, and invalid \`np.rank\` in \`var_regression_matrix\`. It must **never** be presented as "all 91 algorithms completely tensorized / CPU-tested / GPU optimized." No TorchOED algorithm code was created; CUDA/benchmark/performance tests are **NOT_RUN**.
+
+**Independent check environment:** Python 3.13.5, PyTorch 2.10.0+cpu, NumPy 2.3.5; torch.float64/int64 for checks, CPU only. Some checks explicitly use NumPy to reproduce upstream dtype or absent API behavior. No PyDOE package import or installed-PyDOE output comparison was executed. Numerical checks use independent formula-level reconstructions from pinned source, not an end-to-end upstream regression suite.
+
+### 19.1 Remaining 22 exported API audit: exact source blobs and math/GPU scope
+
+All paths relative to \`pydoe/\`. Bounds below describe mathematical kernels, not actual profiled execution times. k=number of dimensions/components, N=sample points, n=training points, m=prediction candidates, L=digit count, t=iterations.
+
+| API | Source file / full frozen Blob SHA | Math structure and checks | Complexity and PyTorch / GPU hypothesis | Status |
+|---|---|---|---|---|
+| \`extreme_vertices_design\` | \`mixture/extreme_vertices.py\` \`a16904443f63ae45df7f3a27e331957792320731\` | Fix q−1 variables at bounds, infer one from simplex equality, filter/deduplicate; 6 bounded q=3 vertices checked | O(q²2^q) naive enumeration; bitmask/broadcast, exponential output | MATH_CPU |
+| \`mixture_axial_design\` | \`mixture/axial.py\` \`ca96a0c09afd417578bca689d739e2d9d79a9bd3\` | centroid c=1/q, axial points (1−δ)c+δe_i; q=4,δ=.35 rows sum to 1, rank 4 | Θ(q²); identity+broadcast, CPU likely preferable | MATH_CPU |
+| \`mixture_process_design\` | \`mixture/process.py\` \`b6ebf10cab68b82cb7297adf673ae47d9b0e1b07\` | Cartesian cross, row i*n₂+j; checked 3×2→6×3 | Θ(n₁n₂(q+p)) output, repeat_interleave+tile | MATH_CPU |
+| \`GaussianProcessRegressor\` | \`sequential/gaussian_process.py\` \`90f087e3cb00abfc6eeac0b02a221e7606159b02\` | RBF kernel + Cholesky posterior; CPU mean/latent variance; duplicate zero-noise SPD failure | O(n³+n²d+nm d+n²m), batch kernels/solves | MATH_CPU |
+| \`sequential_design\` | \`sequential/adaptive.py\` \`61a0f67c1273f9636b5f9ccfccbac4508a6114fd\` | LHS init→objective calls→per-iteration GP refit→EI/PI/UCB max over random candidates | Σ_t O(n_t³)+objective time; sequential decisions not trivially parallelizable, **no full CPU run** | SOURCE_MATH |
+| \`cranley_patterson_shift\` | \`space_filling/quasi_random/cranley_patterson_shift.py\` \`a1ee9bc6f26280b54f4737c98046ce4dec93b891\` | (X+u) mod 1, common shift; pairwise toroidal differences preserved up to 1.11e−16 | Θ(Nk), broadcast modulo; small GPU value | MATH_CPU |
+| \`faure_sequence\` | \`space_filling/quasi_random/faure.py\` \`d7c4deb61fbd0dfcee1cb508935471ee3cfa89b8\` | base-p digit/Pascal GF(p) transform; first 4 2D points exactly reconstructed | O(NkL²) naive; integer modular GEMM/digit batching possible | MATH_CPU |
+| \`halton_sequence\` | \`space_filling/quasi_random/halton.py\` \`2a43a47378ecd1fec5b3f2e113263ab4e5a32269\` | radical inverses in distinct prime bases; first four 2D points checked | O(Nk log N), vectorized division/remainder, CPU often good | MATH_CPU |
+| \`hammersley_sequence\` | \`space_filling/quasi_random/hammersley.py\` \`608f736976e27d58164c2750d40de8f25060afcb\` | first dim i/N; others prime radical inverses; first four N=8 points checked | O(Nk log N), broadcast/digit transforms | MATH_CPU |
+| \`korobov_sequence\` | \`space_filling/quasi_random/korobov.py\` \`db32fcf419f250a2131a58fe7940af6758d40402\` | z_j=a^j mod N then rank-1 lattice; non-coprime a leads missing levels in some columns | Θ(Nk) after O(k) generator, modular integer tensor | MATH_CPU |
+| \`niederreiter_sequence\` | \`space_filling/quasi_random/niederreiter.py\` \`809a31f447024b98f07f8f67e82efafe447373ee\` | LFSR Hankel GF(2) matrix, severe finite rank; first dim only 4 distinct values in first 16 even with 30 bits | O(k L²+Nk L²) naive; **UNSUITABLE AS STRICT DIGITAL-NET ORACLE** | MATH_CPU: NEGATIVE |
+| \`rank1_lattice\` | \`space_filling/quasi_random/rank1.py\` \`688dd77625e3617fd18561e5b9955ee670c1a5fb\` | raw integer residues (i z_j) mod N, *not normalized to [0,1)*; N=8,z=(1,2,4) gives 8/4/2 distinct coordinate levels | Θ(Nk), int64 broadcasting/modulo; explicitly divide N for unit cube | MATH_CPU |
+| \`sukharev_grid\` | \`space_filling/quasi_random/sukharev.py\` \`9a14b24022c3191238e4cb139f0a473cf5cd0709\` | N=s^k cell centers; s=3,k=2 gives 9 points and L∞ cover radius 1/6 | Θ(Nk); cartesian_prod, exponential output | MATH_CPU |
+| \`minimax_design\` | \`space_filling/stochastic/distance_designs.py\` \`fdfc4a3092ec161adeae6d41650bb2e6cad06c1c\` | finite random candidate covering max_z min_s||z−x_s||, not continuous Ω cover; 5-point oracle example | full O(m n k) per evaluation; tiled cdist/cache nearest & second | MATH_CPU: CRITERION |
+| \`nearly_orthogonal_lhs\` | \`space_filling/stochastic/nolh.py\` \`7ba853ff9c356e745764d4bda02427f78d80bf21\` | max abs column Pearson correlation, coordinate swap only alters one Gram row/col; exact incremental formula tested to 1.11e−16 | full score O(Nk²); cached local O(k), good batch hypothesis | MATH_CPU |
+| \`nested_lhs\` | \`space_filling/stochastic/nested_lhs.py\` \`2127b95e3bcb47e41a318dbbbaa400b18e385141\` | coarse/fine *cell* inclusion, independently jittered points are generally **not exact coordinate subset** | Θ(n₁ k_ratio d), batched permutation/scatter | MATH_CPU: SEMANTIC |
+| \`random_uniform\` | \`space_filling/stochastic/random_uniform.py\` \`b5777c21fb26e67682d19bc0d536d92d020379fb\` | iid U[0,1) array, torch seeded shape/range/replay | Θ(Nk) memory/RNG; NumPy vs torch streams differ | MATH_CPU |
+| \`sliced_lhs\` | \`space_filling/stochastic/sliced_lhs.py\` \`c2bdebe60d1d42c8c59d054f762b0a73e6770015\` | whole design LHS; each slice *after rescaling* LHS, but raw slices confined to subintervals | Θ(mt d), permutations/scatter; semantic distinguish | MATH_CPU |
+| \`random_k_means\` | \`clustering/k_means_sampling.py\` \`8ea1241def051a7b7455aca6a8eafc071d7fc3b9\` | online MacQueen center μ'=(cμ+x)/(c+1); one-step invariant checked | Θ(tkd) sequential samples, GPU batch only across independent streams | MATH_CPU: STEP |
+| \`iman_conover\` | \`utils/iman_conover.py\` \`01c395bc544ac4961d52f234413faa39a69dd087\` | whiten score columns→target Cholesky correlation→rank reorder; preserve exact marginal multisets | O(Nk²+k³+ kN log N), batched solve/sort; no exact finite rank target guarantee | MATH_CPU |
+| \`scale_samples\` | \`utils/utils.py\` \`76788e6904da1fc7c9a4883abd79568138b6b315\` | broadcast low + X(high−low); np.empty_like(input) silently truncates fractional results for integer inputs | Θ(Nk), broadcast; require float result dtype | MATH_CPU: NEGATIVE |
+| \`var_regression_matrix\` | \`utils/var_regression_matrix.py\` \`1f677090bc374a37f970abbab913cfecdb9e0e54\` | σ² f(x)ᵀ(HᵀH)⁻¹ f(x); source calls **np.rank**, absent in NumPy 2.3.5 | feature map + Cholesky solve; **do not copy invalid rank check** | MATH_CPU: NEGATIVE |
+
+### 19.2 Four concrete mathematical contracts/counterexamples
+
+**A. Mixture polytope vertices.** Constrained mixture \(l_i\le x_i\le u_i,\ \sum x_i=1\) forms a bounded polytope of affine dimension ≤q−1. Every vertex has q−1 linearly independent active bound constraints within its affine hull (possibly degenerate), hence it is sufficient to enumerate a choice of one free coordinate f, fix all other coordinates at either lower or upper bounds, solve \(x_f=1-\sum_{j\ne f}x_j\), then filter and deduplicate. Complexity ≤q 2^(q−1) candidates and O(q²2^q) elementary arithmetic, but not polynomial in q. **Torch CPU example:** q=3, bounds l=(.1,.1,.1), u=(.6,.6,.6), exactly six vertices: permutations of (.1,.3,.6); all rows sum to 1 and satisfy bounds. General additional linear constraints require a different vertex enumeration scheme. Mixture axial \((1-\delta)\mathbf 1/q+\delta I_q\) plus centroid is Θ(q²); mixture-process Cartesian product row order is i*n₂+j. All checked by torch CPU.
+
+**B. Nested versus sliced Latin hypercube: different invariants.** Frozen \`nested_lhs(n1=4,k=3,d=3)\` guarantees small *cell* integer c^(s), fine cell c^(l), and \( \lfloor c^{(l)}_{ik+r,j}/3\rfloor=c^{(s)}_{ij}\) for r=0..2. The fine and coarse designs are separately jittered; this is **not** true set-theoretic point nesting. Torch CPU both one-dimensional LHS properties PASS and cell nesting PASS, while all four nearest small-to-large point distances are nonzero (≈.05383,.04792,.05844,.14811). If application requires expensive-fidelity points literally included in cheap-fidelity dataset, the upstream semantics do not meet that requirement without matching points.
+
+Frozen \`sliced_lhs(m=4,t=3,d=2)\` puts slice s into cells sm..(s+1)m−1 in **every** dimension. The full N=12 design is LHS, and \(\tilde X_s=tX_s-s\) is a 4-cell LHS for each slice, but **unscaled** slices are confined to disjoint subcubes and are not 4-cell LHS over the original full domain. Torch CPU checked all three properties. Do not conflate this with global-domain sliced LH constructions where each slice has full-domain marginal coverage.
+
+**C. Niederreiter-type generator rank defect (high severity).** Frozen \`niederreiter.py\` builds per-dimension \(L\times L\) Hankel generating matrix \(C_{r,k}=s_{r+k}\) from a binary LFSR of degree v. Its recurrence implies every subsequent row is an F₂-linear combination of v predecessor rows, hence \(\mathrm{rank}_{F_2} C\le v\) **independently of output bit precision L**. A coordinate can therefore take **at most \(2^v\) distinct values**, even as N or n_bits grows. For the first dimension (degree v=2, taps=0b11), independent torch GF(2) row reduction found rank **2** for n_bits=3,5,8,30. In each case the first **16** generated points had only **4** distinct first-coordinate values. At n_bits=30 the first eight values were approx (0,.4285714282,.8571428563,.7142857136,.7142857136,.8571428563,.4285714282,0). This is structurally inconsistent with claiming a generally valid scalable 1D low-discrepancy digital net as N grows. **Mark the pinned implementation as an unsuitable correctness oracle for a true Niederreiter sequence.** Not a floating point issue. Note: no PyDOE import; exact independent source-translated computation.
+
+**D. Type and statistical model safety.** \`rank1_lattice(8,3,z=[1,2,4])\` returns *unscaled residues*; coordinate unique counts [8,4,2], so non-coprime generator components lose 1D stratification. It is not safe to treat raw \`rank1_lattice\`/Korobov output as normalized [0,1)^d points. \`scale_samples\` calls \`np.empty_like(samples)\` before affine scaling; for integer input [[0,1],[1,0]] and bounds [[.25,.75],[.1,.3]], actual source-style NumPy output is all zeros (fractional values truncated), while expected floating result is [[.25,.3],[.75,.1]]. \`var_regression_matrix\` checks \`np.rank(H)\`, which does not exist in NumPy 2.3.5 (confirmed by \`hasattr(np,'rank') == False\`), so its rank check is not a valid mathematical/software oracle. The correct predictive variance formula for full-rank model features is \(\sigma^2 f(x)^\top(H^\top H)^{-1}f(x)\), preferably solved by QR/Cholesky without explicit inverse.
+
+### 19.3 QMC and GP: separate algebraic kernels, actual CPU evidence
+
+- **Halton** radical inversion \(\phi_b(i)=\sum_{j\ge0}a_j b^{-(j+1)}\), with base-b digits \(i=\sum a_j b^j\). torch CPU first four points for bases 2,3: (0,0),(.5,1/3),(.25,2/3),(.75,1/9).
+- **Hammersley**, N=8,d=2: first coordinate i/8 and second \(\phi_2(i)\); first four (0,0),(.125,.5),(.25,.25),(.375,.75).
+- **Faure**, prime base b≥d: Pascal coefficients mod b transform the base-b digits by dimension-dependent upper-triangular GF(b) operation, followed by radical inversion. Independent torch int64 Pascal/digit math yielded first four d=2 points (0,0),(.5,.5),(.25,.75),(.75,.25). GPU opportunity is batched modular integer algebra, not float GEMM alone; exact upstream streams differ from other QMC samplers.
+- **Cranley–Patterson shift** \(Y=(X+u)\bmod1\) preserves pairwise toroidal displacement \((x_i-x_j)\bmod1\); torch float64 max residual 1.11e−16. Randomization seed generators are not portable across NumPy/Torch.
+- **Sukharev** q cells per axis: cell centers \((a+1/2)/q\); N=q^d and optimal uniform-grid L∞ cover radius \(1/(2q)\). torch q=3,d=2 generated nine points, radius 1/6. Not the Euclidean minimax radius.
+- **Near-orthogonal LHS**: with centered X and Gram G=XᵀX, swapping entries of rows r,s within column j changes only G_jℓ, ℓ≠j, by \((X_{sj}-X_{rj})(X_{r\ell}-X_{s\ell})\); column means/norms unchanged. torch n=12,d=4 exact incremental Gram/correlation max abs error 1.11e−16; independent LHS cell permutation remains valid. Thus each trial swap can update O(d) cross-correlations after initial caching rather than recomputing O(nd²); GPU win is a **hypothesis**.
+- **GP**: training kernel \(K_{ij}=\exp(-\|x_i-x_j\|^2/(2\ell^2))+\sigma_n^2\delta_{ij}\), α=K⁻¹(y−mean(y)), predict μ=K_*ᵀα+mean(y); latent posterior \(v(x)=1-\|L^{-1}k_*(x)\|²\) clipped at zero in source. Torch CPU points x=(0,.5,1), y=(0,1,0), ℓ=.5, noise=1e−8: predicted means (~.54324795,~.99999997,~.54324795), latent variances (~.01750554,~1e−8,~.01750554). **This variance excludes observation noise**; a noisy-observation prediction would add σ_n². Duplicate x with noise=0 produces zero eigenvalue and Cholesky failure (torch cholesky_ex info≠0). The \`sequential_design\` coordinator retrains GP on n_t points each step and calls objective sequentially, so vectorizing acquisition over candidates does not remove sequential dependence or cubic dense refit cost.
+- **Iman–Conover**: whiten auxiliary normal scores, impose a target correlation via Cholesky, then rank-reorder each original marginal. Since each column is permuted, **marginal multisets are exactly preserved**, while finite-sample Spearman correlation need not equal the target exactly. Torch CPU n=128, target .7, observed rank correlation ≈.6987674 with exact marginal-preservation PASS.
+- **MacQueen online K-means**: count c, center μ, new sample x; \(\mu'=(c\mu+x)/(c+1)\). torch CPU test c=3, μ=(.1,.3), x=(.9,.7) → μ'=(.3,.4). Each step uses vectorized k-center distances but center assignments/update depend on previous random samples; GPU cannot batch time steps without changing algorithm.
+- **Minimax**: its code minimizes worst nearest-selected-point distance over a **finite random candidate pool**, not over continuum Ω. The finite covering radius is a lower bound on true continuous covering radius for a fixed design, not generally an exact proxy.
+
+### 19.4 What remains after FAMILY_ONLY reaches zero
+
+**SOURCE_MATH=36 remains.** It is inappropriate to stop the mentorship because coverage has no family-only names. The next scientific milestones are:
+1. Upgrade **source-only** APIs with full per-function CPU tests, boundary parameter sweeps, and independent references; in particular \`sequential_design\` adaptive trajectory, GP noise contract and \`fracfact_by_res\`, \`definitive_screening_design\`, \`oa_lhd\`, \`G/E/S/T\` criterion boundaries.
+2. Verify full function outputs against *installed* pinned PyDOE in an isolated environment, controlling NumPy/PyTorch random streams and known upstream semantics. **No such differential suite was run in this session.**
+3. Build independent *correct mathematical* references for frozen upstream branches with counterexamples: \`doehlert_shell_design\`, \`doe_sparse_grid\`, \`niederreiter_sequence\`, \`scale_samples\` integer dtype, \`var_regression_matrix\` invalid rank API, and weak nested/sliced design semantics.
+4. Test float32/float64 precision, exact integer ranges, memory scaling, and CPU/GPU break-even with actual hardware, not GPU labels inferred from source structure.
+5. Revisit candidate uniqueness, repeated physical experiments and GP/mixture constraints for statistics-correct abstractions, maintaining M0 engineering boundary.
+
+**Status: ALL_91_SOURCE_MATH_COVERED / TARGETED_CPU_ORACLES_55; NOT_FULL_91_ALGORITHM_EQUIVALENCE; GPU NOT_RUN; TorchOED package NOT_IMPLEMENTED.** This is a scientific dossier update, not authority to create new Engineer work or merge any PR.

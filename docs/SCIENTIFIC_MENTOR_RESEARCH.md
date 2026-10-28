@@ -726,7 +726,7 @@ $$
 
 ## 18. DOE Constructor Mathematical Tensorization Audit — Factorial, Response Surface, Taguchi, Specialized (2026-10-28)
 
-**Frozen reference:** PyDOE 1.6.0, git commit \`866d3f411942cb662af8054562dc1f7e07372401\`. Scope: 31 named exported APIs from 18 relevant source Python files plus actual Taguchi OA data. Independent checks: torch 2.10.0+cpu, torch.float64 / int64; PyDOE **not installed or executed**, TorchOED **NOT_IMPLEMENTED**, CUDA **NOT_RUN**. For *MATH_CPU*, an independent small mathematical oracle checked a defining invariant, including negative/counterexample findings; this **does not** certify full upstream API semantics, all options or random search trajectories. *SOURCE_MATH* means a relevant function source and mathematics was inspected, not independently run. Section 17 ledger now **MATH_CPU 34 / SOURCE_MATH 35 / FAMILY_ONLY 22 / total 91**.
+**Frozen reference:** PyDOE 1.6.0, git commit \`866d3f411942cb662af8054562dc1f7e07372401\`. Scope: 31 named exported APIs from 19 relevant source Python files plus actual Taguchi OA data. Independent checks: torch 2.10.0+cpu, torch.float64 / int64; PyDOE **not installed or executed**, TorchOED **NOT_IMPLEMENTED**, CUDA **NOT_RUN**. For *MATH_CPU*, an independent small mathematical oracle checked a defining invariant, including negative/counterexample findings; this **does not** certify full upstream API semantics, all options or random search trajectories. *SOURCE_MATH* means a relevant function source and mathematics was inspected, not independently run. Section 17 ledger now **MATH_CPU 34 / SOURCE_MATH 35 / FAMILY_ONLY 22 / total 91**.
 
 ### 18.1 Source/blob provenance
 

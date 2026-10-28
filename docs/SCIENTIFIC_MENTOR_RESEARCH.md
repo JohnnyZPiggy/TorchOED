@@ -532,7 +532,7 @@ $$
 
 ## 17. 全算法数学审计状态：基于真实 91 个公开导出（2026-10-28 增补）
 
-> **历史快照：** 本节原始 13/32/46 统计记录的是第 17 章首次审计，不是当前全包研究状态。最新 91 项证据台账已逐函数更新，第 20 章历史状态为 71/20/0；**第 21 章历史状态为 76/15/0；最新第 22 章为 MATH_CPU=81 / SOURCE_MATH=10 / FAMILY_ONLY=0**。MATH_CPU 仅表示定向 CPU 数学不变量或反例，不是完整函数兼容性或工程实现 PASS。
+> **历史快照：** 本节原始 13/32/46 统计记录的是第 17 章首次审计，不是当前全包研究状态。最新 91 项证据台账已逐函数更新，第 20 章历史状态为 71/20/0；**第 21 章历史状态为 76/15/0；第 22 章历史状态为 81/10/0；最新第 23 章为 MATH_CPU=89 / METADATA_VERIFIED=2 / SOURCE_MATH=0 / FAMILY_ONLY=0**。MATH_CPU 仅表示定向 CPU 数学不变量或反例，不是完整函数兼容性或工程实现 PASS。
 
 **结论先行：截至本次研究，绝没有完成对所有 91 个公开 API 的逐项严格数学推导、张量化等价证明和 CPU/CUDA 验收。** 本节是透明的 research coverage ledger，不是 TorchOED 已实现功能表，也不能代替 Issue #1 规划的 Engineer \`docs/ALGORITHM_COVERAGE.md\`。
 
@@ -547,25 +547,25 @@ $$
 
 | PyDOE root export | 所属公开模块 | 数学研究等级 |
 |---|---|---|
-| `alias_vector_indices` | `factorial` | SOURCE_MATH |
+| `alias_vector_indices` | `factorial` | MATH_CPU |
 | `block_full_factorial` | `factorial` | MATH_CPU |
 | `ff2n` | `factorial` | MATH_CPU |
 | `fold` | `factorial` | MATH_CPU |
 | `fracfact` | `factorial` | MATH_CPU |
 | `fracfact_aliasing` | `factorial` | MATH_CPU |
 | `fracfact_by_res` | `factorial` | MATH_CPU |
-| `fracfact_opt` | `factorial` | SOURCE_MATH |
+| `fracfact_opt` | `factorial` | MATH_CPU |
 | `fullfact` | `factorial` | MATH_CPU |
 | `graeco_latin_square` | `factorial` | MATH_CPU |
-| `gsd` | `factorial` | SOURCE_MATH |
+| `gsd` | `factorial` | MATH_CPU |
 | `hyper_graeco_latin_square` | `factorial` | MATH_CPU |
 | `john_three_quarter_design` | `factorial` | MATH_CPU |
 | `latin_square` | `factorial` | MATH_CPU |
-| `pbdesign` | `factorial` | SOURCE_MATH |
+| `pbdesign` | `factorial` | MATH_CPU |
 | `extreme_vertices_design` | `mixture` | MATH_CPU |
 | `mixture_axial_design` | `mixture` | MATH_CPU |
 | `mixture_process_design` | `mixture` | MATH_CPU |
-| `simplex_centroid_design` | `mixture` | SOURCE_MATH |
+| `simplex_centroid_design` | `mixture` | MATH_CPU |
 | `simplex_lattice_design` | `mixture` | MATH_CPU |
 | `a_efficiency` | `optimal` | MATH_CPU |
 | `a_optimality` | `optimal` | MATH_CPU |
@@ -585,7 +585,7 @@ $$
 | `information_matrix` | `optimal` | MATH_CPU |
 | `jacobian_optimal_design` | `optimal` | MATH_CPU |
 | `modified_fedorov` | `optimal` | MATH_CPU |
-| `optimal_design` | `optimal` | SOURCE_MATH |
+| `optimal_design` | `optimal` | MATH_CPU |
 | `s_optimality` | `optimal` | MATH_CPU |
 | `sequential_dykstra` | `optimal` | MATH_CPU |
 | `simple_exchange_wynn_mitchell` | `optimal` | MATH_CPU |
@@ -597,7 +597,7 @@ $$
 | `doehlert_shell_design` | `response_surface` | MATH_CPU |
 | `doehlert_simplex_design` | `response_surface` | MATH_CPU |
 | `repeat_center` | `response_surface` | MATH_CPU |
-| `small_composite_design` | `response_surface` | SOURCE_MATH |
+| `small_composite_design` | `response_surface` | MATH_CPU |
 | `star` | `response_surface` | MATH_CPU |
 | `union` | `response_surface` | MATH_CPU |
 | `GaussianProcessRegressor` | `sequential` | MATH_CPU |
@@ -612,7 +612,7 @@ $$
 | `korobov_sequence` | `space_filling.quasi_random` | MATH_CPU |
 | `niederreiter_sequence` | `space_filling.quasi_random` | MATH_CPU |
 | `rank1_lattice` | `space_filling.quasi_random` | MATH_CPU |
-| `sobol_sequence` | `space_filling.quasi_random` | SOURCE_MATH |
+| `sobol_sequence` | `space_filling.quasi_random` | MATH_CPU |
 | `sukharev_grid` | `space_filling.quasi_random` | MATH_CPU |
 | `lhs` | `space_filling.stochastic` | MATH_CPU |
 | `maximin_design` | `space_filling.stochastic` | MATH_CPU |
@@ -623,10 +623,10 @@ $$
 | `oa_lhd` | `space_filling.stochastic` | MATH_CPU |
 | `random_uniform` | `space_filling.stochastic` | MATH_CPU |
 | `sliced_lhs` | `space_filling.stochastic` | MATH_CPU |
-| `TaguchiObjective` | `taguchi` | SOURCE_MATH |
+| `TaguchiObjective` | `taguchi` | METADATA_VERIFIED |
 | `compute_snr` | `taguchi` | MATH_CPU |
 | `get_orthogonal_array` | `taguchi` | MATH_CPU |
-| `list_orthogonal_arrays` | `taguchi` | SOURCE_MATH |
+| `list_orthogonal_arrays` | `taguchi` | METADATA_VERIFIED |
 | `taguchi_design` | `taguchi` | MATH_CPU |
 | `random_k_means` | `clustering` | MATH_CPU |
 | `morris_sampling` | `sensitivity_analysis` | MATH_CPU |
@@ -1409,3 +1409,99 @@ Native torch opportunity: form F=phi(C), decompose current M once; use batched C
 - float64 score numerical error against direct recomputed objective \(\le10^{-9}\max(1,|\Phi_{\rm direct}|)\) on well-conditioned inputs; unsafe ill-conditioned trials must be flagged rather than accepted.
 
 **Evidence status:** Five core SEARCH/GRID functions **MATH_CPU-targeted**, not installed PyDOE API equivalence or TorchOED algorithm implementation; real GPU and full random restart evaluation NOT_RUN. **Remaining ten SOURCE_MATH names:** `alias_vector_indices`, `fracfact_opt`, `gsd`, `pbdesign`, `simplex_centroid_design`, `optimal_design`, `small_composite_design`, `sobol_sequence`, `TaguchiObjective`, `list_orthogonal_arrays`. Recommended next Mentor step: finish these ten by independent scalar/tensor oracles, and *only with explicit Scientist scope* do genuine installed PyDOE wheel end-to-end compatibility checks. Existing M0 engineering scope and Issue #1 remain unchanged.
+
+
+
+---
+
+## 23. Remaining SOURCE_MATH: all 10 reviewed with targeted CPU oracles and metadata distinction (2026-10-29)
+
+**Scope, not feature implementation.** SAE V3.3 Scientific Mentor RESEARCH_ONLY. Frozen upstream PyDOE 1.6.0 Git SHA **866d3f411942cb662af8054562dc1f7e07372401**. The source was inspected; tests below are independent small mathematical translations in **torch 2.10.0+cpu**, **NumPy 2.3.5**, **SciPy 1.17.0**, float64/int64. Upstream installed-wheel function parity, all randomized cases, production TorchOED package and CUDA **NOT_RUN**. No Issue/PR/code changes beyond this existing research document and Issue #1 log.
+
+**Research-grade accounting.** Previous 81 MATH_CPU / 10 SOURCE_MATH / 0 FAMILY_ONLY now becomes **89 MATH_CPU / 2 METADATA_VERIFIED / 0 SOURCE_MATH / 0 FAMILY_ONLY = 91**. The new METADATA_VERIFIED tier explicitly records 2 nonnumeric public APIs rather than falsely declaring numerical math validation. MATH_CPU remains a *targeted core property, potentially negative*, and does not imply full function correctness or package parity.
+
+### 23.1 All 10 exported names: source/blob, mathematical contract, cost and falsifiable GPU hypothesis
+
+| Export | Frozen upstream source file / Git Blob SHA | CPU reference / risk | Workload complexity and GPU hypothesis | Research tier |
+|---|---|---|---|---|
+| **alias_vector_indices** | factorial/factorial.py / 54d5f97e34d2226fbbf241b622d64de5d9f15764 | k=4 yields 10 distinct upper-triangle pairs sorted by max(i,j); exactly matches torch.triu_indices with same key | Θ(k²) output, naïve sort O(k² log k); CPU indexing, no GEMM | MATH_CPU |
+| **fracfact_opt** | factorial/factorial.py / 54d5f97e34d2226fbbf241b622d64de5d9f15764 | 4 total factors, 1 erased, all 4 legal generators AB/AC/BC/ABC enumerated; source-ordered lex alias vector prefers ABC | choose p from 2^m−m−1 interaction columns: combinatorial; GF(2) bitmask/XOR, possible batched score, not guaranteed GPU win | MATH_CPU |
+| **gsd** | factorial/gsd.py / 2882bbc91cf06084f8c6e442358cbc1428e63eb6 | 3×4 full grid reduced by 2; parity-labeled complementary 6×2 sets have empty overlap and union 12 unique rows, matching upstream documented sets (not row order) | OA partition mapping + Cartesian expansion; Ω(k·output rows); mostly irregular integer CPU, not automatically GPU GEMM | MATH_CPU |
+| **pbdesign** | factorial/plackett_burman.py / 5235a6009e7c49998b2a99f6b8a35045a97d5c6b | Source-documented 8×5 Hadamard-derived PB matrix: all five columns balanced, HᵀH=8I exactly | Hadamard/Toeplitz/Hankel/Kronecker, O(N²) intermediate possible; Gram check O(Nk²); CUDA only useful batched large matrices | MATH_CPU |
+| **simplex_centroid_design** | mixture/simplex.py / ca4ab276d064937bbdf44d9263d735954d5cb9a5 | q=4: 15 nonempty subsets give 15 distinct mixture points, all row sums 1, last row=(1/4,1/4,1/4,1/4) | Θ(q 2^q) output; bit masks, popcount, scatter, CPU for small q | MATH_CPU |
+| **optimal_design** | optimal/optimal.py / 3027300581c15e74dde9edd51a0d22776f84c4e1 | Actual signature defaults to method=sequential while docstring claims detmax. Independent 1D D-greedy C={−1,0,1}, n=2 chooses candidate IDs [0,2], raw det=4, normalized det=1, D_eff=A_eff=100 | Dispatch to chosen algorithm, score factorization; dominated by search, CPU metadata + potentially batched numerical scoring | MATH_CPU |
+| **small_composite_design** | response_surface/small_composite.py / 25d025b8d9d95981db6a36771488922ebdb0642d | Four factors, center=(2,2): 8 fractional cube + 8 axial ±2e_i + 4 centers =20 rows. Complete quadratic 20×15 feature matrix has **rank 12**, not 15 | O(k n_cube + k²) coordinate output; QR/SVD rank/alias validation, batched CUDA only for many designs | MATH_CPU (negative identifiability example) |
+| **sobol_sequence** | space_filling/quasi_random/sobol.py / 33ecd3aedf676bb5af4d60cc5a8532715fde0905 | SciPy/PyTorch unscrambled d=2 initial 4 points agree exactly. n=3 padded to 4 with pow2 mode; skip=1,n=4,pow2 mode directly raises SciPy ValueError from random_base2 because cumulative count=5 | O(nd) direction-number integer recurrence, vector bounds scaling; no automatic advantage for short sequences | MATH_CPU (edge-case) |
+| **TaguchiObjective** | taguchi/taguchi.py / 841294a7c8ca72e2f05dee1a798763346614141e | Unique Enum has exactly three text labels: larger is better, smaller is better, nominal is best. No mathematical matrix operator exists | O(1) Python enum, GPU not applicable | METADATA_VERIFIED |
+| **list_orthogonal_arrays** | taguchi/taguchi.py / 841294a7c8ca72e2f05dee1a798763346614141e; registry taguchi/orthogonal_arrays/orthogonal_arrays.py / 7491dec1d96ad8b9656d88c7c840cee1415d784d | Static registry contains exactly 17 unique OA labels, from L4(2^3) to L81(3^40). This does **not** prove all 17 matrices satisfy claimed OA strength | O(K) Python dictionary keys, GPU not applicable | METADATA_VERIFIED |
+
+### 23.2 Fractional factorial: exhaustive lexicographic alias-cost oracle
+
+For m independent binary columns, the count of nonmain-effect generator choices is
+
+$$
+Q_m=2^m-m-1.
+$$
+
+Selecting p erased factors requires p≤Q_m and the number of combinations is C(Q_m,p). Source fracfact_opt orders the candidate generators and lexicographically **minimizes an interaction-order alias vector**, not its scalar sum. At n_factors=4, p=1, m=3, all Q_m=4 candidates AB, AC, BC and ABC can be examined completely.
+
+Independent torch CPU: generate eight ±1 combinations for basis A,B,C; append each of the four possible interaction columns; enumerate all 2^4−1 factor-interaction contrast products and group identical signed patterns; count pairwise aliases by interaction orders according to source ordering.
+
+| Appended generator | Ten-entry lex alias vector |
+|---|---|
+| ABC | (0,0,3,4,0,0,0,0,0,0) |
+| AB, AC or BC | (0,3,0,0,3,0,1,0,0,0) |
+
+ABC wins due to lower order-one vs order-two aliasing, consistent with resolution IV instead of III. This is **a fully enumerated small mathematical example**, not a proof that large searches or positive max_attempts return globally best generators. Candidate search grows combinatorially and generates exponentially many interactions.
+
+### 23.3 GSD, PB and mixture structure
+
+For levels (3,4), reduction=2, a simple exact parity partition creates complementary designs
+
+$$
+D_b=\{(i,j):i=0,1,2;\ j=0,1,2,3;\ (i+j)\bmod 2=b\}.
+$$
+
+Each set contains six points; they are disjoint and their union is the 12-point full grid. Matches the **set** of documented PyDOE GSD examples, not output row order, higher-factor OA construction or every complement balance case. GSD structure is Latin-square-derived partitions and Cartesian products; it is **integer index math**, not intrinsically dense matrix linear algebra.
+
+Independent torch verifies the documented PB 8×5 sign table has zero main-effect column sums and Gram HᵀH=8I5; no full orthogonality guarantee for every Plackett–Burman branch (2-power, 12-power, 20-power) has been established. q=4 simplex-centroid has 2^4−1=15 unique nonnegative rows, sum1, last overall centroid (1/4,1/4,1/4,1/4). An intercept alongside all mixture fractions is rank-redundant by the mixture constraint.
+
+### 23.4 New negative result: four-factor small composite cannot identify the full quadratic model
+
+Frozen documentation describes a 4-factor small composite with resolution-III-or-higher fractional cube (8 points, D=ABC), centered cube plus axial points. For center=(2,2), the orthogonal star formula gives
+
+$$
+\alpha^2=4\frac{1+2/8}{1+2/8}=4,\qquad\alpha=2.
+$$
+
+The physical design contains 8 cube runs, 8 axial ±2e_j and 4 centers: **20 rows**. The complete polynomial degree-2 feature map requires
+
+$$
+p=1+4+4+6=15.
+$$
+
+But independent torch.float64 matrix_rank returns **12**, because cube interactions satisfy AB=CD, AC=BD, AD=BC; the axial and center rows have zero two-factor cross-products and cannot break the aliases. The six pairwise interaction columns have rank only 3. This demonstrates **model-specific nonidentifiability**, not that the design fails every intended small-composite purpose or that we executed the installed PyDOE package. Statistical model basis/rank must be part of the TorchOED contract, not inferred solely from run count n≥p.
+
+### 23.5 Sobol count and skip semantics: independent SciPy/PyTorch tests
+
+With scramble=False, first four d=2 samples in SciPy 1.17.0 and torch 2.10.0 CPU exactly match (max absolute error 0):
+
+$$
+(0,0),\quad(1/2,1/2),\quad(3/4,1/4),\quad(1/4,3/4).
+$$
+
+Frozen source uses SciPy qmc.Sobol, optionally fast_forward(skip), then random_base2(log2(rounded n)) if use_pow_of_2=True. Request n=3 thus gives **4 points** under default mode (n=3 when disabled). With skip=1 and n=4 under power2 mode, calling SciPy fast_forward(1) then random_base2(2) raises ValueError because total 5 is not a power of 2. This is a *direct independent SciPy API test of the frozen source's call sequence*, not execution of installed PyDOE. Do not extrapolate the four-point equality to all high dimensions, SciPy/PyTorch direction tables, scrambled streams, all skip combinations or bound-scaling contracts.
+
+### 23.6 Public optimizer default and absolute efficiency values
+
+Frozen optimal_design signature uses default **method="sequential"** but its docstring claims default detmax. Its output dictionary includes raw det(XᵀX), normalized score, D_eff and A_eff. Small exact independent torch CPU reference: C=(-1,0,1), n=2, degree1, greedy D selection candidate IDs [0,2], feature rows (1,−1),(1,1), raw determinant 4, normalized D=1, D_eff=A_eff=100, p=2, n=2. These 100-valued efficiencies are **scale-dependent formulas, not independent global-optimum percentages**. Source's max_iter does not affect sequential branch, and detmax's initial simple_exchange uses its own default max_iter rather than the outer argument; full real wrapper implementation parity is NOT_RUN.
+
+### 23.7 Two nonnumeric APIs, without pretending math or GPU
+
+TaguchiObjective is a unique three-member Enum; list_orthogonal_arrays exposes 17 dictionary keys. Their correctness contracts are **identity, uniqueness, order and schema**, not rank/determinant/GEMM. Independent Python CPU construction verified the three labels and 17 distinct names, together with the exact upstream registry source. These deserve the separate tier **METADATA_VERIFIED**, not MATH_CPU. This does not imply all underlying 17 OA matrices have been exhaustively audited.
+
+### 23.8 Research completion and future acceptance boundary
+
+All 91 names are now categorized with real function-level mathematics or metadata inspection; **89 MATH_CPU (targeted property only), 2 METADATA_VERIFIED, 0 SOURCE_MATH, 0 FAMILY_ONLY**. The 91 include nonalgorithm helpers, registries and an Enum. **Full installed PyDOE 1.6.0 function-by-function equivalence, complete option matrices, all mathematical correctness proofs, TorchOED production code and CUDA remain NOT_RUN**.
+
+The natural next scientific phase is a *separately scoped* bounded installed-upstream reference harness to compare actual frozen function outputs and exceptions against these independent mathematics; prioritize negative cases (small-composite rank, Doehlert Shell, Niederreiter, strict sparse quadrature, Sobol skip, exchange-loop candidate IDs). For performance, distinguish integer combinatorial generators/metadata (CPU-first) from batched D/I/A/Fisher/rank/GP matrix scoring (potential GPU benefits only after measured break-even). Do not create another Issue/PR, alter M0 or claim a measured GPU speedup.

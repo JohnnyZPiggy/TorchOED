@@ -526,3 +526,197 @@ $$
 每轮导师研究更新本文件时：记录适用的固定上游 SHA、数学假设、可证伪实验、数据类型与设备、明确区分推导与实际 PASS/NOT_RUN；修正文献约定冲突；保持 README/DEVELOPMENT_PLAN 的阶段边界；避免未经授权新增 Engineer Issue、实现/提交代码、自动合并任何 PR。
 
 **本次文档完成判定：** 多类别数学研究+既有 Fedorov 结果整理完成；真实 TorchOED 包、CUDA/GPU 性能与可证明浮点误差证书尚未完成。
+
+
+---
+
+## 17. 全算法数学审计状态：基于真实 91 个公开导出（2026-10-28 增补）
+
+**结论先行：截至本次研究，绝没有完成对所有 91 个公开 API 的逐项严格数学推导、张量化等价证明和 CPU/CUDA 验收。** 本节是透明的 research coverage ledger，不是 TorchOED 已实现功能表，也不能代替 Issue #1 规划的 Engineer \`docs/ALGORITHM_COVERAGE.md\`。
+
+数据来源：固定 [PyDOE 1.6.0 root exports](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/__init__.py) 与 [完整冻结 Git tree](https://github.com/pydoe/pydoe/tree/866d3f411942cb662af8054562dc1f7e07372401/pydoe)。完整 tree 已获取，未截断，共 296 个条目（包含 pydoe 之外的内容与二进制/测试/其他文件）；不意味着每个 Python 源文件都经过逐行审读。
+
+审计状态：
+- **MATH_CPU：** 该名字对应的主要数学结构或其共享内核已有独立 PyTorch CPU 小例子验证；**不代表**其 PyDOE 所有 API 参数、随机序列或算法优化流程被逐项复现，更不是 TorchOED 工程 PASS。
+- **SOURCE_MATH：** 已读相关固定源码中的具体函数/定义，并分析其结构/语义，但该公开函数的完整数值与形状契约未逐项独立验证。
+- **FAMILY_ONLY：** 只有家族级数学分类或借鉴结论，尚不能声称单独审阅此导出函数的实现或建立其张量等价性。
+
+**本轮分类结果：** \`MATH_CPU = 13\`、\`SOURCE_MATH = 32\`、\`FAMILY_ONLY = 46\`，合计 **91**。不是“已完成 91 个算法”。
+
+| PyDOE root export | 所属公开模块 | 数学研究等级 |
+|---|---|---|
+| `alias_vector_indices` | `factorial` | FAMILY_ONLY |
+| `block_full_factorial` | `factorial` | FAMILY_ONLY |
+| `ff2n` | `factorial` | SOURCE_MATH |
+| `fold` | `factorial` | FAMILY_ONLY |
+| `fracfact` | `factorial` | FAMILY_ONLY |
+| `fracfact_aliasing` | `factorial` | MATH_CPU |
+| `fracfact_by_res` | `factorial` | SOURCE_MATH |
+| `fracfact_opt` | `factorial` | SOURCE_MATH |
+| `fullfact` | `factorial` | SOURCE_MATH |
+| `graeco_latin_square` | `factorial` | FAMILY_ONLY |
+| `gsd` | `factorial` | FAMILY_ONLY |
+| `hyper_graeco_latin_square` | `factorial` | FAMILY_ONLY |
+| `john_three_quarter_design` | `factorial` | FAMILY_ONLY |
+| `latin_square` | `factorial` | FAMILY_ONLY |
+| `pbdesign` | `factorial` | FAMILY_ONLY |
+| `extreme_vertices_design` | `mixture` | FAMILY_ONLY |
+| `mixture_axial_design` | `mixture` | FAMILY_ONLY |
+| `mixture_process_design` | `mixture` | FAMILY_ONLY |
+| `simplex_centroid_design` | `mixture` | SOURCE_MATH |
+| `simplex_lattice_design` | `mixture` | MATH_CPU |
+| `a_efficiency` | `optimal` | SOURCE_MATH |
+| `a_optimality` | `optimal` | MATH_CPU |
+| `build_design_matrix` | `optimal` | SOURCE_MATH |
+| `build_uniform_moment_matrix` | `optimal` | SOURCE_MATH |
+| `c_optimality` | `optimal` | MATH_CPU |
+| `criterion_value` | `optimal` | SOURCE_MATH |
+| `d_efficiency` | `optimal` | SOURCE_MATH |
+| `d_optimality` | `optimal` | MATH_CPU |
+| `detmax` | `optimal` | SOURCE_MATH |
+| `e_optimality` | `optimal` | SOURCE_MATH |
+| `fedorov` | `optimal` | MATH_CPU |
+| `fisher_information` | `optimal` | SOURCE_MATH |
+| `g_optimality` | `optimal` | SOURCE_MATH |
+| `generate_candidate_set` | `optimal` | SOURCE_MATH |
+| `i_optimality` | `optimal` | MATH_CPU |
+| `information_matrix` | `optimal` | SOURCE_MATH |
+| `jacobian_optimal_design` | `optimal` | SOURCE_MATH |
+| `modified_fedorov` | `optimal` | SOURCE_MATH |
+| `optimal_design` | `optimal` | SOURCE_MATH |
+| `s_optimality` | `optimal` | SOURCE_MATH |
+| `sequential_dykstra` | `optimal` | SOURCE_MATH |
+| `simple_exchange_wynn_mitchell` | `optimal` | SOURCE_MATH |
+| `t_optimality` | `optimal` | SOURCE_MATH |
+| `v_optimality` | `optimal` | MATH_CPU |
+| `bbdesign` | `response_surface` | FAMILY_ONLY |
+| `block_ccdesign` | `response_surface` | FAMILY_ONLY |
+| `ccdesign` | `response_surface` | SOURCE_MATH |
+| `doehlert_shell_design` | `response_surface` | FAMILY_ONLY |
+| `doehlert_simplex_design` | `response_surface` | FAMILY_ONLY |
+| `repeat_center` | `response_surface` | FAMILY_ONLY |
+| `small_composite_design` | `response_surface` | FAMILY_ONLY |
+| `star` | `response_surface` | FAMILY_ONLY |
+| `union` | `response_surface` | FAMILY_ONLY |
+| `GaussianProcessRegressor` | `sequential` | FAMILY_ONLY |
+| `expected_improvement` | `sequential` | MATH_CPU |
+| `probability_of_improvement` | `sequential` | SOURCE_MATH |
+| `sequential_design` | `sequential` | FAMILY_ONLY |
+| `upper_confidence_bound` | `sequential` | SOURCE_MATH |
+| `cranley_patterson_shift` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `faure_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `halton_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `hammersley_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `korobov_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `niederreiter_sequence` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `rank1_lattice` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `sobol_sequence` | `space_filling.quasi_random` | SOURCE_MATH |
+| `sukharev_grid` | `space_filling.quasi_random` | FAMILY_ONLY |
+| `lhs` | `space_filling.stochastic` | MATH_CPU |
+| `maximin_design` | `space_filling.stochastic` | MATH_CPU |
+| `maxpro_design` | `space_filling.stochastic` | MATH_CPU |
+| `minimax_design` | `space_filling.stochastic` | FAMILY_ONLY |
+| `nearly_orthogonal_lhs` | `space_filling.stochastic` | FAMILY_ONLY |
+| `nested_lhs` | `space_filling.stochastic` | FAMILY_ONLY |
+| `oa_lhd` | `space_filling.stochastic` | SOURCE_MATH |
+| `random_uniform` | `space_filling.stochastic` | FAMILY_ONLY |
+| `sliced_lhs` | `space_filling.stochastic` | FAMILY_ONLY |
+| `TaguchiObjective` | `taguchi` | FAMILY_ONLY |
+| `compute_snr` | `taguchi` | FAMILY_ONLY |
+| `get_orthogonal_array` | `taguchi` | SOURCE_MATH |
+| `list_orthogonal_arrays` | `taguchi` | FAMILY_ONLY |
+| `taguchi_design` | `taguchi` | FAMILY_ONLY |
+| `random_k_means` | `clustering` | FAMILY_ONLY |
+| `morris_sampling` | `sensitivity_analysis` | SOURCE_MATH |
+| `saltelli_sampling` | `sensitivity_analysis` | MATH_CPU |
+| `doe_sparse_grid` | `sparse_grid` | SOURCE_MATH |
+| `sparse_grid_dimension` | `sparse_grid` | SOURCE_MATH |
+| `definitive_screening_design` | `specialized` | FAMILY_ONLY |
+| `supersaturated_design` | `specialized` | FAMILY_ONLY |
+| `iman_conover` | `utils` | FAMILY_ONLY |
+| `scale_samples` | `utils` | FAMILY_ONLY |
+| `var_regression_matrix` | `utils` | FAMILY_ONLY |
+
+### 17.1 本轮深入的数学结构 A：Latin Hypercube / MaxPro / Maximin 的局部评分更新
+
+PyDOE [maxpro.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/stochastic/maxpro.py) 和 [distance_designs.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/stochastic/distance_designs.py) 都从按列排列的 LHS cell center 初始化，然后交换一个坐标列的两行，逐轮从头计算完整评分。设设计矩阵 X∈R^{n×d}；每个固定列 j 的 cell index 是 0,…,n-1 的一个排列；交换同一列两行 r,s **严格保留 Latin 分层约束**。
+
+MaxPro 评分设：
+
+$$
+\psi(X)=\sum_{1\le i<t\le n}g(x_i,x_t),\qquad
+g(x_i,x_t)=\prod_{\ell=1}^{d}(x_{i\ell}-x_{t\ell})^{-2}.
+$$
+
+因为只交换 r,s 两行的一个因子列，所有其他点对 (i,t) 的贡献不变；此外点对 (r,s) 在该列只改变差的符号，平方后**其贡献也不变**。于是（点对所有坐标不同的 LHS cell-center 场景）精确增量为：
+
+$$
+\Delta\psi=
+\sum_{t\notin\{r,s\}}
+[g(x'_r,x_t)+g(x'_s,x_t)-g(x_r,x_t)-g(x_s,x_t)].
+$$
+
+这把每次交换重新执行 O(n²d) 点对评分变成 O(nd) 的受影响边计算；若已有完整成对分数缓存，还可进一步研究更新代价，但缓存 O(n²) 内存。**这是单步分数更新的数学计算量，不自动等于整个搜索复杂度或 GPU 必然提速。** LHS cell centers 保证同一列互不相同，避免零分母；其他候选样本可能存在重复坐标，必须额外约束。
+
+Maximin 目标为 \(h(X)=\min_{i<t}\|x_i-x_t\|_2\)。缓存未受影响的点对最小值 h_rest 后，一次交换只需：
+
+$$
+h(X')=\min\bigl(
+h_\mathrm{rest},\min_{t\ne r,s}\|x'_r-x_t\|_2,
+\min_{t\ne r,s}\|x'_s-x_t\|_2,
+\|x'_r-x'_s\|_2
+\bigr).
+$$
+
+**本轮独立 torch float64 CPU_CHECK**：seed=271828，72 种 n=6…10、d=2…5 的真实两行/一列交换；MaxPro 完整重算与受影响点对公式的最大 scaled absolute error 2.274e-13，Maximin cached remainder 与完整重算最大 absolute error 为 0，72 组均保留 LHS 的每列完整分层。这是数学 oracle，不是 PyDOE 本身安装运行或 TorchOED 工程比较。
+
+**可证伪 GPU 命题：** 批量交换候选可以利用矢量化 edge contribution 和 scatter/gather；但许多重复小规模随机交换的控制与缓存更新仍可能令 CPU 较快。需要独立比较完整重算、torch CPU incremental 和 torch CUDA batched incremental 的同步端到端时间以及显存；未测。
+
+### 17.2 结构 B：Fractional Factorial 的 GF(2) 别名
+
+读取 [factorial/factorial.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py) 的 \`fracfact_by_res\`、\`fracfact_aliasing\` 定义：对于二水平 ±1 列，列乘积可以等价表示为整数比特串 XOR。若 D=A·B，则交互作用 A:B 与因子 D 完全混淆。其本质是 \(\mathrm{GF}(2)\) 线性代数与子集 XOR，并不是浮点矩阵乘法求解的加速问题。
+
+独立 torch CPU_CHECK：用 2³=8 个完全因素组合构造 A,B,C 及 D=A·B，验证 A·B 与 D 的 8 个取值全部相同。这一表示还允许快速验证定义关系/别名等价类，但以所有交互子集完整搜索将遭遇指数级组合复杂度；GPU 的 GEMM 并不能取消这一本质障碍。
+
+### 17.3 结构 C：Mixture 的组合数、单纯形秩约束
+
+固定 [mixture/simplex.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/mixture/simplex.py)：\`simplex_lattice_design(q,h)\` 输出全部非负整数向量 r∈Z_{\ge0}^q 且 Σ r_i=h，实际比例 x=r/h；点数精确为 \(\binom{q+h-1}{h}\)。\`simplex_centroid_design(q)\` 输出所有非空组分子集的重心，点数 \(2^q-1\)。
+
+独立 torch CPU_CHECK：q=4,h=3 的所有多重组合生成 20×4 候选，各行总和精确为 1；在其中加入截距列后，5 列的数值秩仅为 4。**这是模型参数化中的严格线性依赖，不应通过隐式 ridge“修复”。**
+
+张量/并行机会：枚举整数 composition 索引、归一化广播、按子集 popcount 构造 centroid；生成的候选数量依旧组合/指数增长，必须有大小上限。
+
+### 17.4 结构 D：Saltelli/Morris 与 EI 属于不同类型的张量计算
+
+读取 [sensitivity_analysis/saltelli.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/sensitivity_analysis/saltelli.py)：从联合 Sobol 基础行 [A_i,B_i]∈R^{2d} 生成 A、B 以及每个坐标 j 的杂交行 A_B(j)、可选 B_A(j)；对固定 d，输出形状分别为 N(d+2)×d 或 N(2d+2)×d。它是具有明确排列次序的复制+单坐标替换算子：输入基础采样与样本装配应分开；不能声称 torch Sobol 与 SciPy Sobol 随机序列逐点相同。
+
+独立 torch CPU_CHECK：torch.quasirandom.SobolEngine 为 d=3,N=8 生成 8×6 基础点，装配 A、3 组单列替换、B，得到张量形状 8×5×3（可展平成 40×3）；对每个杂交行，除被替换的那个坐标外均严格保留 A 的值。两套基础点对应坐标偶然相等时，杂交行也可能整体与 A 一样，故“恰好有一个数值不同”不是普遍不变量。
+
+读取 [sensitivity_analysis/morris.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/sensitivity_analysis/morris.py)：一次轨迹由基点、方向对角矩阵、下三角矩阵与随机置换矩阵构造；批量轨迹可张量化矩阵乘法，但必须验证连续相邻行只有一个因素变化、步长 ±Δ，避免只验证整体输出形状。
+
+读取 [sequential/acquisition.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/sequential/acquisition.py)：在高斯预测 μ,σ 与 best 值 t 下，EI=(μ−t)Φ(z)+σφ(z)，z=(μ−t)/σ；σ=0 的分支取 max(μ−t,0)（最大化情形）。独立 torch float64 CPU_CHECK：μ=(-0.5,0,0.5,1)，σ=(0,0.3,0.7,1.2)，与 SciPy 正态密度的独立数值积分最大绝对差 2.22e-16。**EI 评估是逐点广播的 elementwise kernel，GP posterior fit/update 才有独立的矩阵求解难题**。不要把 acquisition score 的简单 GPU 并行误称为完整 Bayesian Optimization GPU 加速。
+
+### 17.5 关键源码风险：当前 PyDOE Sparse Grid 不可直接作为严格 Smolyak Oracle
+
+这是比想象中的 GPU 性能更重要的事实核验。[固定 \`sparse_grid/sparse_grid.py\`](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/sparse_grid/sparse_grid.py) 的函数文档称 Smolyak construction，但实际 \`_generate_sparse_grid_points(level, dimension, grid_type)\`：先产生中心、轴点和少量内部组合；去重后若不足目标点数，就从逐步展开的笛卡尔网格中**任取点补足给定数量**，而没有在该函数中使用 \`grid_type\` 来选择 Clenshaw–Curtis / Chebyshev / Gauss–Patterson 的一维嵌套节点和 Smolyak 多指数组合。即 **\`grid_type\` 在此核心生成函数中未被引用**。
+
+\`_spdim_formula\` 中 n_level≥7 时使用相同的固定七次 d 多项式，不依赖 n_level。因此例如 d=2 时，level 7 和 level 8 的目标数量都由同一式给出 705；这不能作为多层真实 Smolyak 网格递增结构的通用正确性证据。以上是**源码直接可验证性质，不是已实际安装 PyDOE 并做输出对照**。
+
+**Scientist/Architect 研究建议：** 将 PyDOE 此模块标记为 \`UPSTREAM_ORACLE_UNSUITABLE_FOR_STRICT_SMOLYAK\`；TorchOED 若在后续阶段实现真正的 sparse grid / Smolyak，必须独立指定层级节点族、差分算子 Δ_l、组合多指标集合、嵌套去重与可证明 quadrature exactness。文档此前第 10 节的“Smolyak”的用语仅是数学类别描述，**不能据此宣称上游实际实现符合严格 Smolyak 数学契约**。
+
+### 17.6 其他已核查但尚未逐函数证明的源差异
+
+- [distance_designs.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/stochastic/distance_designs.py) 的 minimax 选择覆盖对象是**随机生成的有限候选集**；不是对连续超立方体真 sup 的精确解。未来可用已有候选集合上的 tiled cdist 或最近距离缓存加速，但需单独分析域离散化误差。
+- [sobol.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/quasi_random/sobol.py) 默认 \`use_pow_of_2=True\` 时，会把非 2 的幂次样本量向上取整；这与“输出恰好 n 行”的固定接口契约不同。Tensor reimplementation 不应静默改变样本数。
+- [oa_lhd.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/stochastic/oa_lhd.py) 利用 OA 等级分块的随机 permutation；保留一维 LHS 不等于自动拥有指定强度的全部二维/高阶 OA 性质，需对输入 OA 的强度与输出分组不变量分别检查。
+- [response_surface/central_composite.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/response_surface/central_composite.py) 提供 circumscribed、inscribed、face-centered 选项；这些是不同几何/可行性约束，不能使用单一无限制张量网格替代。
+- 除上述显式源码，本节 FAMILY_ONLY 的其余导出项仍缺少函数级源码核查与数值可证伪验收。**下轮研究应优先这些空白，而不是重复 D-opt/Fedorov 已经充分覆盖的推导。**
+
+### 17.7 下一阶段的分组导师研究顺序（不是工程实现指令）
+
+1. **FAMILY_ONLY 中的 Response Surface、Taguchi、Latin Square / Fractional Factorial 构造：** 每个公开函数给出索引/秩/别名/几何/合法性不变量及小规模独立 CPU Oracle，判断纯 CPU integer operations 是否优于 GPU；
+2. **Sparse grid 严格 Smolyak 真正数学定义及其与当前上游非等价性：** 设计一维嵌套规则与多指标组合的数学 oracle；
+3. **LHS 的 sliced/nested/OA 与 Space-filling 细分指标：** 从交换局部评分推进到不同切片/嵌套约束的合法邻域；
+4. **Fisher/correlated-noise/GP/sensitivity 复杂结构：** 区分纯张量式与 sequential updating，需要不同的共享内核；
+5. 等上述数学研究就绪，再由 Architect 按里程碑授权 Engineer。**本导师回合不推进 M0 代码、不建立新 Issue/PR，不声称 CUDA 测量。**
+

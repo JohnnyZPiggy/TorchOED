@@ -532,7 +532,7 @@ $$
 
 ## 17. 全算法数学审计状态：基于真实 91 个公开导出（2026-10-28 增补）
 
-> **历史快照：** 本节原始 13/32/46 统计记录的是第 17 章首次审计，不是当前全包研究状态。最新 91 项证据台账已逐函数更新，当前 **MATH_CPU=71 / SOURCE_MATH=20 / FAMILY_ONLY=0**；详见第 20 章。MATH_CPU 仅表示定向 CPU 数学不变量或反例，不是完整函数兼容性或工程实现 PASS。
+> **历史快照：** 本节原始 13/32/46 统计记录的是第 17 章首次审计，不是当前全包研究状态。最新 91 项证据台账已逐函数更新，第 20 章历史状态为 71/20/0；**最新第 21 章为 MATH_CPU=76 / SOURCE_MATH=15 / FAMILY_ONLY=0**。MATH_CPU 仅表示定向 CPU 数学不变量或反例，不是完整函数兼容性或工程实现 PASS。
 
 **结论先行：截至本次研究，绝没有完成对所有 91 个公开 API 的逐项严格数学推导、张量化等价证明和 CPU/CUDA 验收。** 本节是透明的 research coverage ledger，不是 TorchOED 已实现功能表，也不能代替 Issue #1 规划的 Engineer \`docs/ALGORITHM_COVERAGE.md\`。
 
@@ -572,18 +572,18 @@ $$
 | `build_design_matrix` | `optimal` | MATH_CPU |
 | `build_uniform_moment_matrix` | `optimal` | MATH_CPU |
 | `c_optimality` | `optimal` | MATH_CPU |
-| `criterion_value` | `optimal` | SOURCE_MATH |
+| `criterion_value` | `optimal` | MATH_CPU |
 | `d_efficiency` | `optimal` | MATH_CPU |
 | `d_optimality` | `optimal` | MATH_CPU |
 | `detmax` | `optimal` | SOURCE_MATH |
 | `e_optimality` | `optimal` | MATH_CPU |
 | `fedorov` | `optimal` | MATH_CPU |
-| `fisher_information` | `optimal` | SOURCE_MATH |
+| `fisher_information` | `optimal` | MATH_CPU |
 | `g_optimality` | `optimal` | MATH_CPU |
 | `generate_candidate_set` | `optimal` | SOURCE_MATH |
 | `i_optimality` | `optimal` | MATH_CPU |
 | `information_matrix` | `optimal` | MATH_CPU |
-| `jacobian_optimal_design` | `optimal` | SOURCE_MATH |
+| `jacobian_optimal_design` | `optimal` | MATH_CPU |
 | `modified_fedorov` | `optimal` | SOURCE_MATH |
 | `optimal_design` | `optimal` | SOURCE_MATH |
 | `s_optimality` | `optimal` | MATH_CPU |
@@ -603,7 +603,7 @@ $$
 | `GaussianProcessRegressor` | `sequential` | MATH_CPU |
 | `expected_improvement` | `sequential` | MATH_CPU |
 | `probability_of_improvement` | `sequential` | MATH_CPU |
-| `sequential_design` | `sequential` | SOURCE_MATH |
+| `sequential_design` | `sequential` | MATH_CPU |
 | `upper_confidence_bound` | `sequential` | MATH_CPU |
 | `cranley_patterson_shift` | `space_filling.quasi_random` | MATH_CPU |
 | `faure_sequence` | `space_filling.quasi_random` | MATH_CPU |
@@ -631,7 +631,7 @@ $$
 | `random_k_means` | `clustering` | MATH_CPU |
 | `morris_sampling` | `sensitivity_analysis` | MATH_CPU |
 | `saltelli_sampling` | `sensitivity_analysis` | MATH_CPU |
-| `doe_sparse_grid` | `sparse_grid` | SOURCE_MATH |
+| `doe_sparse_grid` | `sparse_grid` | MATH_CPU |
 | `sparse_grid_dimension` | `sparse_grid` | MATH_CPU |
 | `definitive_screening_design` | `specialized` | MATH_CPU |
 | `supersaturated_design` | `specialized` | MATH_CPU |
@@ -1095,3 +1095,178 @@ For candidate physical inputs \((-1,-1),(1,-1),(-1,1),(1,1)\), the quadratic fea
 **Remaining SOURCE_MATH (20 names):** these retain their prior status unless a separate function-level oracle is performed: `alias_vector_indices`, `fracfact_opt`, `gsd`, `pbdesign`, `simplex_centroid_design`, `criterion_value`, `detmax`, `fisher_information`, `generate_candidate_set`, `jacobian_optimal_design`, `modified_fedorov`, `optimal_design`, `sequential_dykstra`, `simple_exchange_wynn_mitchell`, `small_composite_design`, `sequential_design`, `sobol_sequence`, `TaguchiObjective`, `list_orthogonal_arrays`, `doe_sparse_grid`. The previous research on some of them may be mathematically substantial; the per-function **full-case** evidence remains incomplete.
 
 **Decision:** `MATH_ORACLE_PARTIAL_71_OF_91` (targeted mathematical checks only) and `FULL_PYDOE_EQUIVALENCE_NOT_RUN`; 20 SOURCE_MATH remain for later explicit validation. All code/GPU/production implementation **NOT_RUN**. No new Issue/PR, no M0 scope change, and no merge authorization implied.
+
+
+
+---
+
+## 21. Five critical SOURCE_MATH functions: independent mathematical oracles, covariance semantics, GP sequential and genuine Smolyak quadrature (2026-10-29)
+
+> **SAE V3.3 Scientific Mentor; bounded RESEARCH_ONLY.** GitHub fixed upstream reference: `pydoe/pydoe@866d3f411942cb662af8054562dc1f7e07372401` (PyDOE 1.6.0). The following are *independent mathematical reconstructions in PyTorch 2.10.0+cpu and numpy 2.3.5*, rather than execution of installed PyDOE/TorchOED packages. No GPU, new Issue, PR or M0 code changes. Five names have **targeted** mathematical CPU evidence and move SOURCE_MATH→MATH_CPU, giving **MATH_CPU=76, SOURCE_MATH=15, FAMILY_ONLY=0 of 91**. This **does not imply full function/option equivalence**.
+
+| Audited source | Exact upstream Git blob SHA |
+|---|---|
+| `pydoe/optimal/fisher.py` | `d7b7dd261615264f25d1d5096b4c94e0bd7ff915` |
+| `pydoe/optimal/utils.py` | `4e57271f974e5a36292317336fa2ce482c220a9e` |
+| `pydoe/optimal/criterion.py` | `ba413ec04261e23610d480c8d37d5ffbda2b030c` |
+| `pydoe/optimal/model.py` | `3849b89d2391b6d5394ff32b6853835e6ee3cb84` |
+| `pydoe/sequential/adaptive.py` | `61a0f67c1273f9636b5f9ccfccbac4508a6114fd` |
+| `pydoe/sequential/gaussian_process.py` | `90f087e3cb00abfc6eeac0b02a221e7606159b02` |
+| `pydoe/sequential/acquisition.py` | `487b154381e14cbbbc1c891f200a0ee1028a65b0` |
+| `pydoe/sparse_grid/sparse_grid.py` | `b9e5e3d5ca81b1974c163a8e3897909b24aa74fc` |
+
+### 21.1 Fisher information: heteroscedastic, correlated and repeated observation *contracts*
+
+Frozen function accepts J with shape (N,p) or (N,p,K), optional selected integer indices S (duplicates permitted), and covariance `None`, scalar, (N,) diagonal variances or (N,N) dense candidate covariance. It computes
+
+$$
+M_S=\frac1K\sum_{k=1}^K J_{S,k}^{\top}(\Sigma_{SS})^{-1}J_{S,k}.
+$$
+
+The **order of restriction and inversion is essential**: in general \((\Sigma_{SS})^{-1}\ne(\Sigma^{-1})_{SS}\), because correlations with unobserved candidates alter the precision subblock. For diagonal variance vector, \(\Sigma_{SS}^{-1}=\mathrm{diag}(\sigma_{S_i}^{-2})\), with the input vector already containing *variances* rather than standard deviations. A scalar likewise denotes common variance, not standard deviation.
+
+**Independent CPU numeric oracle:** `J=[(1,0),(0,1),(1,1)]`, `S=[0,2]`, variance vector `[1,4,9]`. Weighted outer product and direct solve agree exactly and yield
+
+$$
+M_\mathrm{diag}=
+\begin{pmatrix}1.1111111111&0.1111111111\\
+0.1111111111&0.1111111111\end{pmatrix}.
+$$
+
+For a positive-definite dense covariance
+
+$$
+\Sigma=\begin{pmatrix}2&0.35&0.25\\0.35&1.5&0.4\\0.25&0.4&1.8\end{pmatrix},
+$$
+
+restricting **before** inversion gives
+
+$$
+M_S=\begin{pmatrix}
+0.9328621908&0.4946996466\\
+0.4946996466&0.5653710247
+\end{pmatrix},
+$$
+
+whereas subselecting the already-inverted full covariance gives a different answer; max elementwise discrepancy **0.0902469442749**. This is a mathematical model distinction, not an upstream implementation bug: the frozen function correctly uses \(\Sigma_{SS}^{-1}\).
+
+**Dense covariance and duplicated index: a genuine contract conflict.** Selecting rows [0,0] from dense Σ=2 on the original first diagonal induces [[2,2],[2,2]], mathematically singular: NumPy's inverse raises `LinAlgError: Singular matrix`. Selecting index [0,0] with a 1D variance vector instead constructs a diagonal repeated variance and implicitly assumes **two statistically independent replicate measurements**. These represent different observational events. To support correlated replicated experiments without ambiguity, statistical observation IDs/covariance for each *actual measurement* must be explicit; naively repeating candidate indices in the original full covariance does **not** generally define that model. This risk affects both `fisher_information` and the greedy `jacobian_optimal_design`.
+
+**3D case and average-FIM distinction:** Independent `J[:,:,k]` tensor contraction and direct per-k loop agree to max abs 4.44e−16. However
+
+$$
+\log\det\left(\frac1K\sum_kM_k\right)\ne\frac1K\sum_k\log\det M_k.
+$$
+
+Counterexample \(M_1=\operatorname{diag}(100,1),M_2=\operatorname{diag}(1,100)\): left=7.84394667256; right=4.60517018599. This is **average-information design**, not an automatic replacement for Bayesian expected logdet or worst-case FIM design.
+
+**Tensorization / cost:** For independent variance, weighted GEMM/einsum per k costs O(K n p²). Dense Σ per selected design requires an SPD factorization O(n³), triangular solves O(K n²p), and Gram construction O(K np²); batching across many compatible scenarios is plausible on CUDA, but arbitrary repeated selection and dense covariance slicing/conditioning are not free. Never silently replace dense noise by a per-row inverse-variance weight.
+
+### 21.2 `criterion_value`: complete score **routing** and hidden defaults
+
+Fixed PyDOE score route first sets
+
+$$
+M=\frac{X^\top X+\alpha (X_0^\top X_0/N_0)}{n}
+$$
+
+when X0 exists and α is nonzero. Augmentation is divided by *n* together with the selected-design Gram; it is not a separate unnormalized ridge or necessarily a Bayesian prior with a fixed convention.
+
+For X=[(1,0),(1,1),(1,2)], X0=[(1,-1),(1,0),(1,1),(1,2)] and moment `H=X0ᵀX0/4`, a fully independent torch.float64 evaluation of frozen mathematical objective formulas gives:
+
+| Criterion | Score and explicit frozen default |
+|---|---|
+| D | +0.6666666667 (det M) |
+| A | −4.0000000000 (negative inverse trace) |
+| I | −3.2500000000 (**provided X0/moment**) |
+| C | −1.0000000000 (default `c_vector=ones(p)`) |
+| E | +0.2792407799 (minimum eigenvalue) |
+| G | −7.0000000000 (default candidate set X0 if provided; otherwise X) |
+| V | −2.0000000000 (default test points are *selected X*) |
+| S | +0.5163977795 (det M / sqrt-product of its diagonal) |
+| T | 0.0000000000 (default `model_diff_subset=zeros(n)`) |
+
+Counterfactuals expose semantic stakes: `C(e₂)=-1.5` versus default −1; `V(test=X0)=-3.25` versus default −2; `G(candidates=X)=-2.5` versus default X0 score −7. With α=2, augmented M=[[1.6666666667,1.3333333333],[1.3333333333,2.6666666667]]. Nonzero explicit T difference d=(0,1,0) gives source projection score 1/3, different from a residual discrimination score of 2/3.
+
+**Important invalid-default case:** If both X0 and M_moment are None, the frozen I route passes `moment_matrix=None` to `i_optimality`, which attempts `None @ inverse` and raises TypeError. A “valid I default” must not be fabricated; actual-package exception type/message under every NumPy/SciPy environment is **NOT_RUN**. Also T route operates on original X/d rather than augmented M; `alpha` does not change the source T projection score. Regularized inverse can silently switch the statistical target on ill-conditioned designs; keep `ridge_used` explicit in a future contract.
+
+**Tensorization:** Shared normalized information M, batched Cholesky/solves, eigvalsh, weighted candidate variance and reductions; D/S log-domain for numerical stability. Some routing modes need separate physical designs/feature maps and nontrivial model-difference vectors rather than a single universal numeric reduction.
+
+### 21.3 `jacobian_optimal_design`: greedy with replacement, hidden ridge and returned raw FIM
+
+Frozen code supports **D/A/E/S only**, greedily appends the best candidate index (allowing duplicates), then performs sequential exchange passes. Every *internal score* evaluates
+
+$$
+\Phi(M_{\mathrm{raw}}+10^{-10}I_p),
+$$
+
+but the returned `info["fim"]` is **raw** `M_{\mathrm{raw}}` from `fisher_information`, without ridge. The same source may include an additional dynamic regularized-inverse fallback on A-score. This is a numerical device/definition difference that must not be obscured as an unregularized mathematical optimum.
+
+**Independent CPU greedy and exhaustive enumeration oracle:** J rows are \(e_1=(1,0)\) and \(e_2=(0,1)\), n_points=4, D criterion, max exchange passes 10. Mathematical translation of the exact source greedy loop with 1e−10 I returns indices **[0,1,0,1]**, raw M=diag(2,2), ridge D-score **4.0000000004**. Exhausting all 2⁴=16 ordered selections with replacement gives the same best ridge D-score **4.0000000004**. This is one *successful example*, not a global approximation guarantee for greedy selection.
+
+For n_points=1, a selected row produces a raw FIM of rank 1 < p=2, but ridge-regularized score is ~**1.0000000001e−10**, i.e. nonzero. Do not report the returned raw FIM as fully identifiable merely because greedy score was finite/nonzero. Dense covariance with repeated selected index can be singular as Section 21.1 establishes.
+
+**Tensor/GPU:** Candidate row score GEMMs can be batched if selected-set covariance permits shared factorization; full `N*n_points` greedy trial branching and changing dense Σ_SS reduce reuse, and a fixed scoring regularizer must be explicit. No practical CUDA break-even evidence.
+
+### 21.4 `sequential_design`: deterministic candidate-pool mathematical rollout oracle
+
+Fixed source: initial LHS in physical bounds → scalar objective evaluated for each initial point → re-fit a mean-centered RBF Gaussian Process per iteration on *normalized* factor coordinates → draw random candidates in physical bounds → normalize candidate factors → compute latent GP μ/σ → EI/PI/UCB scored with maximize/minimize switch → choose `argmax` score → call objective and append. It is **sequential** with n_initial+n_iter objective calls. GP diagonal noise defaults to 1e−8; scores use **latent** σ, not predictive observation variance.
+
+**Independent deterministic mini-oracle (not the same random generator as PyDOE):** choose normalized 1D initial points X=(0,.25,1), objective \(f(x)=-(x-.65)^2\), fixed candidate pool (0.1,0.4,0.65,0.9), GP RBF \(\ell=0.24\), noise=1e−8; maximize EI, re-fit after each addition. Independent torch Cholesky and direct solve agree to ≤8.33e−17 on means and ≤4.44e−16 on latent variances over three rounds:
+
+| Iteration | EI scores at pool (0.1,0.4,0.65,0.9) | Selected x | Objective f(x) |
+|---|---|---|---|
+| 1 | (0.01169192,0.21362388,0.34948280,0.15679399) | **0.65** | 0 |
+| 2 | (0.00149969,0.12002638,0.00003989,0.07117735) | **0.4** | −0.0625 |
+| 3 | (0.00002088,~0,0.00003989,0.06023405) | **0.9** | −0.0625 |
+
+This is a **real independent end-to-end mathematical chain of GP fit → acquisition → argmax → objective → append → refit**, not a function-level PyDOE execution or exact random-seed equivalence: the upstream code uses **randomly drawn candidates and LHS initial points**, while this oracle deliberately fixes both. Degenerate candidates or n_candidates≤0 require explicit validation; the source does not check positive `n_candidates` before `np.argmax`. Repeated candidates are not explicitly excluded, so statistical duplicate/measurement semantics matter.
+
+**Tensor/GPU:** GP training dense Cholesky O(n³), cross-kernel O(n m d), solves O(n² m), acquisition O(m); reuse batched kernels and consider one bounded GPU smoke on actual device, but objective calls and refits are serial and Python-dependent. No end-to-end GPU speedup claim.
+
+### 21.5 True Smolyak **weighted quadrature** oracle and distinction from PyDOE's point cloud
+
+A mathematically meaningful Smolyak quadrature requires **both nodes and weights**. Construct a 1D nested dyadic family on [0,1] (these are **midpoint / Simpson / Boole Newton–Cotes rules, NOT Clenshaw–Curtis or Gauss–Patterson**):
+
+$$
+Q_1:\ \{(1/2,1)\},\quad
+Q_2:\ \{(0,1/6),(1/2,2/3),(1,1/6)\},
+$$
+
+$$
+Q_3:\ \{(0,7/90),(1/4,32/90),(1/2,12/90),(3/4,32/90),(1,7/90)\}.
+$$
+
+Define hierarchical **signed difference rules** \(\Delta_1=Q_1,\;\Delta_j=Q_j-Q_{j-1}\) and 2D Smolyak level L:
+
+$$
+A_L=\sum_{\substack{i,j\ge1\\i+j\le L+2}}\Delta_i\otimes\Delta_j.
+$$
+
+This gives nested node supports and nontrivial quadrature weights. Independent CPU reference uses **exact rational Fraction arithmetic to construct/deduplicate weights**, then computes moments again using torch.float64 weighted reductions:
+
+| Smolyak L | Distinct nodes | Sum of signed weights | Q[x²y²] | True ∫x²y² |
+|---|---:|---:|---:|---:|
+| 0 | 1 | 1 | 0.0625000000 | 0.1111111111 |
+| 1 | 5 | 1 | 0.1041666667 | 0.1111111111 |
+| 2 | 13 | 1 | **0.1111111111** | **0.1111111111** |
+
+L=2 additionally integrates \(x^4\) to exactly 1/5 and \(x^3y^2\) to exactly 1/12; supports for L=0,1,2 are nested. Some L=2 weights are **negative**, which is normal for sparse-grid combination operators and important for numerical cancellation/error analysis. For a general product polynomial \(x^a y^b\), oracle is \(1/((a+1)(b+1))\).
+
+Frozen PyDOE `doe_sparse_grid(level,d,grid_type)` **only returns points without quadrature weights**, the `grid_type` argument is forwarded but **not used in the core generator**, and point clouds are padded from Cartesian grids to match a polynomial count. Thus it is **not a quadrature-rule implementation and cannot claim the above polynomial exactness**. Furthermore frozen level-2 d=2 inserts axis coordinates 1/3 and 2/3 from an equispaced 4-point grid, whereas this independently specified dyadic family has 1/4,3/4 at Q3; coincidence in counts 1/5/13 is not sufficient. The source's level≥7 count plateau was shown in Section 20. To establish a strict **Clenshaw–Curtis** or **Gauss–Patterson** implementation, use the actual corresponding 1D nodes/weights, not these Newton–Cotes reference rules.
+
+**Tensor/GPU:** (i) build one-dimensional nodes/weights on CPU with exact/small symbolic oracle, (ii) enumerate multiindices and tensor-product nodes by integer combinatorics, (iii) gather duplicate nodes and scatter-add signed weights, (iv) vectorize batched f(X) evaluation/GEMM and weighted reductions on CUDA if N/d large enough. Cost is governed by \(\sum_{i+j\le L+2}|Q_i||Q_j|\), duplicate reconciliation and function evaluation; naive full tensor grid \(\prod_d|Q_L|\) defeats sparse growth. GPU cannot replace the discrete multiindex proof or fix an invalid upstream mathematical definition.
+
+### 21.6 Acceptance and follow-up
+
+| Target function | Independent CPU mathematical Oracle | Frozen source semantic audit | Full PyDOE equivalence | GPU |
+|---|---|---|---|---|
+| `fisher_information` | PASS: diagonal/dense/3D, mismatch example | PASS: replicate covariance ambiguity | NOT_RUN | NOT_RUN |
+| `criterion_value` | PASS: nine scores with I moment supplied, defaults/counterfactuals | PASS: I missing moment, T zero default, alpha normalization | NOT_RUN | NOT_RUN |
+| `jacobian_optimal_design` | PASS: 16 enumerated repeated-index designs, greedy score | PASS: +1e−10 scoring ridge vs raw returned FIM | NOT_RUN | NOT_RUN |
+| `sequential_design` | PASS: fixed-pool three-step independent GP/EI rollout | PASS: random-pool / normalization and n_candidates risks | NOT_RUN | NOT_RUN |
+| `doe_sparse_grid` | PASS: **independent** weighted Smolyak levels 0–2 | PASS: no quadrature weights, no-op grid_type, wrong oracle for strict rules | NOT_RUN | NOT_RUN |
+
+**Scientist/Architect boundary:** These five are promoted solely because **targeted** independent mathematical CPU checks were completed and genuine source semantics were reviewed. Evolving PyDOE API under every argument branch, stochastic output sequence, integration/installation tests, authoritative CUDA performance, rigorous roundoff bounds and production TorchOED kernels remain **NOT_RUN**. Remaining SOURCE_MATH names = 15: `alias_vector_indices`, `fracfact_opt`, `gsd`, `pbdesign`, `simplex_centroid_design`, `detmax`, `generate_candidate_set`, `modified_fedorov`, `optimal_design`, `sequential_dykstra`, `simple_exchange_wynn_mitchell`, `small_composite_design`, `sobol_sequence`, `TaguchiObjective`, `list_orthogonal_arrays`.
+
+**Next bounded Mentor proposal:** 15 remaining only by meaningful math oracles, highest priority `detmax/modified_fedorov/sequential_dykstra` plus `generate_candidate_set`, and one **real installed-upstream equivalence harness** after explicit Scientist scope authorization; do not confuse Research-only doc commits with Engineer M0 PR deliverables. Continue to reuse Issue #1; no new Issue, PR, merge or code implementation.

@@ -545,21 +545,21 @@ $$
 
 | PyDOE root export | 所属公开模块 | 数学研究等级 |
 |---|---|---|
-| `alias_vector_indices` | `factorial` | FAMILY_ONLY |
-| `block_full_factorial` | `factorial` | FAMILY_ONLY |
-| `ff2n` | `factorial` | SOURCE_MATH |
-| `fold` | `factorial` | FAMILY_ONLY |
-| `fracfact` | `factorial` | FAMILY_ONLY |
+| `alias_vector_indices` | `factorial` | SOURCE_MATH |
+| `block_full_factorial` | `factorial` | MATH_CPU |
+| `ff2n` | `factorial` | MATH_CPU |
+| `fold` | `factorial` | MATH_CPU |
+| `fracfact` | `factorial` | MATH_CPU |
 | `fracfact_aliasing` | `factorial` | MATH_CPU |
 | `fracfact_by_res` | `factorial` | SOURCE_MATH |
 | `fracfact_opt` | `factorial` | SOURCE_MATH |
-| `fullfact` | `factorial` | SOURCE_MATH |
-| `graeco_latin_square` | `factorial` | FAMILY_ONLY |
-| `gsd` | `factorial` | FAMILY_ONLY |
-| `hyper_graeco_latin_square` | `factorial` | FAMILY_ONLY |
-| `john_three_quarter_design` | `factorial` | FAMILY_ONLY |
-| `latin_square` | `factorial` | FAMILY_ONLY |
-| `pbdesign` | `factorial` | FAMILY_ONLY |
+| `fullfact` | `factorial` | MATH_CPU |
+| `graeco_latin_square` | `factorial` | MATH_CPU |
+| `gsd` | `factorial` | SOURCE_MATH |
+| `hyper_graeco_latin_square` | `factorial` | MATH_CPU |
+| `john_three_quarter_design` | `factorial` | MATH_CPU |
+| `latin_square` | `factorial` | MATH_CPU |
+| `pbdesign` | `factorial` | SOURCE_MATH |
 | `extreme_vertices_design` | `mixture` | FAMILY_ONLY |
 | `mixture_axial_design` | `mixture` | FAMILY_ONLY |
 | `mixture_process_design` | `mixture` | FAMILY_ONLY |
@@ -589,15 +589,15 @@ $$
 | `simple_exchange_wynn_mitchell` | `optimal` | SOURCE_MATH |
 | `t_optimality` | `optimal` | SOURCE_MATH |
 | `v_optimality` | `optimal` | MATH_CPU |
-| `bbdesign` | `response_surface` | FAMILY_ONLY |
-| `block_ccdesign` | `response_surface` | FAMILY_ONLY |
-| `ccdesign` | `response_surface` | SOURCE_MATH |
-| `doehlert_shell_design` | `response_surface` | FAMILY_ONLY |
-| `doehlert_simplex_design` | `response_surface` | FAMILY_ONLY |
-| `repeat_center` | `response_surface` | FAMILY_ONLY |
-| `small_composite_design` | `response_surface` | FAMILY_ONLY |
-| `star` | `response_surface` | FAMILY_ONLY |
-| `union` | `response_surface` | FAMILY_ONLY |
+| `bbdesign` | `response_surface` | MATH_CPU |
+| `block_ccdesign` | `response_surface` | MATH_CPU |
+| `ccdesign` | `response_surface` | MATH_CPU |
+| `doehlert_shell_design` | `response_surface` | MATH_CPU |
+| `doehlert_simplex_design` | `response_surface` | MATH_CPU |
+| `repeat_center` | `response_surface` | MATH_CPU |
+| `small_composite_design` | `response_surface` | SOURCE_MATH |
+| `star` | `response_surface` | MATH_CPU |
+| `union` | `response_surface` | MATH_CPU |
 | `GaussianProcessRegressor` | `sequential` | FAMILY_ONLY |
 | `expected_improvement` | `sequential` | MATH_CPU |
 | `probability_of_improvement` | `sequential` | SOURCE_MATH |
@@ -621,18 +621,18 @@ $$
 | `oa_lhd` | `space_filling.stochastic` | SOURCE_MATH |
 | `random_uniform` | `space_filling.stochastic` | FAMILY_ONLY |
 | `sliced_lhs` | `space_filling.stochastic` | FAMILY_ONLY |
-| `TaguchiObjective` | `taguchi` | FAMILY_ONLY |
-| `compute_snr` | `taguchi` | FAMILY_ONLY |
-| `get_orthogonal_array` | `taguchi` | SOURCE_MATH |
-| `list_orthogonal_arrays` | `taguchi` | FAMILY_ONLY |
-| `taguchi_design` | `taguchi` | FAMILY_ONLY |
+| `TaguchiObjective` | `taguchi` | SOURCE_MATH |
+| `compute_snr` | `taguchi` | MATH_CPU |
+| `get_orthogonal_array` | `taguchi` | MATH_CPU |
+| `list_orthogonal_arrays` | `taguchi` | SOURCE_MATH |
+| `taguchi_design` | `taguchi` | MATH_CPU |
 | `random_k_means` | `clustering` | FAMILY_ONLY |
 | `morris_sampling` | `sensitivity_analysis` | SOURCE_MATH |
 | `saltelli_sampling` | `sensitivity_analysis` | MATH_CPU |
 | `doe_sparse_grid` | `sparse_grid` | SOURCE_MATH |
 | `sparse_grid_dimension` | `sparse_grid` | SOURCE_MATH |
-| `definitive_screening_design` | `specialized` | FAMILY_ONLY |
-| `supersaturated_design` | `specialized` | FAMILY_ONLY |
+| `definitive_screening_design` | `specialized` | SOURCE_MATH |
+| `supersaturated_design` | `specialized` | MATH_CPU |
 | `iman_conover` | `utils` | FAMILY_ONLY |
 | `scale_samples` | `utils` | FAMILY_ONLY |
 | `var_regression_matrix` | `utils` | FAMILY_ONLY |
@@ -720,3 +720,129 @@ $$
 4. **Fisher/correlated-noise/GP/sensitivity 复杂结构：** 区分纯张量式与 sequential updating，需要不同的共享内核；
 5. 等上述数学研究就绪，再由 Architect 按里程碑授权 Engineer。**本导师回合不推进 M0 代码、不建立新 Issue/PR，不声称 CUDA 测量。**
 
+
+
+---
+
+## 18. DOE Constructor Mathematical Tensorization Audit — Factorial, Response Surface, Taguchi, Specialized (2026-10-28)
+
+**Frozen reference:** PyDOE 1.6.0, git commit \`866d3f411942cb662af8054562dc1f7e07372401\`. Scope: 31 named exported APIs from 18 relevant source Python files plus actual Taguchi OA data. Independent checks: torch 2.10.0+cpu, torch.float64 / int64; PyDOE **not installed or executed**, TorchOED **NOT_IMPLEMENTED**, CUDA **NOT_RUN**. For *MATH_CPU*, an independent small mathematical oracle checked a defining invariant, including negative/counterexample findings; this **does not** certify full upstream API semantics, all options or random search trajectories. *SOURCE_MATH* means a relevant function source and mathematics was inspected, not independently run. Section 17 ledger now **MATH_CPU 34 / SOURCE_MATH 35 / FAMILY_ONLY 22 / total 91**.
+
+### 18.1 Source/blob provenance
+
+All paths below are under the frozen upstream \`pydoe/\` directory. Source SHA in the next table is the short unambiguous prefix of this exact *file blob* SHA, not the repository commit SHA.
+
+| Path | Full blob SHA |
+|---|---|
+| factorial/factorial.py | \`54d5f97e34d2226fbbf241b622d64de5d9f15764\` |
+| factorial/blocking.py | \`6f25df8920e2ae55d2e04d34863d3b025afcfe3f\` |
+| factorial/fold.py | \`d255cd38340c9f3d93ccd8cdec0a696d293ad0a6\` |
+| factorial/gsd.py | \`2882bbc91cf06084f8c6e442358cbc1428e63eb6\` |
+| factorial/john_three_quarter.py | \`e797829f1133ec88ccf64c1fb4da63e8ebcd4dc8\` |
+| factorial/latin_square.py | \`0a8fdd0f744dce7e45b172c9dd99327b0fbae776\` |
+| factorial/plackett_burman.py | \`5235a6009e7c49998b2a99f6b8a35045a97d5c6b\` |
+| response_surface/box_behnken.py | \`18be3848bec6d93a5d3c4369b78762dd3e20d564\` |
+| response_surface/blocking.py | \`ca2bf7e1ea1ef1dd3fa483271f43af23d9691ac0\` |
+| response_surface/central_composite.py | \`5c113ac034bce07a6f1c6584c4c7ebd4d9e8de69\` |
+| response_surface/center_design.py | \`db03140294d7208f8b5abf959764d89033966b05\` |
+| response_surface/doehlert.py | \`bc443e2364335a0594087df9f2c87e9d60abc975\` |
+| response_surface/small_composite.py | \`25d025b8d9d95981db6a36771488922ebdb0642d\` |
+| response_surface/star.py | \`f640237a352537621a239e154aa2051e43900b8b\` |
+| response_surface/union.py | \`a560888b41749fc6d2b6e38417619a9e71482ebc\` |
+| taguchi/taguchi.py | \`841294a7c8ca72e2f05dee1a798763346614141e\` |
+| taguchi/orthogonal_arrays/orthogonal_arrays.py | \`7491dec1d96ad8b9656d88c7c840cee1415d784d\` |
+| taguchi/orthogonal_arrays/L_4_2_3.oa | \`d50fbaebace7ca514c4b79e19e14cffe0fbfd6f1\` |
+| specialized/definitive_screening.py | \`6aca5183c8b99740f96492e6faa96bbdd6150573\` |
+| specialized/supersaturated.py | \`be009412dbd3b18ed3c12cd7135205b14a1004c1\` |
+
+### 18.2 Per-API mathematics, asymptotic cost, PyTorch/GPU hypothesis and evidence
+
+Notation: k=number of factors, N=number of design rows, L_j=levels of factor j, r=random search attempts. Costs are mathematical kernel/output estimates, **not measured timing**. Every explicit full output has Ω(Nk) size; combinatorial construction cannot be made polynomial simply by tensorization.
+
+| Export | Blob prefix | Mathematical structure and tensorization | Complexity / GPU hypothesis | Evidence |
+|---|---|---|---|---|
+| \`ff2n\` | 54d5f97e | Cartesian product of ±1 levels | Θ(k2^k); integer broadcast, CPU often best | MATH_CPU |
+| \`fullfact\` | 54d5f97e | Mixed-radix integer indexing, first factor fastest | Θ(kΠL_j); batched remainder/division | MATH_CPU |
+| \`fracfact\` | 54d5f97e | Generator columns are ±1 products; D=A·B alias | Θ(Nk) after parsing; XOR/sign tensors | MATH_CPU |
+| \`fracfact_by_res\` | 54d5f97e | GF(2) columns; reject *all* short zero-XOR defining words | combinatorial search; bitsets, not GEMM | SOURCE_MATH |
+| \`fracfact_opt\` | 54d5f97e | search interaction-generator selections by alias cost | combinatorial; batch score only | SOURCE_MATH |
+| \`fracfact_aliasing\` | 54d5f97e | XOR of interaction-column bit patterns | Ω(2^k) interactions; vectorized bitsets | MATH_CPU |
+| \`alias_vector_indices\` | 54d5f97e | triangle indices for interaction-order pairs | O(k²); CPU metadata/indexing | SOURCE_MATH |
+| \`fold\` | d255cd38 | double runs by reversing selected binary levels | Θ(Nk); sign/index broadcast | MATH_CPU |
+| \`block_full_factorial\` | 6f25df89 | generator products into binary block IDs; rank over GF(2) | Θ(k2^k + NΣ|g|); GPU optional | MATH_CPU: counterexample |
+| \`gsd\` | 2882bbc9 | multi-level orthogonal subset partitions, complements | combinatorial and Ω(Nk) output; index kernels | SOURCE_MATH |
+| \`latin_square\` | 0a8fdd0f | L(i,j)=(i+j) mod n | Θ(n²); integer broadcasting | MATH_CPU |
+| \`graeco_latin_square\` | 0a8fdd0f | prime n, orthogonal slopes 1 and 2 | Θ(n²); tensor modulo/unique | MATH_CPU |
+| \`hyper_graeco_latin_square\` | 0a8fdd0f | prime n, k distinct nonzero slopes | Θ(kn²); batched modulo | MATH_CPU |
+| \`john_three_quarter_design\` | e797829f | half fraction + semifoldover, 3·2^(k−2) runs | Θ(k2^k); sign & mask | MATH_CPU |
+| \`pbdesign\` | 5235a600 | Hadamard/circulant/Kronecker orthogonal array | Ω(Nk), intermediate may be N²; CPU-first | SOURCE_MATH |
+| \`bbdesign\` | 18be3848 | each pair of factors uses 2² corners, others zero | Θ(k³) coordinate output; scatter | MATH_CPU |
+| \`block_ccdesign\` | ca2bf7e1 | cube, axial points, center, blocks | Θ(k2^k); centered block orthogonality | MATH_CPU |
+| \`ccdesign\` | 5c113ac0 | CCC/CCI/CCF, alpha and 2k axial points | Θ(k2^k); shared star/scaling/concat | MATH_CPU |
+| \`doehlert_shell_design\` | bc443e23 | source only varies first 2 coordinates: rank ≤ 2 for k>2 | actual Θ(k³) output; **unsafe mathematical oracle** | MATH_CPU: counterexample |
+| \`doehlert_simplex_design\` | bc443e23 | simplex vertices + oriented differences | Θ(k³) output; indexed tensor difference | MATH_CPU |
+| \`repeat_center\` | db031402 | center repeats as zero rows | Θ(Nk), torch.zeros | MATH_CPU |
+| \`small_composite_design\` | 25d025b8 | fractional factorial resolution III + star/center | fraction search dominates; reuse subkernels | SOURCE_MATH |
+| \`star\` | f640237a | 2k axial ±α e_j; rotatable/orthogonal/faced | Θ(k²), identity/scale | MATH_CPU |
+| \`union\` | a560888b | vertically concatenate designs | Θ((N1+N2)k), memory bandwidth | MATH_CPU |
+| \`get_orthogonal_array\` | 841294a7 | preloaded OA table; real L4 data inspected | O(Nk) return/read; CPU metadata | MATH_CPU |
+| \`list_orthogonal_arrays\` | 841294a7 | enumerate OA identifiers | O(number of names), Python metadata | SOURCE_MATH |
+| \`taguchi_design\` | 841294a7 | map coded OA indices to physical levels | Θ(Nk), gather for numeric; strings stay Python | MATH_CPU |
+| \`TaguchiObjective\` | 841294a7 | enum only, not a numerical algorithm | O(1), not GPU | SOURCE_MATH |
+| \`compute_snr\` | 841294a7 | three distinct dB SNR formulae | Θ(number of replicates), reduction/log10 | MATH_CPU |
+| \`definitive_screening_design\` | 6aca5183 | Paley/conference, optional fake/categorical factors | construction arithmetic & Ω(Nk), specialized oracle missing | SOURCE_MATH |
+| \`supersaturated_design\` | be009412 | random ±1 designs minimize mean squared off-diagonal Gram entries | Θ(rNk²), batched GEMM possible | MATH_CPU: criterion only |
+
+### 18.3 Latin Squares: genuine algebraic proof
+
+For prime n, in field F_n set L_a(i,j)=(i+aj) mod n, with 1≤a≤n−1. Each row/column is a permutation because coefficients of i and j are invertible. For a≠b, the map (i,j)→(i+aj,i+bj) has coefficient determinant b−a≠0 modulo n, so each ordered pair occurs exactly once: the squares are mutually orthogonal. A composite n does **not** imply that no Latin squares exist, only that this particular slopes construction loses universal invertibility.
+
+**PyTorch CPU int64:** n=3,5,7; generated n−1 squares and exhaustively checked each row/column and every pair of squares. PASS.
+
+### 18.4 Blocking generator rank theorem and counterexample
+
+Encode full factorial run z∈GF(2)^k and r generator incidence rows G∈GF(2)^(r×k). The r-bit block label is Gz. If rank_GF2(G)=q, there are exactly 2^q nonempty blocks, each containing 2^(k−q) runs; claiming 2^r equal nonempty blocks requires q=r. Upstream \`block_full_factorial\` checks each generator's indices, but not independence *between* generators.
+
+**CPU mathematical counterexample:** k=3, generators [(0,),(0,)] give only labels 0 and 3, with 4 runs each. Independent [(0,),(1,)] give four labels, each with 2 runs. This is a genuine mathematical contract gap, not a crash.
+
+### 18.5 Response Surface quadratic-rank proof obligations
+
+Three-factor complete quadratic model has p=1+3+3+3=10 terms (intercept, linear, squares, pair products). Box–Behnken n=3 takes four ±1 corners for each of C(3,2)=3 factor pairs, plus 3 center replicates: 15 runs, numerical quadratic feature rank 10.
+
+A 3-factor CCD with center=(4,4) contains 8 cube corners, 6 axial ±α e_j and 8 center rows: 22 runs, quadratic feature rank 10. The fixed orthogonal-blocking alpha satisfies
+
+$$
+\alpha^2=k\frac{1+n_{ao}/(2k)}{1+n_{co}/2^k}.
+$$
+
+The mean squared factor coordinate in the cube block is 2^k/(2^k+n_co), in the star block 2α²/(2k+n_ao). Their equality is precisely this formula, so the **centered block indicator** is orthogonal to each pure-square feature. On torch.float64 n=3, center=(4,4), α=1.8257418583505538, the largest block/square inner-product residual was 2.22e−16. This does *not* assert all alternate CCD variants are rotatable or orthogonal.
+
+### 18.6 High-severity source counterexample: Doehlert Shell
+
+Frozen [response_surface/doehlert.py](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/response_surface/doehlert.py) initializes k-dimensional zero vectors but changes **only** point[0], point[1] in a shell loop h=1..k adding h+1 points. Hence for k≥3, rank(X)≤2<k. The number of runs is
+
+$$
+N_{\rm actual}=c+\sum_{h=1}^k(h+1)=c+\frac{k(k+3)}2
+$$
+
+rather than the docstring claim N_doc=c+k²+k. For c=1, independently reconstructed Torch CPU cases k=2/3/4 yield actual 6/10/15, claimed 7/13/21, rank 2/2/2. At k=1 the second coordinate access raises IndexError. The count difference is k(k−1)/2.
+
+In contrast, independent mathematical transliteration of \`doehlert_simplex_design\` at k=2/3/4 produces 7/13/21 distinct rows, ranks 2/3/4. **Neither is production TorchOED verification; frozen source cannot serve as a truthful full high-dimensional Doehlert shell oracle.**
+
+### 18.7 Taguchi, fractional effects and supersaturated
+
+Actual upstream [L4 data](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/taguchi/orthogonal_arrays/L_4_2_3.oa) have 1-based rows (1,1,1),(1,2,2),(2,1,2),(2,2,1). After subtracting one, any 2 columns contain all four ordered 0/1 pairs exactly once (Torch int64 PASS). Numeric level mapping [[10,20],[1,3],[7,9]] gives exactly four mapped rows; string levels need Python metadata and should not be forced into numeric tensor dtype.
+
+\`compute_snr\` exactly uses larger −10log10(mean(y^(−2))), smaller −10log10(mean(y²)), nominal 10log10(mean(y)²/var(y, ddof=1)). For y=(1,2,3,4), independent torch.float64 yields **4.48668622 / −8.75061263 / 5.74031268 dB**. Zero response, zero sample variance, or too few replicates can cause inf/nan: define statistics/precision explicitly.
+
+John's 3/4 semifoldover from a 2^(k−1) half fraction appends 2^(k−2) selected/flipped runs; Torch CPU k=3/4/5 generated **6/12/24 unique rows**. Fullfact levels (2,3,4) yields 24 unique mixed-radix rows, first factor fastest. ff2n k=3 has orthogonal main effect columns XᵀX=8I. Full foldover doubles its 8 rows to 16.
+
+In \`fracfact\` a generated column D=AB aliases the AB interaction. \`fracfact_by_res\` needs shortest zero-XOR word across *all* defining relations: checking generator word lengths alone is invalid. Exhaustive search is combinatorial even if bitset scoring is efficient.
+
+For \`supersaturated_design\`, k>n makes full linear-model rank impossible. Frozen objective \(E(s^2)=\sum_{i\ne j}(X^\top X)_{ij}^2/[k(k−1)]\) is efficiently batchable with GEMM. Independent torch case n=4,k=7 gave rank 4 and E(s²)=**4.571428571428571**, but random-search convergence is **NOT_VERIFIED**.
+
+### 18.8 Decision and falsifiable follow-ups
+
+**CPU_CHECK** documents independent reference tensors/invariants, not execution of PyDOE/TorchOED end-to-end; no GPU/Colab or timing measurements. For DOE constructors, the best PyTorch representation is often integer grid/broadcast, index/scatter, bitsets and structured concatenation; not all algorithms should be forced into large GEMMs or CUDA. Avoid exponential output allocations without explicit bounds.
+
+**Mentor decision:** \`TARGETED_CONSTRUCTOR_RESEARCH_READY\` for modular Latin squares, GF(2) blocking theorem, BB/CCD/Taguchi independent oracles and the *negative* Doehlert Shell source audit; \`SOURCE_MATH\` for the rest of this batch. Next target only remaining **FAMILY_ONLY 22**: Mixture extreme/axial/process, sliced/nested/near-orthogonal LHS, further QMC sequences, GP/sequential/clustering/utilities; also separate genuine Smolyak study. Issue #1 M0 Engineer scope unchanged. No new Issue/PR, no algorithm implementation, no CUDA evidence.

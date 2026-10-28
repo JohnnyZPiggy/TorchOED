@@ -532,6 +532,8 @@ $$
 
 ## 17. 全算法数学审计状态：基于真实 91 个公开导出（2026-10-28 增补）
 
+> **历史快照：** 本节原始 13/32/46 统计记录的是第 17 章首次审计，不是当前全包研究状态。最新 91 项证据台账已逐函数更新，当前 **MATH_CPU=71 / SOURCE_MATH=20 / FAMILY_ONLY=0**；详见第 20 章。MATH_CPU 仅表示定向 CPU 数学不变量或反例，不是完整函数兼容性或工程实现 PASS。
+
 **结论先行：截至本次研究，绝没有完成对所有 91 个公开 API 的逐项严格数学推导、张量化等价证明和 CPU/CUDA 验收。** 本节是透明的 research coverage ledger，不是 TorchOED 已实现功能表，也不能代替 Issue #1 规划的 Engineer \`docs/ALGORITHM_COVERAGE.md\`。
 
 数据来源：固定 [PyDOE 1.6.0 root exports](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/__init__.py) 与 [完整冻结 Git tree](https://github.com/pydoe/pydoe/tree/866d3f411942cb662af8054562dc1f7e07372401/pydoe)。完整 tree 已获取，未截断，共 296 个条目（包含 pydoe 之外的内容与二进制/测试/其他文件）；不意味着每个 Python 源文件都经过逐行审读。
@@ -937,33 +939,33 @@ Frozen \`sliced_lhs(m=4,t=3,d=2)\` puts slice s into cells sm..(s+1)m−1 in **e
 
 ## 20. SOURCE_MATH 深化：E/G/S/T、分式析因、DSD、OA-LHD、GP、数字网与 Smolyak（2026-10-29）
 
-> **SAE V3.3 · Scientific Mentor only.** Frozen upstream PyDOE 1.6.0 commit \`866d3f411942cb662af8054562dc1f7e07372401\`; genuine source audit + **independent PyTorch 2.10.0+cpu float64/int64 small mathematical probes**. This section **does not** mean the installed PyDOE implementation, its complete parameter matrix, TorchOED code, or CUDA kernels were executed. Package-level comparison **NOT_RUN**; CUDA **NOT_RUN**; GPU performance **NOT_RUN**. Existing Issue #1 M0 scope unchanged.
+> **SAE V3.3 · Scientific Mentor only.** Frozen upstream PyDOE 1.6.0 commit `866d3f411942cb662af8054562dc1f7e07372401`; genuine source audit + **independent PyTorch 2.10.0+cpu float64/int64 small mathematical probes**. This section **does not** mean the installed PyDOE implementation, its complete parameter matrix, TorchOED code, or CUDA kernels were executed. Package-level comparison **NOT_RUN**; CUDA **NOT_RUN**; GPU performance **NOT_RUN**. Existing Issue #1 M0 scope unchanged.
 
 ### 20.1 研究状态更新及不夸大范围
 
 已有第 17–19 节共 91 个公开导出名称：本轮 **16 个 SOURCE_MATH → MATH_CPU**，累计 **MATH_CPU 71、SOURCE_MATH 20、FAMILY_ONLY 0**。MATH_CPU 的定义仍仅为**某个核心水平的独立数学/CPU 不变量（包括反例）得到核验**；它绝不是“71 个函数端到端等价 PASS”，更不是包功能完成率。算法术语的证明、上游代码的正确性与真实安装运行属于不同证据。
 
-本轮升级的 16 项：\`e_optimality\`、\`g_optimality\`、\`s_optimality\`、\`t_optimality\`、\`fracfact_by_res\`、\`definitive_screening_design\`、\`oa_lhd\`、\`sparse_grid_dimension\`、\`morris_sampling\`、\`a_efficiency\`、\`d_efficiency\`、\`probability_of_improvement\`、\`upper_confidence_bound\`、\`build_design_matrix\`、\`build_uniform_moment_matrix\`、\`information_matrix\`。
+本轮升级的 16 项：`e_optimality`、`g_optimality`、`s_optimality`、`t_optimality`、`fracfact_by_res`、`definitive_screening_design`、`oa_lhd`、`sparse_grid_dimension`、`morris_sampling`、`a_efficiency`、`d_efficiency`、`probability_of_improvement`、`upper_confidence_bound`、`build_design_matrix`、`build_uniform_moment_matrix`、`information_matrix`。
 
 Frozen upstream Blob provenance:
 
-| Source file under \`pydoe/\` | Git blob SHA |
+| Source file under `pydoe/` | Git blob SHA |
 |---|---|
-| optimal/criterion.py | \`ba413ec04261e23610d480c8d37d5ffbda2b030c\` |
-| optimal/efficiency.py | \`00be23e6b1a114fb1604b364c5a80cb1a3b4ab47\` |
-| optimal/model.py | \`3849b89d2391b6d5394ff32b6853835e6ee3cb84\` |
-| optimal/utils.py | \`4e57271f974e5a36292317336fa2ce482c220a9e\` |
-| optimal/algorithms.py | \`ce48f41018d7819435883d8336c8d8a98a2cec59\` |
-| factorial/factorial.py | \`54d5f97e34d2226fbbf241b622d64de5d9f15764\` |
-| specialized/definitive_screening.py | \`6aca5183c8b99740f96492e6faa96bbdd6150573\` |
-| space_filling/stochastic/oa_lhd.py | \`ef1788de7534adaf7e7c2c15f7dfbbfe7059b3e6\` |
-| space_filling/quasi_random/niederreiter.py | \`809a31f447024b98f07f8f67e82efafe447373ee\` |
-| sparse_grid/sparse_grid.py | \`b9e5e3d5ca81b1974c163a8e3897909b24aa74fc\` |
-| sequential/gaussian_process.py | \`90f087e3cb00abfc6eeac0b02a221e7606159b02\` |
-| sequential/adaptive.py | \`61a0f67c1273f9636b5f9ccfccbac4508a6114fd\` |
-| sequential/acquisition.py | \`487b154381e14cbbbc1c891f200a0ee1028a65b0\` |
-| sensitivity_analysis/morris.py | \`0d5f396f767819c6179f570e98fd1f73f9c45d61\` |
-| response_surface/doehlert.py | \`bc443e2364335a0594087df9f2c87e9d60abc975\` |
+| optimal/criterion.py | `ba413ec04261e23610d480c8d37d5ffbda2b030c` |
+| optimal/efficiency.py | `00be23e6b1a114fb1604b364c5a80cb1a3b4ab47` |
+| optimal/model.py | `3849b89d2391b6d5394ff32b6853835e6ee3cb84` |
+| optimal/utils.py | `4e57271f974e5a36292317336fa2ce482c220a9e` |
+| optimal/algorithms.py | `ce48f41018d7819435883d8336c8d8a98a2cec59` |
+| factorial/factorial.py | `54d5f97e34d2226fbbf241b622d64de5d9f15764` |
+| specialized/definitive_screening.py | `6aca5183c8b99740f96492e6faa96bbdd6150573` |
+| space_filling/stochastic/oa_lhd.py | `ef1788de7534adaf7e7c2c15f7dfbbfe7059b3e6` |
+| space_filling/quasi_random/niederreiter.py | `809a31f447024b98f07f8f67e82efafe447373ee` |
+| sparse_grid/sparse_grid.py | `b9e5e3d5ca81b1974c163a8e3897909b24aa74fc` |
+| sequential/gaussian_process.py | `90f087e3cb00abfc6eeac0b02a221e7606159b02` |
+| sequential/adaptive.py | `61a0f67c1273f9636b5f9ccfccbac4508a6114fd` |
+| sequential/acquisition.py | `487b154381e14cbbbc1c891f200a0ee1028a65b0` |
+| sensitivity_analysis/morris.py | `0d5f396f767819c6179f570e98fd1f73f9c45d61` |
+| response_surface/doehlert.py | `bc443e2364335a0594087df9f2c87e9d60abc975` |
 
 ### 20.2 E-optimality: concave spectral objective and **degenerate eigenvalue** certificate
 
@@ -1024,7 +1026,7 @@ This is **not** \(\det\) of the correlation matrix (which is \(\det M/\prod_j M_
 
 ### 20.5 T-optimality: projection is NOT residual-model discrimination
 
-Frozen source calculates \(d^\top P_Xd\), with \(P_X=X(X^\top X)^{-1}X^\top\), whereas for discrimination from the column span of a *competing* linear model the residual energy is \(d^\top(I-P_X)d\). They sum to \(\|d\|^2\) for exact orthogonal P, but generally represent opposite rankings for fixed d. Example: X=e1∈R^3 and d=e2: projected score **0**, residual score **1**. PyDOE's \`criterion_value(...,"T")\` defaults d=0 in absence of \`model_diff_subset\`; don't claim it optimizes a nontrivial model discrimination by default. Rank-deficient X or hidden regularization yields a nonorthogonal surrogate projector and must be treated distinctly. **Source semantics verified, independent CPU projection/residual oracle PASS.**
+Frozen source calculates \(d^\top P_Xd\), with \(P_X=X(X^\top X)^{-1}X^\top\), whereas for discrimination from the column span of a *competing* linear model the residual energy is \(d^\top(I-P_X)d\). They sum to \(\|d\|^2\) for exact orthogonal P, but generally represent opposite rankings for fixed d. Example: X=e1∈R^3 and d=e2: projected score **0**, residual score **1**. PyDOE's `criterion_value(...,"T")` defaults d=0 in absence of `model_diff_subset`; don't claim it optimizes a nontrivial model discrimination by default. Rank-deficient X or hidden regularization yields a nonorthogonal surrogate projector and must be treated distinctly. **Source semantics verified, independent CPU projection/residual oracle PASS.**
 
 ### 20.6 Fractional Factorial: exhaustive minimum zero-XOR defining relation
 
@@ -1034,15 +1036,15 @@ $$
 R=\min\{|J|:\varnothing\ne J\subseteq\{1,\ldots,k\},\;\bigoplus_{j\in J}c_j=0\}.
 $$
 
-**Check all subset words, not only user-entered generator lengths.** Independent CPU exhaustive exact-bit test: four columns [1,2,4,7] (three basis columns and their 3-way XOR) have **resolution IV**; all seven nonzero GF(2)^3 columns [1,2,3,4,5,6,7] have **resolution III**. Searching minimum run size is still combinatorial; tensorized XOR/batched filtering accelerates tests but does not eliminate branching. This validates a defining mathematical invariant, **not** a run of \`fracfact_by_res\` or \`fracfact_opt\`.
+**Check all subset words, not only user-entered generator lengths.** Independent CPU exhaustive exact-bit test: four columns [1,2,4,7] (three basis columns and their 3-way XOR) have **resolution IV**; all seven nonzero GF(2)^3 columns [1,2,3,4,5,6,7] have **resolution III**. Searching minimum run size is still combinatorial; tensorized XOR/batched filtering accelerates tests but does not eliminate branching. This validates a defining mathematical invariant, **not** a run of `fracfact_by_res` or `fracfact_opt`.
 
 ### 20.7 Definitive Screening (DSD), OA-LHD, Morris: structural CPU oracles
 
-**DSD:** The exact 9×4 sample printed in frozen \`definitive_screening_design\` docstring has each column's {-1,0,+1} counts exactly (3,3,3), and an **exactly diagonal 4×4 main-effects Gram matrix**. Independent torch.float64 CPU verified max off-diagonal=0. This checks a documented reference design only; no claim that \`method="orth"\`, mixed categorical or \`min_13\` variants meet all conference/alias conditions or even that the upstream function ran.
+**DSD:** The exact 9×4 sample printed in frozen `definitive_screening_design` docstring has each column's {-1,0,+1} counts exactly (3,3,3), and an **exactly diagonal 4×4 main-effects Gram matrix**. Independent torch.float64 CPU verified max off-diagonal=0. This checks a documented reference design only; no claim that `method="orth"`, mixed categorical or `min_13` variants meet all conference/alias conditions or even that the upstream function ran.
 
 **OA-LHD:** Frozen code maps each OA level group to a disjoint block of length N/s and randomly permutes within blocks, then jitters. For the verified stored L4 OA, a deterministic independent 4×3 cell mapping yields: every column is a permutation of {0,1,2,3}, and coarse bin \(\lfloor \mathrm{cell}/(N/s)\rfloor\) equals the original OA category exactly. Code checks N divisible by s but **does not check each column-level count equals N/s** before assignment: invalid array with N=4, two levels and column counts (3,1) passes divisibility but fails assignment shape. For validated OA input, level stratification is preserved; for arbitrary invalid input, explicit count validation should be designed, not called a true OA.
 
-**Morris:** Frozen trajectory formula (source \`morris_sampling\`) is \(B^*=x^*+\frac{\Delta}{2}((2BP^*-J)D^*+J)\), where B is strictly lower triangular (D+1)×D and P* is a permutation. Each adjacent row differs in exactly one coordinate by ±Δ. Independent seeded torch CPU generated N=10 trajectories, D=4, num_levels=4, Δ=2/3. Shape [10,5,4], each of 40 steps changes exactly one coordinate; max step-size error 0; samples within [0,1]. No package integration run.
+**Morris:** Frozen trajectory formula (source `morris_sampling`) is \(B^*=x^*+\frac{\Delta}{2}((2BP^*-J)D^*+J)\), where B is strictly lower triangular (D+1)×D and P* is a permutation. Each adjacent row differs in exactly one coordinate by ±Δ. Independent seeded torch CPU generated N=10 trajectories, D=4, num_levels=4, Δ=2/3. Shape [10,5,4], each of 40 steps changes exactly one coordinate; max step-size error 0; samples within [0,1]. No package integration run.
 
 ### 20.8 GP Sequential vs GPU batch and mathematical reference
 
@@ -1053,13 +1055,13 @@ $$
 v_*(x)=1-k_{X*}^\top K_{XX}^{-1}k_{X*}.
 $$
 
-Independent torch CPU using X=(0,.5,1), y=(0,1,0), ell=.5, noise=1e-8, test=(.2,.5,.8) found means ≈(.5432479537586,.9999999709381,.5432479537586), latent variances ≈(.0175055410876,1e-8,.0175055410876); direct torch.solve and triangular/Cholesky formulations agree to max ~6.66e-16 mean, 2.22e-16 variance. A predictive *observation* variance would add noise variance; **frozen GP predict returns latent std**. Duplicated training points with zero noise have rank-deficient K and Cholesky failure. Full \`sequential_design\` selects a candidate by acquisition, actually evaluates objective and refits GP each iteration: this is sequential dependence; batched kernel matrix and score reductions accelerate substeps only. End-to-end sequential optimization outcome **NOT_RUN**.
+Independent torch CPU using X=(0,.5,1), y=(0,1,0), ell=.5, noise=1e-8, test=(.2,.5,.8) found means ≈(.5432479537586,.9999999709381,.5432479537586), latent variances ≈(.0175055410876,1e-8,.0175055410876); direct torch.solve and triangular/Cholesky formulations agree to max ~6.66e-16 mean, 2.22e-16 variance. A predictive *observation* variance would add noise variance; **frozen GP predict returns latent std**. Duplicated training points with zero noise have rank-deficient K and Cholesky failure. Full `sequential_design` selects a candidate by acquisition, actually evaluates objective and refits GP each iteration: this is sequential dependence; batched kernel matrix and score reductions accelerate substeps only. End-to-end sequential optimization outcome **NOT_RUN**.
 
 **PI/UCB independent oracle:** for means (.5,1,1.5,2), std (0,.2,.5,0), best=1, maximizing PI values (0,0.5,0.8413447461,1), correctly handling zero σ and the exactly-equal deterministic case as zero. For κ=1.96, maximizing UCB (.5,1.392,2.48,2), minimizing with sign-normalization (-.5,-.608,-.52,-2). Both elementwise broadcast; low GPU overhead may dominate small vectors.
 
 ### 20.9 Niederreiter and Sparse Grid: source-not-theorem counterexamples
 
-**Niederreiter:** Frozen \`niederreiter_sequence\` builds its first dimension's n_bits×n_bits binary generating matrix \(C_{ij}=s_{i+j}\) from the LFSR for degree-2 polynomial. Its sequence satisfies a 2nd-order linear recurrence over GF(2), so **matrix GF(2)-rank ≤2 regardless of n_bits**. Therefore there are at most 2²=4 distinct coordinate values across all sample indices. Independent exact GF(2) Gaussian elimination + 16 samples:
+**Niederreiter:** Frozen `niederreiter_sequence` builds its first dimension's n_bits×n_bits binary generating matrix \(C_{ij}=s_{i+j}\) from the LFSR for degree-2 polynomial. Its sequence satisfies a 2nd-order linear recurrence over GF(2), so **matrix GF(2)-rank ≤2 regardless of n_bits**. Therefore there are at most 2²=4 distinct coordinate values across all sample indices. Independent exact GF(2) Gaussian elimination + 16 samples:
 
 | n_bits | first-axis GF(2) rank | # distinct first coordinates (first 16) |
 |---:|---:|---:|
@@ -1070,26 +1072,26 @@ Independent torch CPU using X=(0,.5,1), y=(0,1,0), ell=.5, noise=1e-8, test=(.2,
 
 This is a precise **mathematical obstruction to using this particular frozen construction as a generic Niederreiter low-discrepancy oracle**; it does not imply no valid Niederreiter sequence exists. Replacing via torch Sobol or another literature-validated digital net needs separate contract.
 
-**Sparse grid:** Frozen \`_spdim_formula(n_level,d)\` returns the **same degree-7-in-d polynomial for all n_level≥7**, so at d=2 the target counts for levels 0..9 are respectively [1,5,13,29,65,145,321,705,705,705]. Independent CPU integer arithmetic matches the code. The frozen \`_generate_sparse_grid_points\` receives \`grid_type\` but does not use it to choose nested one-dimensional rules, and fills to target count using arbitrary Cartesian candidate points. Consequently it is **not a reliable independent mathematical oracle of true Smolyak quadrature**. A bona fide dyadic nested hierarchical-node support example can define U_1={1/2}, U_2={0,1/2,1}, U_3={0,1/4,1/2,3/4,1}, use new-node sets ΔU_l=U_l\U_(l−1), and take multi-index unions \(\bigcup_{i,j≥1,\ i+j≤L+2}\Delta U_i×\Delta U_j\). Independent CPU yields point counts L=0:1, L=1:5, L=2:13 with verified nesting, including (.25,.5) at L=2. **Matching the first few cardinalities alone does not certify node sets, nestedness, quadrature weights or polynomial exactness.** Frozen level2 uses grid_size=4 and inserts axis coordinates 1/3,2/3 instead, showing a concrete node-set mismatch. True Smolyak needs named 1D quadrature weights, sparse tensor sums, and polynomial integration oracles, not only point-count tests. The source counterexample has already been analyzed in Sections 17/19; this section adds exact counts and a comparable independent reference construction.
+**Sparse grid:** Frozen `_spdim_formula(n_level,d)` returns the **same degree-7-in-d polynomial for all n_level≥7**, so at d=2 the target counts for levels 0..9 are respectively [1,5,13,29,65,145,321,705,705,705]. Independent CPU integer arithmetic matches the code. The frozen `_generate_sparse_grid_points` receives `grid_type` but does not use it to choose nested one-dimensional rules, and fills to target count using arbitrary Cartesian candidate points. Consequently it is **not a reliable independent mathematical oracle of true Smolyak quadrature**. A bona fide dyadic nested hierarchical-node support example can define U_1={1/2}, U_2={0,1/2,1}, U_3={0,1/4,1/2,3/4,1}, use new-node sets ΔU_l=U_l\U_(l−1), and take multi-index unions \(\bigcup_{i,j≥1,\ i+j≤L+2}\Delta U_i×\Delta U_j\). Independent CPU yields point counts L=0:1, L=1:5, L=2:13 with verified nesting, including (.25,.5) at L=2. **Matching the first few cardinalities alone does not certify node sets, nestedness, quadrature weights or polynomial exactness.** Frozen level2 uses grid_size=4 and inserts axis coordinates 1/3,2/3 instead, showing a concrete node-set mismatch. True Smolyak needs named 1D quadrature weights, sparse tensor sums, and polynomial integration oracles, not only point-count tests. The source counterexample has already been analyzed in Sections 17/19; this section adds exact counts and a comparable independent reference construction.
 
-**Doehlert:** Existing Section 18 demonstrates mathematically why frozen \`doehlert_shell_design(k)\` uses only first two coordinate axes, has rank≤2 for k>2 and mismatches its documented size. That result remains a **source-level discrepancy with an independent CPU reconstruction**, not a package execution. No new Doehlert code experiments are being counted again as newly passed.
+**Doehlert:** Existing Section 18 demonstrates mathematically why frozen `doehlert_shell_design(k)` uses only first two coordinate axes, has rank≤2 for k>2 and mismatches its documented size. That result remains a **source-level discrepancy with an independent CPU reconstruction**, not a package execution. No new Doehlert code experiments are being counted again as newly passed.
 
 ### 20.10 Additional small CPU math checks and numeric definitions
 
-On X=[[1,0],[1,1]] and normalized M=XᵀX/2=[[1,.5],[.5,.5]], the frozen formulas evaluate: \`d_efficiency=100 det(M)^(1/2)=50\`, \`a_efficiency=100 p/tr(M^-1)=33.3333333333\`. Neither represents an efficiency ratio to the global exact or approximate optimum; both are unit/scale-dependent absolute metrics.
+On X=[[1,0],[1,1]] and normalized M=XᵀX/2=[[1,.5],[.5,.5]], the frozen formulas evaluate: `d_efficiency=100 det(M)^(1/2)=50`, `a_efficiency=100 p/tr(M^-1)=33.3333333333`. Neither represents an efficiency ratio to the global exact or approximate optimum; both are unit/scale-dependent absolute metrics.
 
 For candidate physical inputs \((-1,-1),(1,-1),(-1,1),(1,1)\), the quadratic feature map creates a 4×6 matrix with first row [1,-1,-1,1,1,1]; empirical moment \(H=F^\top F/4\) has trace 6.0. It is a **candidate empirical moment**, not the analytical continuous uniform integral over a region, unless the candidate set and weights implement the desired quadrature rule.
 
 ### 20.11 Falsifiable compute / GPU hypotheses and outstanding 20 SOURCE_MATH
 
-- E: batched \`eigvalsh\` / eigenspace projector for repeated eigenvalues; KKT requires a PSD mixture Z, not the arbitrary eigenvector output. GPU advantage needs large B and p enough to overcome launches.
+- E: batched `eigvalsh` / eigenspace projector for repeated eigenvalues; KKT requires a PSD mixture Z, not the arbitrary eigenvector output. GPU advantage needs large B and p enough to overcome launches.
 - G: batched solve + F quadratic forms and max reduction; tile candidate dimension.
-- S: \`slogdet\` + log diagonal, explicit SPD and scaling check; do not use direct det/prod in float32 near-singular scoring.
+- S: `slogdet` + log diagonal, explicit SPD and scaling check; do not use direct det/prod in float32 near-singular scoring.
 - T: QR/SVD projector or residual norm on frozen competing-model definition; **do not** conflate opposite projection/residual objectives.
 - Fractional/DSD/OA/Morris: GF(2) bitsets, modular integer ranks, index/gather and small real Gram; heavy combinatorial control mostly CPU-friendly. GPU batched validation only when many instances.
 - GP/sequential: distance GEMM/cdist + batched Cholesky and tiled acquisition; full sequential objective calls not parallel automatically.
 - Niederreiter: reject incorrect finite-rank generator before speed optimizations. Sparse: independent multi-index and quadrature polynomial exactness first, speed later.
 
-**Remaining SOURCE_MATH (20 names):** these retain their prior status unless a separate function-level oracle is performed: \`alias_vector_indices\`, \`fracfact_opt\`, \`gsd\`, \`pbdesign\`, \`simplex_centroid_design\`, \`criterion_value\`, \`detmax\`, \`fisher_information\`, \`generate_candidate_set\`, \`jacobian_optimal_design\`, \`modified_fedorov\`, \`optimal_design\`, \`sequential_dykstra\`, \`simple_exchange_wynn_mitchell\`, \`small_composite_design\`, \`sequential_design\`, \`sobol_sequence\`, \`TaguchiObjective\`, \`list_orthogonal_arrays\`, \`doe_sparse_grid\`. The previous research on some of them may be mathematically substantial; the per-function **full-case** evidence remains incomplete.
+**Remaining SOURCE_MATH (20 names):** these retain their prior status unless a separate function-level oracle is performed: `alias_vector_indices`, `fracfact_opt`, `gsd`, `pbdesign`, `simplex_centroid_design`, `criterion_value`, `detmax`, `fisher_information`, `generate_candidate_set`, `jacobian_optimal_design`, `modified_fedorov`, `optimal_design`, `sequential_dykstra`, `simple_exchange_wynn_mitchell`, `small_composite_design`, `sequential_design`, `sobol_sequence`, `TaguchiObjective`, `list_orthogonal_arrays`, `doe_sparse_grid`. The previous research on some of them may be mathematically substantial; the per-function **full-case** evidence remains incomplete.
 
-**Decision:** \`MATH_ORACLE_PARTIAL_71_OF_91\` (targeted mathematical checks only) and \`FULL_PYDOE_EQUIVALENCE_NOT_RUN\`; 20 SOURCE_MATH remain for later explicit validation. All code/GPU/production implementation **NOT_RUN**. No new Issue/PR, no M0 scope change, and no merge authorization implied.
+**Decision:** `MATH_ORACLE_PARTIAL_71_OF_91` (targeted mathematical checks only) and `FULL_PYDOE_EQUIVALENCE_NOT_RUN`; 20 SOURCE_MATH remain for later explicit validation. All code/GPU/production implementation **NOT_RUN**. No new Issue/PR, no M0 scope change, and no merge authorization implied.

@@ -532,7 +532,7 @@ $$
 
 ## 17. 全算法数学审计状态：基于真实 91 个公开导出（2026-10-28 增补）
 
-> **历史快照：** 本节原始 13/32/46 统计记录的是第 17 章首次审计，不是当前全包研究状态。最新 91 项证据台账已逐函数更新，第 20 章历史状态为 71/20/0；**最新第 21 章为 MATH_CPU=76 / SOURCE_MATH=15 / FAMILY_ONLY=0**。MATH_CPU 仅表示定向 CPU 数学不变量或反例，不是完整函数兼容性或工程实现 PASS。
+> **历史快照：** 本节原始 13/32/46 统计记录的是第 17 章首次审计，不是当前全包研究状态。最新 91 项证据台账已逐函数更新，第 20 章历史状态为 71/20/0；**第 21 章历史状态为 76/15/0；最新第 22 章为 MATH_CPU=81 / SOURCE_MATH=10 / FAMILY_ONLY=0**。MATH_CPU 仅表示定向 CPU 数学不变量或反例，不是完整函数兼容性或工程实现 PASS。
 
 **结论先行：截至本次研究，绝没有完成对所有 91 个公开 API 的逐项严格数学推导、张量化等价证明和 CPU/CUDA 验收。** 本节是透明的 research coverage ledger，不是 TorchOED 已实现功能表，也不能代替 Issue #1 规划的 Engineer \`docs/ALGORITHM_COVERAGE.md\`。
 
@@ -575,20 +575,20 @@ $$
 | `criterion_value` | `optimal` | MATH_CPU |
 | `d_efficiency` | `optimal` | MATH_CPU |
 | `d_optimality` | `optimal` | MATH_CPU |
-| `detmax` | `optimal` | SOURCE_MATH |
+| `detmax` | `optimal` | MATH_CPU |
 | `e_optimality` | `optimal` | MATH_CPU |
 | `fedorov` | `optimal` | MATH_CPU |
 | `fisher_information` | `optimal` | MATH_CPU |
 | `g_optimality` | `optimal` | MATH_CPU |
-| `generate_candidate_set` | `optimal` | SOURCE_MATH |
+| `generate_candidate_set` | `optimal` | MATH_CPU |
 | `i_optimality` | `optimal` | MATH_CPU |
 | `information_matrix` | `optimal` | MATH_CPU |
 | `jacobian_optimal_design` | `optimal` | MATH_CPU |
-| `modified_fedorov` | `optimal` | SOURCE_MATH |
+| `modified_fedorov` | `optimal` | MATH_CPU |
 | `optimal_design` | `optimal` | SOURCE_MATH |
 | `s_optimality` | `optimal` | MATH_CPU |
-| `sequential_dykstra` | `optimal` | SOURCE_MATH |
-| `simple_exchange_wynn_mitchell` | `optimal` | SOURCE_MATH |
+| `sequential_dykstra` | `optimal` | MATH_CPU |
+| `simple_exchange_wynn_mitchell` | `optimal` | MATH_CPU |
 | `t_optimality` | `optimal` | MATH_CPU |
 | `v_optimality` | `optimal` | MATH_CPU |
 | `bbdesign` | `response_surface` | MATH_CPU |
@@ -1270,3 +1270,142 @@ Frozen PyDOE `doe_sparse_grid(level,d,grid_type)` **only returns points without 
 **Scientist/Architect boundary:** These five are promoted solely because **targeted** independent mathematical CPU checks were completed and genuine source semantics were reviewed. Evolving PyDOE API under every argument branch, stochastic output sequence, integration/installation tests, authoritative CUDA performance, rigorous roundoff bounds and production TorchOED kernels remain **NOT_RUN**. Remaining SOURCE_MATH names = 15: `alias_vector_indices`, `fracfact_opt`, `gsd`, `pbdesign`, `simplex_centroid_design`, `detmax`, `generate_candidate_set`, `modified_fedorov`, `optimal_design`, `sequential_dykstra`, `simple_exchange_wynn_mitchell`, `small_composite_design`, `sobol_sequence`, `TaguchiObjective`, `list_orthogonal_arrays`.
 
 **Next bounded Mentor proposal:** 15 remaining only by meaningful math oracles, highest priority `detmax/modified_fedorov/sequential_dykstra` plus `generate_candidate_set`, and one **real installed-upstream equivalence harness** after explicit Scientist scope authorization; do not confuse Research-only doc commits with Engineer M0 PR deliverables. Continue to reuse Issue #1; no new Issue, PR, merge or code implementation.
+
+
+---
+
+## 22. SAE V3.3 Scientific Mentor — exchange-algorithm exact-index mathematical oracles and frozen-source discrepancies (2026-10-29)
+
+**Scope/provenance.** Reuse Issue #1 and Chapters 17–21. Frozen upstream `pydoe/pydoe@866d3f411942cb662af8054562dc1f7e07372401`. Crucial source files:
+- `pydoe/optimal/algorithms.py`, blob `ce48f41018d7819435883d8336c8d8a98a2cec59`: `sequential_dykstra`, `simple_exchange_wynn_mitchell`, `modified_fedorov`, `detmax` (and previously studied `fedorov`).
+- `pydoe/optimal/utils.py`, blob `4e57271f974e5a36292317336fa2ce482c220a9e`: `_best_single_add`, `_best_single_drop`, `criterion_value`; scores are maximized.
+- `pydoe/optimal/model.py`, blob `3849b89d2391b6d5394ff32b6853835e6ee3cb84`: `generate_candidate_set`, `build_design_matrix`.
+- Classical comparison: Mitchell (1974), *Technometrics* 16(2):203–210, DOI:10.1080/00401706.1974.10489175; SAS PROC OPTEX documentation [Search Methods](https://support.sas.com/documentation/cdl/en/qcug/68161/HTML/default/qcug_optex_sect071.htm) explicitly distinguishes genuine varying-size DETMAX excursions and Fedorov simultaneous exchanges.
+
+**Evidence boundary.** Independent source-style mathematical control-flow emulation with `numpy 2.3.5`, `scipy 1.17.0`, `torch 2.10.0+cpu`, float64. Source functions were read at exact SHA; the PyDOE wheel itself was **not installed/executed** in this pass, and no original upstream function's entire parameter/exception matrix has been tested. Mathematical counterexamples are **not** a blanket claim every upstream invocation fails. CUDA, end-to-end package compatibility and timings NOT_RUN. Five focused SOURCE_MATH entries now become MATH_CPU (small targeted mathematics/edge examples only): `sequential_dykstra`, `simple_exchange_wynn_mitchell`, `modified_fedorov`, `detmax`, `generate_candidate_set`. New live 91-export research ledger **81 MATH_CPU / 10 SOURCE_MATH / 0 FAMILY_ONLY**; original snapshot numbers in earlier chapters are historical and are not engineering-feature completion rates.
+
+### 22.1 Exact state-machine and true stopping contracts
+
+Represent a selected design by a *sequence of candidate IDs* S=(i_1,…,i_n), not rounded coordinates; keep exact candidate IDs and the same score definition for all competing n-run designs. Let \(\Phi(S)\) denote PyDOE's `criterion_value` (e.g. normalized D \(\det(X_S^\top X_S/n)\)); every source-style algorithm maximizes \(\Phi\).
+
+| Function | Actual frozen-source loop | What a stop means / legitimacy |
+|---|---|---|
+| `sequential_dykstra` | start empty; evaluate every remaining candidate under add; append first strict best; delete that ID from remaining; repeat n times | only a greedy prefix, NOT local exchange optimum; no guard for n>m causes exhausted pool access |
+| `simple_exchange_wynn_mitchell` | start sequential; choose drop position maximizing score on n−1 rows; among candidates absent from surviving design choose best addition; accept if final n-row score improves by >1e−12 | no improvement for this **single prechosen drop**, NOT proof of full one-swap local optimality |
+| `modified_fedorov` | start sequential; **freeze pool for one sweep**, scan selected positions sequentially and apply individually improving replacement from frozen pool; repeat sweeps | monotonic score improvement, but **candidate IDs can be selected twice** in a sweep; no mandatory-point argument despite source module description |
+| `detmax` | initialize via simple_exchange; scan all one-swaps; if none improves, append one best extra then remove one best drop; accept if improved | excursion ends at the same cardinality with at most one changed ID: cannot cross a strict 1-swap local optimum |
+| `generate_candidate_set` | build \(\prod_jL_j\) physical full-factorial tuples via itertools.product, or generate \((L^k)\) independent random samples then rescale | construction, not optimizer; last physical factor varies fastest in Cartesian output; no local duplicate/conditioning guarantee |
+
+Finite source state spaces and monotonic improvements imply eventual stop under **finite valid values** and a finite candidate set (or max_iter cap) for the exchange variants; numerical NaN/Inf, unknown invalid inputs and initial singular scoring need separate contracts. Fixed absolute threshold means a stopped design need **not** be even a floating-point robust local optimum under scale changes. The no-repeat physical-design contract is **not enforced consistently** across these functions.
+
+### 22.2 `sequential_dykstra`: greedy determinant tie can choose an unidentifiable exact design
+
+Physical two-factor candidate rows \(\mathcal C=[(0,0),(0,0),(1,0),(0,1)]\), with two distinct IDs having the **same coordinates**. Degree-1 feature map \(\phi(x,y)=(1,x,y)\), p=3, n=3. Independently emulate source greedy add with normalized D determinant:
+- Stage 1 picks ID 0 (every single-row det zero).
+- Stage 2 picks ID 1 (every two-row det zero), duplicating identical physical coordinates.
+- Stage 3 picks ID 2 (both remaining full 3×3 feature determinants still zero).
+- Final selected IDs **[0,1,2]** have feature rank **2**, normalized D=0.
+- Feasible distinct alternative IDs **[0,2,3]** have rank **3**, normalized D=**1/27≈0.037037037037**.
+
+Thus early determinant ties before reaching p observations must be handled by **rank-increasing initialization** (pivoted QR/independent feature residual or a legitimate temporary criterion), not blindly assumed D-greedy correct. For `n_points>m`, `remaining` becomes empty, helper returns j_best=−1, source clamps to 0 and tries `remaining[0]` → out-of-range; `n_points<1` alone is validated by source. An independent tiny Python/NumPy reimplementation verified the stated IDs and ranks, **not installed PyDOE runtime**.
+
+### 22.3 `simple_exchange_wynn_mitchell`: full one-swap improvement missed by predetermined drop
+
+Use seven physical two-factor candidates (rounded decimal inputs, fixed candidate IDs 0–6), degree-1 feature map \([1,x,y]\), n=4:
+
+| ID | x | y |
+|---:|---:|---:|
+| 0 | −1.274 | −1.346 |
+| 1 | 1.803 | −2.604 |
+| 2 | 1.111 | −0.918 |
+| 3 | 2.761 | −0.783 |
+| 4 | −2.761 | −2.799 |
+| 5 | 1.754 | 2.829 |
+| 6 | −2.871 | 1.579 |
+
+Start S=(3,4,5,6), normalized \(\Phi_D=\det(X_S^\top X_S/4)\) = **28.381817796977387**.
+
+The source helper picks a **single drop index** maximizing D on the 3-row design. Drop position corresponding to ID **5** wins with 3-row D=**22.04508582776948** (other scores after dropping IDs 3,4,6: 15.391807520833332, 11.952380668981482, 17.88614594562133). For this fixed dropped ID, the best addition is candidate ID 1, final D **19.031925482983127**, worse than current; source stops.
+
+But independent **complete one-swap exhaustive enumeration** (4×3=12 legal swaps) finds replacing ID **3** with candidate **1**, D **32.27328109791529**, strictly improving by **3.8914633009379003**. Hence this function does *not* certify complete one-swap local optimality. This is a **starting-state counterexample to the one-step search operator**; source's preceding greedy initializer is not claimed to yield this starting state in the test, and the installed package was not executed.
+
+### 22.4 `modified_fedorov`: frozen-pool sweep reuses the same incoming ID twice
+
+Use one physical factor x with seven candidate IDs:
+\[
+x=(-2.10978,-0.06937,0.37821,1.15302,1.70066,1.79152,2.84816),
+\quad\phi(x)=(1,x),\quad n=5.
+\]
+Choose **A-opt**, with source normalized information and maximize \(-\operatorname{tr}(M^{-1})\). Independent source-style greedy selects IDs **[5,0,4,1,2]**. At start of modified-Fedorov sweep the **fixed** unused candidate pool is {3,6}. Successive source-style accepted replacements:
+
+1. replace position 0, old ID 5 → candidate **6**: A-score improves from **−1.5501226706548226** to **−1.461939586166772**.
+2. replace position 2, old ID 4 → **the same candidate 6** (the pool is not updated): A-score improves to **−1.4516909978835053**.
+
+Final selected IDs in this sweep = **[6,0,6,1,2]**, containing repeated ID 6. This can be legitimate under a **with-replacement replicated-observation** contract, but contradicts a supposed without-replacement exact candidate-ID selection. The function signature contains no `fixed_points`/mandatory-run option even though its module-level prose describes prespecified mandatory points; that advertised behavior is not supported by this API.
+
+**Crucial distinction:** source `jacobian_optimal_design` intentionally permits replicated observations; `modified_fedorov` here *implicitly* permits them only through a stale pool. TorchOED must explicitly distinguish these two statistical contracts instead of silently replicating the accidental behavior.
+
+### 22.5 `detmax`: 1-add/1-drop cannot leave a strict 1-swap local optimum
+
+Given current set S of n candidate IDs and newly added b∉S, expanded T=S∪{b}. Removing one row yields either:
+- remove b: original S;
+- remove some a∈S: \(S\setminus\{a\}\cup\{b\}\), an **ordinary one-swap** neighbor.
+
+Thus the frozen implementation's supposed "excursion" produces **no design outside the closed one-swap neighborhood**, independent of criterion, factor dimension, and how b was chosen. Therefore if no strict one-swap improves the score, add-best/drop-best **cannot** improve either (assuming consistent score evaluation). A classic varying-size DETMAX excursion allows **multiple** intermediate additions/removals and can cross these traps; Mitchell (1974) and SAS describe design cardinality up to \(n±k\). The upstream module's label "DETMAX with excursions" is thus mathematically misleading for this implementation.
+
+**Concrete 2D feature-level counterexample**, deliberately abstract rather than a degree-1 physical candidate set:
+\[
+F=\begin{bmatrix}1&0\\0&1\\0.9&0.9\\0.9&-0.9\end{bmatrix},\quad n=p=2.
+\]
+At S={0,1}, unnormalized D determinant = **1**. Each legal single replacement has det **0.81**, so no strict improving 1-swap; adding either candidate and dropping any one point gives at most det 1. Yet the global S*={2,3} has unnormalized D **2.6244** (relative improvement factor 2.6244; normalized n=2 determinants divide uniformly by 4 and preserve rankings). An *actual two-swap* crosses the trap. This is a **conditional-state mathematical non-escape proof**, not a claim that frozen `detmax`'s own greedy initializer necessarily arrives at this particular S.
+
+### 22.6 `generate_candidate_set`: exact product order, shape, and RNG semantics
+
+For 2 physical factors and bounds [(-1,1),(0,2)] with 3 levels each, source `itertools.product(*levels)` creates **9×2** candidates in order:
+\[
+(-1,0),(-1,1),(-1,2),(0,0),(0,1),(0,2),(1,0),(1,1),(1,2).
+\]
+Independent `torch.cartesian_prod` int/float reference matches **elementwise max absolute discrepancy 0**. **The last factor varies fastest**, unlike source's `fullfact` mixed-radix choice (previously audited). The first index convention is part of exact selection replay.
+
+Full grid has \(m=L^k\) candidates if each factor has L levels; output work/memory \(\Theta(kL^k)\), so vectorization does not remove combinatorial explosion. The uniform_random path uses **global** `np.random.uniform`, without an explicit seed or RNG argument, and then scales by factor bounds; an output shape match does not prove NumPy/Torch seeded stream equivalence. No explicit low<high / n_levels≥1 validation appears in this function: inverted bounds can produce reversed grid levels, and n_levels=1 trivially samples only low endpoints. Avoid implicit acceptance of invalid bounds in a future TorchOED contract. This study checked source semantics and independent exact small-case tensor reference; **not** PyDOE wheel execution.
+
+### 22.7 Numerical stability: fixed absolute thresholds and coordinate-isclose availability
+
+Source acceptance everywhere compares \( \Phi_{\rm trial}>\Phi_{\rm best}+10^{-12}\), an **absolute** threshold. It is not invariant to physical factor/feature scaling or criterion units. Construct physical two-factor, degree-1 features with 4 candidate rows:
+\[
+F=[(1,0,0),(1,\epsilon,0),(1,0,\epsilon),(1,2\epsilon,0)],\quad\epsilon=10^{-3}.
+\]
+Choose S={0,1,2}, replace candidate 1 with candidate 3. Normalized D:
+\[
+\Phi_{\rm base}=3.703703703703707\times10^{-14},\quad
+\Phi_{\rm swap}=1.481481481481478\times10^{-13}.
+\]
+**The score increases by a factor of 4**, but absolute gain \(1.111111111111107\times10^{-13}<10^{-12}\), so the frozen acceptance comparison rejects it. This is a **scale-contract counterexample** not proof that the particular source initializer reaches S. A new implementation should define an explicit score scale, relative/absolute tolerance and an ill-conditioning-aware independent acceptance check, not silently change mathematical objective.
+
+The frozen availability masks use `np.isclose(candidates,selected,atol=1e-12)` without setting `rtol=0`. NumPy 2.3.5: `isclose(1.0,1.000005,atol=1e-12)=True` with default `rtol=1e-5`, whereas specifying `rtol=0` yields False. Therefore **distinct candidate IDs may be discarded as coordinate duplicates**. Default isclose is not an equivalence relation, may have asymmetries near tolerance, and cannot implement candidate-ID identity or exact combinatorial constraints.
+
+Previous Section 12 near-rank-loss D-update counterexample still applies: direct float32 determinant/Gram and Woodbury rank-two scores can disagree in sign near singularity; do not declare swaps safe from a fixed score epsilon. Prefer Cholesky/QR or robust recomputation verification for borderline swaps and report conditioning.
+
+### 22.8 Complexity, matrixization, rigorous oracle design and Engineer-independent boundaries
+
+Let m=number of candidate IDs, n=selected rows, p=feature dimension. Recomputing each full n×p Gram+det/solve is roughly O(np²+p³), so:
+- Sequential greedy: \(\sum_{t=0}^{n-1}(m-t)\) candidate score calls (if n≤m).
+- Full Fedorov/exhaustive 1-swap: n(m−n) trial scores per sweep.
+- Simple exchange: n drop scores + at most \(m-n+1\) add scores per iteration; cheaper yet can miss an available improving swap.
+- Modified Fedorov: ≈n(m−n) trial scores/sweep with changing design inside sweep and **frozen pool**.
+- Frozen DETMAX: n(m−n) one-swap scores plus one add/drop round; no true k-level excursions.
+- Candidate grid: \(\Theta(kL^k)\) output even if generated by broadcast.
+
+Native torch opportunity: form F=phi(C), decompose current M once; use batched Cholesky solves, candidate leverage GEMMs, stable rank-two determinant ratios / weighted inverse trace, score tile and reduction. For strict unique selections use **candidate ID masking**, updated after every accepted swap; avoid coordinate fuzzy equality. A true 2-swap uses 2k×2k update (prior Ch.13) or independent oracle, not a deceptive add-then-drop. GPU performance/break-even must remain **NOT_RUN** until on actual device.
+
+**Falsifiable standalone CPU reference suite** (future Engineer authorization, NOT production code here):
+- exact candidate-ID sequence and first-tie index for greedy, including duplicated coordinates, `n>m`;
+- 12-pair complete swap oracle with above 7-row physical input; verify prechosen-drop false stop;
+- modified-fedorov A instance, verify repeated candidate ID 6 on frozen pool, and separately a strict-unique alternative that forbids it;
+- DETMAX four-feature trap: all one-swaps ≤base, 2-swap global >base, and validate the set-theoretic 1-add/1-drop equivalence;
+- full factorial 9×2 ordered candidate grid vs independent `torch.cartesian_prod`;
+- 4×3 small-scale normalized D with 4× gain below absolute improvement threshold;
+- near-coincident x values 1.0 vs 1.000005 for default vs exact ID/rtol=0 masks;
+- float64 score numerical error against direct recomputed objective \(\le10^{-9}\max(1,|\Phi_{\rm direct}|)\) on well-conditioned inputs; unsafe ill-conditioned trials must be flagged rather than accepted.
+
+**Evidence status:** Five core SEARCH/GRID functions **MATH_CPU-targeted**, not installed PyDOE API equivalence or TorchOED algorithm implementation; real GPU and full random restart evaluation NOT_RUN. **Remaining ten SOURCE_MATH names:** `alias_vector_indices`, `fracfact_opt`, `gsd`, `pbdesign`, `simplex_centroid_design`, `optimal_design`, `small_composite_design`, `sobol_sequence`, `TaguchiObjective`, `list_orthogonal_arrays`. Recommended next Mentor step: finish these ten by independent scalar/tensor oracles, and *only with explicit Scientist scope* do genuine installed PyDOE wheel end-to-end compatibility checks. Existing M0 engineering scope and Issue #1 remain unchanged.

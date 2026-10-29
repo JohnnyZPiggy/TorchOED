@@ -34,4 +34,3 @@ P4 mapping (no additional PyDOE invocation for these rows):
 Historical 39 records comprise 35 direct/import-provenance records and four derived comparisons. This focused supplement adds **one** separately counted corrected-P1 upstream function invocation. Its negative control and P4/P6 interpretations are not additional package calls.
 
 The legacy full comparator is unchanged and was not rerun; original expected exit1/P1 FAIL remain in their original immutable artifacts. Both test suites and the focused actual-wheel command ran freshly. See supplement_01_commands.json and new logs for actual exits and hashes. Original and supplemental evidence are intentionally separate.
-

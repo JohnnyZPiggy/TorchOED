@@ -42,4 +42,3 @@ Run focused check with a 180-second subprocess limit and each pytest command wit
 New artifacts only: `supplement_01.py`, `test_supplement_01.py`, this document, `results/supplement_01_*`, and `results/SHA256SUMS_SUPPLEMENT_01`. The new manifest covers the nine new deliverables except itself; original manifests remain untouched. Final Git blobs are checked against both manifests before handoff.
 
 The previous task-owned venv/cache residue remains as already reported; no deletion was attempted in this correction cycle. No credentials, wheels, environment binaries, private paths or production dependencies are committed. No original-source change, merge or self-approval.
-

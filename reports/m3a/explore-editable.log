@@ -1,0 +1,13 @@
+Obtaining file:///<TASK_ROOT>/checkout
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torchoed
+  Building editable for torchoed (pyproject.toml): started
+  Building editable for torchoed (pyproject.toml): finished with status 'done'
+  Created wheel for torchoed: filename=torchoed-0.0.1-0.editable-py3-none-any.whl size=2987 sha256=fe8ff5653bbbb1511369d27304eeeb42bddf9c87e05850a5475f8cf231e4c7f8
+  Stored in directory: <D_BUILD_TEMP>\pip-ephem-wheel-cache-cvjrq2ax\wheels\7a\0c\34\6adee824724104bd7629b62a3725ad3bc7709431a862790ff3
+Successfully built torchoed
+Installing collected packages: torchoed
+Successfully installed torchoed-0.0.1

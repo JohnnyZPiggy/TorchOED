@@ -1,0 +1,568 @@
+[
+  {
+    "name": "F1",
+    "features": [
+      [
+        1,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        0
+      ]
+    ],
+    "initial_ids": [
+      0,
+      1
+    ],
+    "search": {
+      "ids": [
+        2,
+        1
+      ],
+      "initial_objective": 0.0,
+      "final_objective": 1.3862943611198906,
+      "objective_history": [
+        0.0,
+        1.3862943611198906
+      ],
+      "swap_history": [
+        {
+          "position": 0,
+          "outgoing_id": 0,
+          "incoming_id": 2,
+          "score": 1.3862943611198906,
+          "gain": 1.3862943611198906,
+          "gamma": 4.0,
+          "tolerance": 3.1520684413405674e-13,
+          "tie_tolerance": 3.1520684413405674e-13,
+          "best_verified_score": 1.3862943611198906
+        }
+      ],
+      "stop_reason": "LOCAL_1_SWAP_NUMERICAL",
+      "accepted_swaps": 1,
+      "evaluated_candidates": 4,
+      "direct_trial_evaluations": 5,
+      "full_neighborhood_checked": true,
+      "scans": [
+        {
+          "evaluated": 2,
+          "verified_spd": 1,
+          "qr_zero": 1,
+          "uncertain": 0,
+          "marginal": 0,
+          "marginal_upper_gain": 0.0,
+          "max_ratio_log_error": 0.0,
+          "condition": 1.0,
+          "max_gain_tolerance": 3.1520684413405674e-13,
+          "first_uncertain": null,
+          "tie_rechecks": 1
+        },
+        {
+          "evaluated": 2,
+          "verified_spd": 1,
+          "qr_zero": 1,
+          "uncertain": 0,
+          "marginal": 0,
+          "marginal_upper_gain": 0.0,
+          "max_ratio_log_error": 0.0,
+          "condition": 4.0,
+          "max_gain_tolerance": 3.1520684413405674e-13,
+          "first_uncertain": null
+        }
+      ],
+      "certificate": "NUMERICAL_ONLY",
+      "effective_tile_size": 64,
+      "workspace_element_estimate": 1854
+    },
+    "exact_all_subsets": [
+      {
+        "ids": [
+          0,
+          1
+        ],
+        "determinant": "1"
+      },
+      {
+        "ids": [
+          0,
+          2
+        ],
+        "determinant": "0"
+      },
+      {
+        "ids": [
+          1,
+          2
+        ],
+        "determinant": "4"
+      }
+    ],
+    "exact_final_determinant": "4",
+    "exact_global_determinant": "4",
+    "exact_best_final_neighbor": "1"
+  },
+  {
+    "name": "F11",
+    "features": [
+      [
+        1,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0.9,
+        0.9
+      ],
+      [
+        0.9,
+        -0.9
+      ]
+    ],
+    "initial_ids": [
+      0,
+      1
+    ],
+    "search": {
+      "ids": [
+        0,
+        1
+      ],
+      "initial_objective": 0.0,
+      "final_objective": 0.0,
+      "objective_history": [
+        0.0
+      ],
+      "swap_history": [],
+      "stop_reason": "LOCAL_1_SWAP_NUMERICAL",
+      "accepted_swaps": 0,
+      "evaluated_candidates": 4,
+      "direct_trial_evaluations": 4,
+      "full_neighborhood_checked": true,
+      "scans": [
+        {
+          "evaluated": 4,
+          "verified_spd": 4,
+          "qr_zero": 0,
+          "uncertain": 0,
+          "marginal": 0,
+          "marginal_upper_gain": 0.0,
+          "max_ratio_log_error": 1.942890293094024e-16,
+          "condition": 1.0,
+          "max_gain_tolerance": 3.5903701770177955e-13,
+          "first_uncertain": null
+        }
+      ],
+      "certificate": "NUMERICAL_ONLY",
+      "effective_tile_size": 64,
+      "workspace_element_estimate": 1856
+    },
+    "exact_all_subsets": [
+      {
+        "ids": [
+          0,
+          1
+        ],
+        "determinant": "1"
+      },
+      {
+        "ids": [
+          0,
+          2
+        ],
+        "determinant": "81/100"
+      },
+      {
+        "ids": [
+          0,
+          3
+        ],
+        "determinant": "81/100"
+      },
+      {
+        "ids": [
+          1,
+          2
+        ],
+        "determinant": "81/100"
+      },
+      {
+        "ids": [
+          1,
+          3
+        ],
+        "determinant": "81/100"
+      },
+      {
+        "ids": [
+          2,
+          3
+        ],
+        "determinant": "6561/2500"
+      }
+    ],
+    "exact_final_determinant": "1",
+    "exact_global_determinant": "6561/2500",
+    "exact_best_final_neighbor": "81/100"
+  },
+  {
+    "name": "F12",
+    "features": [
+      [
+        1,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1e-10
+      ]
+    ],
+    "initial_ids": [
+      0,
+      1
+    ],
+    "search": {
+      "ids": [
+        0,
+        1
+      ],
+      "initial_objective": 0.0,
+      "final_objective": 0.0,
+      "objective_history": [
+        0.0
+      ],
+      "swap_history": [],
+      "stop_reason": "NUMERICAL_INCONCLUSIVE",
+      "accepted_swaps": 0,
+      "evaluated_candidates": 2,
+      "direct_trial_evaluations": 2,
+      "full_neighborhood_checked": true,
+      "scans": [
+        {
+          "evaluated": 2,
+          "verified_spd": 1,
+          "qr_zero": 0,
+          "uncertain": 1,
+          "marginal": 0,
+          "marginal_upper_gain": 0.0,
+          "max_ratio_log_error": 0.0,
+          "condition": 1.0,
+          "max_gain_tolerance": 5.68434188721767e-14,
+          "first_uncertain": {
+            "position": 1,
+            "incoming_id": 2,
+            "reason": "M2_REJECT_QR_NONZERO"
+          }
+        }
+      ],
+      "certificate": "NONE",
+      "effective_tile_size": 64,
+      "workspace_element_estimate": 1854
+    },
+    "exact_all_subsets": [
+      {
+        "ids": [
+          0,
+          1
+        ],
+        "determinant": "1"
+      },
+      {
+        "ids": [
+          0,
+          2
+        ],
+        "determinant": "1/100000000000000000000"
+      },
+      {
+        "ids": [
+          1,
+          2
+        ],
+        "determinant": "1"
+      }
+    ],
+    "exact_final_determinant": "1",
+    "exact_global_determinant": "1",
+    "exact_best_final_neighbor": "1"
+  },
+  {
+    "name": "integer6",
+    "features": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        1,
+        -1,
+        0
+      ],
+      [
+        1,
+        0,
+        -1
+      ]
+    ],
+    "initial_ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "search": {
+      "ids": [
+        4,
+        5,
+        2,
+        3
+      ],
+      "initial_objective": 1.3862943611198906,
+      "final_objective": 2.890371757896165,
+      "objective_history": [
+        1.3862943611198906,
+        2.302585092994046,
+        2.890371757896165
+      ],
+      "swap_history": [
+        {
+          "position": 0,
+          "outgoing_id": 0,
+          "incoming_id": 4,
+          "score": 2.302585092994046,
+          "gain": 0.9162907318741553,
+          "gamma": 2.5,
+          "tolerance": 1.9930446522228847e-12,
+          "tie_tolerance": 1.9930446522228847e-12,
+          "best_verified_score": 2.302585092994046
+        },
+        {
+          "position": 1,
+          "outgoing_id": 1,
+          "incoming_id": 5,
+          "score": 2.890371757896165,
+          "gain": 0.5877866649021191,
+          "gamma": 1.7999999999999996,
+          "tolerance": 2.053193875652415e-12,
+          "tie_tolerance": 2.053193875652415e-12,
+          "best_verified_score": 2.890371757896165
+        }
+      ],
+      "stop_reason": "LOCAL_1_SWAP_NUMERICAL",
+      "accepted_swaps": 2,
+      "evaluated_candidates": 24,
+      "direct_trial_evaluations": 29,
+      "full_neighborhood_checked": true,
+      "scans": [
+        {
+          "evaluated": 8,
+          "verified_spd": 8,
+          "qr_zero": 0,
+          "uncertain": 0,
+          "marginal": 1,
+          "marginal_upper_gain": 1.975030084350547e-12,
+          "max_ratio_log_error": 4.440892098500626e-16,
+          "condition": 10.15149231572077,
+          "max_gain_tolerance": 1.9930446522228847e-12,
+          "first_uncertain": null,
+          "tie_rechecks": 1
+        },
+        {
+          "evaluated": 8,
+          "verified_spd": 8,
+          "qr_zero": 0,
+          "uncertain": 0,
+          "marginal": 0,
+          "marginal_upper_gain": 0.0,
+          "max_ratio_log_error": 8.881784197001256e-16,
+          "condition": 8.331147149049057,
+          "max_gain_tolerance": 3.2797163465145e-12,
+          "first_uncertain": null,
+          "tie_rechecks": 4
+        },
+        {
+          "evaluated": 8,
+          "verified_spd": 8,
+          "qr_zero": 0,
+          "uncertain": 0,
+          "marginal": 0,
+          "marginal_upper_gain": 0.0,
+          "max_ratio_log_error": 6.661338147750939e-16,
+          "condition": 3.732050807568878,
+          "max_gain_tolerance": 4.116937754317519e-12,
+          "first_uncertain": null
+        }
+      ],
+      "certificate": "NUMERICAL_ONLY",
+      "effective_tile_size": 64,
+      "workspace_element_estimate": 2964
+    },
+    "exact_all_subsets": [
+      {
+        "ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "determinant": "4"
+      },
+      {
+        "ids": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "determinant": "6"
+      },
+      {
+        "ids": [
+          0,
+          1,
+          2,
+          5
+        ],
+        "determinant": "6"
+      },
+      {
+        "ids": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "determinant": "6"
+      },
+      {
+        "ids": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "determinant": "4"
+      },
+      {
+        "ids": [
+          0,
+          1,
+          4,
+          5
+        ],
+        "determinant": "6"
+      },
+      {
+        "ids": [
+          0,
+          2,
+          3,
+          4
+        ],
+        "determinant": "4"
+      },
+      {
+        "ids": [
+          0,
+          2,
+          3,
+          5
+        ],
+        "determinant": "6"
+      },
+      {
+        "ids": [
+          0,
+          2,
+          4,
+          5
+        ],
+        "determinant": "6"
+      },
+      {
+        "ids": [
+          0,
+          3,
+          4,
+          5
+        ],
+        "determinant": "12"
+      },
+      {
+        "ids": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "determinant": "10"
+      },
+      {
+        "ids": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "determinant": "10"
+      },
+      {
+        "ids": [
+          1,
+          2,
+          4,
+          5
+        ],
+        "determinant": "16"
+      },
+      {
+        "ids": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "determinant": "18"
+      },
+      {
+        "ids": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "determinant": "18"
+      }
+    ],
+    "exact_final_determinant": "18",
+    "exact_global_determinant": "18",
+    "exact_best_final_neighbor": "18"
+  }
+]

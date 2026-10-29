@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "tested_sha": "ff85dcb7723ea61da5c8f4fbacb4b8768f73ca3f",
+  "gates": {
+    "F1": "PASS",
+    "F2": "PASS",
+    "F3": "PASS",
+    "F4": "PASS",
+    "F5": "PASS",
+    "F6": "PASS",
+    "F7": "PASS",
+    "F8": "PASS",
+    "F9": "PASS",
+    "F10": "PASS",
+    "F11": "PASS",
+    "F12": "PASS"
+  },
+  "floating_errors": {
+    "F1_logdet_error": 0.0,
+    "dtype": "float64",
+    "comparison_atol": 1e-09,
+    "comparison_rtol": 1e-09,
+    "float32": "NOT_RUN_OUT_OF_SCOPE"
+  }
+}

@@ -1,6 +1,6 @@
 # TorchOED
 
-Torch-only M1 constructors/features plus M2-A linear information and D/A/E criteria (Issue #7). CPU acceptance only; no optimizer or release claim.
+Torch-only M1 constructors/features, M2-A information/criteria and scoped M3-A Fedorov search (Issue #9). CPU acceptance only; experimental API, no release claim.
 
 ```powershell
 python -m pip install --no-build-isolation -e .

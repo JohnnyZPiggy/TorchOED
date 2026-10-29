@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_m3a.py"
+  ],
+  "cwd": "<TASK_ROOT>\\checkout",
+  "timeout_seconds": 180,
+  "elapsed_seconds": 5.181977987289429,
+  "exit_code": 0
+}

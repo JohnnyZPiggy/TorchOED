@@ -1,12 +1,12 @@
 # Frozen upstream API coverage ledger
 
-**Frozen 91-export inventory with scoped M1/M2-A/M3-A acceptance.** Exactly 91 rows below correspond one-to-one to PyDOE1.6.0 root __all__. 89 function definitions and two classes (one Enum) are not 91 distinct algorithms. Ten rows below have scoped M1/M2-A implementations; this is not complete upstream equivalence. The private M0 Gram smoke helper does not implement the planned information_matrix API.
+**Frozen 91-export inventory with scoped M1/M2-A/M3-A acceptance.** Exactly 91 rows below correspond one-to-one to PyDOE1.6.0 root __all__. 89 function definitions and two classes (one Enum) are not 91 distinct algorithms. Ten rows below have scoped M1/M2-A/M3-A implementations; this is not complete upstream equivalence. The private M0 Gram smoke helper does not implement the planned information_matrix API.
 
 Baseline: tag v1.6.0 resolves directly to commit 866d3f411942cb662af8054562dc1f7e07372401. Reused wheel was rehashed; sdist was downloaded/hash-checked and selected source/metadata bytes compared with pinned Git. See [upstream-baseline.json](upstream-baseline.json) for actual SHA-256s, Git blob IDs and comparison scope. PyDOE is BSD-3-Clause; TorchOED's existing MIT LICENSE is unchanged. No upstream implementation copied into src/.
 
 AST inventory resolves each root re-export to its defining function/class in the verified wheel without importing PyDOE in the M0 runtime. Definition/type/source inspection and the read research dossier support classification; they do not establish complete algorithm equivalence. Proposed M1–M5 priorities are backlog suggestions, not execution authorization.
 
-Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later scoped milestone; DEFERRED=requires later scope/oracle; IMPLEMENTED=real public implementation; VERIFIED=implementation with recorded acceptance. Ten rows are VERIFIED only for subsets documented in [M1_API.md](M1_API.md) [M2_API.md](M2_API.md), and [M3_API.md](M3_API.md); all other rows retain PLANNED/DEFERRED. Research MATH_CPU and E0 package observations are separate evidence, not TorchOED feature statuses.
+Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later scoped milestone; DEFERRED=requires later scope/oracle; IMPLEMENTED=real public implementation; VERIFIED=implementation with recorded acceptance. Ten rows are VERIFIED only for subsets documented in [M1_API.md](M1_API.md), [M2_API.md](M2_API.md), and [M3_API.md](M3_API.md); all other rows retain PLANNED/DEFERRED. Research MATH_CPU and E0 package observations are separate evidence, not TorchOED feature statuses.
 
 ## Root exports — 91 rows
 

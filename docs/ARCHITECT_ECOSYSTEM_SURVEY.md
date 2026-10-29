@@ -15,29 +15,29 @@
 Its credible differentiation is a **small composable PyTorch-native numerical OED core**:
 
 1. **Structured candidates / constructors**: classical factorial, response surface, mixture, LHS/QMC; distinguish integer combinatorics from tensor-linear-algebra workloads.
-2. **Model/features and noise**: \`C[m,k] -> F[m,p]\`, differentiable \`J[m,p]\`, independent/heteroscedastic/dense-correlated noise with explicit replication semantics.
+2. **Model/features and noise**: `C[m,k] -> F[m,p]`, differentiable `J[m,p]`, independent/heteroscedastic/dense-correlated noise with explicit replication semantics.
 3. **Shared OED scoring**: D/A/E/G/I/C/V (plus S/T only with explicit mathematical semantics), matrix factorizations, weighted-inverse-trace kernels, rank/condition checks and batched candidate score reductions.
 4. **Search and certificate**: exact (without replacement), replicated (with replacement), approximate weight designs, one-swap and only *genuine* k-swap/excursion when implemented, plus numerical and optimality-gap certificates.
 5. **Optional ecosystem adapters** (future, NOT V1 core deps): BoTorch/GPyTorch for GP/BO; Pyro for Bayesian expected information gain; external constrained workflows where justified.
 
-**Default runtime dependency stays \`torch\` only, as the pre-existing development plan mandates.** No PyDOE/SciPy/NumPy CPU computation inside the public hot path. Dev-only external CPU oracles are permissible in an isolated comparator environment. Any additional runtime dependency or change to original M0 scope requires a separate Architect decision and Scientist authorization.
+**Default runtime dependency stays `torch` only, as the pre-existing development plan mandates.** No PyDOE/SciPy/NumPy CPU computation inside the public hot path. Dev-only external CPU oracles are permissible in an isolated comparator environment. Any additional runtime dependency or change to original M0 scope requires a separate Architect decision and Scientist authorization.
 
 The major performance hypothesis is not “Torch is faster than NumPy” but rather **Batched structured OED scoring can reuse factorizations and avoid O(n m) full matrix reconstructions, and on sufficiently large batches may have a GPU performance break-even.** No such speedup has been measured by this survey.
 
 ## 2. Confirmed landscape: first-order competitors, alternatives and reference oracles
 
-Fields: **Mode** = proposed relationship to TorchOED (\`CORE\`, \`DEV_ORACLE\`, \`MATH_REFERENCE\`, \`OPTIONAL_LATER\`, \`AVOID_DEPENDENCY\`). **Maintenance** is a verified public GitHub snapshot when available. **License** means upstream project metadata, *not* an automatic permit to import/modify proprietary or third-party code.
+Fields: **Mode** = proposed relationship to TorchOED (`CORE`, `DEV_ORACLE`, `MATH_REFERENCE`, `OPTIONAL_LATER`, `AVOID_DEPENDENCY`). **Maintenance** is a verified public GitHub snapshot when available. **License** means upstream project metadata, *not* an automatic permit to import/modify proprietary or third-party code.
 
 | Project / verified source | Real capabilities / applicable TorchOED domains | Stack / license | Evidence, maintenance and decision |
 |---|---|---|---|
-| [PyTorch](https://pytorch.org/docs/stable/index.html), [SobolEngine](https://docs.pytorch.org/docs/stable/generated/torch.quasirandom.SobolEngine.html) | \`torch.linalg\`, \`bmm\`, \`vmap\`, autograd, \`cdist\`, \`quasirandom.SobolEngine\` (up to 21,201 dimensions in docs) | Native torch / upstream torch license | **CORE**. Reuse existing tensor and Sobol primitives; do not reimplement BLAS, Cholesky, Sobol direction tables or write CUDA in V1. The Sobol *generator* itself is not assumed CUDA-native; test generation vs tensor transfer separately. |
-| [PyDOE](https://github.com/pydoe/pydoe), [fixed 1.6.0 source](https://github.com/pydoe/pydoe/tree/866d3f411942cb662af8054562dc1f7e07372401) | 91 root exports spanning factorial, mixture, response surface, QMC, space-filling, OED criteria/search, sequential, Taguchi, sensitivity | NumPy/SciPy; **BSD-3-Clause** | **DEV_ORACLE**, frozen 1.6.0 Git SHA \`866d3f411942cb662af8054562dc1f7e07372401\`. GitHub active (pushed 2026-10-28). Upstream installed-wheel parity was **BLOCKED** in mentor §24, not PASS. Several math/source semantic defects require triangulation, not blind copying. |
+| [PyTorch](https://pytorch.org/docs/stable/index.html), [SobolEngine](https://docs.pytorch.org/docs/stable/generated/torch.quasirandom.SobolEngine.html) | `torch.linalg`, `bmm`, `vmap`, autograd, `cdist`, `quasirandom.SobolEngine` (up to 21,201 dimensions in docs) | Native torch / upstream torch license | **CORE**. Reuse existing tensor and Sobol primitives; do not reimplement BLAS, Cholesky, Sobol direction tables or write CUDA in V1. The Sobol *generator* itself is not assumed CUDA-native; test generation vs tensor transfer separately. |
+| [PyDOE](https://github.com/pydoe/pydoe), [fixed 1.6.0 source](https://github.com/pydoe/pydoe/tree/866d3f411942cb662af8054562dc1f7e07372401) | 91 root exports spanning factorial, mixture, response surface, QMC, space-filling, OED criteria/search, sequential, Taguchi, sensitivity | NumPy/SciPy; **BSD-3-Clause** | **DEV_ORACLE**, frozen 1.6.0 Git SHA `866d3f411942cb662af8054562dc1f7e07372401`. GitHub active (pushed 2026-10-28). Upstream installed-wheel parity was **BLOCKED** in mentor §24, not PASS. Several math/source semantic defects require triangulation, not blind copying. |
 | [pyDOE3](https://github.com/relf/pyDOE3), [official status](https://pydoe3.readthedocs.io/) | Legacy PyDOE successor with overlapping functions | NumPy/SciPy; **BSD-3-Clause** | **AVOID_DEPENDENCY**: repo is archived and directs migration to main PyDOE. No need for parallel canonical oracles with same ancestry. |
 | [PyOptEx](https://github.com/mborn1/pyoptex), [docs](https://pyoptex.readthedocs.io/en/latest/) | Optimal DoE, arbitrary criteria, mixture, split-plot/blocked design, budget/cost-optimal CODEX, experiment constraints | Python, predominantly CPU; **BSD-3-Clause** | **MATH_REFERENCE / possible external quality baseline**; current docs 1.2.1, GitHub updated 2026-10-28. Better reference than plain PyDOE for **fixed vs cost-constrained exact designs** and legal neighborhoods. Do not import its entire framework as TorchOED runtime. |
 | [OApackage](https://github.com/eendebakpt/oapackage), [PyPI](https://pypi.org/project/oapackage/) | Orthogonal arrays, optimal/conference arrays, generalized wordlength, isomorphisms, D-efficiency | C++/Python; PyPI **BSD-3-Clause** | **DEV_ORACLE / specialist combinatorial reference**. GitHub active Oct 2026, but compiled stack may complicate environment; optional isolated test backend. Do not reproduce OA enumeration by GPU GEMM. |
 | [SciPy QMC](https://docs.scipy.org/doc/scipy/reference/stats.qmc.html) | Sobol, Halton, LHS including OA strength, Poisson disk, discrepancy metrics, scaling | NumPy/SciPy; standard SciPy open-source license | **DEV_ORACLE** for random/QMC criteria, not numeric runtime dependency. RNG/direction numbers/skip/roundup differ from PyTorch and PyDOE; test invariants and document sequence restrictions rather than claim all seeds match bitwise. |
 | [QMCPy](https://github.com/QMCSoftware/qmcpy), [community](https://qmcsoftware.org/software/qmcpy.html) | QMC point generators, automatic measure transforms, integration, stopping tolerances | Python; **Apache-2.0** | **MATH_REFERENCE / optional advanced QMC oracle**, maintained Oct 2026; useful for quadrature correctness and error criteria beyond point count. |
-| [OpenTURNS](https://openturns.github.io/openturns/latest/user_manual/designs_of_experiments.html) | Optimal LHS (annealing), space-filling scores, SmolyakExperiment and \`generateWithWeights\`, QMC, UQ | C++/Python; **license/reuse terms require file-level check** (GitHub metadata inconclusive) | **DEV_ORACLE** especially for *real weighted* sparse-grid and LHS optimization. It already implements permutation-update ideas; must compare mathematical objective definitions and numerical conditioning, not assume it is infallible. |
+| [OpenTURNS](https://openturns.github.io/openturns/latest/user_manual/designs_of_experiments.html) | Optimal LHS (annealing), space-filling scores, SmolyakExperiment and `generateWithWeights`, QMC, UQ | C++/Python; **license/reuse terms require file-level check** (GitHub metadata inconclusive) | **DEV_ORACLE** especially for *real weighted* sparse-grid and LHS optimization. It already implements permutation-update ideas; must compare mathematical objective definitions and numerical conditioning, not assume it is infallible. |
 | [Pyomo.DoE](https://pyomo.readthedocs.io/en/stable/explanation/analysis/doe/doe.html) | Physics-based nonlinear model DoE, parameter uncertainty, Fisher information and constrained optimization | Pyomo algebraic models + solver stack; **license file check pending** | **MATH_REFERENCE / OPTIONAL_LATER**. Valuable for nonlinear OED formulations and solver-based baselines, not a tensor numerical dependency. |
 | [pydex](https://github.com/KennedyKusumo/pydex) | Continuous model-based OED, pseudo-Bayesian/CVaR, D/A/E/V, Pyomo/IPOPT/DAE | Python/Pyomo/SciPy, **MIT** GitHub metadata | **MATH_REFERENCE** for continuous effort designs, nonlinear constraint handling; opt solvers are heavyweight. Maintained through Apr 2026, small user base. |
 | [PyOED](https://web.cels.anl.gov/~aattia/pyoed/index.html) | Model-constrained OED, Bayesian inversion, sensor placement and data assimilation | Python research suite; [GitLab source](https://gitlab.com/ahmedattia/pyoed); **license not verified in this survey** | **MATH_REFERENCE / long-horizon** for robust/inverse-problem OED. Docs 2.1 under development; no claim about easy package installation or drop-in replacement. |
@@ -51,7 +51,7 @@ Fields: **Mode** = proposed relationship to TorchOED (\`CORE\`, \`DEV_ORACLE\`, 
 | [NEXTorch](https://github.com/VlachosGroup/nextorch), [PyPI](https://pypi.org/project/nextorch/) | Older PyTorch+BoTorch experiment/BO toolkit | Older PyTorch/BoTorch constraints; **MIT** | **AVOID_DEPENDENCY**: last public Git push Aug 2024 and PyPI documents much older compatibility; current BoTorch is better forward reference. |
 | [OptBayesExpt](https://github.com/usnistgov/optbayesexpt), [NIST](https://pages.nist.gov/optbayesexpt/index.html) | Sequential Bayesian experiment control and parameter learning | Python; license not independently checked here | **MATH_REFERENCE ONLY**, GitHub repository archived, not preferred live dependency. |
 
-**Survey exclusions / other ecosystems:** \`dexpy\`, \`doepy\`, \`diversipy\`, \`pyLHD\`, \`DoEgen\`, \`IDAES PySMO sampling\`, \`OpenMDAO DOEDriver\`, \`UQpy\` and Optuna/Ax are informative but not essential first-order dependencies for a torch-native *mathematical* OED core. Their different niches are tracked in [the curated October 2026 ecosystem list](https://github.com/danieleongari/awesome-design-of-experiments). Do not assert lack of utility based only on repo popularity.
+**Survey exclusions / other ecosystems:** `dexpy`, `doepy`, `diversipy`, `pyLHD`, `DoEgen`, `IDAES PySMO sampling`, `OpenMDAO DOEDriver`, `UQpy` and Optuna/Ax are informative but not essential first-order dependencies for a torch-native *mathematical* OED core. Their different niches are tracked in [the curated October 2026 ecosystem list](https://github.com/danieleongari/awesome-design-of-experiments). Do not assert lack of utility based only on repo popularity.
 
 ### 2.1 Maturity, source reliability and license gate
 
@@ -64,10 +64,10 @@ Fields: **Mode** = proposed relationship to TorchOED (\`CORE\`, \`DEV_ORACLE\`, 
 
 | Capability | Reuse now / Oracle | Build or do not build | Architect decision |
 |---|---|---|---|
-| Dense matrix operations, autograd, batching | \`torch.linalg.cholesky_ex\`, \`solve\`, \`slogdet\`, \`eigvalsh\`, \`bmm\`, \`einsum\`, \`vmap\` | No custom CUDA/Triton/BLAS in V1 | **REUSE_CORE** |
-| Sobol / basic space filling | \`torch.quasirandom.SobolEngine\`; SciPy qmc/OApackage/OpenTURNS reference | Thin torch-native interface around existing engine plus explicit skip, bounds, device, RNG contracts; own LHS permutations as warranted | **REUSE_CORE + SPECIALIZED_BUILD** |
+| Dense matrix operations, autograd, batching | `torch.linalg.cholesky_ex`, `solve`, `slogdet`, `eigvalsh`, `bmm`, `einsum`, `vmap` | No custom CUDA/Triton/BLAS in V1 | **REUSE_CORE** |
+| Sobol / basic space filling | `torch.quasirandom.SobolEngine`; SciPy qmc/OApackage/OpenTURNS reference | Thin torch-native interface around existing engine plus explicit skip, bounds, device, RNG contracts; own LHS permutations as warranted | **REUSE_CORE + SPECIALIZED_BUILD** |
 | Full/fractional factorial, BB/CCD, mixture | PyDOE docs, OApackage, PyOptEx | Integer/broadcast constructors **only as needed**; model-rank and alias checks independent of names. No giant suite before OED core | **BUILD_LATER** |
-| Information / Fisher / noise | torch weighted matrix ops, solves, autograd Jacobian; Pyomo.DoE/pydex reference | Shared \`F\`, \`J\`, covariance semantics, approximate vs exact normalization, with/without replacement and missing-rank diagnostics | **PRIMARY_DIFFERENTIATOR** |
+| Information / Fisher / noise | torch weighted matrix ops, solves, autograd Jacobian; Pyomo.DoE/pydex reference | Shared `F`, `J`, covariance semantics, approximate vs exact normalization, with/without replacement and missing-rank diagnostics | **PRIMARY_DIFFERENTIATOR** |
 | D/A/E/G/I/C/V OED scoring | torch.linalg + independently derived closed forms | Shared batched scoring, rank/condition reporting, exact semantics. A/I/C/V weighted inverse-trace family, D logdet, E eigspace, G max variance | **PRIMARY_DIFFERENTIATOR** |
 | Exact Fedorov / k-exchange | PyOptEx exchange structure, OApackage/real full-swap enumeration, mentor CPU oracles | Candidate-ID strict masks, tiled incremental rank-two, verified acceptance and optional true multi-swap later | **PRIMARY_DIFFERENTIATOR** |
 | Approximate weights and quality certificates | Mentor KKT/equivalence derivations; Pyomo models or SciPy optimize external dev oracles | constrained simplex weights and exact-design lower bounds as later mathematical modules; do not promise global exact optimization | **LATER_CORE** |
@@ -75,13 +75,13 @@ Fields: **Mode** = proposed relationship to TorchOED (\`CORE\`, \`DEV_ORACLE\`, 
 | GP + Bayesian optimization | BoTorch/GPyTorch; BoFire/BayBE workflow references | Optional adapter; no redundant GP kernel/BO product in V1 | **OPTIONAL_ADAPTER** |
 | Bayesian EIG | Pyro OED | Optional compatibility bridge; not a D-opt/Fisher alias | **FUTURE_ONLY** |
 | Sensitivity / Morris / Saltelli | SALib + Torch QMC | small sampling helpers only if user-facing demand exists; no full SALib clone | **REFERENCE_ONLY** |
-| Mixed categorical / cost/constraint domain | PyOptEx, BoFire, BayBE | lightweight \`candidate_id\`, factor schema and feasibility mask; avoid huge product framework | **REFERENCE_ONLY** |
+| Mixed categorical / cost/constraint domain | PyOptEx, BoFire, BayBE | lightweight `candidate_id`, factor schema and feasibility mask; avoid huge product framework | **REFERENCE_ONLY** |
 
 ## 4. Lean architecture map and explicit contracts
 
 Proposed composition (architecture diagram, **NOT code layout or M0 deliverables**):
 
-\`\`\`text
+```text
 Classic DOE / LHS / Sobol / external provided candidates
                           |
            CandidateSet {coordinates, ids, constraints}
@@ -101,14 +101,14 @@ one/k-exchange       KKT / dual bound       optional BoTorch/Pyro
    |                      |                        |
    +----------------------v------------------------+
           independent CPU oracle + GPU break-even
-\`\`\`
+```
 
 **Proposed invariant types (NOT M0 implementation):**
-- \`candidate_id\` identity, physical coordinates, and feature rows remain separate; numeric coordinate \`isclose\` never stands for candidate-ID uniqueness.
-- \`Selection\` has \`allow_repeats\`, or separate \`counts\` vs \`unique_ids\`. With correlated observation covariance, repeated event identity/covariance must be explicit (not a repeated index into one observed event).
-- \`InfoMatrix\` carries \`normalized\` and exact \`n\`; distinct design sizes cannot compare raw determinant scores without scale conversion.
-- \`CriterionSpec\` carries objective sign, *fixed* moment H, contrast c or evaluation set, and expected units; E-opt multiple eigenvalues need eigenspace PSD certificate, S score is not correlation determinant, T projection vs residual model-discrimination is a real modeling choice.
-- Validity is reported: \`rank\`, Cholesky failure, condition diagnostics, regularization used/forbidden, threshold/tolerance and unsafe float32 near singularity.
+- `candidate_id` identity, physical coordinates, and feature rows remain separate; numeric coordinate `isclose` never stands for candidate-ID uniqueness.
+- `Selection` has `allow_repeats`, or separate `counts` vs `unique_ids`. With correlated observation covariance, repeated event identity/covariance must be explicit (not a repeated index into one observed event).
+- `InfoMatrix` carries `normalized` and exact `n`; distinct design sizes cannot compare raw determinant scores without scale conversion.
+- `CriterionSpec` carries objective sign, *fixed* moment H, contrast c or evaluation set, and expected units; E-opt multiple eigenvalues need eigenspace PSD certificate, S score is not correlation determinant, T projection vs residual model-discrimination is a real modeling choice.
+- Validity is reported: `rank`, Cholesky failure, condition diagnostics, regularization used/forbidden, threshold/tolerance and unsafe float32 near singularity.
 - Output to caller should include candidate index sequence (or counts), score, validity and diagnostics. Determinism is per engine/device, not across SciPy vs torch RNG streams.
 
 **Avoid overdesigning the M0 spine:** none of these dataclasses/interfaces are M0 requirements; prefer a tiny torch-only package + evidence ledger in the existing [M0 issue](https://github.com/JohnnyZPiggy/TorchOED/issues/1), then freeze only proven API contracts in M1/M2.
@@ -143,7 +143,7 @@ Promote a CUDA-native custom kernel **only** if a live GPU trace demonstrates th
 | ADR | Status | Decision |
 |---|---|---|
 | ADR-01 | **ACCEPT** | PyDOE frozen 1.6.0 is dev-only source comparator, NOT runtime backend. Real-wheel parity from mentor §24 is BLOCKED, so do not pretend installed-PyDOE tests passed. |
-| ADR-02 | **ACCEPT** | \`torch\` sole default numerical runtime; torch.linalg and existing Sobol engine first. No new dependencies or PyTorch-only slogan unsupported by code. |
+| ADR-02 | **ACCEPT** | `torch` sole default numerical runtime; torch.linalg and existing Sobol engine first. No new dependencies or PyTorch-only slogan unsupported by code. |
 | ADR-03 | **ACCEPT** | Numerical OED core (model → information → criterion → exact search) before trying to match all 91 public PyDOE names. |
 | ADR-04 | **ACCEPT** | Candidate IDs/replication, normalization, information-matrix rank and explicit criterion defaults are first-class mathematical contracts; no silent quirks copied from PyDOE. |
 | ADR-05 | **ACCEPT** | PyOptEx, OApackage, OpenTURNS, SciPy QMC, Pyomo.DoE serve as **independent external math/structure oracles** in optional dev setups. No package new default dep. |
@@ -164,4 +164,4 @@ Promote a CUDA-native custom kernel **only** if a live GPU trace demonstrates th
 - **Bayesian / adaptive**: [BoTorch](https://github.com/meta-pytorch/botorch); [BoTorch pyproject](https://github.com/meta-pytorch/botorch/blob/main/pyproject.toml); [Pyro OED](https://docs.pyro.ai/en/dev/contrib.oed.html); [BoFire](https://experimental-design.github.io/bofire/); [BayBE](https://github.com/emdgroup/baybe).
 - **Watch/legacy**: [discopt-doe](https://github.com/jkitchin/discopt-doe); [NEXTorch](https://github.com/VlachosGroup/nextorch); [OptBayesExpt](https://github.com/usnistgov/optbayesexpt); [curated survey (2026-10)](https://github.com/danieleongari/awesome-design-of-experiments).
 
-**Survey status:** \`ARCHITECT_REUSE_FIRST_SURVEY_COMPLETE\`; \`PACKAGE_INTEGRATION_NOT_RUN\`; \`TORCHOED_M0_UNCHANGED\`; \`CUDA_NOT_RUN\`.
+**Survey status:** `ARCHITECT_REUSE_FIRST_SURVEY_COMPLETE`; `PACKAGE_INTEGRATION_NOT_RUN`; `TORCHOED_M0_UNCHANGED`; `CUDA_NOT_RUN`.

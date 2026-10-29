@@ -1,0 +1,30 @@
+sae_version: "3.3"
+project:
+  repository: "JohnnyZPiggy/TorchOED"
+  name: "TorchOED"
+  package: "torchoed"
+  scientific_goal: "PyTorch-native DOE/OED with explicit numerical contracts"
+framework:
+  repository: "JohnnyZPiggy/SAE-Framework"
+  commit_sha: "d84942e4890d9837ae0e6cbb379b85c3a95aba84"
+  adoption: "minimal_reference"
+  entrypoint: ".sae/README.md"
+roles:
+  scientist: "human"
+  architect: "assigned_architect"
+  mentor: "assigned_scientific_mentor"
+  engineer: "codex"
+collaboration:
+  task_hub: "github_issues"
+  review_hub: "github_pull_requests"
+  actions_enabled: false
+  hosted_ci_required: false
+  engineer_may_merge: false
+workflow:
+  supported_modes: ["EXPLORE", "VALIDATE"]
+  task_timeout_required: true
+  max_self_repair_attempts_per_failure_class: 3
+current_dispatch:
+  issue: 1
+  milestone: "M0"
+  compute: "cpu_only"

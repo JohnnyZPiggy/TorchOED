@@ -133,3 +133,5 @@ Static scan found the following 11 unprefixed module-level function definitions 
 - E0 actual Small Composite rank15/15 supersedes the old rank12 hypothesis for the original wheel. The different D=ABC mathematical control is rank12.
 - E0 P4 grid-type comparisons are derived from actual calls; point counts/equal arrays are not weighted Smolyak validation. Niederreiter's frozen first-axis rank limitation and Doehlert shell limitations are named-source findings, not blanket equivalence checks.
 - M1 APIs outside the five scoped rows, M2 APIs outside the five M2-A exports and M3 APIs other than scoped fedorov_exchange, S/T, Fisher dense-covariance repeats, GP/BO, optimized LHS and strict sparse-grid construction remain unimplemented. The canonical [M1/M2 contract](M1_M2_NUMERICAL_CONTRACT.md) controls future semantics.
+
+M3-B1 adds the separate `score_two_swaps` mathematical scoring API, verified by the scoped B oracles in [M3B1_API.md](M3B1_API.md). It has no one-to-one frozen upstream root export and does not promote Modified Fedorov/DETMAX or change the 91-row counts.

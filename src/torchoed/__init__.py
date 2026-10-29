@@ -8,7 +8,8 @@ from .sampling import lhs, sobol
 from .information import exact_information, weighted_information
 from .criteria import d_optimality, a_optimality, e_optimality
 from .exchange import fedorov_exchange
+from .two_swap import score_two_swaps
 
 __all__ = ["full_factorial", "ff2n", "lhs", "sobol", "polynomial_features",
            "exact_information", "weighted_information", "d_optimality",
-           "a_optimality", "e_optimality", "fedorov_exchange"]
+           "a_optimality", "e_optimality", "fedorov_exchange", "score_two_swaps"]

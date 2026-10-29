@@ -1,0 +1,3304 @@
+[
+  {
+    "case_id": "P0",
+    "upstream": {
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "installed_source_files_verified": 76,
+      "pinned_source_blobs_verified": 6
+    },
+    "oracle": {
+      "kind": "published digest + pinned Git blobs + installed-vs-wheel byte equality"
+    },
+    "comparison": {
+      "status": "PASS_MATCH"
+    }
+  },
+  {
+    "case_id": "P1",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n": 4,
+      "center": [
+        2,
+        2
+      ]
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        20,
+        4
+      ],
+      "output": [
+        [
+          -1.0,
+          -1.0,
+          -1.0,
+          1.0
+        ],
+        [
+          -1.0,
+          -1.0,
+          1.0,
+          1.0
+        ],
+        [
+          -1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        [
+          -1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        [
+          1.0,
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        [
+          1.0,
+          -1.0,
+          1.0,
+          -1.0
+        ],
+        [
+          1.0,
+          1.0,
+          -1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -2.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -2.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          2.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -2.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          2.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          -2.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          2.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent full quadratic torch features",
+      "expected_shape": [
+        20,
+        4
+      ],
+      "expected_rank": 12,
+      "feature_columns": 15
+    },
+    "comparison": {
+      "status": "FAIL_MISMATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "feature_shape": [
+        20,
+        15
+      ],
+      "rank": 15,
+      "AB_minus_CD_max_abs": 2.0,
+      "exact_gram_determinant": "18014398509481984",
+      "independent_D_equals_ABC_reference_rank": 12,
+      "interpretation": "Frozen-wheel source bytes match; earlier rank-12 prediction used a different fractional cube. This is not proof of an upstream defect.",
+      "singular_values": [
+        8.990716082598492,
+        5.656854249492381,
+        5.65685424949238,
+        5.65685424949238,
+        4.5764912225414776,
+        4.576491222541475,
+        4.576491222541474,
+        4.0,
+        2.8284271247461907,
+        2.8284271247461907,
+        2.82842712474619,
+        1.7796135316705148,
+        1.7480640977952844,
+        1.7480640977952842,
+        1.7480640977952842
+      ]
+    },
+    "limitations": [
+      "Full-quadratic identifiability, not a defect claim for every reduced model."
+    ]
+  },
+  {
+    "case_id": "P2-k1",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "num_factors": 1,
+      "num_center_points": 1
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "exception": {
+        "class": "IndexError",
+        "message": "index 1 is out of bounds for axis 0 with size 1"
+      },
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent rank/count check; frozen-source predictions separately labeled",
+      "expected_exception": "IndexError",
+      "expected_rank": null
+    },
+    "comparison": {
+      "status": "EXPECTED_EXCEPTION",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      }
+    },
+    "limitations": [
+      "Frozen source prediction is not a valid general Doehlert construction oracle."
+    ]
+  },
+  {
+    "case_id": "P2-k2",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "num_factors": 2,
+      "num_center_points": 1
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        6,
+        2
+      ],
+      "output": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.7071067811865476,
+          0.0
+        ],
+        [
+          -0.7071067811865476,
+          8.659560562354934e-17
+        ],
+        [
+          1.0,
+          0.0
+        ],
+        [
+          -0.4999999999999998,
+          0.8660254037844387
+        ],
+        [
+          -0.5000000000000004,
+          -0.8660254037844385
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent rank/count check; frozen-source predictions separately labeled",
+      "expected_exception": null,
+      "expected_rank": 2
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "source_prediction_match": true,
+      "rank": 2,
+      "documented_expected_rows": 7
+    },
+    "limitations": [
+      "Frozen source prediction is not a valid general Doehlert construction oracle."
+    ]
+  },
+  {
+    "case_id": "P2-k3",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "num_factors": 3,
+      "num_center_points": 1
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        10,
+        3
+      ],
+      "output": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.5773502691896257,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5773502691896257,
+          7.070501591499379e-17,
+          0.0
+        ],
+        [
+          0.816496580927726,
+          0.0,
+          0.0
+        ],
+        [
+          -0.40824829046386285,
+          0.7071067811865476,
+          0.0
+        ],
+        [
+          -0.4082482904638634,
+          -0.7071067811865474,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          6.123233995736766e-17,
+          1.0,
+          0.0
+        ],
+        [
+          -1.0,
+          1.2246467991473532e-16,
+          0.0
+        ],
+        [
+          -1.8369701987210297e-16,
+          -1.0,
+          0.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent rank/count check; frozen-source predictions separately labeled",
+      "expected_exception": null,
+      "expected_rank": 2
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "source_prediction_match": true,
+      "rank": 2,
+      "documented_expected_rows": 13
+    },
+    "limitations": [
+      "Frozen source prediction is not a valid general Doehlert construction oracle."
+    ]
+  },
+  {
+    "case_id": "P2-k4",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "num_factors": 4,
+      "num_center_points": 1
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        15,
+        4
+      ],
+      "output": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.5,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.5,
+          6.123233995736766e-17,
+          0.0,
+          0.0
+        ],
+        [
+          0.7071067811865476,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.3535533905932736,
+          0.6123724356957946,
+          0.0,
+          0.0
+        ],
+        [
+          -0.3535533905932741,
+          -0.6123724356957945,
+          0.0,
+          0.0
+        ],
+        [
+          0.8660254037844386,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          5.302876193624534e-17,
+          0.8660254037844386,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8660254037844386,
+          1.0605752387249068e-16,
+          0.0,
+          0.0
+        ],
+        [
+          -1.5908628580873602e-16,
+          -0.8660254037844386,
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.30901699437494745,
+          0.9510565162951535,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8090169943749473,
+          0.5877852522924732,
+          0.0,
+          0.0
+        ],
+        [
+          -0.8090169943749475,
+          -0.587785252292473,
+          0.0,
+          0.0
+        ],
+        [
+          0.30901699437494723,
+          -0.9510565162951536,
+          0.0,
+          0.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent rank/count check; frozen-source predictions separately labeled",
+      "expected_exception": null,
+      "expected_rank": 2
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "source_prediction_match": true,
+      "rank": 2,
+      "documented_expected_rows": 21
+    },
+    "limitations": [
+      "Frozen source prediction is not a valid general Doehlert construction oracle."
+    ]
+  },
+  {
+    "case_id": "P3-b3",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "num_points": 16,
+      "dimension": 1,
+      "n_bits": 3
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        16,
+        1
+      ],
+      "output": [
+        [
+          0.0
+        ],
+        [
+          0.375
+        ],
+        [
+          0.75
+        ],
+        [
+          0.625
+        ],
+        [
+          0.625
+        ],
+        [
+          0.75
+        ],
+        [
+          0.375
+        ],
+        [
+          0.0
+        ],
+        [
+          0.0
+        ],
+        [
+          0.375
+        ],
+        [
+          0.75
+        ],
+        [
+          0.625
+        ],
+        [
+          0.625
+        ],
+        [
+          0.75
+        ],
+        [
+          0.375
+        ],
+        [
+          0.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent GF(2) elimination and exact recurrence arithmetic",
+      "polynomial": "x^2+x+1",
+      "expected_distinct": 4,
+      "expected_rank": 2
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "source_prediction_match": true,
+      "distinct_first_coordinate": 4,
+      "independent_GF2_rank": 2,
+      "max_abs_error": 0.0
+    },
+    "limitations": [
+      "Source recurrence equivalence, not certification of Niederreiter theory.",
+      "For b=3, 16 exceeds 2**b; b=5/8/30 do not."
+    ]
+  },
+  {
+    "case_id": "P3-b5",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "num_points": 16,
+      "dimension": 1,
+      "n_bits": 5
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        16,
+        1
+      ],
+      "output": [
+        [
+          0.0
+        ],
+        [
+          0.40625
+        ],
+        [
+          0.84375
+        ],
+        [
+          0.6875
+        ],
+        [
+          0.6875
+        ],
+        [
+          0.84375
+        ],
+        [
+          0.40625
+        ],
+        [
+          0.0
+        ],
+        [
+          0.40625
+        ],
+        [
+          0.0
+        ],
+        [
+          0.6875
+        ],
+        [
+          0.84375
+        ],
+        [
+          0.84375
+        ],
+        [
+          0.6875
+        ],
+        [
+          0.0
+        ],
+        [
+          0.40625
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent GF(2) elimination and exact recurrence arithmetic",
+      "polynomial": "x^2+x+1",
+      "expected_distinct": 4,
+      "expected_rank": 2
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "source_prediction_match": true,
+      "distinct_first_coordinate": 4,
+      "independent_GF2_rank": 2,
+      "max_abs_error": 0.0
+    },
+    "limitations": [
+      "Source recurrence equivalence, not certification of Niederreiter theory.",
+      "For b=3, 16 exceeds 2**b; b=5/8/30 do not."
+    ]
+  },
+  {
+    "case_id": "P3-b8",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "num_points": 16,
+      "dimension": 1,
+      "n_bits": 8
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        16,
+        1
+      ],
+      "output": [
+        [
+          0.0
+        ],
+        [
+          0.42578125
+        ],
+        [
+          0.85546875
+        ],
+        [
+          0.7109375
+        ],
+        [
+          0.7109375
+        ],
+        [
+          0.85546875
+        ],
+        [
+          0.42578125
+        ],
+        [
+          0.0
+        ],
+        [
+          0.42578125
+        ],
+        [
+          0.0
+        ],
+        [
+          0.7109375
+        ],
+        [
+          0.85546875
+        ],
+        [
+          0.85546875
+        ],
+        [
+          0.7109375
+        ],
+        [
+          0.0
+        ],
+        [
+          0.42578125
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent GF(2) elimination and exact recurrence arithmetic",
+      "polynomial": "x^2+x+1",
+      "expected_distinct": 4,
+      "expected_rank": 2
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "source_prediction_match": true,
+      "distinct_first_coordinate": 4,
+      "independent_GF2_rank": 2,
+      "max_abs_error": 0.0
+    },
+    "limitations": [
+      "Source recurrence equivalence, not certification of Niederreiter theory.",
+      "For b=3, 16 exceeds 2**b; b=5/8/30 do not."
+    ]
+  },
+  {
+    "case_id": "P3-b30",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "num_points": 16,
+      "dimension": 1,
+      "n_bits": 30
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        16,
+        1
+      ],
+      "output": [
+        [
+          0.0
+        ],
+        [
+          0.4285714281722903
+        ],
+        [
+          0.8571428563445807
+        ],
+        [
+          0.7142857136204839
+        ],
+        [
+          0.7142857136204839
+        ],
+        [
+          0.8571428563445807
+        ],
+        [
+          0.4285714281722903
+        ],
+        [
+          0.0
+        ],
+        [
+          0.4285714281722903
+        ],
+        [
+          0.0
+        ],
+        [
+          0.7142857136204839
+        ],
+        [
+          0.8571428563445807
+        ],
+        [
+          0.8571428563445807
+        ],
+        [
+          0.7142857136204839
+        ],
+        [
+          0.0
+        ],
+        [
+          0.4285714281722903
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent GF(2) elimination and exact recurrence arithmetic",
+      "polynomial": "x^2+x+1",
+      "expected_distinct": 4,
+      "expected_rank": 2
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "source_prediction_match": true,
+      "distinct_first_coordinate": 4,
+      "independent_GF2_rank": 2,
+      "max_abs_error": 0.0
+    },
+    "limitations": [
+      "Source recurrence equivalence, not certification of Niederreiter theory.",
+      "For b=3, 16 exceeds 2**b; b=5/8/30 do not."
+    ]
+  },
+  {
+    "case_id": "P5-pow2-True",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n": 3,
+      "d": 2,
+      "scramble": false,
+      "skip": 0,
+      "use_pow_of_2": true
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        4,
+        2
+      ],
+      "output": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.75,
+          0.25
+        ],
+        [
+          0.25,
+          0.75
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "real SciPy QMC + independent real torch Sobol",
+      "expected_shape": [
+        4,
+        2
+      ],
+      "reference_points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.75,
+          0.25
+        ],
+        [
+          0.25,
+          0.75
+        ]
+      ]
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "max_abs_error": 0.0
+    },
+    "limitations": []
+  },
+  {
+    "case_id": "P5-pow2-False",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n": 3,
+      "d": 2,
+      "scramble": false,
+      "skip": 0,
+      "use_pow_of_2": false
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        3,
+        2
+      ],
+      "output": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.75,
+          0.25
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "real SciPy QMC + independent real torch Sobol",
+      "expected_shape": [
+        3,
+        2
+      ],
+      "reference_points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.75,
+          0.25
+        ]
+      ]
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "max_abs_error": 0.0
+    },
+    "limitations": []
+  },
+  {
+    "case_id": "P5-skip1",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n": 4,
+      "d": 2,
+      "scramble": false,
+      "skip": 1,
+      "use_pow_of_2": true
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "exception": {
+        "class": "ValueError",
+        "message": "The balance properties of Sobol' points require n to be a power of 2. 1 points have been previously generated, then: n=1+2**2=5. If you still want to do this, the function 'Sobol.random()' can be used."
+      },
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "real SciPy backend exception independently invoked",
+      "expected_exception": "ValueError"
+    },
+    "comparison": {
+      "status": "EXPECTED_EXCEPTION",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      }
+    },
+    "limitations": []
+  },
+  {
+    "case_id": "P4-L0-clenshaw_curtis",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 0,
+      "n_factors": 2,
+      "grid_type": "clenshaw_curtis"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        1,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 1
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L0-chebyshev",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 0,
+      "n_factors": 2,
+      "grid_type": "chebyshev"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        1,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 1
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L0-gauss_patterson",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 0,
+      "n_factors": 2,
+      "grid_type": "gauss_patterson"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        1,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 1
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L1-clenshaw_curtis",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 1,
+      "n_factors": 2,
+      "grid_type": "clenshaw_curtis"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        5,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.5,
+          1.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 5
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L1-chebyshev",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 1,
+      "n_factors": 2,
+      "grid_type": "chebyshev"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        5,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.5,
+          1.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 5
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L1-gauss_patterson",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 1,
+      "n_factors": 2,
+      "grid_type": "gauss_patterson"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        5,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.5,
+          1.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 5
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L2-clenshaw_curtis",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 2,
+      "n_factors": 2,
+      "grid_type": "clenshaw_curtis"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        13,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.5,
+          1.0
+        ],
+        [
+          0.3333333333333333,
+          0.5
+        ],
+        [
+          0.6666666666666666,
+          0.5
+        ],
+        [
+          0.5,
+          0.3333333333333333
+        ],
+        [
+          0.5,
+          0.6666666666666666
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.125
+        ],
+        [
+          0.0,
+          0.25
+        ],
+        [
+          0.0,
+          0.375
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 13
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L2-chebyshev",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 2,
+      "n_factors": 2,
+      "grid_type": "chebyshev"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        13,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.5,
+          1.0
+        ],
+        [
+          0.3333333333333333,
+          0.5
+        ],
+        [
+          0.6666666666666666,
+          0.5
+        ],
+        [
+          0.5,
+          0.3333333333333333
+        ],
+        [
+          0.5,
+          0.6666666666666666
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.125
+        ],
+        [
+          0.0,
+          0.25
+        ],
+        [
+          0.0,
+          0.375
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 13
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L2-gauss_patterson",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 2,
+      "n_factors": 2,
+      "grid_type": "gauss_patterson"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        13,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.5,
+          1.0
+        ],
+        [
+          0.3333333333333333,
+          0.5
+        ],
+        [
+          0.6666666666666666,
+          0.5
+        ],
+        [
+          0.5,
+          0.3333333333333333
+        ],
+        [
+          0.5,
+          0.6666666666666666
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.125
+        ],
+        [
+          0.0,
+          0.25
+        ],
+        [
+          0.0,
+          0.375
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 13
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L3-clenshaw_curtis",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 3,
+      "n_factors": 2,
+      "grid_type": "clenshaw_curtis"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        29,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.5,
+          1.0
+        ],
+        [
+          0.25,
+          0.5
+        ],
+        [
+          0.75,
+          0.5
+        ],
+        [
+          0.5,
+          0.25
+        ],
+        [
+          0.5,
+          0.75
+        ],
+        [
+          0.25,
+          0.25
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0625
+        ],
+        [
+          0.0,
+          0.125
+        ],
+        [
+          0.0,
+          0.1875
+        ],
+        [
+          0.0,
+          0.25
+        ],
+        [
+          0.0,
+          0.3125
+        ],
+        [
+          0.0,
+          0.375
+        ],
+        [
+          0.0,
+          0.4375
+        ],
+        [
+          0.0,
+          0.5625
+        ],
+        [
+          0.0,
+          0.625
+        ],
+        [
+          0.0,
+          0.6875
+        ],
+        [
+          0.0,
+          0.75
+        ],
+        [
+          0.0,
+          0.8125
+        ],
+        [
+          0.0,
+          0.875
+        ],
+        [
+          0.0,
+          0.9375
+        ],
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0625,
+          0.0
+        ],
+        [
+          0.0625,
+          0.0625
+        ],
+        [
+          0.0625,
+          0.125
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 29
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L3-chebyshev",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 3,
+      "n_factors": 2,
+      "grid_type": "chebyshev"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        29,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.5,
+          1.0
+        ],
+        [
+          0.25,
+          0.5
+        ],
+        [
+          0.75,
+          0.5
+        ],
+        [
+          0.5,
+          0.25
+        ],
+        [
+          0.5,
+          0.75
+        ],
+        [
+          0.25,
+          0.25
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0625
+        ],
+        [
+          0.0,
+          0.125
+        ],
+        [
+          0.0,
+          0.1875
+        ],
+        [
+          0.0,
+          0.25
+        ],
+        [
+          0.0,
+          0.3125
+        ],
+        [
+          0.0,
+          0.375
+        ],
+        [
+          0.0,
+          0.4375
+        ],
+        [
+          0.0,
+          0.5625
+        ],
+        [
+          0.0,
+          0.625
+        ],
+        [
+          0.0,
+          0.6875
+        ],
+        [
+          0.0,
+          0.75
+        ],
+        [
+          0.0,
+          0.8125
+        ],
+        [
+          0.0,
+          0.875
+        ],
+        [
+          0.0,
+          0.9375
+        ],
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0625,
+          0.0
+        ],
+        [
+          0.0625,
+          0.0625
+        ],
+        [
+          0.0625,
+          0.125
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 29
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L3-gauss_patterson",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 3,
+      "n_factors": 2,
+      "grid_type": "gauss_patterson"
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        29,
+        2
+      ],
+      "output": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.0,
+          0.5
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.5,
+          0.0
+        ],
+        [
+          0.5,
+          1.0
+        ],
+        [
+          0.25,
+          0.5
+        ],
+        [
+          0.75,
+          0.5
+        ],
+        [
+          0.5,
+          0.25
+        ],
+        [
+          0.5,
+          0.75
+        ],
+        [
+          0.25,
+          0.25
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0625
+        ],
+        [
+          0.0,
+          0.125
+        ],
+        [
+          0.0,
+          0.1875
+        ],
+        [
+          0.0,
+          0.25
+        ],
+        [
+          0.0,
+          0.3125
+        ],
+        [
+          0.0,
+          0.375
+        ],
+        [
+          0.0,
+          0.4375
+        ],
+        [
+          0.0,
+          0.5625
+        ],
+        [
+          0.0,
+          0.625
+        ],
+        [
+          0.0,
+          0.6875
+        ],
+        [
+          0.0,
+          0.75
+        ],
+        [
+          0.0,
+          0.8125
+        ],
+        [
+          0.0,
+          0.875
+        ],
+        [
+          0.0,
+          0.9375
+        ],
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0625,
+          0.0
+        ],
+        [
+          0.0625,
+          0.0625
+        ],
+        [
+          0.0625,
+          0.125
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen-source count prediction (not weighted Smolyak oracle)"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "expected_count": 29
+    },
+    "limitations": [
+      "Count match alone does not establish quadrature semantics."
+    ]
+  },
+  {
+    "case_id": "P4-L0-grid-type",
+    "actual": {
+      "called_original_pydoe": true,
+      "coordinates_identical": true
+    },
+    "oracle": {
+      "kind": "cross-option observation; separate exact weighted Smolyak in environment.json"
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE"
+    }
+  },
+  {
+    "case_id": "P4-L1-grid-type",
+    "actual": {
+      "called_original_pydoe": true,
+      "coordinates_identical": true
+    },
+    "oracle": {
+      "kind": "cross-option observation; separate exact weighted Smolyak in environment.json"
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE"
+    }
+  },
+  {
+    "case_id": "P4-L2-grid-type",
+    "actual": {
+      "called_original_pydoe": true,
+      "coordinates_identical": true
+    },
+    "oracle": {
+      "kind": "cross-option observation; separate exact weighted Smolyak in environment.json"
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE"
+    }
+  },
+  {
+    "case_id": "P4-L3-grid-type",
+    "actual": {
+      "called_original_pydoe": true,
+      "coordinates_identical": true
+    },
+    "oracle": {
+      "kind": "cross-option observation; separate exact weighted Smolyak in environment.json"
+    },
+    "comparison": {
+      "status": "SOURCE_SEMANTIC_DIFFERENCE"
+    }
+  },
+  {
+    "case_id": "P4-dimension7",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 7,
+      "n_factors": 2
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [],
+      "output": 705,
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen formula prediction",
+      "expected": 705
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      }
+    },
+    "limitations": []
+  },
+  {
+    "case_id": "P4-dimension8",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "n_level": 8,
+      "n_factors": 2
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [],
+      "output": 705,
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "frozen formula prediction",
+      "expected": 705
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      }
+    },
+    "limitations": []
+  },
+  {
+    "case_id": "P6-easy-fedorov",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "candidates": [
+        [
+          -1.0
+        ],
+        [
+          0.0
+        ],
+        [
+          1.0
+        ]
+      ],
+      "n_points": 2,
+      "degree": 1,
+      "criterion": "D",
+      "alpha": 0,
+      "max_iter": 20
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        2,
+        1
+      ],
+      "output": [
+        [
+          -1.0
+        ],
+        [
+          1.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent exact Fraction determinants + exhaustive legal one-swap enumeration",
+      "normalization": "det(F.T@F/n), features=[1, physical coordinates]"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "selected_ids": [
+        0,
+        2
+      ],
+      "unique_ids": true,
+      "rank": 2,
+      "normalized_D_exact_fraction": "1",
+      "upstream_normalized_D": 1.0,
+      "max_abs_error": 0.0,
+      "best_closed_one_swap_D": "1",
+      "one_swap_local_exact": true,
+      "all_one_swap_scores": [
+        {
+          "drop_position": 0,
+          "add_id": 1,
+          "score": "1/4"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 1,
+          "score": "1/4"
+        }
+      ],
+      "exhaustive_global_D": "1",
+      "global_gap": 0.0,
+      "condition_number": 1.0,
+      "stop_rule_note": "Locality is measured separately; max_iter=20 is a cap, not a convergence certificate."
+    },
+    "limitations": [
+      "No forced initial state; \u00a722 conditional traps are not assumed reachable.",
+      "PASS_MATCH validates score and structural contract, not global optimality."
+    ]
+  },
+  {
+    "case_id": "P6-easy-detmax",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "candidates": [
+        [
+          -1.0
+        ],
+        [
+          0.0
+        ],
+        [
+          1.0
+        ]
+      ],
+      "n_points": 2,
+      "degree": 1,
+      "criterion": "D",
+      "alpha": 0,
+      "max_iter": 20
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        2,
+        1
+      ],
+      "output": [
+        [
+          -1.0
+        ],
+        [
+          1.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent exact Fraction determinants + exhaustive legal one-swap enumeration",
+      "normalization": "det(F.T@F/n), features=[1, physical coordinates]"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "selected_ids": [
+        0,
+        2
+      ],
+      "unique_ids": true,
+      "rank": 2,
+      "normalized_D_exact_fraction": "1",
+      "upstream_normalized_D": 1.0,
+      "max_abs_error": 0.0,
+      "best_closed_one_swap_D": "1",
+      "one_swap_local_exact": true,
+      "all_one_swap_scores": [
+        {
+          "drop_position": 0,
+          "add_id": 1,
+          "score": "1/4"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 1,
+          "score": "1/4"
+        }
+      ],
+      "exhaustive_global_D": "1",
+      "global_gap": 0.0,
+      "condition_number": 1.0,
+      "stop_rule_note": "Locality is measured separately; max_iter=20 is a cap, not a convergence certificate."
+    },
+    "limitations": [
+      "No forced initial state; \u00a722 conditional traps are not assumed reachable.",
+      "PASS_MATCH validates score and structural contract, not global optimality."
+    ]
+  },
+  {
+    "case_id": "P6-easy-simple_exchange_wynn_mitchell",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "candidates": [
+        [
+          -1.0
+        ],
+        [
+          0.0
+        ],
+        [
+          1.0
+        ]
+      ],
+      "n_points": 2,
+      "degree": 1,
+      "criterion": "D",
+      "alpha": 0,
+      "max_iter": 20
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        2,
+        1
+      ],
+      "output": [
+        [
+          -1.0
+        ],
+        [
+          1.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent exact Fraction determinants + exhaustive legal one-swap enumeration",
+      "normalization": "det(F.T@F/n), features=[1, physical coordinates]"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "selected_ids": [
+        0,
+        2
+      ],
+      "unique_ids": true,
+      "rank": 2,
+      "normalized_D_exact_fraction": "1",
+      "upstream_normalized_D": 1.0,
+      "max_abs_error": 0.0,
+      "best_closed_one_swap_D": "1",
+      "one_swap_local_exact": true,
+      "all_one_swap_scores": [
+        {
+          "drop_position": 0,
+          "add_id": 1,
+          "score": "1/4"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 1,
+          "score": "1/4"
+        }
+      ],
+      "exhaustive_global_D": "1",
+      "global_gap": 0.0,
+      "condition_number": 1.0,
+      "stop_rule_note": "Locality is measured separately; max_iter=20 is a cap, not a convergence certificate."
+    },
+    "limitations": [
+      "No forced initial state; \u00a722 conditional traps are not assumed reachable.",
+      "PASS_MATCH validates score and structural contract, not global optimality."
+    ]
+  },
+  {
+    "case_id": "P6-easy-modified_fedorov",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "candidates": [
+        [
+          -1.0
+        ],
+        [
+          0.0
+        ],
+        [
+          1.0
+        ]
+      ],
+      "n_points": 2,
+      "degree": 1,
+      "criterion": "D",
+      "alpha": 0,
+      "max_iter": 20
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        2,
+        1
+      ],
+      "output": [
+        [
+          -1.0
+        ],
+        [
+          1.0
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent exact Fraction determinants + exhaustive legal one-swap enumeration",
+      "normalization": "det(F.T@F/n), features=[1, physical coordinates]"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "selected_ids": [
+        0,
+        2
+      ],
+      "unique_ids": true,
+      "rank": 2,
+      "normalized_D_exact_fraction": "1",
+      "upstream_normalized_D": 1.0,
+      "max_abs_error": 0.0,
+      "best_closed_one_swap_D": "1",
+      "one_swap_local_exact": true,
+      "all_one_swap_scores": [
+        {
+          "drop_position": 0,
+          "add_id": 1,
+          "score": "1/4"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 1,
+          "score": "1/4"
+        }
+      ],
+      "exhaustive_global_D": "1",
+      "global_gap": 0.0,
+      "condition_number": 1.0,
+      "stop_rule_note": "Locality is measured separately; max_iter=20 is a cap, not a convergence certificate."
+    },
+    "limitations": [
+      "No forced initial state; \u00a722 conditional traps are not assumed reachable.",
+      "PASS_MATCH validates score and structural contract, not global optimality."
+    ]
+  },
+  {
+    "case_id": "P6-mentor22-fedorov",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "candidates": [
+        [
+          -1.274,
+          -1.346
+        ],
+        [
+          1.803,
+          -2.604
+        ],
+        [
+          1.111,
+          -0.918
+        ],
+        [
+          2.761,
+          -0.783
+        ],
+        [
+          -2.761,
+          -2.799
+        ],
+        [
+          1.754,
+          2.829
+        ],
+        [
+          -2.871,
+          1.579
+        ]
+      ],
+      "n_points": 4,
+      "degree": 1,
+      "criterion": "D",
+      "alpha": 0,
+      "max_iter": 20
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        4,
+        2
+      ],
+      "output": [
+        [
+          -2.761,
+          -2.799
+        ],
+        [
+          -2.871,
+          1.579
+        ],
+        [
+          1.754,
+          2.829
+        ],
+        [
+          1.803,
+          -2.604
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent exact Fraction determinants + exhaustive legal one-swap enumeration",
+      "normalization": "det(F.T@F/n), features=[1, physical coordinates]"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "selected_ids": [
+        4,
+        6,
+        5,
+        1
+      ],
+      "unique_ids": true,
+      "rank": 3,
+      "normalized_D_exact_fraction": "1032744995133289/32000000000000",
+      "upstream_normalized_D": 32.27328109791529,
+      "max_abs_error": 7.105427357601002e-15,
+      "best_closed_one_swap_D": "1032744995133289/32000000000000",
+      "one_swap_local_exact": true,
+      "all_one_swap_scores": [
+        {
+          "drop_position": 0,
+          "add_id": 0,
+          "score": "300443703885613/16000000000000"
+        },
+        {
+          "drop_position": 0,
+          "add_id": 2,
+          "score": "472985102879859/32000000000000"
+        },
+        {
+          "drop_position": 0,
+          "add_id": 3,
+          "score": "570968820804099/32000000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 0,
+          "score": "9362241708773/640000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 2,
+          "score": "86701379211891/6400000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 3,
+          "score": "119228208636267/6400000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 0,
+          "score": "10673705891531/1280000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 2,
+          "score": "19517116055679/1600000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 3,
+          "score": "30451080772773/1600000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 0,
+          "score": "352171811099431/32000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 2,
+          "score": "579983696439301/32000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 3,
+          "score": "227054542375819/8000000000000"
+        }
+      ],
+      "exhaustive_global_D": "1032744995133289/32000000000000",
+      "global_gap": 0.0,
+      "condition_number": 7.355885690159723,
+      "stop_rule_note": "Locality is measured separately; max_iter=20 is a cap, not a convergence certificate."
+    },
+    "limitations": [
+      "No forced initial state; \u00a722 conditional traps are not assumed reachable.",
+      "PASS_MATCH validates score and structural contract, not global optimality."
+    ]
+  },
+  {
+    "case_id": "P6-mentor22-detmax",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "candidates": [
+        [
+          -1.274,
+          -1.346
+        ],
+        [
+          1.803,
+          -2.604
+        ],
+        [
+          1.111,
+          -0.918
+        ],
+        [
+          2.761,
+          -0.783
+        ],
+        [
+          -2.761,
+          -2.799
+        ],
+        [
+          1.754,
+          2.829
+        ],
+        [
+          -2.871,
+          1.579
+        ]
+      ],
+      "n_points": 4,
+      "degree": 1,
+      "criterion": "D",
+      "alpha": 0,
+      "max_iter": 20
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        4,
+        2
+      ],
+      "output": [
+        [
+          -2.871,
+          1.579
+        ],
+        [
+          1.754,
+          2.829
+        ],
+        [
+          1.803,
+          -2.604
+        ],
+        [
+          -2.761,
+          -2.799
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent exact Fraction determinants + exhaustive legal one-swap enumeration",
+      "normalization": "det(F.T@F/n), features=[1, physical coordinates]"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "selected_ids": [
+        6,
+        5,
+        1,
+        4
+      ],
+      "unique_ids": true,
+      "rank": 3,
+      "normalized_D_exact_fraction": "1032744995133289/32000000000000",
+      "upstream_normalized_D": 32.27328109791529,
+      "max_abs_error": 7.105427357601002e-15,
+      "best_closed_one_swap_D": "1032744995133289/32000000000000",
+      "one_swap_local_exact": true,
+      "all_one_swap_scores": [
+        {
+          "drop_position": 0,
+          "add_id": 0,
+          "score": "9362241708773/640000000000"
+        },
+        {
+          "drop_position": 0,
+          "add_id": 2,
+          "score": "86701379211891/6400000000000"
+        },
+        {
+          "drop_position": 0,
+          "add_id": 3,
+          "score": "119228208636267/6400000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 0,
+          "score": "10673705891531/1280000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 2,
+          "score": "19517116055679/1600000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 3,
+          "score": "30451080772773/1600000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 0,
+          "score": "352171811099431/32000000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 2,
+          "score": "579983696439301/32000000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 3,
+          "score": "227054542375819/8000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 0,
+          "score": "300443703885613/16000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 2,
+          "score": "472985102879859/32000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 3,
+          "score": "570968820804099/32000000000000"
+        }
+      ],
+      "exhaustive_global_D": "1032744995133289/32000000000000",
+      "global_gap": 0.0,
+      "condition_number": 7.355885690159725,
+      "stop_rule_note": "Locality is measured separately; max_iter=20 is a cap, not a convergence certificate."
+    },
+    "limitations": [
+      "No forced initial state; \u00a722 conditional traps are not assumed reachable.",
+      "PASS_MATCH validates score and structural contract, not global optimality."
+    ]
+  },
+  {
+    "case_id": "P6-mentor22-simple_exchange_wynn_mitchell",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "candidates": [
+        [
+          -1.274,
+          -1.346
+        ],
+        [
+          1.803,
+          -2.604
+        ],
+        [
+          1.111,
+          -0.918
+        ],
+        [
+          2.761,
+          -0.783
+        ],
+        [
+          -2.761,
+          -2.799
+        ],
+        [
+          1.754,
+          2.829
+        ],
+        [
+          -2.871,
+          1.579
+        ]
+      ],
+      "n_points": 4,
+      "degree": 1,
+      "criterion": "D",
+      "alpha": 0,
+      "max_iter": 20
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        4,
+        2
+      ],
+      "output": [
+        [
+          -2.871,
+          1.579
+        ],
+        [
+          1.754,
+          2.829
+        ],
+        [
+          1.803,
+          -2.604
+        ],
+        [
+          -2.761,
+          -2.799
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent exact Fraction determinants + exhaustive legal one-swap enumeration",
+      "normalization": "det(F.T@F/n), features=[1, physical coordinates]"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "selected_ids": [
+        6,
+        5,
+        1,
+        4
+      ],
+      "unique_ids": true,
+      "rank": 3,
+      "normalized_D_exact_fraction": "1032744995133289/32000000000000",
+      "upstream_normalized_D": 32.27328109791529,
+      "max_abs_error": 7.105427357601002e-15,
+      "best_closed_one_swap_D": "1032744995133289/32000000000000",
+      "one_swap_local_exact": true,
+      "all_one_swap_scores": [
+        {
+          "drop_position": 0,
+          "add_id": 0,
+          "score": "9362241708773/640000000000"
+        },
+        {
+          "drop_position": 0,
+          "add_id": 2,
+          "score": "86701379211891/6400000000000"
+        },
+        {
+          "drop_position": 0,
+          "add_id": 3,
+          "score": "119228208636267/6400000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 0,
+          "score": "10673705891531/1280000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 2,
+          "score": "19517116055679/1600000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 3,
+          "score": "30451080772773/1600000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 0,
+          "score": "352171811099431/32000000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 2,
+          "score": "579983696439301/32000000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 3,
+          "score": "227054542375819/8000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 0,
+          "score": "300443703885613/16000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 2,
+          "score": "472985102879859/32000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 3,
+          "score": "570968820804099/32000000000000"
+        }
+      ],
+      "exhaustive_global_D": "1032744995133289/32000000000000",
+      "global_gap": 0.0,
+      "condition_number": 7.355885690159725,
+      "stop_rule_note": "Locality is measured separately; max_iter=20 is a cap, not a convergence certificate."
+    },
+    "limitations": [
+      "No forced initial state; \u00a722 conditional traps are not assumed reachable.",
+      "PASS_MATCH validates score and structural contract, not global optimality."
+    ]
+  },
+  {
+    "case_id": "P6-mentor22-modified_fedorov",
+    "upstream": {
+      "distribution": "pydoe",
+      "version": "1.6.0",
+      "source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+      "wheel_sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+      "wheel_sha256_verified": true
+    },
+    "input": {
+      "candidates": [
+        [
+          -1.274,
+          -1.346
+        ],
+        [
+          1.803,
+          -2.604
+        ],
+        [
+          1.111,
+          -0.918
+        ],
+        [
+          2.761,
+          -0.783
+        ],
+        [
+          -2.761,
+          -2.799
+        ],
+        [
+          1.754,
+          2.829
+        ],
+        [
+          -2.871,
+          1.579
+        ]
+      ],
+      "n_points": 4,
+      "degree": 1,
+      "criterion": "D",
+      "alpha": 0,
+      "max_iter": 20
+    },
+    "actual": {
+      "called_original_pydoe": true,
+      "shape": [
+        4,
+        2
+      ],
+      "output": [
+        [
+          -2.761,
+          -2.799
+        ],
+        [
+          -2.871,
+          1.579
+        ],
+        [
+          1.754,
+          2.829
+        ],
+        [
+          1.803,
+          -2.604
+        ]
+      ],
+      "finite": true,
+      "warnings": []
+    },
+    "oracle": {
+      "kind": "independent exact Fraction determinants + exhaustive legal one-swap enumeration",
+      "normalization": "det(F.T@F/n), features=[1, physical coordinates]"
+    },
+    "comparison": {
+      "status": "PASS_MATCH",
+      "tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-09
+      },
+      "selected_ids": [
+        4,
+        6,
+        5,
+        1
+      ],
+      "unique_ids": true,
+      "rank": 3,
+      "normalized_D_exact_fraction": "1032744995133289/32000000000000",
+      "upstream_normalized_D": 32.27328109791529,
+      "max_abs_error": 7.105427357601002e-15,
+      "best_closed_one_swap_D": "1032744995133289/32000000000000",
+      "one_swap_local_exact": true,
+      "all_one_swap_scores": [
+        {
+          "drop_position": 0,
+          "add_id": 0,
+          "score": "300443703885613/16000000000000"
+        },
+        {
+          "drop_position": 0,
+          "add_id": 2,
+          "score": "472985102879859/32000000000000"
+        },
+        {
+          "drop_position": 0,
+          "add_id": 3,
+          "score": "570968820804099/32000000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 0,
+          "score": "9362241708773/640000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 2,
+          "score": "86701379211891/6400000000000"
+        },
+        {
+          "drop_position": 1,
+          "add_id": 3,
+          "score": "119228208636267/6400000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 0,
+          "score": "10673705891531/1280000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 2,
+          "score": "19517116055679/1600000000000"
+        },
+        {
+          "drop_position": 2,
+          "add_id": 3,
+          "score": "30451080772773/1600000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 0,
+          "score": "352171811099431/32000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 2,
+          "score": "579983696439301/32000000000000"
+        },
+        {
+          "drop_position": 3,
+          "add_id": 3,
+          "score": "227054542375819/8000000000000"
+        }
+      ],
+      "exhaustive_global_D": "1032744995133289/32000000000000",
+      "global_gap": 0.0,
+      "condition_number": 7.355885690159723,
+      "stop_rule_note": "Locality is measured separately; max_iter=20 is a cap, not a convergence certificate."
+    },
+    "limitations": [
+      "No forced initial state; \u00a722 conditional traps are not assumed reachable.",
+      "PASS_MATCH validates score and structural contract, not global optimality."
+    ]
+  }
+]

@@ -68,5 +68,5 @@ Initial reuse of inherited Anaconda NumPy/SciPy triggered Intel OpenMP duplicate
 - `results/summary.md`: concise interpretation.
 - `results/SHA256SUMS`: byte integrity of all deliverables except itself.
 
-No wheel or venv is committed. Scratch/pip cache is disposable; local wheel/venv and exact-path evidence are retained deliberately for reproducibility, outside the checkout. No GPU session was allocated for E0. PyDOE source was read but not modified or copied into TorchOED; references are mathematical formulas. Existing project MIT license is untouched; PyDOE remains its separate BSD-3-Clause development oracle.
+No wheel or venv is committed. After evidence publication, scratch/pip cache and the disposable venv are removed; the small verified wheel and exact-path evidence are retained outside the checkout. No GPU session was allocated for E0. PyDOE source was read but not modified or copied into TorchOED; references are mathematical formulas. Existing project MIT license is untouched; PyDOE remains its separate BSD-3-Clause development oracle.
 

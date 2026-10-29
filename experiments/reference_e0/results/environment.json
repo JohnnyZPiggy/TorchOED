@@ -1,0 +1,1303 @@
+{
+  "environment": {
+    "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+    "executable": "<E0_TASK_ROOT>\\venv\\Scripts\\python.exe",
+    "prefix": "<E0_TASK_ROOT>\\venv",
+    "base_prefix": "D:\\software\\anaconda3",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD",
+    "numpy": "2.4.6",
+    "scipy": "1.18.0",
+    "torch": "2.14.1+cpu",
+    "pydoe": "1.6.0",
+    "numpy_file": "<E0_TASK_ROOT>\\venv\\Lib\\site-packages\\numpy\\__init__.py",
+    "scipy_file": "<E0_TASK_ROOT>\\venv\\Lib\\site-packages\\scipy\\__init__.py",
+    "torch_file": "D:\\software\\anaconda3\\Lib\\site-packages\\torch\\__init__.py",
+    "pydoe_file": "<E0_TASK_ROOT>\\venv\\Lib\\site-packages\\pydoe\\__init__.py",
+    "device": "cpu",
+    "dtype": "float64",
+    "seed": 20261029,
+    "inherited_system_site_packages": true
+  },
+  "base_sha": "e6c0052adb2bff559c625a8319f89b061c971e9f",
+  "upstream_source_sha": "866d3f411942cb662af8054562dc1f7e07372401",
+  "tested_source_sha": "f5e9fde69fb31e5e4e9691158f213fe181c38260",
+  "committed_source_sha256": {
+    "run_reference.py": "9ec7ea4be6c4fc5d4d7dbfd41aea9356e93dd28d8c243134dd2b78fd1c5ab788",
+    "test_reference.py": "2908e871963e3ef399dc419576042c5782f646bfe34c7bc6563f4accf229f23f"
+  },
+  "framework_pin": "d84942e4890d9837ae0e6cbb379b85c3a95aba84",
+  "wheel": {
+    "filename": "pydoe-1.6.0-py3-none-any.whl",
+    "bytes": 131897,
+    "sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+    "download_url": "https://pypi.org/simple/pydoe/",
+    "requires_dist": [
+      "numpy>=2.2.6",
+      "numpy>=2.5.4; python_version >= '3.15'",
+      "scipy>=1.15.3",
+      "scipy>=1.18.1; python_version >= '3.15'"
+    ]
+  },
+  "source_files": {
+    "pydoe/__init__.py": {
+      "sha256": "97d5f75a1d13758e33314f2a9fdb55ff0391cb67dcb9e4299a8b14ed2cf64d45",
+      "git_blob_sha1": "e5ba623180ff6610fda868e06e328568b9c1990c"
+    },
+    "pydoe/__main__.py": {
+      "sha256": "9e9c868ba09399a27b8fe9af96564220c8f2ca6d6de324c43ff9e1b5addcc9e2",
+      "git_blob_sha1": "923b96d72f050ddfa6146e7adb99152e0145be6a"
+    },
+    "pydoe/debug.py": {
+      "sha256": "7455d5c7f1ffe835000fa26011da8dbe690f862f129a945fb5e67b80a3663f07",
+      "git_blob_sha1": "e734c7bbd2f6fd5632b4d4a9708e26392fc1a5d2"
+    },
+    "pydoe/clustering/__init__.py": {
+      "sha256": "a90249889c5cc9ec63e0493705395b93c5d686ed41f7bfa68a852b5fc27277f8",
+      "git_blob_sha1": "8a86e70d5e2657eff2cc7bc9454ca4e913f8f0e0"
+    },
+    "pydoe/clustering/k_means_sampling.py": {
+      "sha256": "de963e5fb596d5bcce08968b62045d3da1e7613ee68565f9798525682ef06984",
+      "git_blob_sha1": "8ea1241def051a7b7455aca6a8eafc071d7fc3b9"
+    },
+    "pydoe/factorial/__init__.py": {
+      "sha256": "480789b97b88cecf433619a06698bb184ebdbc76d252f4c794ca19c23960ea14",
+      "git_blob_sha1": "b0cbe7ea75ae4defd79b06203bddcf720c0b6cd7"
+    },
+    "pydoe/factorial/blocking.py": {
+      "sha256": "746feaf550376dabc8065c7a6fc960bc91de5da1cb3cd4713ab3cb774c50aa5e",
+      "git_blob_sha1": "6f25df8920e2ae55d2e04d34863d3b025afcfe3f"
+    },
+    "pydoe/factorial/factorial.py": {
+      "sha256": "24a5002ac64a558a5ba10cba48b66c483f35146a45f7dbc41e1c15ba4c80400d",
+      "git_blob_sha1": "54d5f97e34d2226fbbf241b622d64de5d9f15764"
+    },
+    "pydoe/factorial/fold.py": {
+      "sha256": "0de902a38a60aba5e507f5a86a823bca0129af89e8dd9bdbf6fb59d41fc0bebb",
+      "git_blob_sha1": "d255cd38340c9f3d93ccd8cdec0a696d293ad0a6"
+    },
+    "pydoe/factorial/gsd.py": {
+      "sha256": "d092c44cee99dcfd86428a01c174a3e91fdb6ffc128573f7ea7703ee0f25e0ed",
+      "git_blob_sha1": "2882bbc91cf06084f8c6e442358cbc1428e63eb6"
+    },
+    "pydoe/factorial/john_three_quarter.py": {
+      "sha256": "d6ad67455c621ac33735ee2b0f78822499e94088564a2da712d09b4b837166d0",
+      "git_blob_sha1": "e797829f1133ec88ccf64c1fb4da63e8ebcd4dc8"
+    },
+    "pydoe/factorial/latin_square.py": {
+      "sha256": "b58ea0d94aa085d8a41bc456128543c3e65aa461dca0ef3e935741cfaa2c0c87",
+      "git_blob_sha1": "0a8fdd0f744dce7e45b172c9dd99327b0fbae776"
+    },
+    "pydoe/factorial/plackett_burman.py": {
+      "sha256": "2ccdbc53889abcff9a96a6e6b6019f59a0272db17dd654eb001ea48033e25b1a",
+      "git_blob_sha1": "5235a6009e7c49998b2a99f6b8a35045a97d5c6b"
+    },
+    "pydoe/mixture/__init__.py": {
+      "sha256": "93589ece25c147ba19fcd6b05a6c6001f898291f45fa06dc6c584cb1f7a332c9",
+      "git_blob_sha1": "750ecbeacd8974c6b041d833e3facf5cb6ff9a40"
+    },
+    "pydoe/mixture/axial.py": {
+      "sha256": "af467b7aa4d09b5246c827f1f140f0460c3e08ff0ca67335d1ae2f157190b82c",
+      "git_blob_sha1": "ca96a0c09afd417578bca689d739e2d9d79a9bd3"
+    },
+    "pydoe/mixture/extreme_vertices.py": {
+      "sha256": "9ad7f9c0026876d139dfe53208de07009ed2c0321130a7d2e1ab4758d4df5e54",
+      "git_blob_sha1": "a16904443f63ae45df7f3a27e331957792320731"
+    },
+    "pydoe/mixture/process.py": {
+      "sha256": "e151720ad4af7ddeb554796cd661926547250b5ead1df08622cf1d25c031a0e5",
+      "git_blob_sha1": "b6ebf10cab68b82cb7297adf673ae47d9b0e1b07"
+    },
+    "pydoe/mixture/simplex.py": {
+      "sha256": "f4fd6f7ca0c629ed52889f5c2bacdc0dfc8af9925a0a2249f10c9ae4d48310d1",
+      "git_blob_sha1": "ca4ab276d064937bbdf44d9263d735954d5cb9a5"
+    },
+    "pydoe/optimal/__init__.py": {
+      "sha256": "c6284b9a140d1c7b2bc6d2b994eb752a9e9f421ea305e640d2618ab39fa51035",
+      "git_blob_sha1": "8a494134ba3db852a4583e050c14af2d9a22f785"
+    },
+    "pydoe/optimal/algorithms.py": {
+      "sha256": "90869c8a9b307659b9c26dd6de608fbb7fac29fc54adaba0172c5cd911abe1cf",
+      "git_blob_sha1": "ce48f41018d7819435883d8336c8d8a98a2cec59"
+    },
+    "pydoe/optimal/criterion.py": {
+      "sha256": "d155f1287c161b0cf273efa15f393d90069515bb216f5db0c297fbc0fb957378",
+      "git_blob_sha1": "ba413ec04261e23610d480c8d37d5ffbda2b030c"
+    },
+    "pydoe/optimal/efficiency.py": {
+      "sha256": "344cbd79ae5608d9ec05d026b20dd0b72201a97e7eb6f44f3fffecd7dbe4c3d5",
+      "git_blob_sha1": "00be23e6b1a114fb1604b364c5a80cb1a3b4ab47"
+    },
+    "pydoe/optimal/fisher.py": {
+      "sha256": "279047a487b49eee34aac3594c9a972c899171810b7019e8eec0fd352bbd182e",
+      "git_blob_sha1": "d7b7dd261615264f25d1d5096b4c94e0bd7ff915"
+    },
+    "pydoe/optimal/model.py": {
+      "sha256": "053609c3374488762ca725c753a0377f1d0638442d7ac8d7cdcf5de18553c51c",
+      "git_blob_sha1": "3849b89d2391b6d5394ff32b6853835e6ee3cb84"
+    },
+    "pydoe/optimal/optimal.py": {
+      "sha256": "107b699b273a23981cd48de3805faab5b223adad1632b566382b4fdb11832ed6",
+      "git_blob_sha1": "3027300581c15e74dde9edd51a0d22776f84c4e1"
+    },
+    "pydoe/optimal/utils.py": {
+      "sha256": "e52214ad3ccc871c3c8b3b4e68962b09d1ec34d2c6cb5a53af34eaa4eab43448",
+      "git_blob_sha1": "4e57271f974e5a36292317336fa2ce482c220a9e"
+    },
+    "pydoe/response_surface/__init__.py": {
+      "sha256": "cf21bb7efe4cd59a354d67fb2e2944722e5a3516a24cd0ac97a239b04c00b245",
+      "git_blob_sha1": "6a2fb39bae7a86dade3d8d149491b5cfe57c58be"
+    },
+    "pydoe/response_surface/blocking.py": {
+      "sha256": "1466c0eef4defe3c7c97286dd4f1c808bd6bd7f24cce874fb2c7c0778bf03673",
+      "git_blob_sha1": "ca2bf7e1ea1ef1dd3fa483271f43af23d9691ac0"
+    },
+    "pydoe/response_surface/box_behnken.py": {
+      "sha256": "2c2de6cc1ed2dbbb8dc9d91e138d0bdda27fc2452afc734d1ce9086df321cfe1",
+      "git_blob_sha1": "18be3848bec6d93a5d3c4369b78762dd3e20d564"
+    },
+    "pydoe/response_surface/center_design.py": {
+      "sha256": "0998826195107af8c51d4c82bc14185229fe41289ef5963a83c62b3b7412767b",
+      "git_blob_sha1": "db03140294d7208f8b5abf959764f89033966b05"
+    },
+    "pydoe/response_surface/central_composite.py": {
+      "sha256": "985b4797fe6a34db2f1854c894f572e1d05b171a0eb78a9b1f11c25cb6f43da4",
+      "git_blob_sha1": "5c113ac034bce07a6f1c6584c4c7ebd4d9e8de69"
+    },
+    "pydoe/response_surface/doehlert.py": {
+      "sha256": "f54524497f4e386f947dc6452f66638e1e1334019a89b87c6a25728d828ef67d",
+      "git_blob_sha1": "bc443e2364335a0594087df9f2c87e9d60abc975"
+    },
+    "pydoe/response_surface/small_composite.py": {
+      "sha256": "6e1cff0e036143a75eed6b61521f5735a833c9aec76f1fc8c5a47ad354ca0f7b",
+      "git_blob_sha1": "25d025b8d9d95981db6a36771488922ebdb0642d"
+    },
+    "pydoe/response_surface/star.py": {
+      "sha256": "2f7bc148fbf68e3fc98bd37afc886d7013783de32e5bb4956d8d508010a84b44",
+      "git_blob_sha1": "f640237a352537621a239e154aa2051e43900b8b"
+    },
+    "pydoe/response_surface/union.py": {
+      "sha256": "a4dff5b3fae31f6467b5ed8a3dd54487964c55082e00bb18d094c335b08f83ab",
+      "git_blob_sha1": "a560888b41749fc6d2b6e38417619a9e71482ebc"
+    },
+    "pydoe/sensitivity_analysis/__init__.py": {
+      "sha256": "ead501ecd95305c906f8430f1872a176c9823592455010fb369a4cabe305482f",
+      "git_blob_sha1": "7dedae13bde302b25b1674af0d2c2643c08071ed"
+    },
+    "pydoe/sensitivity_analysis/morris.py": {
+      "sha256": "e551c399cffd77b12da144e178db8e63dea1b4aed378a5e69b82df064f73782f",
+      "git_blob_sha1": "0d5f396f767819c6179f570e98fd1f73f9c45d61"
+    },
+    "pydoe/sensitivity_analysis/saltelli.py": {
+      "sha256": "bfbf91692fa54e40f0f81e88781b5a47f757be912b7f398e09580ba18b69b5b1",
+      "git_blob_sha1": "d8811de79af80b3fd0550d6ba5b93f7789891211"
+    },
+    "pydoe/sequential/__init__.py": {
+      "sha256": "19b093bb8d63c5dc8d54dbe43bc7e110d30367a3448855fd0ae4ac5c2dec3504",
+      "git_blob_sha1": "02fe9d783e4ded7854dcd31aa3748bbb4001df66"
+    },
+    "pydoe/sequential/acquisition.py": {
+      "sha256": "8d3a1f3e1815e3df77a6eecc5b82a72bc06bfde9965d18ce7e59c7f7aafe212d",
+      "git_blob_sha1": "487b154381e14cbbbc1c891f200a0ee1028a65b0"
+    },
+    "pydoe/sequential/adaptive.py": {
+      "sha256": "09991823931f1587136476ee27d1c778df6bc70f3edfd60d15beabf6cfa0e268",
+      "git_blob_sha1": "61a0f67c1273f9636b5f9ccfccbac4508a6114fd"
+    },
+    "pydoe/sequential/gaussian_process.py": {
+      "sha256": "967cc2816052478814dbde88ec4d96242b1554bdcb08779691136898d729006a",
+      "git_blob_sha1": "90f087e3cb00abfc6eeac0b02a221e7606159b02"
+    },
+    "pydoe/space_filling/__init__.py": {
+      "sha256": "63ae737a133f095ecf94c1675deb0430e6c6ddee1a985215b17d448100721e58",
+      "git_blob_sha1": "cd09534f9b06b03f7ebe5b34778ff0c1dd5a945c"
+    },
+    "pydoe/space_filling/quasi_random/__init__.py": {
+      "sha256": "7d75f5822ea75f2d5ae5dc74b55ad9f7be500983598489c9b452284ff137dc85",
+      "git_blob_sha1": "1ff7f827ac266d1b6b5a22d10e56bfe409bc5e91"
+    },
+    "pydoe/space_filling/quasi_random/cranley_patterson_shift.py": {
+      "sha256": "c96ae36e7c3f48577cd7a564950ecb06eb0172102837615d5b739974d75113c5",
+      "git_blob_sha1": "a1ee9bc6f26280b54f4737c98046ce4dec93b891"
+    },
+    "pydoe/space_filling/quasi_random/faure.py": {
+      "sha256": "d41f248bfcd005b830a7cee956340cc361b8d5b3aa4ae82f5b081968ee7a91e6",
+      "git_blob_sha1": "d7c4deb61fbd0dfcee1cb508935471ee3cfa89b8"
+    },
+    "pydoe/space_filling/quasi_random/halton.py": {
+      "sha256": "8b418bb8f223185c0998f4c358f3963ba8df11123712ff3b11bcb435c8193c94",
+      "git_blob_sha1": "2a43a47378ecd1fec5b3f2e113263ab4e5a32269"
+    },
+    "pydoe/space_filling/quasi_random/hammersley.py": {
+      "sha256": "d5889cd5c9196c8b7e3789ff6cd3f8b4449f489c90172fca04442f11aabef05b",
+      "git_blob_sha1": "608f736976e27d58164c2750d40de8f25060afcb"
+    },
+    "pydoe/space_filling/quasi_random/korobov.py": {
+      "sha256": "9dce9fdde4bbef6e7c156e9760dc55ec7286eb25eff17b867b543630a445d676",
+      "git_blob_sha1": "db32fcf419f250a2131a58fe7940af6758d40402"
+    },
+    "pydoe/space_filling/quasi_random/niederreiter.py": {
+      "sha256": "fd315f9e71de2af42c09a04bf081baf2de41972b7da005ccf178929ab7ec48e9",
+      "git_blob_sha1": "809a31f447024b98f07f8f67e82efafe447373ee"
+    },
+    "pydoe/space_filling/quasi_random/rank1.py": {
+      "sha256": "633e65ed2e3c2b73c01c9f99909637e9856f63f1c1b65c02a4fb6b5ce99dd285",
+      "git_blob_sha1": "688dd77625e3617fd18561e5b9955ee670c1a5fb"
+    },
+    "pydoe/space_filling/quasi_random/sobol.py": {
+      "sha256": "a7a96d661f2e78fcd40739deed409551c8f10234226cc0635551b1961fc0ab9c",
+      "git_blob_sha1": "33ecd3aedf676bb5af4d60cc5a8532715fde0905"
+    },
+    "pydoe/space_filling/quasi_random/sukharev.py": {
+      "sha256": "7670ec4d0d061c2a875ca25847e3bafe63e14c79954f50807cb561f65e5dde1e",
+      "git_blob_sha1": "9a14b24022c3191238e4cb139f0a473cf5cd0709"
+    },
+    "pydoe/space_filling/stochastic/__init__.py": {
+      "sha256": "edd60e25dcdcaacbaa0713b73f0a9c18315570064ff66eca0d3b1d2b54ae0321",
+      "git_blob_sha1": "e8d8fe5708353031972c6b17a81a68c78ead8d80"
+    },
+    "pydoe/space_filling/stochastic/distance_designs.py": {
+      "sha256": "2aba556cc75f92aa8607652e79f5f0c8e7642d0cf24ba03691440bdfdb3d0a68",
+      "git_blob_sha1": "fdfc4a3092ec161adeae6d41650bb2e6cad06c1c"
+    },
+    "pydoe/space_filling/stochastic/lhs.py": {
+      "sha256": "49dffa573071dfdc186c13e7b352753f9bfa88f2d8785ee4d3326d741fbdfd40",
+      "git_blob_sha1": "ace596659d4c149e99f9e46f68b428120a3540e2"
+    },
+    "pydoe/space_filling/stochastic/maxpro.py": {
+      "sha256": "90f3a413ad331381c7d7f4ecbeb2315473a8b2ceac57badc2ada3ae06c90921a",
+      "git_blob_sha1": "722fca96f4d487c23598dad2ebdc316f47b89418"
+    },
+    "pydoe/space_filling/stochastic/nested_lhs.py": {
+      "sha256": "c993c07700ed36350b4e9c9160908574d6799d82c8f23795a146d2fcc17e09e2",
+      "git_blob_sha1": "2127b95e3bcb47e41a318dbbbaa400b18e385141"
+    },
+    "pydoe/space_filling/stochastic/nolh.py": {
+      "sha256": "1d62dcc11b01c84f64fca9a9bd07a20c95ebb3c19b2c4f477191b95165bb81be",
+      "git_blob_sha1": "7ba853ff9c356e745764d4bda02427f78d80bf21"
+    },
+    "pydoe/space_filling/stochastic/oa_lhd.py": {
+      "sha256": "7173ac59898dab64bd68ff99f98e57f7b9866844d157914c2f8381e147b74c70",
+      "git_blob_sha1": "ef1788de7534adaf7e7c2c15f7dfbbfe7059b3e6"
+    },
+    "pydoe/space_filling/stochastic/random_uniform.py": {
+      "sha256": "06c3ed9d55f9640cd17114d2dd9c1b3b0adc4eaeead078c1d573b6eee0f4e213",
+      "git_blob_sha1": "b5777c21fb26e67682d19bc0d536d92d020379fb"
+    },
+    "pydoe/space_filling/stochastic/sliced_lhs.py": {
+      "sha256": "8075f20a682471364935497b341394bbf713221a9cebe68ae6782ca9cdc848f1",
+      "git_blob_sha1": "c2bdebe60d1d42c8c59d054f762b0a73e6770015"
+    },
+    "pydoe/sparse_grid/__init__.py": {
+      "sha256": "8fbd63c48bd8a6d25c0e449baaef8db74c7d28e38c21ba4336470e25307177da",
+      "git_blob_sha1": "8fb424b6db4f7043b30d618760cb9a6afeed6108"
+    },
+    "pydoe/sparse_grid/sparse_grid.py": {
+      "sha256": "7944756fcba1f8e03772f7de361747a5fec111bba7d12d6ef0bdef53f19390b0",
+      "git_blob_sha1": "b9e5e3d5ca81b1974c163a8e3897909b24aa74fc"
+    },
+    "pydoe/specialized/__init__.py": {
+      "sha256": "c9b9466ad3097964dfd00c2982443d4eb441d5c423e60866e523325cf9e37443",
+      "git_blob_sha1": "a32fecda8c1d6029e7955d44b16853a976059f47"
+    },
+    "pydoe/specialized/definitive_screening.py": {
+      "sha256": "7ed5fd6bb81aa6812e87881ded9f514023a5b005e417d93108004ae6d370de3c",
+      "git_blob_sha1": "6aca5183c8b99740f96492e6faa96bbdd6150573"
+    },
+    "pydoe/specialized/supersaturated.py": {
+      "sha256": "1b9e3b74339567050b415020195bbda8c018d55aef9b3720d30d374f32b23a08",
+      "git_blob_sha1": "be009412dbd3b18ed3c12cd7135205b14a1004c1"
+    },
+    "pydoe/taguchi/__init__.py": {
+      "sha256": "1acf779cfd2621ca91b83ec06d0e4e1197a512b2a945b9ea092131fc6aa665dd",
+      "git_blob_sha1": "5a6f092a2c4ee6b7128ccf2f704315cbade80c16"
+    },
+    "pydoe/taguchi/taguchi.py": {
+      "sha256": "da4ed6886e2bad06d3ff5d7daa4fdef7885fdb2d88c40f6bd23867684632c9ef",
+      "git_blob_sha1": "841294a7c8ca72e2f05dee1a798763346614141e"
+    },
+    "pydoe/taguchi/orthogonal_arrays/__init__.py": {
+      "sha256": "ee74dd21ace9e77d105c37574a1072e8d0cede34a41e4eb720bdefddb60822a6",
+      "git_blob_sha1": "fdf041fc29760e40e464e246d1da98b2022a55f8"
+    },
+    "pydoe/taguchi/orthogonal_arrays/orthogonal_arrays.py": {
+      "sha256": "f7e0d781ca68d693a5f645d359963e36074507b8797f8c15b9d51cdcb0068af0",
+      "git_blob_sha1": "7491dec1d96ad8b9656d88c7c840cee1415d784d"
+    },
+    "pydoe/utils/__init__.py": {
+      "sha256": "87e90fe522f48bada9a34f6cd28edc59878d3897b5e6b14d3d36fdc261c43db2",
+      "git_blob_sha1": "75c768e7fa32e29c24c7c83800328fc3974f161a"
+    },
+    "pydoe/utils/build_regression_matrix.py": {
+      "sha256": "fc497b4cfcbf756936e9afbd5bb4562d08762ce737ee5fc351a61012f2b1a2a1",
+      "git_blob_sha1": "fe45f989a43677e6c885f53faf825a6b4e99a837"
+    },
+    "pydoe/utils/iman_conover.py": {
+      "sha256": "3f4c35117cc0038e6c32e12b1ac21dede7b02ed75ad4a23dffbadaa8cedb9829",
+      "git_blob_sha1": "01c395bc544ac4961d52f234413faa39a69dd087"
+    },
+    "pydoe/utils/utils.py": {
+      "sha256": "f3a03900b22f5e6078280284db7de58211afc34e214db65339587aacc9ac34b5",
+      "git_blob_sha1": "76788e6904da1fc7c9a4883abd79568138b6b315"
+    },
+    "pydoe/utils/var_regression_matrix.py": {
+      "sha256": "5b29b0d0cb3adb736ce48bc96c8b96ef96d206eb21fa324d3899ebdb05cc4762",
+      "git_blob_sha1": "1f677090bc374a37f970abbab913cfecdb9e0e54"
+    }
+  },
+  "pinned_git_blobs": {
+    "pydoe/response_surface/small_composite.py": "25d025b8d9d95981db6a36771488922ebdb0642d",
+    "pydoe/response_surface/doehlert.py": "bc443e2364335a0594087df9f2c87e9d60abc975",
+    "pydoe/space_filling/quasi_random/niederreiter.py": "809a31f447024b98f07f8f67e82efafe447373ee",
+    "pydoe/sparse_grid/sparse_grid.py": "b9e5e3d5ca81b1974c163a8e3897909b24aa74fc",
+    "pydoe/space_filling/quasi_random/sobol.py": "33ecd3aedf676bb5af4d60cc5a8532715fde0905",
+    "pydoe/optimal/algorithms.py": "ce48f41018d7819435883d8336c8d8a98a2cec59"
+  },
+  "pip_freeze_sanitized": [
+    "aiobotocore @ <local-file-url-omitted>",
+    "aiodns @ <local-file-url-omitted>",
+    "aiohappyeyeballs @ <local-file-url-omitted>",
+    "aiohttp @ <local-file-url-omitted>",
+    "aioitertools @ <local-file-url-omitted>",
+    "aiosignal @ <local-file-url-omitted>",
+    "alabaster @ <local-file-url-omitted>",
+    "altair @ <local-file-url-omitted>",
+    "anaconda-anon-usage @ <local-file-url-omitted>",
+    "anaconda-auth @ <local-file-url-omitted>",
+    "anaconda-catalogs @ <local-file-url-omitted>",
+    "anaconda-channel-guide @ <local-file-url-omitted>",
+    "anaconda-cli-base @ <local-file-url-omitted>",
+    "anaconda-client @ <local-file-url-omitted>",
+    "anaconda-navigator @ <local-file-url-omitted>",
+    "anaconda-project @ <local-file-url-omitted>",
+    "annotated-doc @ <local-file-url-omitted>",
+    "annotated-types @ <local-file-url-omitted>",
+    "anyio @ <local-file-url-omitted>",
+    "archspec @ <local-file-url-omitted>",
+    "argon2-cffi @ <local-file-url-omitted>",
+    "argon2-cffi-bindings @ <local-file-url-omitted>",
+    "arrow @ <local-file-url-omitted>",
+    "astroid @ <local-file-url-omitted>",
+    "astropy @ <local-file-url-omitted>",
+    "astropy-iers-data @ <local-file-url-omitted>",
+    "asttokens @ <local-file-url-omitted>",
+    "async-lru @ <local-file-url-omitted>",
+    "asyncssh @ <local-file-url-omitted>",
+    "attrs @ <local-file-url-omitted>",
+    "autopep8 @ <local-file-url-omitted>",
+    "babel @ <local-file-url-omitted>",
+    "bcrypt @ <local-file-url-omitted>",
+    "beautifulsoup4 @ <local-file-url-omitted>",
+    "binaryornot @ <local-file-url-omitted>",
+    "black @ <local-file-url-omitted>",
+    "bleach @ <local-file-url-omitted>",
+    "blinker @ <local-file-url-omitted>",
+    "bokeh @ <local-file-url-omitted>",
+    "boltons @ <local-file-url-omitted>",
+    "botocore @ <local-file-url-omitted>",
+    "brotlicffi @ <local-file-url-omitted>",
+    "build @ <local-file-url-omitted>",
+    "cachetools @ <local-file-url-omitted>",
+    "cattrs @ <local-file-url-omitted>",
+    "certifi @ <local-file-url-omitted>",
+    "cffi @ <local-file-url-omitted>",
+    "chardet @ <local-file-url-omitted>",
+    "charset-normalizer @ <local-file-url-omitted>",
+    "click @ <local-file-url-omitted>",
+    "cloudpickle @ <local-file-url-omitted>",
+    "colorama @ <local-file-url-omitted>",
+    "colorcet @ <local-file-url-omitted>",
+    "comm @ <local-file-url-omitted>",
+    "conda @ <local-file-url-omitted>",
+    "conda-anaconda-telemetry @ <local-file-url-omitted>",
+    "conda-anaconda-tos @ <local-file-url-omitted>",
+    "conda-build @ <local-file-url-omitted>",
+    "conda-content-trust @ <local-file-url-omitted>",
+    "conda-libmamba-solver @ <local-file-url-omitted>",
+    "conda-lockfiles @ <local-file-url-omitted>",
+    "conda-pack @ <local-file-url-omitted>",
+    "conda-package-handling @ <local-file-url-omitted>",
+    "conda-pypi @ <local-file-url-omitted>",
+    "conda-rattler-solver @ <local-file-url-omitted>",
+    "conda-repo-cli @ <local-file-url-omitted>",
+    "conda-self @ <local-file-url-omitted>",
+    "conda_index @ <local-file-url-omitted>",
+    "conda_package_streaming @ <local-file-url-omitted>",
+    "contourpy @ <local-file-url-omitted>",
+    "cookiecutter @ <local-file-url-omitted>",
+    "cryptography @ <local-file-url-omitted>",
+    "cycler @ <local-file-url-omitted>",
+    "dask @ <local-file-url-omitted>",
+    "datashader @ <local-file-url-omitted>",
+    "debugpy @ <local-file-url-omitted>",
+    "decorator @ <local-file-url-omitted>",
+    "defusedxml @ <local-file-url-omitted>",
+    "diff-match-patch @ <local-file-url-omitted>",
+    "dill @ <local-file-url-omitted>",
+    "distributed @ <local-file-url-omitted>",
+    "distro @ <local-file-url-omitted>",
+    "docstring-to-markdown @ <local-file-url-omitted>",
+    "docutils @ <local-file-url-omitted>",
+    "entrypoints @ <local-file-url-omitted>",
+    "et_xmlfile @ <local-file-url-omitted>",
+    "evalidate @ <local-file-url-omitted>",
+    "executing @ <local-file-url-omitted>",
+    "fastjsonschema @ <local-file-url-omitted>",
+    "filelock @ <local-file-url-omitted>",
+    "flake8 @ <local-file-url-omitted>",
+    "Flask @ <local-file-url-omitted>",
+    "fonttools @ <local-file-url-omitted>",
+    "frozendict @ <local-file-url-omitted>",
+    "frozenlist @ <local-file-url-omitted>",
+    "fsspec @ <local-file-url-omitted>",
+    "gitdb @ <local-file-url-omitted>",
+    "GitPython @ <local-file-url-omitted>",
+    "gmpy2 @ <local-file-url-omitted>",
+    "greenlet @ <local-file-url-omitted>",
+    "h11 @ <local-file-url-omitted>",
+    "h5py @ <local-file-url-omitted>",
+    "HeapDict @ <local-file-url-omitted>",
+    "holoviews @ <local-file-url-omitted>",
+    "httpcore @ <local-file-url-omitted>",
+    "httptools @ <local-file-url-omitted>",
+    "httpx @ <local-file-url-omitted>",
+    "hvplot @ <local-file-url-omitted>",
+    "idna @ <local-file-url-omitted>",
+    "ImageIO @ <local-file-url-omitted>",
+    "imagesize @ <local-file-url-omitted>",
+    "imbalanced-learn @ <local-file-url-omitted>",
+    "importlib_metadata @ <local-file-url-omitted>",
+    "inflection @ <local-file-url-omitted>",
+    "iniconfig @ <local-file-url-omitted>",
+    "installer @ <local-file-url-omitted>",
+    "intake @ <local-file-url-omitted>",
+    "intervaltree @ <local-file-url-omitted>",
+    "ipykernel @ <local-file-url-omitted>",
+    "ipympl @ <local-file-url-omitted>",
+    "ipython @ <local-file-url-omitted>",
+    "ipython_pygments_lexers @ <local-file-url-omitted>",
+    "ipywidgets @ <local-file-url-omitted>",
+    "isort @ <local-file-url-omitted>",
+    "itsdangerous @ <local-file-url-omitted>",
+    "jaraco.classes @ <local-file-url-omitted>",
+    "jaraco.context @ <local-file-url-omitted>",
+    "jaraco.functools @ <local-file-url-omitted>",
+    "jedi @ <local-file-url-omitted>",
+    "jellyfish @ <local-file-url-omitted>",
+    "Jinja2 @ <local-file-url-omitted>",
+    "jmespath @ <local-file-url-omitted>",
+    "joblib @ <local-file-url-omitted>",
+    "json5 @ <local-file-url-omitted>",
+    "jsonpatch @ <local-file-url-omitted>",
+    "jsonpointer @ <local-file-url-omitted>",
+    "jsonschema @ <local-file-url-omitted>",
+    "jsonschema-specifications @ <local-file-url-omitted>",
+    "jupyter @ <local-file-url-omitted>",
+    "jupyter-console @ <local-file-url-omitted>",
+    "jupyter-events @ <local-file-url-omitted>",
+    "jupyter-lsp @ <local-file-url-omitted>",
+    "jupyter_client @ <local-file-url-omitted>",
+    "jupyter_core @ <local-file-url-omitted>",
+    "jupyter_server @ <local-file-url-omitted>",
+    "jupyter_server_terminals @ <local-file-url-omitted>",
+    "jupyterlab @ <local-file-url-omitted>",
+    "jupyterlab_pygments @ <local-file-url-omitted>",
+    "jupyterlab_server @ <local-file-url-omitted>",
+    "jupyterlab_widgets @ <local-file-url-omitted>",
+    "keyring @ <local-file-url-omitted>",
+    "kiwisolver @ <local-file-url-omitted>",
+    "lazy-loader @ <local-file-url-omitted>",
+    "lckr_jupyterlab_variableinspector @ <local-file-url-omitted>",
+    "libarchive-c @ <local-file-url-omitted>",
+    "libmambapy @ <local-file-url-omitted>",
+    "librt @ <local-file-url-omitted>",
+    "lief @ <local-file-url-omitted>",
+    "linkify-it-py @ <local-file-url-omitted>",
+    "llvmlite @ <local-file-url-omitted>",
+    "lmdb @ <local-file-url-omitted>",
+    "locket @ <local-file-url-omitted>",
+    "lsprotocol @ <local-file-url-omitted>",
+    "lz4 @ <local-file-url-omitted>",
+    "Markdown @ <local-file-url-omitted>",
+    "markdown-it-py @ <local-file-url-omitted>",
+    "MarkupSafe @ <local-file-url-omitted>",
+    "matplotlib==3.11.0",
+    "matplotlib-inline @ <local-file-url-omitted>",
+    "mccabe @ <local-file-url-omitted>",
+    "mdit-py-plugins @ <local-file-url-omitted>",
+    "mdurl @ <local-file-url-omitted>",
+    "menuinst @ <local-file-url-omitted>",
+    "mistune @ <local-file-url-omitted>",
+    "mkl-service==2.7.2",
+    "mkl_fft @ <local-file-url-omitted>",
+    "mkl_random @ <local-file-url-omitted>",
+    "more-itertools @ <local-file-url-omitted>",
+    "mpi4py @ <local-file-url-omitted>",
+    "mpmath @ <local-file-url-omitted>",
+    "msgpack @ <local-file-url-omitted>",
+    "multidict @ <local-file-url-omitted>",
+    "multipledispatch @ <local-file-url-omitted>",
+    "mypy @ <local-file-url-omitted>",
+    "mypy_extensions @ <local-file-url-omitted>",
+    "narwhals @ <local-file-url-omitted>",
+    "navigator-updater @ <local-file-url-omitted>",
+    "nbclient @ <local-file-url-omitted>",
+    "nbconvert @ <local-file-url-omitted>",
+    "nbformat @ <local-file-url-omitted>",
+    "nest-asyncio @ <local-file-url-omitted>",
+    "networkx @ <local-file-url-omitted>",
+    "nh3 @ <local-file-url-omitted>",
+    "nltk @ <local-file-url-omitted>",
+    "notebook @ <local-file-url-omitted>",
+    "notebook_shim @ <local-file-url-omitted>",
+    "numba @ <local-file-url-omitted>",
+    "numexpr @ <local-file-url-omitted>",
+    "numpy==2.4.6",
+    "numpydoc @ <local-file-url-omitted>",
+    "openpyxl @ <local-file-url-omitted>",
+    "packaging==26.0",
+    "pandas @ <local-file-url-omitted>",
+    "pandocfilters @ <local-file-url-omitted>",
+    "panel @ <local-file-url-omitted>",
+    "panel-material-ui @ <local-file-url-omitted>",
+    "param @ <local-file-url-omitted>",
+    "parso @ <local-file-url-omitted>",
+    "partd @ <local-file-url-omitted>",
+    "pathspec @ <local-file-url-omitted>",
+    "patsy @ <local-file-url-omitted>",
+    "pexpect @ <local-file-url-omitted>",
+    "pickleshare @ <local-file-url-omitted>",
+    "pillow @ <local-file-url-omitted>",
+    "pkce @ <local-file-url-omitted>",
+    "pkginfo @ <local-file-url-omitted>",
+    "platformdirs @ <local-file-url-omitted>",
+    "plotly @ <local-file-url-omitted>",
+    "pluggy @ <local-file-url-omitted>",
+    "prometheus_client @ <local-file-url-omitted>",
+    "prompt_toolkit @ <local-file-url-omitted>",
+    "propcache @ <local-file-url-omitted>",
+    "protobuf @ <local-file-url-omitted>",
+    "psutil @ <local-file-url-omitted>",
+    "ptyprocess @ <local-file-url-omitted>",
+    "pure_eval @ <local-file-url-omitted>",
+    "py-cpuinfo @ <local-file-url-omitted>",
+    "py-rattler @ <local-file-url-omitted>",
+    "py-rattler-build @ <local-file-url-omitted>",
+    "pyarrow @ <local-file-url-omitted>",
+    "pycares @ <local-file-url-omitted>",
+    "pycodestyle @ <local-file-url-omitted>",
+    "pycosat @ <local-file-url-omitted>",
+    "pycparser @ <local-file-url-omitted>",
+    "pyct @ <local-file-url-omitted>",
+    "pydantic @ <local-file-url-omitted>",
+    "pydantic-settings @ <local-file-url-omitted>",
+    "pydantic_core @ <local-file-url-omitted>",
+    "pydocstyle @ <local-file-url-omitted>",
+    "pydoe @ <local-file-url-omitted>",
+    "pyerfa @ <local-file-url-omitted>",
+    "pyflakes @ <local-file-url-omitted>",
+    "PyGithub @ <local-file-url-omitted>",
+    "Pygments @ <local-file-url-omitted>",
+    "PyJWT @ <local-file-url-omitted>",
+    "pylint @ <local-file-url-omitted>",
+    "pylint-venv @ <local-file-url-omitted>",
+    "pyls-spyder==0.4.0",
+    "PyNaCl @ <local-file-url-omitted>",
+    "pyodbc @ <local-file-url-omitted>",
+    "pyparsing @ <local-file-url-omitted>",
+    "pyproject_hooks @ <local-file-url-omitted>",
+    "PyQt6==6.11.0",
+    "PyQt6-WebEngine==6.11.0",
+    "PyQt6_sip @ <local-file-url-omitted>",
+    "PySide6==6.11.0",
+    "PySocks @ <local-file-url-omitted>",
+    "pytest @ <local-file-url-omitted>",
+    "python-dateutil @ <local-file-url-omitted>",
+    "python-dotenv @ <local-file-url-omitted>",
+    "python-json-logger @ <local-file-url-omitted>",
+    "python-lsp-black @ <local-file-url-omitted>",
+    "python-lsp-jsonrpc @ <local-file-url-omitted>",
+    "python-lsp-ruff @ <local-file-url-omitted>",
+    "python-lsp-server @ <local-file-url-omitted>",
+    "python-multipart @ <local-file-url-omitted>",
+    "python-slugify @ <local-file-url-omitted>",
+    "pytokens @ <local-file-url-omitted>",
+    "pytoolconfig @ <local-file-url-omitted>",
+    "pytz @ <local-file-url-omitted>",
+    "pyuca @ <local-file-url-omitted>",
+    "pyviz_comms @ <local-file-url-omitted>",
+    "PyWavelets @ <local-file-url-omitted>",
+    "pywin32 @ <local-file-url-omitted>",
+    "pywin32-ctypes @ <local-file-url-omitted>",
+    "pywinpty @ <local-file-url-omitted>",
+    "PyYAML @ <local-file-url-omitted>",
+    "pyzmq @ <local-file-url-omitted>",
+    "QDarkStyle @ <local-file-url-omitted>",
+    "qstylizer @ <local-file-url-omitted>",
+    "QtAwesome @ <local-file-url-omitted>",
+    "qtconsole @ <local-file-url-omitted>",
+    "QtPy @ <local-file-url-omitted>",
+    "readchar @ <local-file-url-omitted>",
+    "referencing @ <local-file-url-omitted>",
+    "regex @ <local-file-url-omitted>",
+    "requests @ <local-file-url-omitted>",
+    "requests-toolbelt @ <local-file-url-omitted>",
+    "rfc3339_validator @ <local-file-url-omitted>",
+    "rfc3986_validator @ <local-file-url-omitted>",
+    "rich @ <local-file-url-omitted>",
+    "roman-numerals @ <local-file-url-omitted>",
+    "rope @ <local-file-url-omitted>",
+    "rpds-py @ <local-file-url-omitted>",
+    "rtree @ <local-file-url-omitted>",
+    "ruamel.yaml @ <local-file-url-omitted>",
+    "ruamel.yaml.clib @ <local-file-url-omitted>",
+    "ruff @ <local-file-url-omitted>",
+    "s3fs @ <local-file-url-omitted>",
+    "scikit-image @ <local-file-url-omitted>",
+    "scikit-learn @ <local-file-url-omitted>",
+    "scipy==1.18.0",
+    "seaborn @ <local-file-url-omitted>",
+    "semver @ <local-file-url-omitted>",
+    "Send2Trash @ <local-file-url-omitted>",
+    "setuptools==83.0.0",
+    "shellingham @ <local-file-url-omitted>",
+    "shiboken6==6.11.0",
+    "sip @ <local-file-url-omitted>",
+    "six @ <local-file-url-omitted>",
+    "sklearn-compat @ <local-file-url-omitted>",
+    "smmap @ <local-file-url-omitted>",
+    "snowballstemmer @ <local-file-url-omitted>",
+    "sortedcontainers @ <local-file-url-omitted>",
+    "soupsieve @ <local-file-url-omitted>",
+    "Sphinx @ <local-file-url-omitted>",
+    "sphinxcontrib-applehelp @ <local-file-url-omitted>",
+    "sphinxcontrib-devhelp @ <local-file-url-omitted>",
+    "sphinxcontrib-htmlhelp @ <local-file-url-omitted>",
+    "sphinxcontrib-jsmath @ <local-file-url-omitted>",
+    "sphinxcontrib-qthelp @ <local-file-url-omitted>",
+    "sphinxcontrib-serializinghtml @ <local-file-url-omitted>",
+    "spyder @ <local-file-url-omitted>",
+    "spyder-kernels @ <local-file-url-omitted>",
+    "SQLAlchemy @ <local-file-url-omitted>",
+    "stack_data @ <local-file-url-omitted>",
+    "starlette @ <local-file-url-omitted>",
+    "statsmodels @ <local-file-url-omitted>",
+    "streamlit @ <local-file-url-omitted>",
+    "superqt @ <local-file-url-omitted>",
+    "sympy @ <local-file-url-omitted>",
+    "tables @ <local-file-url-omitted>",
+    "tabulate @ <local-file-url-omitted>",
+    "tblib @ <local-file-url-omitted>",
+    "tenacity @ <local-file-url-omitted>",
+    "terminado @ <local-file-url-omitted>",
+    "text-unidecode @ <local-file-url-omitted>",
+    "textdistance @ <local-file-url-omitted>",
+    "threadpoolctl @ <local-file-url-omitted>",
+    "three-merge @ <local-file-url-omitted>",
+    "tifffile @ <local-file-url-omitted>",
+    "tinycss2 @ <local-file-url-omitted>",
+    "toml @ <local-file-url-omitted>",
+    "tomli @ <local-file-url-omitted>",
+    "tomli_w @ <local-file-url-omitted>",
+    "tomlkit @ <local-file-url-omitted>",
+    "toolz @ <local-file-url-omitted>",
+    "torch==2.14.1",
+    "# Editable install with no version control (torchtark==0.1.0)",
+    "-e d:\\dropbox\\study\\ms-phd\\phd-epfl\\doctoral proposal\\epfl\\small interesting research\\torchtark",
+    "-e git+https://github.com/JohnnyZPiggy/TorchYAND.git@1ee2a100db61bc3be62ced9cc7923f261b512b35#egg=torchyand",
+    "tornado @ <local-file-url-omitted>",
+    "tqdm @ <local-file-url-omitted>",
+    "traitlets @ <local-file-url-omitted>",
+    "truststore @ <local-file-url-omitted>",
+    "typer @ <local-file-url-omitted>",
+    "typing-inspection @ <local-file-url-omitted>",
+    "typing_extensions @ <local-file-url-omitted>",
+    "tzdata @ <local-file-url-omitted>",
+    "uc-micro-py @ <local-file-url-omitted>",
+    "ujson @ <local-file-url-omitted>",
+    "unearth @ <local-file-url-omitted>",
+    "urllib3 @ <local-file-url-omitted>",
+    "uvicorn @ <local-file-url-omitted>",
+    "watchdog @ <local-file-url-omitted>",
+    "wcwidth @ <local-file-url-omitted>",
+    "webencodings @ <local-file-url-omitted>",
+    "websocket-client @ <local-file-url-omitted>",
+    "websockets @ <local-file-url-omitted>",
+    "Werkzeug @ <local-file-url-omitted>",
+    "whatthepatch @ <local-file-url-omitted>",
+    "wheel==0.47.0",
+    "widgetsnbextension @ <local-file-url-omitted>",
+    "win_inet_pton @ <local-file-url-omitted>",
+    "winloop @ <local-file-url-omitted>",
+    "wrapt @ <local-file-url-omitted>",
+    "xarray @ <local-file-url-omitted>",
+    "xlwings @ <local-file-url-omitted>",
+    "xyzservices @ <local-file-url-omitted>",
+    "yapf @ <local-file-url-omitted>",
+    "yarl @ <local-file-url-omitted>",
+    "zict @ <local-file-url-omitted>",
+    "zipp @ <local-file-url-omitted>",
+    "zstandard @ <local-file-url-omitted>"
+  ],
+  "pip_freeze_raw_sha256": "c9b1a01b769cfd2f0cb6417d157197b3d0a3b5f1aa9b7287a18eb73f4496f7f5",
+  "distribution_versions": {
+    "Flask": "3.1.3",
+    "GitPython": "3.1.50",
+    "HeapDict": "1.0.1",
+    "ImageIO": "2.37.3",
+    "Jinja2": "3.1.6",
+    "Markdown": "3.10.2",
+    "MarkupSafe": "3.0.3",
+    "PyGithub": "2.9.1",
+    "PyJWT": "2.13.0",
+    "PyNaCl": "1.6.2",
+    "PyQt6": "6.11.0",
+    "PyQt6-WebEngine": "6.11.0",
+    "PyQt6_sip": "13.11.1",
+    "PySide6": "6.11.0 ",
+    "PySocks": "1.7.1",
+    "PyWavelets": "1.9.0",
+    "PyYAML": "6.0.3",
+    "Pygments": "2.20.0",
+    "QDarkStyle": "3.2.3",
+    "QtAwesome": "1.4.2",
+    "QtPy": "2.4.3",
+    "SQLAlchemy": "2.0.51",
+    "Send2Trash": "1.8.3",
+    "Sphinx": "9.1.0",
+    "Werkzeug": "3.1.6",
+    "aiobotocore": "3.7.0",
+    "aiodns": "3.6.1",
+    "aiohappyeyeballs": "2.6.2",
+    "aiohttp": "3.14.1",
+    "aioitertools": "0.12.0",
+    "aiosignal": "1.4.0",
+    "alabaster": "1.0.0",
+    "altair": "6.0.0",
+    "anaconda-anon-usage": "0.8.1",
+    "anaconda-auth": "0.15.1",
+    "anaconda-catalogs": "0.2.0",
+    "anaconda-channel-guide": "0.1.1",
+    "anaconda-cli-base": "0.9.1",
+    "anaconda-client": "1.14.1",
+    "anaconda-navigator": "2.7.1",
+    "anaconda-project": "0.13.2",
+    "annotated-doc": "0.0.4",
+    "annotated-types": "0.7.0",
+    "anyio": "4.12.1",
+    "archspec": "0.2.6",
+    "argon2-cffi": "25.1.0",
+    "argon2-cffi-bindings": "25.1.0",
+    "arrow": "1.4.0",
+    "astroid": "4.0.3",
+    "astropy": "8.0.1",
+    "astropy-iers-data": "0.2026.7.13.0.54.2",
+    "asttokens": "3.0.1",
+    "async-lru": "2.3.0",
+    "asyncssh": "2.21.1",
+    "attrs": "26.1.0",
+    "autopep8": "2.0.4",
+    "babel": "2.17.0",
+    "bcrypt": "5.0.0",
+    "beautifulsoup4": "4.15.0",
+    "binaryornot": "0.6.0",
+    "black": "26.5.1",
+    "bleach": "6.4.0",
+    "blinker": "1.9.0",
+    "bokeh": "3.9.1",
+    "boltons": "25.0.0",
+    "botocore": "1.43.0",
+    "brotlicffi": "1.2.0.0",
+    "build": "1.5.1",
+    "cachetools": "6.2.2",
+    "cattrs": "25.3.0",
+    "certifi": "2026.6.17",
+    "cffi": "2.1.0",
+    "chardet": "5.2.0",
+    "charset-normalizer": "3.4.7",
+    "click": "8.4.1",
+    "cloudpickle": "3.1.2",
+    "colorama": "0.4.6",
+    "colorcet": "3.2.1",
+    "comm": "0.2.3",
+    "conda": "26.5.3",
+    "conda-anaconda-telemetry": "0.3.0",
+    "conda-anaconda-tos": "0.2.2",
+    "conda-build": "26.5.0",
+    "conda-content-trust": "0.3.2",
+    "conda-libmamba-solver": "26.7.0",
+    "conda-lockfiles": "0.2.1",
+    "conda-pack": "0.9.1",
+    "conda-package-handling": "2.5.0",
+    "conda-pypi": "0.11.0",
+    "conda-rattler-solver": "0.1.1",
+    "conda-repo-cli": "1.0.173+2.gf8332ec",
+    "conda-self": "0.2.1",
+    "conda_index": "0.12.1",
+    "conda_package_streaming": "0.13.0",
+    "contourpy": "1.3.3",
+    "cookiecutter": "2.7.1",
+    "cryptography": "49.0.0",
+    "cycler": "0.12.1",
+    "dask": "2026.7.1",
+    "datashader": "0.19.1",
+    "debugpy": "1.8.21",
+    "decorator": "5.3.1",
+    "defusedxml": "0.7.1",
+    "diff-match-patch": "20200713",
+    "dill": "0.4.1",
+    "distributed": "2026.7.1",
+    "distro": "1.9.0",
+    "docstring-to-markdown": "0.17",
+    "docutils": "0.21.2",
+    "entrypoints": "0.4",
+    "et_xmlfile": "2.0.0",
+    "evalidate": "2.1.4",
+    "executing": "2.2.1",
+    "fastjsonschema": "2.21.2",
+    "filelock": "3.29.4",
+    "flake8": "7.3.0",
+    "fonttools": "4.63.0",
+    "frozendict": "2.4.7",
+    "frozenlist": "1.8.0",
+    "fsspec": "2026.4.0",
+    "gitdb": "4.0.12",
+    "gmpy2": "2.2.2",
+    "greenlet": "3.3.2",
+    "h11": "0.16.0",
+    "h5py": "3.16.0",
+    "holoviews": "1.23.1",
+    "httpcore": "1.0.9",
+    "httptools": "0.7.1",
+    "httpx": "0.28.1",
+    "hvplot": "0.12.2",
+    "idna": "3.18",
+    "imagesize": "1.4.1",
+    "imbalanced-learn": "0.14.2",
+    "importlib_metadata": "8.7.1",
+    "inflection": "0.5.1",
+    "iniconfig": "2.3.0",
+    "installer": "1.0.1",
+    "intake": "2.0.9",
+    "intervaltree": "3.2.1",
+    "ipykernel": "6.31.0",
+    "ipympl": "0.9.8",
+    "ipython": "9.15.0",
+    "ipython_pygments_lexers": "1.1.1",
+    "ipywidgets": "8.1.7",
+    "isort": "8.0.1",
+    "itsdangerous": "2.2.0",
+    "jaraco.classes": "3.4.0",
+    "jaraco.context": "6.1.0",
+    "jaraco.functools": "4.4.0",
+    "jedi": "0.19.2",
+    "jellyfish": "1.2.1",
+    "jmespath": "1.1.0",
+    "joblib": "1.5.3",
+    "json5": "0.12.1",
+    "jsonpatch": "1.33",
+    "jsonpointer": "3.1.1",
+    "jsonschema": "4.25.1",
+    "jsonschema-specifications": "2025.9.1",
+    "jupyter": "1.1.1",
+    "jupyter-console": "6.6.3",
+    "jupyter-events": "0.12.1",
+    "jupyter-lsp": "2.3.0",
+    "jupyter_client": "8.9.1",
+    "jupyter_core": "5.9.1",
+    "jupyter_server": "2.20.0",
+    "jupyter_server_terminals": "0.5.4",
+    "jupyterlab": "4.5.9",
+    "jupyterlab_pygments": "0.3.0",
+    "jupyterlab_server": "2.28.0",
+    "jupyterlab_widgets": "3.0.16",
+    "keyring": "25.6.0",
+    "kiwisolver": "1.4.9",
+    "lazy-loader": "0.5",
+    "lckr_jupyterlab_variableinspector": "3.2.4",
+    "libarchive-c": "5.1",
+    "libmambapy": "2.3.2",
+    "librt": "0.8.1",
+    "lief": "0.17.0",
+    "linkify-it-py": "2.1.0",
+    "llvmlite": "0.47.0",
+    "lmdb": "1.7.5",
+    "locket": "1.0.0",
+    "lsprotocol": "2025.0.0",
+    "lz4": "4.4.5",
+    "markdown-it-py": "4.0.0",
+    "matplotlib": "3.11.0",
+    "matplotlib-inline": "0.2.2",
+    "mccabe": "0.7.0",
+    "mdit-py-plugins": "0.6.1",
+    "mdurl": "0.1.2",
+    "menuinst": "2.5.2",
+    "mistune": "3.3.3",
+    "mkl-service": "2.7.2",
+    "mkl_fft": "2.2.0",
+    "mkl_random": "1.4.1",
+    "more-itertools": "11.0.2",
+    "mpi4py": "4.0.3",
+    "mpmath": "1.3.0",
+    "msgpack": "1.2.1",
+    "multidict": "6.7.1",
+    "multipledispatch": "1.0.0",
+    "mypy": "1.20.2",
+    "mypy_extensions": "1.1.0",
+    "narwhals": "2.23.0",
+    "navigator-updater": "0.6.0",
+    "nbclient": "0.11.0",
+    "nbconvert": "7.17.1",
+    "nbformat": "5.10.4",
+    "nest-asyncio": "1.5.1",
+    "networkx": "3.6.1",
+    "nh3": "0.3.6",
+    "nltk": "3.10.0",
+    "notebook": "7.5.7",
+    "notebook_shim": "0.2.4",
+    "numba": "0.65.1",
+    "numexpr": "2.14.1",
+    "numpy": "2.4.6",
+    "numpydoc": "1.10.0",
+    "openpyxl": "3.1.5",
+    "packaging": "26.0",
+    "pandas": "3.0.3",
+    "pandocfilters": "1.5.1",
+    "panel": "1.9.3",
+    "panel-material-ui": "0.14.0",
+    "param": "2.4.1",
+    "parso": "0.8.7",
+    "partd": "1.4.2",
+    "pathspec": "1.0.4",
+    "patsy": "1.0.2",
+    "pexpect": "4.9.0",
+    "pickleshare": "0.7.5",
+    "pillow": "12.3.0",
+    "pip": "26.1.2",
+    "pkce": "1.0.3",
+    "pkginfo": "1.12.1.2",
+    "platformdirs": "4.9.4",
+    "plotly": "6.7.0",
+    "pluggy": "1.6.0",
+    "prometheus_client": "0.24.1",
+    "prompt_toolkit": "3.0.52",
+    "propcache": "0.4.1",
+    "protobuf": "6.33.5",
+    "psutil": "7.2.2",
+    "ptyprocess": "0.7.0",
+    "pure_eval": "0.2.3",
+    "py-cpuinfo": "9.0.0",
+    "py-rattler": "0.25.0",
+    "py-rattler-build": "0.65.1",
+    "pyarrow": "23.0.1",
+    "pycares": "4.10.0",
+    "pycodestyle": "2.14.0",
+    "pycosat": "0.6.6",
+    "pycparser": "3.0",
+    "pyct": "0.6.0",
+    "pydantic": "2.13.4",
+    "pydantic-settings": "2.14.2",
+    "pydantic_core": "2.46.4",
+    "pydocstyle": "6.3.0",
+    "pydoe": "1.6.0",
+    "pyerfa": "2.0.1.5",
+    "pyflakes": "3.4.0",
+    "pylint": "4.0.6",
+    "pylint-venv": "3.0.3",
+    "pyls-spyder": "0.4.0",
+    "pyodbc": "5.3.0",
+    "pyparsing": "3.2.5",
+    "pyproject_hooks": "1.2.0",
+    "pytest": "9.0.3",
+    "python-dateutil": "2.9.0.post0",
+    "python-dotenv": "1.2.1",
+    "python-json-logger": "4.0.0",
+    "python-lsp-black": "2.0.0",
+    "python-lsp-jsonrpc": "1.1.2",
+    "python-lsp-ruff": "2.3.0",
+    "python-lsp-server": "1.14.0",
+    "python-multipart": "0.0.32",
+    "python-slugify": "8.0.4",
+    "pytokens": "0.4.1",
+    "pytoolconfig": "1.3.1",
+    "pytz": "2026.2",
+    "pyuca": "1.2",
+    "pyviz_comms": "3.0.6",
+    "pywin32": "312",
+    "pywin32-ctypes": "0.2.3",
+    "pywinpty": "3.0.2",
+    "pyzmq": "27.1.0",
+    "qstylizer": "0.2.4",
+    "qtconsole": "5.7.2",
+    "readchar": "4.2.2",
+    "referencing": "0.37.0",
+    "regex": "2026.5.9",
+    "requests": "2.34.2",
+    "requests-toolbelt": "1.0.0",
+    "rfc3339_validator": "0.1.4",
+    "rfc3986_validator": "0.1.1",
+    "rich": "15.0.0",
+    "roman-numerals": "3.1.0",
+    "rope": "1.14.0",
+    "rpds-py": "0.28.0",
+    "rtree": "1.4.1",
+    "ruamel.yaml": "0.18.16",
+    "ruamel.yaml.clib": "0.2.14",
+    "ruff": "0.15.1",
+    "s3fs": "2026.4.0",
+    "scikit-image": "0.26.0",
+    "scikit-learn": "1.9.0",
+    "scipy": "1.18.0",
+    "seaborn": "0.13.2",
+    "semver": "3.0.4",
+    "setuptools": "83.0.0",
+    "shellingham": "1.5.4",
+    "shiboken6": "6.11.0 ",
+    "sip": "6.15.1",
+    "six": "1.17.0",
+    "sklearn-compat": "0.1.6",
+    "smmap": "4.0.0",
+    "snowballstemmer": "3.1.1",
+    "sortedcontainers": "2.4.0",
+    "soupsieve": "2.8.4",
+    "sphinxcontrib-applehelp": "2.0.0",
+    "sphinxcontrib-devhelp": "2.0.0",
+    "sphinxcontrib-htmlhelp": "2.1.0",
+    "sphinxcontrib-jsmath": "1.0.1",
+    "sphinxcontrib-qthelp": "2.0.0",
+    "sphinxcontrib-serializinghtml": "2.0.0",
+    "spyder": "6.1.5",
+    "spyder-kernels": "3.1.5",
+    "stack_data": "0.6.3",
+    "starlette": "1.3.1",
+    "statsmodels": "0.14.6",
+    "streamlit": "1.58.0",
+    "superqt": "0.8.1",
+    "sympy": "1.14.0",
+    "tables": "3.11.1",
+    "tabulate": "0.10.0",
+    "tblib": "3.2.2",
+    "tenacity": "9.1.4",
+    "terminado": "0.18.1",
+    "text-unidecode": "1.3",
+    "textdistance": "4.6.3",
+    "threadpoolctl": "3.5.0",
+    "three-merge": "0.1.1",
+    "tifffile": "2026.6.1",
+    "tinycss2": "1.5.1",
+    "toml": "0.10.2",
+    "tomli": "2.4.0",
+    "tomli_w": "1.2.0",
+    "tomlkit": "0.15.1",
+    "toolz": "1.1.0",
+    "torch": "2.14.1",
+    "torchtark": "0.1.0",
+    "torchyand": "0.1.0",
+    "tornado": "6.5.7",
+    "tqdm": "4.68.2",
+    "traitlets": "5.15.0",
+    "truststore": "0.10.4",
+    "typer": "0.25.1",
+    "typing-inspection": "0.4.2",
+    "typing_extensions": "4.16.0",
+    "tzdata": "2026.2",
+    "uc-micro-py": "2.0.0",
+    "ujson": "5.13.0",
+    "unearth": "0.18.2",
+    "urllib3": "2.7.0",
+    "uvicorn": "0.40.0",
+    "watchdog": "6.0.0",
+    "wcwidth": "0.8.2",
+    "webencodings": "0.5.1",
+    "websocket-client": "1.8.0",
+    "websockets": "16.0",
+    "whatthepatch": "1.0.7",
+    "wheel": "0.47.0",
+    "widgetsnbextension": "4.0.14",
+    "win_inet_pton": "1.1.0",
+    "winloop": "0.6.3",
+    "wrapt": "2.2.1",
+    "xarray": "2026.7.0",
+    "xlwings": "0.36.0",
+    "xyzservices": "2026.3.0",
+    "yapf": "0.43.0",
+    "yarl": "1.24.2",
+    "zict": "3.0.0",
+    "zipp": "3.23.0",
+    "zstandard": "0.25.0"
+  },
+  "commands": {
+    "argv": [
+      "<E0_TASK_ROOT>\\checkout\\experiments\\reference_e0\\run_reference.py",
+      "--wheel",
+      "<E0_TASK_ROOT>\\wheel\\pydoe-1.6.0-py3-none-any.whl"
+    ],
+    "cwd": "<E0_TASK_ROOT>\\checkout",
+    "script_sha256": "9ec7ea4be6c4fc5d4d7dbfd41aea9356e93dd28d8c243134dd2b78fd1c5ab788"
+  },
+  "independent_smolyak_different_target": [
+    {
+      "level": 0,
+      "nodes": 1,
+      "sum_weights": "1",
+      "x2y2": "1/16",
+      "negative_weights": 0,
+      "rule": [
+        {
+          "point": [
+            "1/2",
+            "1/2"
+          ],
+          "weight": "1"
+        }
+      ]
+    },
+    {
+      "level": 1,
+      "nodes": 5,
+      "sum_weights": "1",
+      "x2y2": "5/48",
+      "negative_weights": 0,
+      "rule": [
+        {
+          "point": [
+            "0",
+            "1/2"
+          ],
+          "weight": "1/6"
+        },
+        {
+          "point": [
+            "1/2",
+            "0"
+          ],
+          "weight": "1/6"
+        },
+        {
+          "point": [
+            "1/2",
+            "1/2"
+          ],
+          "weight": "1/3"
+        },
+        {
+          "point": [
+            "1/2",
+            "1"
+          ],
+          "weight": "1/6"
+        },
+        {
+          "point": [
+            "1",
+            "1/2"
+          ],
+          "weight": "1/6"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "nodes": 13,
+      "sum_weights": "1",
+      "x2y2": "1/9",
+      "negative_weights": 1,
+      "rule": [
+        {
+          "point": [
+            "0",
+            "0"
+          ],
+          "weight": "1/36"
+        },
+        {
+          "point": [
+            "0",
+            "1/2"
+          ],
+          "weight": "1/45"
+        },
+        {
+          "point": [
+            "0",
+            "1"
+          ],
+          "weight": "1/36"
+        },
+        {
+          "point": [
+            "1/4",
+            "1/2"
+          ],
+          "weight": "16/45"
+        },
+        {
+          "point": [
+            "1/2",
+            "0"
+          ],
+          "weight": "1/45"
+        },
+        {
+          "point": [
+            "1/2",
+            "1/4"
+          ],
+          "weight": "16/45"
+        },
+        {
+          "point": [
+            "1/2",
+            "1/2"
+          ],
+          "weight": "-28/45"
+        },
+        {
+          "point": [
+            "1/2",
+            "3/4"
+          ],
+          "weight": "16/45"
+        },
+        {
+          "point": [
+            "1/2",
+            "1"
+          ],
+          "weight": "1/45"
+        },
+        {
+          "point": [
+            "3/4",
+            "1/2"
+          ],
+          "weight": "16/45"
+        },
+        {
+          "point": [
+            "1",
+            "0"
+          ],
+          "weight": "1/36"
+        },
+        {
+          "point": [
+            "1",
+            "1/2"
+          ],
+          "weight": "1/45"
+        },
+        {
+          "point": [
+            "1",
+            "1"
+          ],
+          "weight": "1/36"
+        }
+      ]
+    }
+  ],
+  "scipy_torch_sobol_max_abs": 0.0,
+  "gpu": "NOT_RUN",
+  "performance": "NOT_RUN"
+}

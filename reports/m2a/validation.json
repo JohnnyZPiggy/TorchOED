@@ -1,0 +1,142 @@
+{
+  "tested_sha": "9619fb24eb8898ad667b1c1d013ba57e8f0023bc",
+  "source_sha256": {
+    "pyproject.toml": "fd34a9992e2611cdcc72a5f64b5a6ebcb55296f4e6f246f6a090aa514259d14d",
+    "src/torchoed/__init__.py": "ccc843ca2ae30e0d5582b24162344a9fb89f0f7e21f6dcfd3155ca055cd598e3",
+    "src/torchoed/_smoke.py": "b5e6eccd3384d6cf727ae3d0f075ae2064aacb35c96309a339e7493ae5c5fbca",
+    "src/torchoed/_validation.py": "78e2981a0b6a91d9a6e666c47265b3c9c07ab18402b21a79a56964d1f78d31ff",
+    "src/torchoed/criteria.py": "6df707495530475222620ab23f22eed705b3cbfa5c56f9d344f67bb3a78c0fc1",
+    "src/torchoed/factorial.py": "513ff4c7332b8e8ccecc130009e2918fc7508fd91f5feb0d814fffd16db0c8f4",
+    "src/torchoed/features.py": "0807d767cc1d1eb255c24911aa3674e9998e550c87a91f428c016b902efdedd3",
+    "src/torchoed/information.py": "96b04634afee837446a3bd66f0354e474375d07597b2a58f718ae778b09ba598",
+    "src/torchoed/sampling.py": "7f9cf08087749fdc1792b508710807230e619e4b23fe26a72b6ead11b66bd48f",
+    "tests/fixtures/e0_p1.json": "55591136aee0ddfa7374eb83561fdb9a4a7d4a6c4d96e03be4fd75079aae590f",
+    "tests/test_m1.py": "1e2610976debf5b4f01dd59f05d12d0651c8214be81b883c598d888f17bd18b6",
+    "tests/test_m2a.py": "3553315e066c71853d9b0001e5079767e2b71af91d649562fe4c26462526bb0d",
+    "tests/test_smoke.py": "c95f0568f5befa7a4a976e5a4cefa214898c7848cfb6481c00edbdd457ea6b23",
+    "tools/validate_m1.py": "9a4ed7c52fb604f4721d022f2b37606952bce7870644367906848b0973e699c3",
+    "tools/validate_m2a.py": "5120c1fe95a72b87490c7066b109a07d3063026d25714a840201d3b8d9ca40dc"
+  },
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+  "executable": "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "torch": "2.14.1+cpu",
+  "cuda_build": null,
+  "device": "cpu",
+  "commands": [
+    {
+      "name": "pytest",
+      "argv": [
+        "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml=<TASK_ROOT>\\validation\\pytest.xml"
+      ],
+      "cwd": "<TASK_ROOT>\\checkout",
+      "timeout_seconds": 180,
+      "elapsed_seconds": 5.184847593307495,
+      "exit_code": 0
+    },
+    {
+      "name": "wheel_build",
+      "argv": [
+        "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "wheel",
+        "--no-deps",
+        "--no-build-isolation",
+        "--wheel-dir",
+        "<TASK_ROOT>\\validation\\wheel",
+        "."
+      ],
+      "cwd": "<TASK_ROOT>\\checkout",
+      "timeout_seconds": 120,
+      "elapsed_seconds": 3.77679181098938,
+      "exit_code": 0
+    },
+    {
+      "name": "wheel_venv",
+      "argv": [
+        "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "venv",
+        "--system-site-packages",
+        "<TASK_ROOT>\\validation\\wheel-venv"
+      ],
+      "cwd": "<TASK_ROOT>\\validation",
+      "timeout_seconds": 120,
+      "elapsed_seconds": 6.675637483596802,
+      "exit_code": 0
+    },
+    {
+      "name": "wheel_install",
+      "argv": [
+        "<TASK_ROOT>\\validation\\wheel-venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "<TASK_ROOT>\\validation\\wheel\\torchoed-0.0.1-py3-none-any.whl"
+      ],
+      "cwd": "<TASK_ROOT>\\validation",
+      "timeout_seconds": 120,
+      "elapsed_seconds": 2.9983773231506348,
+      "exit_code": 0
+    },
+    {
+      "name": "outside_checkout_wheel_smoke",
+      "argv": [
+        "<TASK_ROOT>\\validation\\wheel-venv\\Scripts\\python.exe",
+        "-c",
+        "import importlib.util,torch,torchoed\nassert importlib.util.find_spec('pydoe') is None\nassert 'site-packages' in torchoed.__file__\nassert len(torchoed.__all__)==10\nassert torchoed.exact_information(torch.tensor([[1.,-1.],[1.,1.]],dtype=torch.float64),torch.tensor([0,1])).tolist()==[[2.,0.],[0.,2.]]\nM=torch.tensor([[2.,0.],[0.,8.]],dtype=torch.float64)\nassert abs(torchoed.d_optimality(M).item()-2.772588722239781)<1e-9\nassert abs(torchoed.a_optimality(M).item()+.625)<1e-9\nassert torchoed.e_optimality(M).item()==2\nassert torchoed.weighted_information(torch.eye(2,dtype=torch.float64),torch.tensor([.5,.5],dtype=torch.float64)).tolist()==[[.5,0.],[0.,.5]]\nassert torchoed.full_factorial((2,3)).tolist()==[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]]\nassert torchoed.polynomial_features(torchoed.ff2n(2)).shape==(4,6)\nassert torchoed.lhs(5,3,generator=torch.Generator().manual_seed(4)).shape==(5,3)\nassert torchoed.sobol(3,2).shape==(3,2)\nprint('PASS',torchoed.__file__,torch.__version__)\n"
+      ],
+      "cwd": "<TASK_ROOT>\\validation",
+      "timeout_seconds": 60,
+      "elapsed_seconds": 2.8500611782073975,
+      "exit_code": 0
+    }
+  ],
+  "scientific_performance": "NOT_RUN",
+  "gpu": "NOT_RUN_USER_CPU_ONLY",
+  "actions": "NOT_RUN_USER_PROHIBITED",
+  "environment": "fresh task venv with system-site-packages; not hermetic",
+  "gates": {
+    "A1": "PASS",
+    "A2": "PASS",
+    "A3": "PASS",
+    "A4": "PASS",
+    "A5": "PASS",
+    "A6": "PASS",
+    "A7": "PASS",
+    "A8": "PASS",
+    "A9": "PASS",
+    "A10": "PASS",
+    "A11": "PASS",
+    "A12": "PASS"
+  },
+  "pytest_testcases": 40,
+  "wheel_sha256": "b4d53d0a2d18b8693182d42cfb965c586fd75ab54410d7d3739abed805017917",
+  "floating_errors": {
+    "torch.float64": {
+      "errors": {
+        "D": 2.220446049250313e-16,
+        "A": 2.220446049250313e-16,
+        "E": 0.0
+      },
+      "atol": 1e-09,
+      "rtol": 1e-09
+    },
+    "torch.float32": {
+      "errors": {
+        "D": 1.9834087483516782e-08,
+        "A": 7.947285962650597e-08,
+        "E": 0.0
+      },
+      "atol": 1e-05,
+      "rtol": 1e-05
+    }
+  },
+  "status": "PASS"
+}

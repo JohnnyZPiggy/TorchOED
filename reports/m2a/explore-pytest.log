@@ -1,0 +1,31 @@
+................................F.......                                 [100%]
+================================== FAILURES ===================================
+___________________ test_A12_actual_e0_vs_separate_negative ___________________
+
+    def test_A12_actual_e0_vs_separate_negative():
+        fixture = json.loads((Path(__file__).parent/'fixtures/e0_p1.json').read_text())
+        assert fixture['source_sha256'] == '34ef4a2784ef6f5c528032377d6c0830f1a3bb986fbb21404a724a48a99a458f'
+        positive = fixture['C']
+        negative = [[a,b,c,a*b*c] for a,b,c in itertools.product((-1,1), repeat=3)] + positive[8:]
+        for rows, rank, det in ((positive,15,18014398509481984),(negative,12,0)):
+            features = scalar_features(rows)
+            assert exact_rank_det(features) == (rank,det)
+            f = polynomial_features(t(rows))
+            assert torch.equal(f, t(features))
+            M = exact_information(f, torch.arange(20))
+            independent_gram = t([[sum(r[i]*r[j] for r in features) for j in range(15)] for i in range(15)])
+            assert torch.equal(M, independent_gram)
+            assert torch.linalg.matrix_rank(M).item() == rank
+            if det:
+                close(d_optimality(M), math.log(det))
+                assert torch.linalg.cholesky_ex(M).info.item() == 0
+            else:
+                for score in SCORES[:2]:
+>                   with pytest.raises(ValueError):
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E                   Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_m2a.py:160: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_m2a.py::test_A12_actual_e0_vs_separate_negative - Failed: D...
+1 failed, 39 passed in 3.86s

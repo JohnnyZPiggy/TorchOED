@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "tested_sha": "9619fb24eb8898ad667b1c1d013ba57e8f0023bc",
+  "gates": {
+    "A1": "PASS",
+    "A2": "PASS",
+    "A3": "PASS",
+    "A4": "PASS",
+    "A5": "PASS",
+    "A6": "PASS",
+    "A7": "PASS",
+    "A8": "PASS",
+    "A9": "PASS",
+    "A10": "PASS",
+    "A11": "PASS",
+    "A12": "PASS"
+  },
+  "floating_errors": {
+    "torch.float64": {
+      "errors": {
+        "D": 2.220446049250313e-16,
+        "A": 2.220446049250313e-16,
+        "E": 0.0
+      },
+      "atol": 1e-09,
+      "rtol": 1e-09
+    },
+    "torch.float32": {
+      "errors": {
+        "D": 1.9834087483516782e-08,
+        "A": 7.947285962650597e-08,
+        "E": 0.0
+      },
+      "atol": 1e-05,
+      "rtol": 1e-05
+    }
+  }
+}

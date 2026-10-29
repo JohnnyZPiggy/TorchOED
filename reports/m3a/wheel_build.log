@@ -1,0 +1,9 @@
+Processing .\.
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torchoed
+  Building wheel for torchoed (pyproject.toml): started
+  Building wheel for torchoed (pyproject.toml): finished with status 'done'
+  Created wheel for torchoed: filename=torchoed-0.0.1-py3-none-any.whl size=12308 sha256=ac72b152c07cc342e492bb3be6eea873aa391524666fd5845e121e57a27446e0
+  Stored in directory: <D_BUILD_TEMP>\pip-ephem-wheel-cache-fkjz1nhu\wheels\7a\0c\34\6adee824724104bd7629b62a3725ad3bc7709431a862790ff3
+Successfully built torchoed

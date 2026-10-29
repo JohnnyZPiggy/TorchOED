@@ -1,0 +1,72 @@
+{
+  "base_sha": "5abafc65ae464a36c6d830136902830f254b9a3e",
+  "tested_sha": "4de56c1b7d60c76aaa18a443935240a60b197f60",
+  "branch": "feat/9-m3a-fedorov-exchange",
+  "cpu_gates": {
+    "F1": "PASS",
+    "F2": "PASS",
+    "F3": "PASS",
+    "F4": "PASS",
+    "F5": "PASS",
+    "F6": "PASS",
+    "F7": "PASS",
+    "F8": "PASS",
+    "F9": "PASS",
+    "F10": "PASS",
+    "F11": "PASS",
+    "F12": "PASS"
+  },
+  "protected_history_and_existing_source_unchanged": [
+    "reports/m0",
+    "reports/m1",
+    "reports/m2a",
+    "src/torchoed/information.py",
+    "src/torchoed/criteria.py",
+    "tests/test_m2a.py",
+    "tools/validate_m2a.py",
+    "LICENSE",
+    "tests/test_m1.py",
+    "tests/test_smoke.py",
+    "tests/fixtures/e0_p1.json",
+    "src/torchoed/factorial.py",
+    "src/torchoed/features.py",
+    "src/torchoed/sampling.py",
+    "src/torchoed/_validation.py",
+    "tools/validate_m1.py",
+    "docs/M1_M2_NUMERICAL_CONTRACT.md",
+    "docs/M2_IMPLEMENTATION_GATE.md",
+    "docs/RELEASE_ROADMAP.md"
+  ],
+  "failure_history": [
+    {
+      "stage": "EXPLORE (uncommitted)",
+      "test": "integer6 independent exact best swap",
+      "result": "53 PASS / 1 FAIL: insignificant positive roundoff gain blocked clear best move",
+      "repair": "one numerical repair: separate marginal gains; only accept verified best with heuristic lower gain exceeding marginal upper gains; unresolved cases still stop",
+      "raw_log": "explore-pytest.log",
+      "targeted_repair": "14 passed; repair1-pytest.log",
+      "final_suite": "54 passed; pytest.log"
+    }
+  ],
+  "additional_prepublication_audit": "major-tensor tile workspace estimate increased to account for simultaneous expression temporaries; constrained-budget regression; final committed-source validation rerun",
+  "NOT_RUN": [
+    "GPU/Colab",
+    "Actions",
+    "paid services",
+    "benchmarks",
+    "PyDOE call",
+    "float32 search",
+    "batched search",
+    "M3-B/modified Fedorov/DETMAX/k-swap",
+    "autograd-through-selection",
+    "rigorous interval/exact local certificate",
+    "other OS/torch versions"
+  ],
+  "status": "M3A_F1_F12_CPU_ORACLES_PASS / TORCH_ONLY / ARCHITECT_REVIEW_PENDING",
+  "evidence_assembly_note": {
+    "observed_error": "source identity assertion for src/torchoed/exchange.py",
+    "cause": "assembler initially read intermediate validation JSON after final-source workspace audit",
+    "resolution": "corrected assembler to validation-final; identity guard then passed; no runtime or oracle changed",
+    "trace_location": "tool output; this is an assembly failure, not a numerical/test failure"
+  }
+}

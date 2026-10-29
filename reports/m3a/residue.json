@@ -1,0 +1,47 @@
+{
+  "dropbox_scratch": {
+    "path": "<TASK_ROOT>\\scratch",
+    "file_count": 0,
+    "bytes": 0
+  },
+  "D_build_temp": {
+    "path": "<D_BUILD_TEMP>",
+    "file_count": 0,
+    "bytes": 0
+  },
+  "editable_env_retained": {
+    "path": "<TASK_ROOT>\\venv",
+    "file_count": 883,
+    "bytes": 12381214
+  },
+  "validation_env_wheel_logs_retained": {
+    "path": "<TASK_ROOT>\\validation-final",
+    "file_count": 909,
+    "bytes": 12487125
+  },
+  "pip_cache_retained": {
+    "path": "<TASK_ROOT>\\pip-cache",
+    "file_count": 0,
+    "bytes": 0
+  },
+  "intermediate_validation_retained": {
+    "path": "<TASK_ROOT>/validation",
+    "file_count": 909,
+    "bytes": 12484588
+  },
+  "build_outputs_retained": {
+    "path": "<TASK_ROOT>/checkout/build",
+    "file_count": 9,
+    "bytes": 22240
+  },
+  "build_metadata_retained": {
+    "path": "<TASK_ROOT>/checkout/src/torchoed.egg-info",
+    "file_count": 5,
+    "bytes": 2496
+  },
+  "pytest_cache_retained": {
+    "path": "<TASK_ROOT>/checkout/.pytest_cache",
+    "file_count": 5,
+    "bytes": 3438
+  }
+}

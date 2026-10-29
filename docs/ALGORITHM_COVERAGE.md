@@ -1,12 +1,12 @@
 # Frozen upstream API coverage ledger
 
-**Frozen 91-export inventory with scoped M1/M2-A acceptance.** Exactly 91 rows below correspond one-to-one to PyDOE1.6.0 root __all__. 89 function definitions and two classes (one Enum) are not 91 distinct algorithms. Nine rows below have scoped M1/M2-A implementations; this is not complete upstream equivalence. The private M0 Gram smoke helper does not implement the planned information_matrix API.
+**Frozen 91-export inventory with scoped M1/M2-A/M3-A acceptance.** Exactly 91 rows below correspond one-to-one to PyDOE1.6.0 root __all__. 89 function definitions and two classes (one Enum) are not 91 distinct algorithms. Ten rows below have scoped M1/M2-A/M3-A implementations; this is not complete upstream equivalence. The private M0 Gram smoke helper does not implement the planned information_matrix API.
 
 Baseline: tag v1.6.0 resolves directly to commit 866d3f411942cb662af8054562dc1f7e07372401. Reused wheel was rehashed; sdist was downloaded/hash-checked and selected source/metadata bytes compared with pinned Git. See [upstream-baseline.json](upstream-baseline.json) for actual SHA-256s, Git blob IDs and comparison scope. PyDOE is BSD-3-Clause; TorchOED's existing MIT LICENSE is unchanged. No upstream implementation copied into src/.
 
 AST inventory resolves each root re-export to its defining function/class in the verified wheel without importing PyDOE in the M0 runtime. Definition/type/source inspection and the read research dossier support classification; they do not establish complete algorithm equivalence. Proposed M1–M5 priorities are backlog suggestions, not execution authorization.
 
-Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later scoped milestone; DEFERRED=requires later scope/oracle; IMPLEMENTED=real public implementation; VERIFIED=implementation with recorded acceptance. Nine rows are VERIFIED only for subsets documented in [M1_API.md](M1_API.md) and [M2_API.md](M2_API.md); all other rows retain PLANNED/DEFERRED. Research MATH_CPU and E0 package observations are separate evidence, not TorchOED feature statuses.
+Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later scoped milestone; DEFERRED=requires later scope/oracle; IMPLEMENTED=real public implementation; VERIFIED=implementation with recorded acceptance. Ten rows are VERIFIED only for subsets documented in [M1_API.md](M1_API.md), [M2_API.md](M2_API.md), and [M3_API.md](M3_API.md); all other rows retain PLANNED/DEFERRED. Research MATH_CPU and E0 package observations are separate evidence, not TorchOED feature statuses.
 
 ## Root exports — 91 rows
 
@@ -38,7 +38,7 @@ Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later sc
 | `expected_improvement` | acquisition criterion | GP/adaptive | M5 | DEFER stack; REUSE proven GP components if dispatched | DEFERRED | [sequential/acquisition.py:64](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/sequential/acquisition.py#L64) |
 | `extreme_vertices_design` | constructor algorithm | Mixture | M4 | BUILD simplex geometry; REUSE gather/broadcast | DEFERRED | [mixture/extreme_vertices.py:31](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/mixture/extreme_vertices.py#L31) |
 | `faure_sequence` | sampler/search | QMC | M5 | BUILD exact digit/lattice semantics; REUSE integer tensors | DEFERRED | [space_filling/quasi_random/faure.py:35](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/quasi_random/faure.py#L35) |
-| `fedorov` | search algorithm | OED | M3 | REUSE factorizations/tiled scores; BUILD exact-ID search policy | PLANNED | [optimal/algorithms.py:208](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/algorithms.py#L208) |
+| `fedorov` | search algorithm | OED | M3 | REUSE factorizations/tiled scores; BUILD exact-ID search policy | VERIFIED (fedorov_exchange; CPUfloat64 provided IDs, no repeats, numerical 1-swap only; no initializer/upstream parity) | [optimal/algorithms.py:208](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/algorithms.py#L208) |
 | `ff2n` | constructor algorithm | Factorial/blocking | M1 | REUSE cartesian/index/RNG operators; BUILD explicit ordering/features | VERIFIED (signed corners; frozen TorchOED order) | [factorial/factorial.py:102](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py#L102) |
 | `fisher_information` | matrix helper | OED | M2 | REUSE weighted GEMM/precision solves; DEFER dense-repeat semantics | DEFERRED | [optimal/fisher.py:56](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/fisher.py#L56) |
 | `fold` | transform helper | Factorial/blocking | M4 | BUILD combinatorics; REUSE integer indexing | DEFERRED | [factorial/fold.py:22](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/fold.py#L22) |
@@ -104,7 +104,7 @@ Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later sc
 | `v_optimality` | criterion | OED | M2 | REUSE linalg/solves; BUILD explicit criterion semantics | DEFERRED | [optimal/criterion.py:263](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/criterion.py#L263) |
 | `var_regression_matrix` | variance helper | Numerical helper | M2 | REUSE feature mapping/solves; BUILD explicit variance convention | DEFERRED | [utils/var_regression_matrix.py:21](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/utils/var_regression_matrix.py#L21) |
 
-Counts: 8 PLANNED + 74 DEFERRED + 9 scoped VERIFIED =91; no other implementation claims.
+Counts: 7 PLANNED + 74 DEFERRED + 10 scoped VERIFIED =91; no other implementation claims.
 
 ## Submodule-only definitions — separate from root coverage
 
@@ -132,4 +132,4 @@ Static scan found the following 11 unprefixed module-level function definitions 
 - Upstream information defaults normalized=True; D returns det instead of logdet; A uses negative inverse trace and may regularize; Jacobian scoring adds an internal ridge. Align definitions before any later oracle comparison.
 - E0 actual Small Composite rank15/15 supersedes the old rank12 hypothesis for the original wheel. The different D=ABC mathematical control is rank12.
 - E0 P4 grid-type comparisons are derived from actual calls; point counts/equal arrays are not weighted Smolyak validation. Niederreiter's frozen first-axis rank limitation and Doehlert shell limitations are named-source findings, not blanket equivalence checks.
-- M1 APIs outside the five scoped rows, M2 APIs outside the five M2-A exports and all M3 APIs, S/T, Fisher dense-covariance repeats, GP/BO, optimized LHS and strict sparse-grid construction remain unimplemented. The canonical [M1/M2 contract](M1_M2_NUMERICAL_CONTRACT.md) controls future semantics.
+- M1 APIs outside the five scoped rows, M2 APIs outside the five M2-A exports and M3 APIs other than scoped fedorov_exchange, S/T, Fisher dense-covariance repeats, GP/BO, optimized LHS and strict sparse-grid construction remain unimplemented. The canonical [M1/M2 contract](M1_M2_NUMERICAL_CONTRACT.md) controls future semantics.

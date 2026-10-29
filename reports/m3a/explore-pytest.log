@@ -1,0 +1,21 @@
+................................................F.....                   [100%]
+================================== FAILURES ===================================
+__________ test_exhaustive_integer_fixture_best_move_and_local_check __________
+
+    def test_exhaustive_integer_fixture_best_move_and_local_check():
+        rows=[[1,0,0],[1,1,0],[1,0,1],[1,1,1],[1,-1,0],[1,0,-1]]
+        all_designs=exhaustive(rows,4)
+        assert len(all_designs)==15
+        initial=[0,1,2,3]
+        expected=max(d for _,_,d in neighborhood(rows,initial))
+        one=run(rows,initial,max_iter=1)
+>       assert determinant(rows,one['ids'].tolist())==expected
+E       assert Fraction(4, 1) == Fraction(10, 1)
+E        +  where Fraction(4, 1) = determinant([[1, 0, 0], [1, 1, 0], [1, 0, 1], [1, 1, 1], [1, -1, 0], [1, 0, -1]], [0, 1, 2, 3])
+E        +    where [0, 1, 2, 3] = <built-in method tolist of Tensor object at 0x000001E689A4B7D0>()
+E        +      where <built-in method tolist of Tensor object at 0x000001E689A4B7D0> = tensor([0, 1, 2, 3]).tolist
+
+tests\test_m3a.py:160: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_m3a.py::test_exhaustive_integer_fixture_best_move_and_local_check
+1 failed, 53 passed in 3.78s

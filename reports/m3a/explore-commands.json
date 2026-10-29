@@ -1,0 +1,33 @@
+[
+  {
+    "name": "editable",
+    "argv": [
+      "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "install",
+      "--no-deps",
+      "--no-build-isolation",
+      "-e",
+      "."
+    ],
+    "cwd": "<TASK_ROOT>\\checkout",
+    "timeout": 120,
+    "elapsed": 6.026012659072876,
+    "exit_code": 0
+  },
+  {
+    "name": "pytest",
+    "argv": [
+      "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "--junitxml=<TASK_ROOT>\\evidence\\explore.xml"
+    ],
+    "cwd": "<TASK_ROOT>\\checkout",
+    "timeout": 180,
+    "elapsed": 5.443204879760742,
+    "exit_code": 1
+  }
+]

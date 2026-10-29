@@ -1,6 +1,6 @@
 # TorchOED
 
-Torch-only M1 constructors/features plus M2-A linear information and D/A/E criteria (Issue #7). CPU acceptance only; no optimizer or release claim.
+Torch-only M1 constructors/features, M2-A information/criteria and scoped M3-A Fedorov search (Issue #9). CPU acceptance only; experimental API, no release claim.
 
 ```powershell
 python -m pip install --no-build-isolation -e .
@@ -26,3 +26,5 @@ F = torch.tensor([[1.,-1.],[1.,0.],[1.,1.]], dtype=torch.float64)
 M = exact_information(F, torch.tensor([0,2]))  # diag(2,2), raw event count
 score = d_optimality(M)  # log(4), maximize; singular inputs raise
 ```
+
+M3-A adds `fedorov_exchange(F, ids)` for provided-initial-ID CPUfloat64 best-improvement search. [API/error/certificate policy](docs/M3_API.md), [CPU evidence](reports/m3a/ENGINEER_HANDOFF.md). Numerical 1-swap stopping is not global optimality or a rigorous certificate. No initializer, repeats, GPU or M3-B.

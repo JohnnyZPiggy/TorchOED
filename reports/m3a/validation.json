@@ -1,0 +1,134 @@
+{
+  "tested_sha": "4de56c1b7d60c76aaa18a443935240a60b197f60",
+  "source_sha256": {
+    "pyproject.toml": "fd34a9992e2611cdcc72a5f64b5a6ebcb55296f4e6f246f6a090aa514259d14d",
+    "src/torchoed/__init__.py": "afc537e4c69d7dc7c3c5bca58cbbfd4f3123da8b5eda02acb6b3d2728c9cad61",
+    "src/torchoed/_smoke.py": "b5e6eccd3384d6cf727ae3d0f075ae2064aacb35c96309a339e7493ae5c5fbca",
+    "src/torchoed/_validation.py": "78e2981a0b6a91d9a6e666c47265b3c9c07ab18402b21a79a56964d1f78d31ff",
+    "src/torchoed/criteria.py": "6df707495530475222620ab23f22eed705b3cbfa5c56f9d344f67bb3a78c0fc1",
+    "src/torchoed/exchange.py": "b139fa8b182c4c205fa2c5dc07dcc4b1c6431a9291314da942a0d5c71787eed8",
+    "src/torchoed/factorial.py": "513ff4c7332b8e8ccecc130009e2918fc7508fd91f5feb0d814fffd16db0c8f4",
+    "src/torchoed/features.py": "0807d767cc1d1eb255c24911aa3674e9998e550c87a91f428c016b902efdedd3",
+    "src/torchoed/information.py": "96b04634afee837446a3bd66f0354e474375d07597b2a58f718ae778b09ba598",
+    "src/torchoed/sampling.py": "7f9cf08087749fdc1792b508710807230e619e4b23fe26a72b6ead11b66bd48f",
+    "tests/fixtures/e0_p1.json": "55591136aee0ddfa7374eb83561fdb9a4a7d4a6c4d96e03be4fd75079aae590f",
+    "tests/oracle_exchange.py": "a1d8ba05b46e21d121738d0b958e1ac00a679d7f977559dd8a853ae3558bca59",
+    "tests/test_m1.py": "1e2610976debf5b4f01dd59f05d12d0651c8214be81b883c598d888f17bd18b6",
+    "tests/test_m2a.py": "3553315e066c71853d9b0001e5079767e2b71af91d649562fe4c26462526bb0d",
+    "tests/test_m3a.py": "afe2026e37a59a0ffd099a489edc0d2c2d1a8629356e14c83502c8e35ab3c2c7",
+    "tests/test_smoke.py": "c95f0568f5befa7a4a976e5a4cefa214898c7848cfb6481c00edbdd457ea6b23",
+    "tools/validate_m1.py": "9a4ed7c52fb604f4721d022f2b37606952bce7870644367906848b0973e699c3",
+    "tools/validate_m2a.py": "5120c1fe95a72b87490c7066b109a07d3063026d25714a840201d3b8d9ca40dc",
+    "tools/validate_m3a.py": "0ebb6a791a86ce47f7f8e9181dbc3882238bdb54e15ccb3fb34761493165be22"
+  },
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+  "executable": "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "torch": "2.14.1+cpu",
+  "cuda_build": null,
+  "device": "cpu",
+  "commands": [
+    {
+      "name": "pytest",
+      "argv": [
+        "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml=<TASK_ROOT>\\validation-final\\pytest.xml"
+      ],
+      "cwd": "<TASK_ROOT>\\checkout",
+      "timeout_seconds": 180,
+      "elapsed_seconds": 5.532042980194092,
+      "exit_code": 0
+    },
+    {
+      "name": "wheel_build",
+      "argv": [
+        "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "wheel",
+        "--no-deps",
+        "--no-build-isolation",
+        "--wheel-dir",
+        "<TASK_ROOT>\\validation-final\\wheel",
+        "."
+      ],
+      "cwd": "<TASK_ROOT>\\checkout",
+      "timeout_seconds": 120,
+      "elapsed_seconds": 4.004815101623535,
+      "exit_code": 0
+    },
+    {
+      "name": "wheel_venv",
+      "argv": [
+        "<TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "venv",
+        "--system-site-packages",
+        "<TASK_ROOT>\\validation-final\\wheel-venv"
+      ],
+      "cwd": "<TASK_ROOT>\\validation-final",
+      "timeout_seconds": 120,
+      "elapsed_seconds": 6.428272724151611,
+      "exit_code": 0
+    },
+    {
+      "name": "wheel_install",
+      "argv": [
+        "<TASK_ROOT>\\validation-final\\wheel-venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "<TASK_ROOT>\\validation-final\\wheel\\torchoed-0.0.1-py3-none-any.whl"
+      ],
+      "cwd": "<TASK_ROOT>\\validation-final",
+      "timeout_seconds": 120,
+      "elapsed_seconds": 3.2018327713012695,
+      "exit_code": 0
+    },
+    {
+      "name": "outside_checkout_wheel_smoke",
+      "argv": [
+        "<TASK_ROOT>\\validation-final\\wheel-venv\\Scripts\\python.exe",
+        "-c",
+        "import importlib.util,torch,torchoed\nassert importlib.util.find_spec('pydoe') is None\nassert 'site-packages' in torchoed.__file__\nassert len(torchoed.__all__)==11\nr=torchoed.fedorov_exchange(torch.tensor([[1.,0.],[0.,1.],[2.,0.]],dtype=torch.float64),torch.tensor([0,1]))\nassert r['ids'].tolist()==[2,1]\nassert r['stop_reason']=='LOCAL_1_SWAP_NUMERICAL'\nassert torchoed.exact_information(torch.tensor([[1.,-1.],[1.,1.]],dtype=torch.float64),torch.tensor([0,1])).tolist()==[[2.,0.],[0.,2.]]\nM=torch.tensor([[2.,0.],[0.,8.]],dtype=torch.float64)\nassert abs(torchoed.d_optimality(M).item()-2.772588722239781)<1e-9\nassert abs(torchoed.a_optimality(M).item()+.625)<1e-9\nassert torchoed.e_optimality(M).item()==2\nassert torchoed.weighted_information(torch.eye(2,dtype=torch.float64),torch.tensor([.5,.5],dtype=torch.float64)).tolist()==[[.5,0.],[0.,.5]]\nassert torchoed.full_factorial((2,3)).tolist()==[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]]\nassert torchoed.polynomial_features(torchoed.ff2n(2)).shape==(4,6)\nassert torchoed.lhs(5,3,generator=torch.Generator().manual_seed(4)).shape==(5,3)\nassert torchoed.sobol(3,2).shape==(3,2)\nprint('PASS',torchoed.__file__,torch.__version__)\n"
+      ],
+      "cwd": "<TASK_ROOT>\\validation-final",
+      "timeout_seconds": 60,
+      "elapsed_seconds": 2.7616140842437744,
+      "exit_code": 0
+    }
+  ],
+  "scientific_performance": "NOT_RUN",
+  "gpu": "NOT_RUN_USER_CPU_ONLY",
+  "actions": "NOT_RUN_USER_PROHIBITED",
+  "environment": "fresh task venv with system-site-packages; not hermetic",
+  "gates": {
+    "F1": "PASS",
+    "F2": "PASS",
+    "F3": "PASS",
+    "F4": "PASS",
+    "F5": "PASS",
+    "F6": "PASS",
+    "F7": "PASS",
+    "F8": "PASS",
+    "F9": "PASS",
+    "F10": "PASS",
+    "F11": "PASS",
+    "F12": "PASS"
+  },
+  "pytest_testcases": 54,
+  "wheel_sha256": "ac72b152c07cc342e492bb3be6eea873aa391524666fd5845e121e57a27446e0",
+  "oracle_cases": 4,
+  "floating_errors": {
+    "F1_logdet_error": 0.0,
+    "dtype": "float64",
+    "comparison_atol": 1e-09,
+    "comparison_rtol": 1e-09,
+    "float32": "NOT_RUN_OUT_OF_SCOPE"
+  },
+  "status": "PASS"
+}

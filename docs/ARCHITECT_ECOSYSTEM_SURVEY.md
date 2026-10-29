@@ -1,5 +1,7 @@
 # TorchOED — Algorithm Ecosystem Survey & Reuse-First Architecture Decisions
 
+> **Live status update 2026-10-29:** The original PyDOE 1.6.0 wheel has now been hash-verified and actually executed by Codex under [E0 Draft PR #3](https://github.com/JohnnyZPiggy/TorchOED/pull/3), superseding the earlier §24 network BLOCKED state for that *separate* environment. Architect independently confirmed actual 4-factor Small Composite quadratic rank **15/15**, not previous assumed 12/15; see Scientific Mentor §25. The survey's earlier installation and PR descriptions are historical.
+
 > **SAE V3.3 | Chief Architect | Research-only evidence memo | 2026-10-29**
 >
 > **Repository:** [JohnnyZPiggy/TorchOED](https://github.com/JohnnyZPiggy/TorchOED).

@@ -1,0 +1,27 @@
+{
+  "dropbox_scratch": {
+    "path": "<TASK_ROOT>\\scratch",
+    "file_count": 0,
+    "bytes": 0
+  },
+  "D_build_temp": {
+    "path": "<D_BUILD_TEMP>",
+    "file_count": 0,
+    "bytes": 0
+  },
+  "editable_env_retained": {
+    "path": "<TASK_ROOT>\\venv",
+    "file_count": 883,
+    "bytes": 12380770
+  },
+  "validation_env_wheel_logs_retained": {
+    "path": "<TASK_ROOT>\\validation",
+    "file_count": 906,
+    "bytes": 12445315
+  },
+  "pip_cache_retained": {
+    "path": "<TASK_ROOT>\\pip-cache",
+    "file_count": 0,
+    "bytes": 0
+  }
+}

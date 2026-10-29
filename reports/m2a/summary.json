@@ -1,0 +1,57 @@
+{
+  "base_sha": "d718b912f08caa59d6008e8f276b4145cc153918",
+  "tested_sha": "9619fb24eb8898ad667b1c1d013ba57e8f0023bc",
+  "branch": "feat/7-m2a-info-criteria",
+  "cpu_gates": {
+    "A1": "PASS",
+    "A2": "PASS",
+    "A3": "PASS",
+    "A4": "PASS",
+    "A5": "PASS",
+    "A6": "PASS",
+    "A7": "PASS",
+    "A8": "PASS",
+    "A9": "PASS",
+    "A10": "PASS",
+    "A11": "PASS",
+    "A12": "PASS"
+  },
+  "protected_history_and_M1_source_unchanged": [
+    "reports/m0",
+    "reports/m1",
+    "LICENSE",
+    "tests/test_m1.py",
+    "tests/test_smoke.py",
+    "tests/fixtures/e0_p1.json",
+    "src/torchoed/factorial.py",
+    "src/torchoed/features.py",
+    "src/torchoed/sampling.py",
+    "src/torchoed/_validation.py",
+    "tools/validate_m1.py",
+    "docs/M1_M2_NUMERICAL_CONTRACT.md",
+    "docs/M2_IMPLEMENTATION_GATE.md",
+    "docs/RELEASE_ROADMAP.md"
+  ],
+  "failure_history": [
+    {
+      "stage": "EXPLORE",
+      "test": "A12 D=ABC singular D/A",
+      "result": "FAIL: Cholesky returned success on exact rank12 Gram",
+      "repair": "one numerical repair: squared Cholesky pivots must exceed scale-aware tau; no ridge",
+      "raw_log": "explore-pytest.log",
+      "repaired_targeted_suite": "15 passed; repair1-pytest.log",
+      "final_suite": "40 passed; pytest.log"
+    }
+  ],
+  "NOT_RUN": [
+    "M3",
+    "GPU/Colab",
+    "Actions",
+    "paid services",
+    "benchmarks",
+    "new PyDOE call",
+    "E repeated-minimum-eigenvalue gradients (nonunique)",
+    "other OS/torch versions"
+  ],
+  "status": "M2A_A1_A12_CPU_ORACLES_PASS / TORCH_ONLY / ARCHITECT_REVIEW_PENDING"
+}

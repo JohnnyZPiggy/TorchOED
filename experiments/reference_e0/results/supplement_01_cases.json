@@ -1,0 +1,607 @@
+{
+  "supplement": "E0-CORRECTION-01",
+  "status": "PASS",
+  "tested_source_sha": "778db21ad78e770b4cd1ae0e703a6cb8a4ec0e2b",
+  "source_hashes": {
+    "supplement_01.py": {
+      "sha256": "4b50e8ef7d4017a7c0323fb21692f5bb2e7c59a62fc5ed4cdfc86c47934cd758",
+      "git_blob_sha1": "0f5de9f5d7bb390659b1391c43ed9dc529b46121"
+    },
+    "test_supplement_01.py": {
+      "sha256": "fda50f9ad536b45aca4dc8b23689b66ab9481e39d35de03c42dc0733f1965b6a",
+      "git_blob_sha1": "ad7a03e9cb90eae183c7cfe780656d0234e07a78"
+    },
+    "run_reference.py": {
+      "sha256": "9ec7ea4be6c4fc5d4d7dbfd41aea9356e93dd28d8c243134dd2b78fd1c5ab788",
+      "git_blob_sha1": "e23b851cf85282005d30f371c16a8eb4106aea0e"
+    },
+    "test_reference.py": {
+      "sha256": "2908e871963e3ef399dc419576042c5782f646bfe34c7bc6563f4accf229f23f",
+      "git_blob_sha1": "bd5f6cc5c4d24c3a1a92d35dc3343181410122da"
+    }
+  },
+  "original_archive": {
+    "frozen_head": "8a4f2e8cc51653594387196c9bac95279f1bbe3d",
+    "original_tested_source": "f5e9fde69fb31e5e4e9691158f213fe181c38260",
+    "manifest_sha256": "8f200ab9ea90f448bf718d000c7309fd990b24493a903457fc61d5e0ad4a0d95",
+    "original_manifest_entries_verified": 10,
+    "original_files_unchanged_including_manifest": 11,
+    "files": [
+      {
+        "path": ".gitattributes",
+        "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+        "git_blob_sha1": "fcadb2cf97913f58a2523f535336e725c6b59d1f"
+      },
+      {
+        "path": "README.md",
+        "sha256": "67f8b74846cc51735cb215c624d12b8f6205713df431e8ebd9c6687ab824cf2c",
+        "git_blob_sha1": "750df84b1c9e165ecb78845a30a580c287e4e1bd"
+      },
+      {
+        "path": "results/cases.json",
+        "sha256": "b2ae8a86792a7121eb302ec93309a52400f4e4159781ea08508413f55f7b366b",
+        "git_blob_sha1": "c7f789a73ed777b1c53b2425f7e9e954d4abbe04"
+      },
+      {
+        "path": "results/commands.json",
+        "sha256": "043fbe4f4132dc2aac3fc3660bcf733a1347420c956e613926fe6a39db82615a",
+        "git_blob_sha1": "1f541eee8ddd8e214894fd8c6dbe18accd64a7ca"
+      },
+      {
+        "path": "results/environment.json",
+        "sha256": "58204019d21af32cb2fefbc71a29cc5b3597d206376ea1ee15b92bc9cdf25069",
+        "git_blob_sha1": "097302910a6a9f0f6dc9417ade010fc8bba42360"
+      },
+      {
+        "path": "results/run.txt",
+        "sha256": "0c5555b6538305b690aab8405301507c38797c2621fb40ba9330aee6b145b58e",
+        "git_blob_sha1": "bbedfdb7ee0a8237186e95dc7d5726203a20b915"
+      },
+      {
+        "path": "results/summary.md",
+        "sha256": "71f6d117345b5dc90b4dcfe3d69420e3838e2121038f981dbe8e5dfe242e3c2a",
+        "git_blob_sha1": "ae3e5bbbd5a1b6d78dbc068c4c5a166d1b781794"
+      },
+      {
+        "path": "results/tests.txt",
+        "sha256": "6affff3fa6ce0c6f95578cfcdc5fb8f6e18696d0b51309940bab380bda460a3e",
+        "git_blob_sha1": "d27957b4339307a4238fc91b8d425316b37f9766"
+      },
+      {
+        "path": "run_reference.py",
+        "sha256": "9ec7ea4be6c4fc5d4d7dbfd41aea9356e93dd28d8c243134dd2b78fd1c5ab788",
+        "git_blob_sha1": "e23b851cf85282005d30f371c16a8eb4106aea0e"
+      },
+      {
+        "path": "test_reference.py",
+        "sha256": "2908e871963e3ef399dc419576042c5782f646bfe34c7bc6563f4accf229f23f",
+        "git_blob_sha1": "bd5f6cc5c4d24c3a1a92d35dc3343181410122da"
+      }
+    ]
+  },
+  "historical_evidence": {
+    "records": 39,
+    "direct_function_or_import_provenance_rows": 35,
+    "derived_p4_comparisons": 4,
+    "unchanged_status_counts": {
+      "PASS_MATCH": 25,
+      "FAIL_MISMATCH": 1,
+      "EXPECTED_EXCEPTION": 2,
+      "SOURCE_SEMANTIC_DIFFERENCE": 11
+    }
+  },
+  "new_function_invocations": 1,
+  "new_import_provenance": "Fresh import, version and installed-wheel byte verification",
+  "wheel": {
+    "filename": "pydoe-1.6.0-py3-none-any.whl",
+    "sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec",
+    "bytes": 131897,
+    "installed_source_files_verified": 76
+  },
+  "environment": {
+    "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+    "numpy": "2.4.6",
+    "scipy": "1.18.0",
+    "torch": "2.14.1+cpu",
+    "pydoe": "1.6.0",
+    "pydoe_file": "D:\\Dropbox\\study\\ms-phd\\PHD-EPFL\\Doctoral proposal\\EPFL\\small interesting research\\TorchOED\\.sae-e0-20261029\\venv\\Lib\\site-packages\\pydoe\\__init__.py",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD",
+    "seed": 20261029,
+    "device": "cpu"
+  },
+  "corrected_p1": {
+    "case_id": "P1-corrected",
+    "status": "PASS_MATCH",
+    "evidence_type": "FRESH_ORIGINAL_WHEEL_CALL",
+    "called_original_pydoe": true,
+    "function": "pydoe.small_composite_design",
+    "input": {
+      "n": 4,
+      "center": [
+        2,
+        2
+      ]
+    },
+    "expected": {
+      "shape": [
+        20,
+        4
+      ],
+      "feature_shape": [
+        20,
+        15
+      ],
+      "rank": 15,
+      "exact_gram_determinant": "18014398509481984"
+    },
+    "actual": {
+      "shape": [
+        20,
+        4
+      ],
+      "feature_shape": [
+        20,
+        15
+      ],
+      "rank": 15,
+      "exact_gram_determinant": "18014398509481984",
+      "output": [
+        [
+          -1.0,
+          -1.0,
+          -1.0,
+          1.0
+        ],
+        [
+          -1.0,
+          -1.0,
+          1.0,
+          1.0
+        ],
+        [
+          -1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        [
+          -1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        [
+          1.0,
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        [
+          1.0,
+          -1.0,
+          1.0,
+          -1.0
+        ],
+        [
+          1.0,
+          1.0,
+          -1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -2.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -2.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          2.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -2.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          2.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          -2.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          2.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "oracle": "Independent quadratic feature map, float64 SVD rank and exact rational determinant of integer Gram",
+    "dtype": "float64",
+    "device": "cpu",
+    "atol": 1e-09,
+    "rtol": 1e-09
+  },
+  "different_negative_control": {
+    "case_id": "P1-different-D-equals-ABC",
+    "status": "PASS_MATCH",
+    "evidence_type": "INDEPENDENT_MATH_CONTROL",
+    "called_original_pydoe": false,
+    "expected_rank": 12,
+    "actual_rank": 12,
+    "shape": [
+      20,
+      4
+    ],
+    "feature_shape": [
+      20,
+      15
+    ],
+    "exact_gram_determinant": "0",
+    "output": [
+      [
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      [
+        -1,
+        -1,
+        1,
+        1
+      ],
+      [
+        -1,
+        1,
+        -1,
+        1
+      ],
+      [
+        -1,
+        1,
+        1,
+        -1
+      ],
+      [
+        1,
+        -1,
+        -1,
+        1
+      ],
+      [
+        1,
+        -1,
+        1,
+        -1
+      ],
+      [
+        1,
+        1,
+        -1,
+        -1
+      ],
+      [
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        -2,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        -2,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        -2,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        -2
+      ],
+      [
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "interpretation": "Different fractional cube with identical axial/center pattern; not a PyDOE failure."
+  },
+  "p4_provenance_corrections": [
+    {
+      "case_id": "P4-L0-grid-type",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P4-L0-clenshaw_curtis",
+        "P4-L0-chebyshev",
+        "P4-L0-gauss_patterson"
+      ],
+      "coordinates_identical": true,
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "supersedes_interpretation_only": "Original ambiguous called_original_pydoe flag; original row is unchanged."
+    },
+    {
+      "case_id": "P4-L1-grid-type",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P4-L1-clenshaw_curtis",
+        "P4-L1-chebyshev",
+        "P4-L1-gauss_patterson"
+      ],
+      "coordinates_identical": true,
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "supersedes_interpretation_only": "Original ambiguous called_original_pydoe flag; original row is unchanged."
+    },
+    {
+      "case_id": "P4-L2-grid-type",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P4-L2-clenshaw_curtis",
+        "P4-L2-chebyshev",
+        "P4-L2-gauss_patterson"
+      ],
+      "coordinates_identical": true,
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "supersedes_interpretation_only": "Original ambiguous called_original_pydoe flag; original row is unchanged."
+    },
+    {
+      "case_id": "P4-L3-grid-type",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P4-L3-clenshaw_curtis",
+        "P4-L3-chebyshev",
+        "P4-L3-gauss_patterson"
+      ],
+      "coordinates_identical": true,
+      "status": "SOURCE_SEMANTIC_DIFFERENCE",
+      "supersedes_interpretation_only": "Original ambiguous called_original_pydoe flag; original row is unchanged."
+    }
+  ],
+  "p6_pass_semantics": [
+    {
+      "case_id": "P6-easy-fedorov",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P6-easy-fedorov"
+      ],
+      "PASS_MATCH_meaning": "Candidate-ID legality and normalized D-score agreement only",
+      "legal_score_pass": true,
+      "separate_diagnostics": {
+        "one_swap_local_exact": true,
+        "global_gap": 0.0,
+        "exhaustive_global_D": "1"
+      },
+      "general_optimality_claim": false
+    },
+    {
+      "case_id": "P6-easy-detmax",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P6-easy-detmax"
+      ],
+      "PASS_MATCH_meaning": "Candidate-ID legality and normalized D-score agreement only",
+      "legal_score_pass": true,
+      "separate_diagnostics": {
+        "one_swap_local_exact": true,
+        "global_gap": 0.0,
+        "exhaustive_global_D": "1"
+      },
+      "general_optimality_claim": false
+    },
+    {
+      "case_id": "P6-easy-simple_exchange_wynn_mitchell",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P6-easy-simple_exchange_wynn_mitchell"
+      ],
+      "PASS_MATCH_meaning": "Candidate-ID legality and normalized D-score agreement only",
+      "legal_score_pass": true,
+      "separate_diagnostics": {
+        "one_swap_local_exact": true,
+        "global_gap": 0.0,
+        "exhaustive_global_D": "1"
+      },
+      "general_optimality_claim": false
+    },
+    {
+      "case_id": "P6-easy-modified_fedorov",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P6-easy-modified_fedorov"
+      ],
+      "PASS_MATCH_meaning": "Candidate-ID legality and normalized D-score agreement only",
+      "legal_score_pass": true,
+      "separate_diagnostics": {
+        "one_swap_local_exact": true,
+        "global_gap": 0.0,
+        "exhaustive_global_D": "1"
+      },
+      "general_optimality_claim": false
+    },
+    {
+      "case_id": "P6-mentor22-fedorov",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P6-mentor22-fedorov"
+      ],
+      "PASS_MATCH_meaning": "Candidate-ID legality and normalized D-score agreement only",
+      "legal_score_pass": true,
+      "separate_diagnostics": {
+        "one_swap_local_exact": true,
+        "global_gap": 0.0,
+        "exhaustive_global_D": "1032744995133289/32000000000000"
+      },
+      "general_optimality_claim": false
+    },
+    {
+      "case_id": "P6-mentor22-detmax",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P6-mentor22-detmax"
+      ],
+      "PASS_MATCH_meaning": "Candidate-ID legality and normalized D-score agreement only",
+      "legal_score_pass": true,
+      "separate_diagnostics": {
+        "one_swap_local_exact": true,
+        "global_gap": 0.0,
+        "exhaustive_global_D": "1032744995133289/32000000000000"
+      },
+      "general_optimality_claim": false
+    },
+    {
+      "case_id": "P6-mentor22-simple_exchange_wynn_mitchell",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P6-mentor22-simple_exchange_wynn_mitchell"
+      ],
+      "PASS_MATCH_meaning": "Candidate-ID legality and normalized D-score agreement only",
+      "legal_score_pass": true,
+      "separate_diagnostics": {
+        "one_swap_local_exact": true,
+        "global_gap": 0.0,
+        "exhaustive_global_D": "1032744995133289/32000000000000"
+      },
+      "general_optimality_claim": false
+    },
+    {
+      "case_id": "P6-mentor22-modified_fedorov",
+      "evidence_type": "DERIVED_FROM_ACTUAL_CASES",
+      "called_original_pydoe": false,
+      "derived_from": [
+        "P6-mentor22-modified_fedorov"
+      ],
+      "PASS_MATCH_meaning": "Candidate-ID legality and normalized D-score agreement only",
+      "legal_score_pass": true,
+      "separate_diagnostics": {
+        "one_swap_local_exact": true,
+        "global_gap": 0.0,
+        "exhaustive_global_D": "1032744995133289/32000000000000"
+      },
+      "general_optimality_claim": false
+    }
+  ],
+  "legacy_comparator": "Unchanged; documented exit 1 from original P1 is not an all-pass result.",
+  "legacy_comparator_rerun": "NOT_RUN: no legacy runner changes; focused actual-wheel regression plus both test suites are fresh.",
+  "gpu": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "merge": "NO_MERGE"
+}

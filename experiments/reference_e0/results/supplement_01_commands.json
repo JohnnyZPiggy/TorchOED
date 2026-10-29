@@ -1,0 +1,58 @@
+[
+  {
+    "argv": [
+      "<E0_TASK_ROOT>\\venv\\Scripts\\python.exe",
+      "<E0_TASK_ROOT>\\checkout\\experiments\\reference_e0\\supplement_01.py",
+      "--wheel",
+      "<E0_TASK_ROOT>\\wheel\\pydoe-1.6.0-py3-none-any.whl",
+      "--out",
+      "<E0_TASK_ROOT>\\checkout\\experiments\\reference_e0\\results\\supplement_01_cases.json"
+    ],
+    "cwd": "<E0_TASK_ROOT>/checkout",
+    "timeout_seconds": 180,
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "tested_source_sha": "778db21ad78e770b4cd1ae0e703a6cb8a4ec0e2b",
+    "log": "supplement_01_run.txt",
+    "log_sha256": "7d521f5e2c7ab67f5965e98d5d691c464f448ad30d28ecb4740619ad8934d2a2",
+    "elapsed_seconds_not_benchmark": 7.287270399996487
+  },
+  {
+    "argv": [
+      "<E0_TASK_ROOT>\\venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "<E0_TASK_ROOT>\\checkout\\experiments\\reference_e0\\test_reference.py"
+    ],
+    "cwd": "<E0_TASK_ROOT>/checkout",
+    "timeout_seconds": 60,
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "tested_source_sha": "778db21ad78e770b4cd1ae0e703a6cb8a4ec0e2b",
+    "log": "supplement_01_legacy_tests.txt",
+    "log_sha256": "6affff3fa6ce0c6f95578cfcdc5fb8f6e18696d0b51309940bab380bda460a3e",
+    "elapsed_seconds_not_benchmark": 0.7245182000042405
+  },
+  {
+    "argv": [
+      "<E0_TASK_ROOT>\\venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "<E0_TASK_ROOT>\\checkout\\experiments\\reference_e0\\test_supplement_01.py"
+    ],
+    "cwd": "<E0_TASK_ROOT>/checkout",
+    "timeout_seconds": 60,
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "tested_source_sha": "778db21ad78e770b4cd1ae0e703a6cb8a4ec0e2b",
+    "log": "supplement_01_tests.txt",
+    "log_sha256": "64881b85155f91ae975308351fc3f0654cccab5567c2d0ada11cc50002456d26",
+    "elapsed_seconds_not_benchmark": 4.638411400002951
+  }
+]

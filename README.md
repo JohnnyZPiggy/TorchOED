@@ -1,6 +1,6 @@
 # TorchOED
 
-Torch-only M1 constructors and polynomial features (Issue #5). CPU acceptance only; no M2/M3 algorithms or release claim.
+Torch-only M1 constructors/features plus M2-A linear information and D/A/E criteria (Issue #7). CPU acceptance only; no optimizer or release claim.
 
 ```powershell
 python -m pip install --no-build-isolation -e .
@@ -16,3 +16,13 @@ F = polynomial_features(C, degree=2)  # shape (4,6), rank deficient by design
 See [API contract](docs/M1_API.md), [91-export coverage](docs/ALGORITHM_COVERAGE.md), [M1 evidence](reports/m1/ENGINEER_HANDOFF.md), and [SAE entrypoint](.sae/README.md).
 
 Historical M0 evidence remains under reports/m0 at its original tested commit; its hashes describe that historical snapshot, not current M1 sources. Runtime dependency is torch only; PyDOE is not installed or called by the M1 package/tests.
+
+M2-A: see [API and numerical boundaries](docs/M2_API.md) and [acceptance evidence](reports/m2a/ENGINEER_HANDOFF.md).
+
+```python
+import torch
+from torchoed import exact_information, d_optimality
+F = torch.tensor([[1.,-1.],[1.,0.],[1.,1.]], dtype=torch.float64)
+M = exact_information(F, torch.tensor([0,2]))  # diag(2,2), raw event count
+score = d_optimality(M)  # log(4), maximize; singular inputs raise
+```

@@ -132,3 +132,31 @@ Measure **actual end-to-end** candidate scoring and selected-swap quality, not j
 4. Preserve original wheel SHA/Source SHA, exact tested commit, script hashes, environments, finite commands, negative cases, corrected research §25, and the transparent GPU NOT_RUN/COLD-WARM caveat. Maintain experiment-only paths. If any runner code changes, rerun finite CPU comparisons on same pinned wheel and record a **new tested commit**. Do not edit the original raw evidence to manufacture PASS.
 
 **Scientist/Architect boundary:** This is a completed *E0 evidence audit*, **not** permission to merge Draft PR #3. E1, E2, M0, CUDA, release and deployment remain separately gated. Architect will verify any Engineer follow-up before changing MERGE_GATE=HOLD.
+
+
+---
+
+## 7. E0-CORRECTION-01 final independent Chief Architect acceptance (2026-10-29)
+
+**Reviewed object:** Issue [#2](https://github.com/JohnnyZPiggy/TorchOED/issues/2), exact-head [Draft PR #3](https://github.com/JohnnyZPiggy/TorchOED/pull/3) at `1d59ae5da6c694230aba2e95f217b517cea692c8`. Base `e6c0052adb2bff559c625a8319f89b061c971e9f`; Engineer tested source commit `778db21ad78e770b4cd1ae0e703a6cb8a4ec0e2b`. PR OPEN/DRAFT/UNMERGED. **Formal status: `E0_CORRECTION_01_ACCEPTED`; `E0_SCIENTIFIC_DELIVERY_PASS`; `PR3_MERGE_NOT_AUTHORIZED`.** A separate Scientist approval is required for any merge; this acceptance is not a GitHub APPROVE action.
+
+### 7.1 Independent integrity and scope gates — PASS
+
+- Changed files total **21**: original 11, append-only new 10, all under `experiments/reference_e0/**`; no M0 changes, runtime dependency drift or GitHub Actions.
+- Independently computed SHA-256 over **9/9** new files in `results/SHA256SUMS_SUPPLEMENT_01` with a separately implemented hasher self-checked against SHA-256 of abc. The manifest itself is the tenth new file. All nine hashes match the recorded actual GitHub file bytes.
+- Independently compared exact Git Blob SHA IDs of **11/11** original files to the frozen original archive (`8a4f2e8cc51653594387196c9bac95279f1bbe3d`); all are unchanged, including original `results/SHA256SUMS` (previous 10/10 hashes verified). Historical `results/cases.json` still has **39** rows: 25 PASS_MATCH, 1 FAIL_MISMATCH, 2 EXPECTED_EXCEPTION, 11 SOURCE_SEMANTIC_DIFFERENCE. The historical P1 FAIL remains and its original runner exit 1 has NOT been relabeled.
+- All four original and new Python scripts (`run_reference.py`, `test_reference.py`, `supplement_01.py`, `test_supplement_01.py`) have byte-identical content/Git Blob IDs at the exact tested-source commit and reviewed PR head. New script/test SHA-256s match both the new manifest and supplement evidence map.
+- Engineer rehashed the **actual local original PyDOE 1.6.0 wheel** against expected SHA-256 `5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec`, and reported installed 76 Python source-file byte checks. These are reproducible *Engineer-executed* results in Windows Python 3.14.6, NumPy 2.4.6, SciPy 1.18.0, Torch 2.14.1+cpu, pytest 9.0.3. Architect did NOT download or execute that wheel on its own host.
+
+### 7.2 Function-level supplement gates — PASS
+
+- **P1 corrected positive:** Exactly one new original-wheel `pydoe.small_composite_design(4,center=(2,2))` call, separately logged. Actual points exactly match the original 20×4 wheel output. Architect independently rebuilt full quadratic 20×15 features and, using separate exact-integer Bareiss elimination, obtained **rank 15** and `det(F.T@F)=18014398509481984`. Distinct `D=ABC` mathematical negative control is **rank 12, determinant 0**; explicitly not a PyDOE defect. Old FAIL is preserved.
+- **P4 honest provenance:** Each of four `P4-L{0..3}-grid-type` rows is labeled `DERIVED_FROM_ACTUAL_CASES` and `called_original_pydoe=false`, and references the three actual source-case IDs for its level. Architect checked all 12 referenced ID records and equality of corresponding arrays. **Historical 39 records = 35 direct/import provenance records + four derived comparisons**, not 39 separate package calls.
+- **P6 semantics:** New independent helper and four supplement tests enforce that PASS means only **legal candidate IDs and normalized D-score agreement**. Altering `one_swap_local_exact`, `global_gap` or `exhaustive_global_D` does not alter PASS; illegal IDs or wrong scores fail. Architect independently replayed **8/8** original candidate-ID selections and D-score values. The two tiny instances do not certify general global optimality.
+
+### 7.3 Actual CPU logs and what was not run
+
+- Engineer’s new bounded commands and immutable logs: focused original-wheel supplement **exit 0** (180 s max); original oracle tests **3 passed / exit 0** (60 s); supplement tests **4 passed / exit 0** (60 s). Exact command argv and tested-source SHA are recorded in `results/supplement_01_commands.json`; independently verified new log SHA-256s are in the 9/9 manifest. Original 39-case runner was **NOT_RERUN** because its historical source/outputs were unchanged.
+- **NOT_RUN by Architect**: independent physical Windows PyDOE wheel install/command rerun. **NOT_RUN project-wide**: complete PyDOE 91-function parity, TorchOED M0 implementation, E1/E2, GPU/WARM/CUDA, performance benchmark, PR merge.
+
+**Gate conclusion:** `ENGINEER_HANDOFF_CORRECTION_01_VERIFIED` and `E0_EXPERIMENT_ACCEPTED_WITH_EVIDENCE_BOUNDARIES`. P1/P4/P6 supplements need no further correction under existing scope. **Leave PR #3 Draft/Open and Issue #2 Open until separate Scientist decision; do not merge, start GPU, or open new Issue/PR.** Recheck exact head before any future permitted merge.

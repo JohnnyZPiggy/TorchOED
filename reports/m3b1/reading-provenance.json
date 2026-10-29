@@ -1,0 +1,28 @@
+{
+  "base_sha": "cb944b0e7cf0a6cd1bfc99743a6e72bc69471ab4",
+  "new_full_reads": [
+    "Issue #11",
+    "docs/M3B_ADVANCED_EXCHANGE_GATE.md",
+    "docs/M3_API.md",
+    "AGENTS.md",
+    "sae.yaml",
+    ".sae/README.md",
+    "pinned SAE protocols/ENGINEER.md"
+  ],
+  "reused_full_reads_unchanged": [
+    "docs/M3_FEDOROV_EXCHANGE_GATE.md",
+    "docs/SCIENTIFIC_MENTOR_RESEARCH.md \u00a7\u00a711\u201314",
+    "docs/M1_M2_NUMERICAL_CONTRACT.md",
+    "pinned SAE constitution/COLD/WARM/task/security/lean"
+  ],
+  "base_document_sha256": {
+    "AGENTS.md": "b5802e36ae564643704929fd549e0c3d3900c404054a0f315d9dd930ab1bf89c",
+    "sae.yaml": "6b8f9b4f086cf94f2c385ec681badc1730cfb704ab625e3f28c029bbb1aac490",
+    ".sae/README.md": "a200b55a5532a67d8cf187e4e4e4f24dc70e4caf47f9622bf7a5fbb96ad92f44",
+    "docs/M3B_ADVANCED_EXCHANGE_GATE.md": "c4b5c87af5640f2e829adb02e1f8504459f69daec262f6fbba37240af3dfa821",
+    "docs/M3_API.md": "67d0efd3c65242c0415772054d128e0f062fb7909d26341042857af2474cb690",
+    "docs/M3_FEDOROV_EXCHANGE_GATE.md": "a5cf3c6e213435e96354d876d7b7de690d891ad97a22f45dfcc35acc3977cbdf",
+    "docs/SCIENTIFIC_MENTOR_RESEARCH.md": "2498aaac76c0ee8c1b7619744e7e294b00790649cc4a1a631f1bf71f8be5883a",
+    "docs/M1_M2_NUMERICAL_CONTRACT.md": "c16e2f8eca3e9030013723170d1b84942b703958fddfe23ebab32f2091087b25"
+  }
+}

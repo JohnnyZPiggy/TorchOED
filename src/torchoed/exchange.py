@@ -48,7 +48,7 @@ def fedorov_exchange(F, ids, *, max_iter=100, tile_size=64,
     budget((max_iter + 1, 8), max_elements)
     # Conservative major-tensor workspace estimate, excluding caller-owned F.
     fixed = 4*n*p + 8*p*p + 2*m + 4*n
-    per_column = 3*n + 3*p + 4
+    per_column = 6*n + 4*p + 8
     capacity = (max_elements - fixed) // per_column
     if capacity < 1:
         raise ValueError("insufficient max_elements for one score tile/workspace")

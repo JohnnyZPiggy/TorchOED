@@ -184,3 +184,6 @@ def test_input_budget_ownership_and_reproducibility():
     result=fedorov_exchange(F.requires_grad_(),selected)
     assert not result['ids'].requires_grad
     assert result['workspace_element_estimate']<=1_000_000
+    constrained=fedorov_exchange(F,selected,max_iter=1,tile_size=64,max_elements=100)
+    assert constrained['ids'].tolist()==[2,1]
+    assert constrained['workspace_element_estimate']<=100

@@ -71,7 +71,7 @@ evaluated_candidates counts all legal pairs once per completed primary sweep;
 direct_trial_evaluations also counts the prefix tie rechecks, excluding the
 initial score. No complete n×m allocation or retained per-pair history. The
 declared max_elements bounds input/selected/Gram tensors via M2 and a conservative
-major-tensor scratch estimate `fixed=4np+8p²+2m+4n`, per tile column `3n+3p+4`;
+major-tensor scratch estimate `fixed=4np+8p²+2m+4n`, per tile column `6n+4p+8`;
 effective tile width=min(requested,floor((budget-fixed)/per_column)). Reject if
 one column cannot fit. `8*(max_iter+1)<=budget` additionally bounds history length.
 These count estimates are **not** measured peak memory or bounds on backend

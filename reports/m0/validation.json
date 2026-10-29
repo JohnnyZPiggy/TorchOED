@@ -1,0 +1,351 @@
+{
+  "status": "PASS",
+  "tested_source_sha": "d7a0b3fa8941555fc55d8d251952c22b8f6d3a13",
+  "base_sha": "4dc2dd7e6a94a3437bac1df6e76dc4c0585a0728",
+  "cpu": {
+    "status": "PASS",
+    "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+    "torch": "2.14.1+cpu",
+    "pytest": "9.0.3",
+    "setuptools": "83.0.0",
+    "pip": "26.1.2",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD",
+    "torchoed": "0.0.1",
+    "module_file": "<M0_TASK_ROOT>\\validation-venv\\Lib\\site-packages\\torchoed\\__init__.py",
+    "mandatory_requires": [
+      "torch>=2.0"
+    ],
+    "pydoe_absent": true,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "shape": [
+      2,
+      2
+    ],
+    "actual": [
+      [
+        3.0,
+        0.0
+      ],
+      [
+        0.0,
+        2.0
+      ]
+    ],
+    "max_abs_error": 0.0,
+    "actual_scratch_root": "<M0_TASK_ROOT>\\scratch",
+    "roundtrip_path": "<M0_TASK_ROOT>\\scratch\\m0-roundtrip.json",
+    "roundtrip_bytes": 24,
+    "roundtrip_sha256": "e2584e1cff274cb7bcdf840428122d87eff485d719ee28b0afe31478db995ad7",
+    "roundtrip_cleanup_confirmed": true,
+    "gpu": "NOT_RUN_USER_CPU_ONLY",
+    "seed": "NOT_USED_DETERMINISTIC_FIXTURE",
+    "environment": "fresh venv; existing torch/pytest inherited; PyDOE absent"
+  },
+  "wheel": {
+    "filename": "torchoed-0.0.1-py3-none-any.whl",
+    "sha256": "9639e90fc8f446634014ddff0d278fd6e4d0977397fe3a5222ae014883c611e2",
+    "bytes": 4081,
+    "python_files": [
+      "torchoed/__init__.py",
+      "torchoed/_smoke.py"
+    ],
+    "license_audit": {
+      "text_equal_after_CRLF_normalization": true,
+      "wheel_license_sha256": "ea1a893e6cd4058f855b6ef0a74d5741f3bb4c4769531145db61a945ceac42ae",
+      "git_license_sha256": "2f0819452dd5f7667e2c0e93b769238a41c8164e62f89f212646076f66765bde",
+      "note": "Windows checkout line endings differ; original Git LICENSE is unchanged."
+    }
+  },
+  "source_files": {
+    ".gitattributes": {
+      "sha256": "e8cdf587df2de737a74217b301c6a955e75ccdb4dfa4ad556d6e9bd731f89759",
+      "git_blob_sha1": "9cc37231e98eeee7d125285f5c5964ea4bce69ce"
+    },
+    ".gitignore": {
+      "sha256": "a52543ccbed322d508f84d814d408106bdc0966834a8da2271b78bb59730ede5",
+      "git_blob_sha1": "4c2a76fb23a23f6f89a08561b38dbed2df00b3cc"
+    },
+    ".sae/README.md": {
+      "sha256": "dbfe5eaf4a1a10b91c18127d0ab3565e3e33f1a1fcc15bc9ec9749d32d3d6829",
+      "git_blob_sha1": "7d3b76d5933ada100caaf8bd79db774048755b8f"
+    },
+    "AGENTS.md": {
+      "sha256": "391598302ebcee099a1ad9225e1ab8e403bcf24158c0218a672ae8d1e74ff131",
+      "git_blob_sha1": "0202a68181b145a43cbb54e6329f8cb5c7391941"
+    },
+    "README.md": {
+      "sha256": "338f6d22f3923af422f6cbdd1ec699548cde1234752c8ef6a32b0e257304306e",
+      "git_blob_sha1": "dba7aee1d0981d0ea0c4cfb4a2a4f952802c69e7"
+    },
+    "docs/ALGORITHM_COVERAGE.md": {
+      "sha256": "6f8e4d776137194e3bf16459776d70478ebee8f40e73ae7be46b47175ac7cfd6",
+      "git_blob_sha1": "c57593468b43bffd758d7632e8805bf5e8b16ecb"
+    },
+    "docs/NUMERICAL_CONTRACTS.md": {
+      "sha256": "bf295f47e3bb9eab999cfcc0421e217c7fb134ce4f6435aa3c79d840d7610d21",
+      "git_blob_sha1": "3d1776e84b84004d23ac4716a0b2290891bc6285"
+    },
+    "docs/upstream-baseline.json": {
+      "sha256": "3c1d744a5d53c55db315015590254a5839126230374856fb8f8fe9cb291098b9",
+      "git_blob_sha1": "bb01c72836b75e5bde6d65eb241b19b55d5134f7"
+    },
+    "pyproject.toml": {
+      "sha256": "fd34a9992e2611cdcc72a5f64b5a6ebcb55296f4e6f246f6a090aa514259d14d",
+      "git_blob_sha1": "01739de8f239bcb256683d1d59ac0c45c1b71d09"
+    },
+    "sae.yaml": {
+      "sha256": "a6e32e5a2490b6549e598a41010450e62e86307a041a0a0b04a949d45f0f596d",
+      "git_blob_sha1": "f712022cdbb09ab39b0b23d83a70b6fed4ac7773"
+    },
+    "src/torchoed/__init__.py": {
+      "sha256": "55c1baa022cbe1e2656afb4aaa92282e8329407b53bd473c25b9499e6f30d5ca",
+      "git_blob_sha1": "a773bbc40438a423668d2dc39ffe661095963a77"
+    },
+    "src/torchoed/_smoke.py": {
+      "sha256": "b5e6eccd3384d6cf727ae3d0f075ae2064aacb35c96309a339e7493ae5c5fbca",
+      "git_blob_sha1": "74f8deff680f4201fdd8d5e938cb7ffa001f2f3a"
+    },
+    "tests/test_smoke.py": {
+      "sha256": "b9ceb5606e6537de2752bdec156b8105cda2fbc55e867cb06288f654e30b35d6",
+      "git_blob_sha1": "517787c7a97ba3955260bd8a7098b82b208e25dd"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "D:\\software\\anaconda3\\python.exe",
+        "-m",
+        "venv",
+        "--system-site-packages",
+        "<M0_TASK_ROOT>\\validation-venv"
+      ],
+      "cwd": "<M0_TASK_ROOT>\\checkout",
+      "timeout_seconds": 120,
+      "exit_code": 0,
+      "log": "validate-venv.txt",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "output": ""
+    },
+    {
+      "argv": [
+        "<M0_TASK_ROOT>\\validation-venv\\Scripts\\python.exe",
+        "-c",
+        "from importlib.util import find_spec; assert find_spec('pydoe') is None; assert find_spec('torchoed') is None; print('FRESH_ENV_PYDOE_AND_TORCHOED_ABSENT')"
+      ],
+      "cwd": "<M0_TASK_ROOT>",
+      "timeout_seconds": 60,
+      "exit_code": 0,
+      "log": "validate-clean-before.txt",
+      "log_sha256": "ca30c1b1b8edb99866205164dbaa3143e7d0e1441dbfc5669cbc8c434e5f5b83",
+      "output": "FRESH_ENV_PYDOE_AND_TORCHOED_ABSENT\n"
+    },
+    {
+      "argv": [
+        "<M0_TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "--no-deps",
+        "--no-build-isolation",
+        "-e",
+        "."
+      ],
+      "cwd": "<M0_TASK_ROOT>\\checkout",
+      "timeout_seconds": 120,
+      "exit_code": 0,
+      "log": "validate-editable-install.txt",
+      "log_sha256": "33d56cdb12748b2c2148f2f2959e28e274e89c142952d6a671eff8c3be213ee5",
+      "output": "Obtaining <M0_TASK_ROOT>/checkout\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: torchoed\n  Building editable for torchoed (pyproject.toml): started\n  Building editable for torchoed (pyproject.toml): finished with status 'done'\n  Created wheel for torchoed: filename=torchoed-0.0.1-0.editable-py3-none-any.whl size=3847 sha256=7b7bde15497bb97b5c3611ef1f0a546119fac9c5aa01f847b880c1b745a3e1f4\n  Stored in directory: <M0_TASK_ROOT>\\scratch\\pip-ephem-wheel-cache-4qvb5q97\\wheels\\98\\25\\79\\b24e029e107d042f517c2a412d889673b02dfb810cb015e466\nSuccessfully built torchoed\nInstalling collected packages: torchoed\n  Attempting uninstall: torchoed\n    Found existing installation: torchoed 0.0.1\n    Uninstalling torchoed-0.0.1:\n      Successfully uninstalled torchoed-0.0.1\nSuccessfully installed torchoed-0.0.1\n"
+    },
+    {
+      "argv": [
+        "<M0_TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "<M0_TASK_ROOT>\\checkout",
+      "timeout_seconds": 60,
+      "exit_code": 0,
+      "log": "validate-tests.txt",
+      "log_sha256": "604c4a438bf34850f479d3009e0788d2f1124a9318bd877a6cb49d4c74043125",
+      "output": "....                                                                     [100%]\n4 passed in 4.49s\n"
+    },
+    {
+      "argv": [
+        "<M0_TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "wheel",
+        "--no-index",
+        "--no-deps",
+        "--no-build-isolation",
+        "--wheel-dir",
+        "<M0_TASK_ROOT>\\scratch\\wheels",
+        "."
+      ],
+      "cwd": "<M0_TASK_ROOT>\\checkout",
+      "timeout_seconds": 120,
+      "exit_code": 0,
+      "log": "validate-wheel-build.txt",
+      "log_sha256": "3dd688650e547e6e7abe577890f471ada46080b0388d9164ded73299e9c474b3",
+      "output": "Processing .\\.\n  Preparing metadata (pyproject.toml): started\n  Preparing metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: torchoed\n  Building wheel for torchoed (pyproject.toml): started\n  Building wheel for torchoed (pyproject.toml): finished with status 'done'\n  Created wheel for torchoed: filename=torchoed-0.0.1-py3-none-any.whl size=4081 sha256=9639e90fc8f446634014ddff0d278fd6e4d0977397fe3a5222ae014883c611e2\n  Stored in directory: <M0_TASK_ROOT>\\scratch\\pip-ephem-wheel-cache-fd9m9kjl\\wheels\\98\\25\\79\\b24e029e107d042f517c2a412d889673b02dfb810cb015e466\nSuccessfully built torchoed\n"
+    },
+    {
+      "argv": [
+        "<M0_TASK_ROOT>\\validation-venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "--no-deps",
+        "<M0_TASK_ROOT>\\scratch\\wheels\\torchoed-0.0.1-py3-none-any.whl"
+      ],
+      "cwd": "<M0_TASK_ROOT>",
+      "timeout_seconds": 120,
+      "exit_code": 0,
+      "log": "validate-wheel-install.txt",
+      "log_sha256": "2354bda762c9fcd090f02bd4d898c528870dc457792166252dbf146bb319f744",
+      "output": "Processing .\\scratch\\wheels\\torchoed-0.0.1-py3-none-any.whl\nInstalling collected packages: torchoed\nSuccessfully installed torchoed-0.0.1\n"
+    },
+    {
+      "argv": [
+        "<M0_TASK_ROOT>\\validation-venv\\Scripts\\python.exe",
+        "-c",
+        "from importlib import metadata,util\nfrom pathlib import Path\nimport hashlib,json,os,platform,sys,tempfile\nimport torch,pytest,torchoed\nfrom torchoed._smoke import _gram\nassert util.find_spec('pydoe') is None\nassert Path(torchoed.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())\nf=torch.tensor([[1.,-1.],[1.,0.],[1.,1.]],dtype=torch.float64)\nexpected=torch.tensor([[3.,0.],[0.,2.]],dtype=torch.float64)\nactual=_gram(f)\ntorch.testing.assert_close(actual,expected,atol=0,rtol=0)\nscratch=Path(os.environ['TEMP']).resolve()\nassert Path(tempfile.gettempdir()).resolve()==scratch\nfile=scratch/'m0-roundtrip.json'\nassert not file.exists()\nraw=json.dumps(actual.tolist()).encode()\nfile.write_bytes(raw)\nassert file.read_bytes()==raw\nchecksum=hashlib.sha256(file.read_bytes()).hexdigest()\nfile.unlink()\nassert not file.exists()\nprint(json.dumps({'status':'PASS','python':sys.version,'torch':torch.__version__,'pytest':pytest.__version__,\n'setuptools':metadata.version('setuptools'),'pip':metadata.version('pip'),\n'platform':platform.platform(),'cpu':platform.processor(),'torchoed':torchoed.__version__,\n'module_file':torchoed.__file__,'mandatory_requires':[r for r in metadata.requires('torchoed') if 'extra ==' not in r],\n'pydoe_absent':True,'device':'cpu','dtype':str(actual.dtype),'shape':list(actual.shape),\n'actual':actual.tolist(),'max_abs_error':(actual-expected).abs().max().item(),\n'actual_scratch_root':str(scratch),'roundtrip_path':str(file),'roundtrip_bytes':len(raw),\n'roundtrip_sha256':checksum,'roundtrip_cleanup_confirmed':True,\n'gpu':'NOT_RUN_USER_CPU_ONLY','seed':'NOT_USED_DETERMINISTIC_FIXTURE',\n'environment':'fresh venv; existing torch/pytest inherited; PyDOE absent'}))\n"
+      ],
+      "cwd": "<M0_TASK_ROOT>",
+      "timeout_seconds": 60,
+      "exit_code": 0,
+      "log": "validate-wheel-cpu.txt",
+      "log_sha256": "cc9a5ddbd70ba3ce360e162e8da28b1d2efe731820fc93f9cf5cde5d4a427f78",
+      "output": "{\"status\": \"PASS\", \"python\": \"3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]\", \"torch\": \"2.14.1+cpu\", \"pytest\": \"9.0.3\", \"setuptools\": \"83.0.0\", \"pip\": \"26.1.2\", \"platform\": \"Windows-11-10.0.26200-SP0\", \"cpu\": \"AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD\", \"torchoed\": \"0.0.1\", \"module_file\": \"<M0_TASK_ROOT>\\\\validation-venv\\\\Lib\\\\site-packages\\\\torchoed\\\\__init__.py\", \"mandatory_requires\": [\"torch>=2.0\"], \"pydoe_absent\": true, \"device\": \"cpu\", \"dtype\": \"torch.float64\", \"shape\": [2, 2], \"actual\": [[3.0, 0.0], [0.0, 2.0]], \"max_abs_error\": 0.0, \"actual_scratch_root\": \"<M0_TASK_ROOT>\\\\scratch\", \"roundtrip_path\": \"<M0_TASK_ROOT>\\\\scratch\\\\m0-roundtrip.json\", \"roundtrip_bytes\": 24, \"roundtrip_sha256\": \"e2584e1cff274cb7bcdf840428122d87eff485d719ee28b0afe31478db995ad7\", \"roundtrip_cleanup_confirmed\": true, \"gpu\": \"NOT_RUN_USER_CPU_ONLY\", \"seed\": \"NOT_USED_DETERMINISTIC_FIXTURE\", \"environment\": \"fresh venv; existing torch/pytest inherited; PyDOE absent\"}\n"
+    }
+  ],
+  "limitations": [
+    "CPU only; one Python/torch configuration",
+    "not hermetic: inherited installed torch/pytest",
+    "no public DOE/OED API",
+    "M1/M2/M3/GPU/compile/autograd/performance NOT_RUN"
+  ],
+  "reading": {
+    "project_docs_full": [
+      "docs/DEVELOPMENT_PLAN.md",
+      "docs/SCIENTIFIC_MENTOR_RESEARCH.md",
+      "docs/M1_M2_NUMERICAL_CONTRACT.md"
+    ],
+    "framework": {
+      "pin": "d84942e4890d9837ae0e6cbb379b85c3a95aba84",
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "sha256": "d3c7e57c7e507049e561db0c063563c4503ce81a10ad587927ef378e7a6304be",
+          "bytes": 10613
+        },
+        {
+          "path": "SAE_BOOTSTRAP.md",
+          "sha256": "37b24c9247cd6730a61377441b541fcea3a1d9e2c77cf69f0aeb47249dd0baf1",
+          "bytes": 4523
+        },
+        {
+          "path": "protocols/ENGINEER.md",
+          "sha256": "db65be632bb28a5e7d5e1cfe60cc83b9fd329aec9a3eaf444a24641af983c7a2",
+          "bytes": 8763
+        },
+        {
+          "path": "workflows/UNIVERSAL_COLD_START.md",
+          "sha256": "3e1dcc3ea0bee3dd8da24f88a58c3b0fa14b73b1c7b06da623272a4df04eebb7",
+          "bytes": 10048
+        },
+        {
+          "path": "workflows/AGENT_WARM_START.md",
+          "sha256": "1afbab278e7bca56f9396f41605846fc5a7d4b8c74f74db174a18d1a26c00c10",
+          "bytes": 5189
+        },
+        {
+          "path": "workflows/TASK_MANAGEMENT.md",
+          "sha256": "f8c2079153981c4eee8ee1bed083388bb37145d4fdd07f437774824ab462b33f",
+          "bytes": 6738
+        },
+        {
+          "path": "workflows/SECURITY.md",
+          "sha256": "e81212259be4ff23caca9fe123b387709baaf93bac64fe36da32a8f2c74d5e3c",
+          "bytes": 1758
+        },
+        {
+          "path": "workflows/MATHEMATICAL_RESEARCH.md",
+          "sha256": "b88ff1904cdae62a060e6b34e456d50b8285362376d851315803fdc3a11f5cd9",
+          "bytes": 5519
+        },
+        {
+          "path": "workflows/ECOSYSTEM_REVIEW.md",
+          "sha256": "b666b3176cd63adb54956cd68a5e52545b0def9d2ba8a8d23b5f89960f2cbe5d",
+          "bytes": 3993
+        },
+        {
+          "path": "workflows/LEAN_RESEARCH_LAB.md",
+          "sha256": "22b91b1ac6a5cb710c5910a9c217959cb9fcd12a65d6a951ad9311ffa73578cf",
+          "bytes": 6463
+        },
+        {
+          "path": "governance/COMPUTE_THROUGHPUT_POLICY.md",
+          "sha256": "cd6b4631da23ce706ad4c001f98383e1eceff75e8d4acc427edeca037373ff2b",
+          "bytes": 2390
+        },
+        {
+          "path": "governance/STANDING_AUTHORIZATION.md",
+          "sha256": "aa00df8c7fe6d0a302eeb282447423fd54b65eb62c5d128053c62bf24b597131",
+          "bytes": 12401
+        },
+        {
+          "path": "workflows/NEXT_ACTION.md",
+          "sha256": "adb4042a2b4aeb0d7861e38871b1262236a3873ec8503541f10e96633d473ca0",
+          "bytes": 6304
+        }
+      ]
+    }
+  },
+  "explore_commands": [
+    {
+      "argv": [
+        "<M0_TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "--no-deps",
+        "--no-build-isolation",
+        "-e",
+        "."
+      ],
+      "exit_code": 0,
+      "timeout_seconds": 120,
+      "log": "explore-install.txt",
+      "log_sha256": "41d7b7e10bfec5dea0fc589bcfd8b073a3bcfd36af85a4cb2b044c640d2ec879",
+      "output": "Obtaining <M0_TASK_ROOT>/checkout\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: torchoed\n  Building editable for torchoed (pyproject.toml): started\n  Building editable for torchoed (pyproject.toml): finished with status 'done'\n  Created wheel for torchoed: filename=torchoed-0.0.1-0.editable-py3-none-any.whl size=3847 sha256=0c14b78634a5f8217639ad7bad77a640600fa1459d055b42110702385025a679\n  Stored in directory: <M0_TASK_ROOT>\\scratch\\pip-ephem-wheel-cache-52n1weze\\wheels\\98\\25\\79\\b24e029e107d042f517c2a412d889673b02dfb810cb015e466\nSuccessfully built torchoed\nInstalling collected packages: torchoed\nSuccessfully installed torchoed-0.0.1\n",
+      "source_identity": "EXPLORE pre-commit working source, not a pinned-source claim"
+    },
+    {
+      "argv": [
+        "<M0_TASK_ROOT>\\venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "exit_code": 0,
+      "timeout_seconds": 60,
+      "log": "explore-tests.txt",
+      "log_sha256": "181a1cdfc8516fd19a70362113d1e63d9884b281b8b3b282984aec59518aa189",
+      "output": "....                                                                     [100%]\n4 passed in 13.37s\n",
+      "source_identity": "EXPLORE pre-commit working source, not a pinned-source claim"
+    }
+  ],
+  "documentation_delta_since_test": "Coverage reuse-strategy wording and LF attributes for evidence logs/manifest refined after tested commit; reports added. Runtime files, pyproject.toml and tests unchanged. Fresh static audit recorded separately."
+}

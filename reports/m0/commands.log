@@ -1,0 +1,65 @@
+## explore-install.txt
+Obtaining <M0_TASK_ROOT>/checkout
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torchoed
+  Building editable for torchoed (pyproject.toml): started
+  Building editable for torchoed (pyproject.toml): finished with status 'done'
+  Created wheel for torchoed: filename=torchoed-0.0.1-0.editable-py3-none-any.whl size=3847 sha256=0c14b78634a5f8217639ad7bad77a640600fa1459d055b42110702385025a679
+  Stored in directory: <M0_TASK_ROOT>\scratch\pip-ephem-wheel-cache-52n1weze\wheels\98\25\79\b24e029e107d042f517c2a412d889673b02dfb810cb015e466
+Successfully built torchoed
+Installing collected packages: torchoed
+Successfully installed torchoed-0.0.1
+
+## explore-tests.txt
+....                                                                     [100%]
+4 passed in 13.37s
+
+## validate-venv.txt
+
+## validate-clean-before.txt
+FRESH_ENV_PYDOE_AND_TORCHOED_ABSENT
+
+## validate-editable-install.txt
+Obtaining <M0_TASK_ROOT>/checkout
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torchoed
+  Building editable for torchoed (pyproject.toml): started
+  Building editable for torchoed (pyproject.toml): finished with status 'done'
+  Created wheel for torchoed: filename=torchoed-0.0.1-0.editable-py3-none-any.whl size=3847 sha256=7b7bde15497bb97b5c3611ef1f0a546119fac9c5aa01f847b880c1b745a3e1f4
+  Stored in directory: <M0_TASK_ROOT>\scratch\pip-ephem-wheel-cache-4qvb5q97\wheels\98\25\79\b24e029e107d042f517c2a412d889673b02dfb810cb015e466
+Successfully built torchoed
+Installing collected packages: torchoed
+  Attempting uninstall: torchoed
+    Found existing installation: torchoed 0.0.1
+    Uninstalling torchoed-0.0.1:
+      Successfully uninstalled torchoed-0.0.1
+Successfully installed torchoed-0.0.1
+
+## validate-tests.txt
+....                                                                     [100%]
+4 passed in 4.49s
+
+## validate-wheel-build.txt
+Processing .\.
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torchoed
+  Building wheel for torchoed (pyproject.toml): started
+  Building wheel for torchoed (pyproject.toml): finished with status 'done'
+  Created wheel for torchoed: filename=torchoed-0.0.1-py3-none-any.whl size=4081 sha256=9639e90fc8f446634014ddff0d278fd6e4d0977397fe3a5222ae014883c611e2
+  Stored in directory: <M0_TASK_ROOT>\scratch\pip-ephem-wheel-cache-fd9m9kjl\wheels\98\25\79\b24e029e107d042f517c2a412d889673b02dfb810cb015e466
+Successfully built torchoed
+
+## validate-wheel-install.txt
+Processing .\scratch\wheels\torchoed-0.0.1-py3-none-any.whl
+Installing collected packages: torchoed
+Successfully installed torchoed-0.0.1
+
+## validate-wheel-cpu.txt
+{"status": "PASS", "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]", "torch": "2.14.1+cpu", "pytest": "9.0.3", "setuptools": "83.0.0", "pip": "26.1.2", "platform": "Windows-11-10.0.26200-SP0", "cpu": "AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD", "torchoed": "0.0.1", "module_file": "<M0_TASK_ROOT>\\validation-venv\\Lib\\site-packages\\torchoed\\__init__.py", "mandatory_requires": ["torch>=2.0"], "pydoe_absent": true, "device": "cpu", "dtype": "torch.float64", "shape": [2, 2], "actual": [[3.0, 0.0], [0.0, 2.0]], "max_abs_error": 0.0, "actual_scratch_root": "<M0_TASK_ROOT>\\scratch", "roundtrip_path": "<M0_TASK_ROOT>\\scratch\\m0-roundtrip.json", "roundtrip_bytes": 24, "roundtrip_sha256": "e2584e1cff274cb7bcdf840428122d87eff485d719ee28b0afe31478db995ad7", "roundtrip_cleanup_confirmed": true, "gpu": "NOT_RUN_USER_CPU_ONLY", "seed": "NOT_USED_DETERMINISTIC_FIXTURE", "environment": "fresh venv; existing torch/pytest inherited; PyDOE absent"}

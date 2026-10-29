@@ -1,0 +1,51 @@
+{
+  "distribution": "pydoe",
+  "version": "1.6.0",
+  "tag": "v1.6.0",
+  "tag_commit": "866d3f411942cb662af8054562dc1f7e07372401",
+  "wheel": {
+    "filename": "pydoe-1.6.0-py3-none-any.whl",
+    "bytes": 131897,
+    "sha256": "5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec"
+  },
+  "sdist": {
+    "filename": "pydoe-1.6.0.tar.gz",
+    "bytes": 1948832,
+    "sha256": "f08dac190923892f7419744986fdbab28057998128ad4f01061f5dcde81ec7c3",
+    "archive_prefix": "pydoe-1.6.0/",
+    "PKG_INFO_version": "1.6.0",
+    "selected_sources_equal_pinned_git": [
+      "pydoe/__init__.py",
+      "pydoe/optimal/__init__.py",
+      "pyproject.toml",
+      "LICENSE"
+    ]
+  },
+  "sources": {
+    "pydoe/__init__.py": {
+      "sha256": "97d5f75a1d13758e33314f2a9fdb55ff0391cb67dcb9e4299a8b14ed2cf64d45",
+      "git_blob_sha1": "e5ba623180ff6610fda868e06e328568b9c1990c"
+    },
+    "pydoe/optimal/__init__.py": {
+      "sha256": "c6284b9a140d1c7b2bc6d2b994eb752a9e9f421ea305e640d2618ab39fa51035",
+      "git_blob_sha1": "8a494134ba3db852a4583e050c14af2d9a22f785"
+    },
+    "pyproject.toml": {
+      "sha256": "613839e126c00a1d15e2cf735c10d8629719d68a57ae8958d9fd5497c4b41526",
+      "git_blob_sha1": "fa411270c1e28add14d46400aaec615326a26842"
+    },
+    "LICENSE": {
+      "sha256": "12694c60de4fe9bb1d08d9d08488b56612b2061a05bf15aca54a0cc62aa4177a",
+      "git_blob_sha1": "3971443ca6bd7a9d2e79051b86eaf95fb8541b50"
+    }
+  },
+  "license": "BSD-3-Clause; unchanged, wheel LICENSE bytes equal pinned Git",
+  "requires_python": ">=3.11",
+  "requires_dist": [
+    "numpy>=2.2.6",
+    "numpy>=2.5.4; python_version >= \"3.15\"",
+    "scipy>=1.15.3",
+    "scipy>=1.18.1; python_version >= \"3.15\""
+  ],
+  "scope": "Selected source/metadata byte equivalence only; not all PyDOE algorithms verified by M0."
+}

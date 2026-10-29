@@ -104,7 +104,7 @@ Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later sc
 | `v_optimality` | criterion | OED | M2 | REUSE linalg/solves; BUILD explicit criterion semantics | DEFERRED | [optimal/criterion.py:263](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/criterion.py#L263) |
 | `var_regression_matrix` | variance helper | Numerical helper | M2 | REUSE feature mapping/solves; BUILD explicit variance convention | DEFERRED | [utils/var_regression_matrix.py:21](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/utils/var_regression_matrix.py#L21) |
 
-Counts: 17 PLANNED + 74 DEFERRED =91; 0 IMPLEMENTED / 0 VERIFIED.
+Counts: 12 PLANNED + 74 DEFERRED + 5 scoped VERIFIED =91; no other implementation claims.
 
 ## Submodule-only definitions — separate from root coverage
 
@@ -132,4 +132,4 @@ Static scan found the following 11 unprefixed module-level function definitions 
 - Upstream information defaults normalized=True; D returns det instead of logdet; A uses negative inverse trace and may regularize; Jacobian scoring adds an internal ridge. Align definitions before any later oracle comparison.
 - E0 actual Small Composite rank15/15 supersedes the old rank12 hypothesis for the original wheel. The different D=ABC mathematical control is rank12.
 - E0 P4 grid-type comparisons are derived from actual calls; point counts/equal arrays are not weighted Smolyak validation. Niederreiter's frozen first-axis rank limitation and Doehlert shell limitations are named-source findings, not blanket equivalence checks.
-- M1/M2/M3 APIs, S/T, Fisher dense-covariance repeats, GP/BO, optimized LHS and strict sparse-grid construction remain unimplemented. The canonical [M1/M2 contract](M1_M2_NUMERICAL_CONTRACT.md) controls future semantics.
+- M1 APIs outside the five scoped rows, all M2/M3 APIs, S/T, Fisher dense-covariance repeats, GP/BO, optimized LHS and strict sparse-grid construction remain unimplemented. The canonical [M1/M2 contract](M1_M2_NUMERICAL_CONTRACT.md) controls future semantics.

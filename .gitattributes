@@ -7,3 +7,6 @@
 *.txt text eol=lf
 *.log text eol=lf
 reports/m0/SHA256SUMS text eol=lf
+
+reports/m1/* text eol=lf
+reports/m1/implementation.diff whitespace=-blank-at-eol

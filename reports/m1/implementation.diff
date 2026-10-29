@@ -1,0 +1,878 @@
+diff --git a/.sae/README.md b/.sae/README.md
+index 7d3b76d..8814153 100644
+--- a/.sae/README.md
++++ b/.sae/README.md
+@@ -16,4 +16,4 @@ This is a reference entrypoint, not a copied snapshot, CLI, grant or claim of ru
+ - [Security](https://github.com/JohnnyZPiggy/SAE-Framework/blob/d84942e4890d9837ae0e6cbb379b85c3a95aba84/workflows/SECURITY.md)
+ - [Next action](https://github.com/JohnnyZPiggy/SAE-Framework/blob/d84942e4890d9837ae0e6cbb379b85c3a95aba84/workflows/NEXT_ACTION.md)
+ 
+-User instructions and the project AGENTS.md govern scope. Issue #1 / current dispatch authorizes CPU-only M0, not M1–M3, E0 edits or accelerators. The Engineer never self-merges.
++User instructions and the project AGENTS.md govern scope. Issue #5 / current dispatch authorizes scoped CPU-only M1 constructors and features, not M2/M3, E0 edits or accelerators. The Engineer never self-merges.
+diff --git a/AGENTS.md b/AGENTS.md
+index 0202a68..e94fb02 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -7,11 +7,11 @@ Read the actual [pinned constitution](https://github.com/JohnnyZPiggy/SAE-Framew
+ 
+ - Scientist sets the objective and can redirect/stop work; Architect/Mentor owns specifications, mathematics and independent review.
+ - Engineer implements/tests on independent branches and submits evidence; **never self-approves or merges**, never writes protected main or force-pushes.
+-- M0 Issue #1 permits only the installable torch-only spine, frozen upstream inventory, minimal SAE adoption and CPU smoke. Public M1/M2/M3 algorithms are not dispatched by planning documents.
+-- E0 Issue #2 / PR #3 is separate experiment work: do not change its files or branch while executing M0.
++- M0 Issue #1 historically permitted only the installable torch-only spine, frozen upstream inventory, minimal SAE adoption and CPU smoke. Planning documents alone do not dispatch algorithms. Explicit Issue #5/user authorization now permits only full_factorial, ff2n, random lhs, native Sobol wrapper and degree1/2 polynomial_features with CPU oracles; M2/M3 remain out of scope.
++- E0 Issue #2 / PR #3 is separate experiment work: do not change its files or branch while executing M1.
+ - Preserve existing LICENSE and research/history. Read [DEVELOPMENT_PLAN](docs/DEVELOPMENT_PLAN.md), [Mentor research](docs/SCIENTIFIC_MENTOR_RESEARCH.md) and [M1/M2 architecture](docs/M1_M2_NUMERICAL_CONTRACT.md). The §25 rank15 correction supersedes the historical rank12 hypothesis for actual PyDOE.
+ - Production numerical dependency: torch only. PyDOE/NumPy/SciPy are development references, never numerical backends. Prefer native torch primitives; no custom CUDA.
+ - Reuse COLD/WARM evidence when source/runtime is unchanged; refresh relevant git/gh/Issue/PR state before work. Use EXPLORE → VALIDATE with exact source, real commands and PASS/FAIL/NOT_RUN/BLOCKED.
+ - Use the designated D: workspace, including Dropbox, for owned scratch/caches/results. Clean only task-owned disposable files and report residue.
+-- Current M0 dispatch is **CPU only**: no GPU/Colab, Actions, paid services or global configuration changes. Other work requires its own scoped dispatch; do not infer compute authority from a plan.
+-- Submit one Draft PR with Refs #1 and ENGINEER_HANDOFF. No self-merge; keep evidence sanitized and provide a concrete next handoff.
++- Current M1 dispatch is **CPU only**: no GPU/Colab, Actions, paid services or global configuration changes. Other work requires its own scoped dispatch; do not infer compute authority from a plan.
++- Submit one Draft PR with Refs #5 and ENGINEER_HANDOFF. No self-merge; keep evidence sanitized and provide a concrete next handoff.
+diff --git a/README.md b/README.md
+index dba7aee..c678314 100644
+--- a/README.md
++++ b/README.md
+@@ -1,30 +1,18 @@
+ # TorchOED
+ 
+-**M0: installable PyTorch-only package spine.** No public DOE/OED algorithm APIs are implemented yet. This is an independent project; it is not an official PyDOE port or wrapper.
++Torch-only M1 constructors and polynomial features (Issue #5). CPU acceptance only; no M2/M3 algorithms or release claim.
+ 
+-## Install and CPU smoke
+-
+-Python >=3.11; torch is the sole mandatory numerical runtime dependency. pytest is an optional test extra.
+-
+-```sh
+-python -m pip install -e ".[test]"
++```powershell
++python -m pip install --no-build-isolation -e .
+ python -m pytest -q
+-python -c "import torchoed; print(torchoed.__version__)"
+ ```
+ 
+-For an existing torch/pytest environment, an offline editable install can use `python -m pip install --no-deps --no-build-isolation -e .`. Tests require PyDOE to be absent. M0 validation uses a fresh venv inheriting the already-installed torch/pytest; it is not a claim of a hermetic or NumPy-free torch installation.
+-
+-The only numerical package code is a **private**, non-public smoke helper: `F.mT @ F`. The CPU float64 fixture `[[1,-1],[1,0],[1,1]]` must produce `[[3,0],[0,2]]`, preserve shape/dtype/device, and satisfy symmetry/PSD checks. It is not the planned public information-matrix API.
+-
+-## Scope, references and limits
+-
+-- [91-name inventory](docs/ALGORITHM_COVERAGE.md): root exports include helpers/classes, not 91 algorithms. All public feature implementations remain PLANNED or DEFERRED.
+-- [Numerical scope note](docs/NUMERICAL_CONTRACTS.md) and [future M1/M2 contract](docs/M1_M2_NUMERICAL_CONTRACT.md): definitions, not M0 algorithm implementations.
+-- PyDOE1.6.0 is a frozen, optional **development oracle**, never a runtime dependency or numerical backend. See the inventory for wheel/tag/source/license provenance. Existing E0 PR #3 remains a separate experiment.
+-- GPU, compile/autograd claims, performance, full upstream equivalence and M1/M2/M3 are NOT_RUN / not implemented by M0.
+-- Original project code is covered by the existing [MIT LICENSE](LICENSE). PyDOE has its own BSD-3-Clause license; no upstream implementation was copied into the package.
+-- [SAE entrypoint](AGENTS.md) pins V3.3. Engineers submit reviewable branches/PRs and never self-merge.
++```python
++from torchoed import full_factorial, ff2n, lhs, sobol, polynomial_features
++C = ff2n(2)
++F = polynomial_features(C, degree=2)  # shape (4,6), rank deficient by design
++```
+ 
+-## 中文说明
++See [API contract](docs/M1_API.md), [91-export coverage](docs/ALGORITHM_COVERAGE.md), [M1 evidence](reports/m1/ENGINEER_HANDOFF.md), and [SAE entrypoint](.sae/README.md).
+ 
+-当前仅完成 M0 最小工程骨架：可安装、可导入，数值运行依赖只有 torch；没有公开的 DOE/OED 算法、求解器或占位接口。CPU 测试使用内部 Gram 运算和解析小矩阵，不等于实现 M2 信息矩阵 API。PyDOE 只作为开发期参考，不参与生产数值计算。91 个名字的清单不是算法完成率。后续 M1/M2/M3、GPU 和性能实验需要独立范围与真实证据；本轮未执行。工程师不自行合并。
++Historical M0 evidence remains under reports/m0 at its original tested commit; its hashes describe that historical snapshot, not current M1 sources. Runtime dependency is torch only; PyDOE is not installed or called by the M1 package/tests.
+diff --git a/docs/ALGORITHM_COVERAGE.md b/docs/ALGORITHM_COVERAGE.md
+index 29f0276..93cf440 100644
+--- a/docs/ALGORITHM_COVERAGE.md
++++ b/docs/ALGORITHM_COVERAGE.md
+@@ -1,12 +1,12 @@
+ # Frozen upstream API coverage ledger
+ 
+-**M0 inventory, not implementation coverage.** Exactly 91 rows below correspond one-to-one to PyDOE1.6.0 root __all__. 89 function definitions and two classes (one Enum) are not 91 distinct algorithms. No listed public feature is implemented or verified in TorchOED. The private M0 Gram smoke helper does not implement the planned information_matrix API.
++**Frozen 91-export inventory with scoped M1 acceptance.** Exactly 91 rows below correspond one-to-one to PyDOE1.6.0 root __all__. 89 function definitions and two classes (one Enum) are not 91 distinct algorithms. Five rows below have scoped M1 implementations; this is not complete upstream equivalence. The private M0 Gram smoke helper does not implement the planned information_matrix API.
+ 
+ Baseline: tag v1.6.0 resolves directly to commit 866d3f411942cb662af8054562dc1f7e07372401. Reused wheel was rehashed; sdist was downloaded/hash-checked and selected source/metadata bytes compared with pinned Git. See [upstream-baseline.json](upstream-baseline.json) for actual SHA-256s, Git blob IDs and comparison scope. PyDOE is BSD-3-Clause; TorchOED's existing MIT LICENSE is unchanged. No upstream implementation copied into src/.
+ 
+ AST inventory resolves each root re-export to its defining function/class in the verified wheel without importing PyDOE in the M0 runtime. Definition/type/source inspection and the read research dossier support classification; they do not establish complete algorithm equivalence. Proposed M1–M5 priorities are backlog suggestions, not execution authorization.
+ 
+-Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later scoped milestone; DEFERRED=requires later scope/oracle; IMPLEMENTED=real public implementation; VERIFIED=implementation with recorded acceptance. This ledger uses only PLANNED/DEFERRED; ZERO public algorithms implemented/verified. Research MATH_CPU and E0 package observations are separate evidence, not TorchOED feature statuses.
++Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later scoped milestone; DEFERRED=requires later scope/oracle; IMPLEMENTED=real public implementation; VERIFIED=implementation with recorded acceptance. Five rows are VERIFIED only for the subsets documented in [M1_API.md](M1_API.md); all other rows retain PLANNED/DEFERRED. Research MATH_CPU and E0 package observations are separate evidence, not TorchOED feature statuses.
+ 
+ ## Root exports — 91 rows
+ 
+@@ -20,7 +20,7 @@ Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later sc
+ | `bbdesign` | constructor algorithm | Response surface | M4 | BUILD geometry; REUSE indexing/cat/zeros | DEFERRED | [response_surface/box_behnken.py:27](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/response_surface/box_behnken.py#L27) |
+ | `block_ccdesign` | constructor algorithm | Response surface | M4 | BUILD geometry; REUSE indexing/cat/zeros | DEFERRED | [response_surface/blocking.py:33](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/response_surface/blocking.py#L33) |
+ | `block_full_factorial` | constructor algorithm | Factorial/blocking | M4 | BUILD combinatorics; REUSE integer indexing | DEFERRED | [factorial/blocking.py:32](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/blocking.py#L32) |
+-| `build_design_matrix` | feature helper | OED | M1 | REUSE cartesian/index/RNG operators; BUILD explicit ordering/features | PLANNED | [optimal/model.py:57](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/model.py#L57) |
++| `build_design_matrix` | feature helper | OED | M1 | REUSE cartesian/index/RNG operators; BUILD explicit ordering/features | VERIFIED (polynomial_features; degree1/2 only) | [optimal/model.py:57](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/model.py#L57) |
+ | `build_uniform_moment_matrix` | moment helper | OED | M2 | REUSE linalg/solves; BUILD explicit criterion semantics | DEFERRED | [optimal/model.py:133](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/model.py#L133) |
+ | `c_optimality` | criterion | OED | M2 | REUSE linalg/solves; BUILD explicit criterion semantics | DEFERRED | [optimal/criterion.py:157](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/criterion.py#L157) |
+ | `ccdesign` | constructor algorithm | Response surface | M4 | BUILD geometry; REUSE indexing/cat/zeros | DEFERRED | [response_surface/central_composite.py:31](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/response_surface/central_composite.py#L31) |
+@@ -39,14 +39,14 @@ Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later sc
+ | `extreme_vertices_design` | constructor algorithm | Mixture | M4 | BUILD simplex geometry; REUSE gather/broadcast | DEFERRED | [mixture/extreme_vertices.py:31](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/mixture/extreme_vertices.py#L31) |
+ | `faure_sequence` | sampler/search | QMC | M5 | BUILD exact digit/lattice semantics; REUSE integer tensors | DEFERRED | [space_filling/quasi_random/faure.py:35](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/quasi_random/faure.py#L35) |
+ | `fedorov` | search algorithm | OED | M3 | REUSE factorizations/tiled scores; BUILD exact-ID search policy | PLANNED | [optimal/algorithms.py:208](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/algorithms.py#L208) |
+-| `ff2n` | constructor algorithm | Factorial/blocking | M1 | REUSE cartesian/index/RNG operators; BUILD explicit ordering/features | PLANNED | [factorial/factorial.py:102](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py#L102) |
++| `ff2n` | constructor algorithm | Factorial/blocking | M1 | REUSE cartesian/index/RNG operators; BUILD explicit ordering/features | VERIFIED (signed corners; frozen TorchOED order) | [factorial/factorial.py:102](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py#L102) |
+ | `fisher_information` | matrix helper | OED | M2 | REUSE weighted GEMM/precision solves; DEFER dense-repeat semantics | DEFERRED | [optimal/fisher.py:56](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/fisher.py#L56) |
+ | `fold` | transform helper | Factorial/blocking | M4 | BUILD combinatorics; REUSE integer indexing | DEFERRED | [factorial/fold.py:22](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/fold.py#L22) |
+ | `fracfact` | constructor algorithm | Factorial/blocking | M4 | BUILD combinatorics; REUSE integer indexing | DEFERRED | [factorial/factorial.py:201](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py#L201) |
+ | `fracfact_aliasing` | diagnostic helper | Factorial/blocking | M4 | BUILD combinatorics; REUSE integer indexing | DEFERRED | [factorial/factorial.py:837](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py#L837) |
+ | `fracfact_by_res` | constructor algorithm | Factorial/blocking | M4 | BUILD combinatorics; REUSE integer indexing | DEFERRED | [factorial/factorial.py:347](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py#L347) |
+ | `fracfact_opt` | search algorithm | Factorial/blocking | M4 | BUILD combinatorics; REUSE integer indexing | DEFERRED | [factorial/factorial.py:701](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py#L701) |
+-| `fullfact` | constructor algorithm | Factorial/blocking | M1 | REUSE cartesian/index/RNG operators; BUILD explicit ordering/features | PLANNED | [factorial/factorial.py:38](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py#L38) |
++| `fullfact` | constructor algorithm | Factorial/blocking | M1 | REUSE cartesian/index/RNG operators; BUILD explicit ordering/features | VERIFIED (full_factorial; index set, explicitly different row-order policy) | [factorial/factorial.py:38](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/factorial.py#L38) |
+ | `g_optimality` | criterion | OED | M2 | REUSE linalg/solves; BUILD explicit criterion semantics | DEFERRED | [optimal/criterion.py:213](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/criterion.py#L213) |
+ | `generate_candidate_set` | candidate constructor | OED | M1 | REUSE cartesian/index/RNG operators; BUILD explicit ordering/features | PLANNED | [optimal/model.py:152](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/optimal/model.py#L152) |
+ | `get_orthogonal_array` | table accessor | Taguchi/OA | M5 | BUILD explicit metadata/table mapping; audit table provenance | DEFERRED | [taguchi/taguchi.py:60](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/taguchi/taguchi.py#L60) |
+@@ -62,7 +62,7 @@ Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later sc
+ | `john_three_quarter_design` | constructor algorithm | Factorial/blocking | M4 | BUILD combinatorics; REUSE integer indexing | DEFERRED | [factorial/john_three_quarter.py:43](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/john_three_quarter.py#L43) |
+ | `korobov_sequence` | sampler/search | QMC | M5 | BUILD exact digit/lattice semantics; REUSE integer tensors | DEFERRED | [space_filling/quasi_random/korobov.py:30](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/quasi_random/korobov.py#L30) |
+ | `latin_square` | constructor algorithm | Factorial/blocking | M4 | BUILD combinatorics; REUSE integer indexing | DEFERRED | [factorial/latin_square.py:30](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/factorial/latin_square.py#L30) |
+-| `lhs` | sampler/search | Space filling | M1 | REUSE randperm/rand; BUILD strata convention, no optimized modes | PLANNED | [space_filling/stochastic/lhs.py:29](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/stochastic/lhs.py#L29) |
++| `lhs` | sampler/search | Space filling | M1 | REUSE randperm/rand; BUILD strata convention, no optimized modes | VERIFIED (random mode only; optimized modes DEFERRED) | [space_filling/stochastic/lhs.py:29](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/stochastic/lhs.py#L29) |
+ | `list_orthogonal_arrays` | registry helper | Taguchi/OA | M5 | BUILD explicit metadata/table mapping; audit table provenance | DEFERRED | [taguchi/taguchi.py:87](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/taguchi/taguchi.py#L87) |
+ | `maximin_design` | search algorithm | Space filling | M4 | BUILD legal permutations/search; REUSE RNG/distances | DEFERRED | [space_filling/stochastic/distance_designs.py:36](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/stochastic/distance_designs.py#L36) |
+ | `maxpro_design` | search algorithm | Space filling | M4 | BUILD legal permutations/search; REUSE RNG/distances | DEFERRED | [space_filling/stochastic/maxpro.py:48](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/stochastic/maxpro.py#L48) |
+@@ -92,7 +92,7 @@ Statuses: UNREVIEWED=no classification; PLANNED=initial candidate for a later sc
+ | `simplex_lattice_design` | constructor algorithm | Mixture | M4 | BUILD simplex geometry; REUSE gather/broadcast | DEFERRED | [mixture/simplex.py:31](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/mixture/simplex.py#L31) |
+ | `sliced_lhs` | sampler/search | Space filling | M4 | BUILD legal permutations/search; REUSE RNG/distances | DEFERRED | [space_filling/stochastic/sliced_lhs.py:27](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/stochastic/sliced_lhs.py#L27) |
+ | `small_composite_design` | constructor algorithm | Response surface | M4 | BUILD geometry; REUSE indexing/cat/zeros | DEFERRED | [response_surface/small_composite.py:33](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/response_surface/small_composite.py#L33) |
+-| `sobol_sequence` | sampler/search | QMC | M1 | REUSE torch.quasirandom.SobolEngine; explicit count/skip/device contract | PLANNED | [space_filling/quasi_random/sobol.py:32](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/quasi_random/sobol.py#L32) |
++| `sobol_sequence` | sampler/search | QMC | M1 | REUSE torch.quasirandom.SobolEngine; explicit count/skip/device contract | VERIFIED (sobol; native torch exact-n policy, no PyDOE padding compatibility) | [space_filling/quasi_random/sobol.py:32](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/quasi_random/sobol.py#L32) |
+ | `sparse_grid_dimension` | count helper | Sparse grid | M5 | BUILD independently validated weighted rules; do not copy point-cloud oracle | DEFERRED | [sparse_grid/sparse_grid.py:73](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/sparse_grid/sparse_grid.py#L73) |
+ | `star` | constructor helper | Response surface | M4 | BUILD geometry; REUSE indexing/cat/zeros | DEFERRED | [response_surface/star.py:23](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/response_surface/star.py#L23) |
+ | `sukharev_grid` | sampler/search | QMC | M5 | BUILD exact digit/lattice semantics; REUSE integer tensors | DEFERRED | [space_filling/quasi_random/sukharev.py:9](https://github.com/pydoe/pydoe/blob/866d3f411942cb662af8054562dc1f7e07372401/pydoe/space_filling/quasi_random/sukharev.py#L9) |
+diff --git a/docs/M1_API.md b/docs/M1_API.md
+new file mode 100644
+index 0000000..ded763e
+--- /dev/null
++++ b/docs/M1_API.md
+@@ -0,0 +1,46 @@
++# M1 CPU constructor contract
++
++Issue #5 dispatches only five public callables. Version remains 0.0.1: no release
++or general PyDOE compatibility is claimed. Runtime dependency remains torch only.
++CPU oracles: `tests/test_m1.py`; reproducible validation: `tools/validate_m1.py`.
++
++All scalar counts are Python ints (bool and integral floats reject). All APIs
++accept `max_elements=1_000_000`, a configurable output element budget, checked
++before output allocation, with an additional int64 size limit. This is not a
++bound on native backend workspace or execution time. Only float32 and float64
++are supported floating dtypes. Default device is CPU and floating dtype float64.
++Device forwarding exists; this dispatch verifies CPU only.
++
++| API | Frozen behavior |
++|---|---|
++| `full_factorial(levels, *, device=None, max_elements=...)` | Nonempty tuple/list of positive ints; int64 indices; last factor fastest. Single factors keep a column dimension. Set equivalence does not promise PyDOE row order. |
++| `ff2n(k, *, device=None, dtype=torch.float64, max_elements=...)` | Positive k; signed -1/+1 corners in the same order. No implicit physical scaling. |
++| `lhs(n_samples,n_factors, *, generator=None,device=None,dtype=torch.float64,mode='random',max_elements=...)` | Positive counts; one randperm and independent jitter vector per column. Only random mode. A supplied generator is consumed normally and never reseeded; global RNG is untouched. None uses native global RNG. Replay is limited to the same torch/backend. |
++| `sobol(n,d, *, scramble=False,seed=None,skip=0,balance='exact',dtype=torch.float64,device=None,max_elements=...)` | Exactly n points, no padding; n=0 returns (0,d) without constructing an engine. Native CPU SobolEngine plus explicit device transfer; no CUDA-native generation claim. |
++| `polynomial_features(C,degree=2,include_bias=True, *, max_elements=...)` | Floating (m,k) or (B,m,k), k>=1. Preserves dtype/device/autograd. Empty rows/batches supported. Rejects nonfinite/integer/complex input; caller must code integer indices explicitly. |
++
++LHS repairs floating rounding across stratum boundaries with that stratum's
++midpoint, ensuring exact `floor(n*x)` IDs. Counts are limited to 2^22 for float32
++and 2^51 for float64 for midpoint representability; the default budget is smaller.
++No maximin, centered, OA or sliced LHS is implemented. Permutation ties and
++cross-library random sequences are not scientific equivalence criteria.
++
++Sobol validates d against native MAXDIM (21201 in tested torch), skip>=0 and
++skip+n<=2^MAXBIT (MAXBIT=30). Seeds are None or Python ints in [0,2^63-1]; scramble
++is bool; only balance='exact' is supported. A fixed scrambling seed isolates
++global RNG; seed=None with scrambling consumes native global RNG. Zero output
++does not consume RNG. Direction tables and replay are torch-version specific.
++
++Feature degree1 order: [bias, linear]. Degree2: [bias, linear, squares,
++pair products i<j in lexicographic order]. Bias removal only removes the first
++column. p=1+2k+k(k-1)/2 for degree2 with bias. No rank repair, ridge, information
++matrix criterion, search or M2/M3 algorithm is added. Finiteness validation
++requires one device synchronization on accelerators; these are untested here.
++
++P6 reuses a SHA-256-verified immutable E0 actual-wheel output, not a fresh PyDOE
++call: `tests/fixtures/e0_p1.json` records its source commit/path/hash. Actual
++20x4 coordinates produce 20x15 features, rank15 and exact Gram determinant
++18014398509481984. The separate D=ABC mathematical fixture has rank12/det0.
++Independent scalar feature formulas and Fraction elimination supplement CPU
++SVD rank. Float64 tolerance is 1e-9; float32 checks use 1e-6; gradcheck uses
++eps=1e-6, atol=1e-5, rtol=1e-3. Integer IDs/strata are exact.
+diff --git a/sae.yaml b/sae.yaml
+index f712022..5c12f96 100644
+--- a/sae.yaml
++++ b/sae.yaml
+@@ -25,6 +25,6 @@ workflow:
+   task_timeout_required: true
+   max_self_repair_attempts_per_failure_class: 3
+ current_dispatch:
+-  issue: 1
+-  milestone: "M0"
++  issue: 5
++  milestone: "M1"
+   compute: "cpu_only"
+diff --git a/src/torchoed/__init__.py b/src/torchoed/__init__.py
+index a773bbc..e21704a 100644
+--- a/src/torchoed/__init__.py
++++ b/src/torchoed/__init__.py
+@@ -1,3 +1,9 @@
+-"""TorchOED M0 package spine; no public DOE/OED algorithms yet."""
++"""Torch-only M1 constructors and polynomial features; CPU acceptance only."""
+ 
+ __version__ = "0.0.1"
++
++from .factorial import ff2n, full_factorial
++from .features import polynomial_features
++from .sampling import lhs, sobol
++
++__all__ = ["full_factorial", "ff2n", "lhs", "sobol", "polynomial_features"]
+diff --git a/src/torchoed/_validation.py b/src/torchoed/_validation.py
+new file mode 100644
+index 0000000..0d72374
+--- /dev/null
++++ b/src/torchoed/_validation.py
+@@ -0,0 +1,23 @@
++import torch
++
++
++def integer(value, name, minimum=1):
++    if type(value) is not int or value < minimum:
++        raise ValueError(f"{name} must be a Python int >= {minimum}")
++    return value
++
++
++def floating(dtype):
++    if dtype not in (torch.float32, torch.float64):
++        raise TypeError("supported floating dtypes: torch.float32, torch.float64")
++
++
++def budget(dimensions, max_elements):
++    integer(max_elements, "max_elements")
++    total = 1
++    for size in dimensions:
++        if size > min(max_elements, 2**63 - 1):
++            raise ValueError("dimension exceeds output element budget/int64 limit")
++        total *= size
++        if total > min(max_elements, 2**63 - 1):
++            raise ValueError("output exceeds element budget/int64 limit")
+diff --git a/src/torchoed/factorial.py b/src/torchoed/factorial.py
+new file mode 100644
+index 0000000..25447d0
+--- /dev/null
++++ b/src/torchoed/factorial.py
+@@ -0,0 +1,27 @@
++import torch
++
++from ._validation import budget, floating, integer
++
++
++def full_factorial(levels, *, device=None, max_elements=1_000_000):
++    """Integer index grid; last factor varies fastest. See docs/M1_API.md."""
++    if not isinstance(levels, (tuple, list)) or not levels:
++        raise ValueError("levels must be a nonempty tuple/list of positive Python ints")
++    rows = 1
++    for q in levels:
++        rows *= integer(q, "level")
++    budget((rows, len(levels)), max_elements)
++    axes = [torch.arange(q, device=device, dtype=torch.int64) for q in levels]
++    return torch.cartesian_prod(*axes).reshape(rows, len(levels))
++
++
++def ff2n(k, *, device=None, dtype=torch.float64, max_elements=1_000_000):
++    """Signed corners, in full_factorial order, with explicit floating dtype."""
++    integer(k, "k")
++    floating(dtype)
++    # Bound k before constructing an exponentially large Python integer/list.
++    if k >= 63:
++        raise ValueError("signed grid exceeds int64 output limit")
++    budget((2**k, k), max_elements)
++    return (2 * full_factorial((2,) * k, device=device,
++                              max_elements=max_elements) - 1).to(dtype=dtype)
+diff --git a/src/torchoed/features.py b/src/torchoed/features.py
+new file mode 100644
+index 0000000..5b0d78e
+--- /dev/null
++++ b/src/torchoed/features.py
+@@ -0,0 +1,27 @@
++import torch
++
++from ._validation import budget, floating
++
++
++def polynomial_features(C, degree=2, include_bias=True, *, max_elements=1_000_000):
++    """[bias, linear, squares, pair products i<j]; preserves autograd."""
++    if not isinstance(C, torch.Tensor):
++        raise TypeError("C must be a floating torch.Tensor")
++    floating(C.dtype)
++    if C.ndim not in (2, 3) or C.shape[-1] < 1:
++        raise ValueError("C must have shape (m,k) or (B,m,k), k>=1")
++    if type(degree) is not int or degree not in (1, 2):
++        raise ValueError("degree must be 1 or 2")
++    if type(include_bias) is not bool:
++        raise TypeError("include_bias must be bool")
++    k = C.shape[-1]
++    p = int(include_bias) + k + (k + k * (k - 1) // 2 if degree == 2 else 0)
++    budget((*C.shape[:-1], p), max_elements)
++    if not bool(torch.isfinite(C).all()):
++        raise ValueError("C must contain only finite values")
++    parts = [torch.ones_like(C[..., :1])] if include_bias else []
++    parts.append(C)
++    if degree == 2:
++        i, j = torch.triu_indices(k, k, offset=1, device=C.device)
++        parts.extend((C.square(), C[..., i] * C[..., j]))
++    return torch.cat(parts, dim=-1)
+diff --git a/src/torchoed/sampling.py b/src/torchoed/sampling.py
+new file mode 100644
+index 0000000..08adea6
+--- /dev/null
++++ b/src/torchoed/sampling.py
+@@ -0,0 +1,59 @@
++import torch
++
++from ._validation import budget, floating, integer
++
++
++def lhs(n_samples, n_factors, *, generator=None, device=None,
++        dtype=torch.float64, mode="random", max_elements=1_000_000):
++    """Basic random Latin hypercube; consumes the supplied generator normally."""
++    n = integer(n_samples, "n_samples")
++    k = integer(n_factors, "n_factors")
++    floating(dtype)
++    budget((n, k), max_elements)
++    if mode != "random":
++        raise ValueError("only mode='random' is implemented")
++    if n > (2**22 if dtype == torch.float32 else 2**51):
++        raise ValueError("strata exceed safe floating-point resolution")
++    target = torch.device("cpu" if device is None else device)
++    if generator is not None:
++        if not isinstance(generator, torch.Generator):
++            raise TypeError("generator must be a torch.Generator or None")
++        if generator.device.type != target.type:
++            raise ValueError("generator and output must use the same device backend")
++    columns = []
++    for _ in range(k):
++        ids = torch.randperm(n, generator=generator, device=target)
++        jitter = torch.rand(n, generator=generator, device=target, dtype=dtype)
++        x = (ids.to(dtype) + jitter) / n
++        # Rounding can place a jitter at the next boundary; retain exact strata.
++        x = torch.where(torch.floor(n * x).to(torch.int64) == ids,
++                        x, (ids.to(dtype) + 0.5) / n)
++        columns.append(x)
++    return torch.stack(columns, dim=1)
++
++
++def sobol(n, d, *, scramble=False, seed=None, skip=0, balance="exact",
++          dtype=torch.float64, device=None, max_elements=1_000_000):
++    """Native CPU Sobol generation followed by an explicit device transfer."""
++    integer(n, "n", 0)
++    integer(d, "d")
++    integer(skip, "skip", 0)
++    floating(dtype)
++    budget((n, d), max_elements)
++    if type(scramble) is not bool:
++        raise TypeError("scramble must be bool")
++    if seed is not None:
++        integer(seed, "seed", 0)
++        if seed > 2**63 - 1:
++            raise ValueError("seed must fit signed int64")
++    engine_type = torch.quasirandom.SobolEngine
++    if d > engine_type.MAXDIM or skip + n > 2**engine_type.MAXBIT:
++        raise ValueError("Sobol dimension or sequence horizon exceeded")
++    if balance != "exact":
++        raise ValueError("only balance='exact' is implemented; never pads n")
++    if n == 0:
++        return torch.empty((0, d), dtype=dtype, device=device)
++    engine = engine_type(d, scramble=scramble, seed=seed)
++    if skip:
++        engine.fast_forward(skip)
++    return engine.draw(n, dtype=dtype).to(device=device)
+diff --git a/tests/fixtures/e0_p1.json b/tests/fixtures/e0_p1.json
+new file mode 100644
+index 0000000..c1f0005
+--- /dev/null
++++ b/tests/fixtures/e0_p1.json
+@@ -0,0 +1,128 @@
++{
++  "source_commit": "1d59ae5da6c694230aba2e95f217b517cea692c8",
++  "source_path": "experiments/reference_e0/results/supplement_01_cases.json",
++  "source_sha256": "34ef4a2784ef6f5c528032377d6c0830f1a3bb986fbb21404a724a48a99a458f",
++  "evidence_type": "REUSED_ACTUAL_PYDOE_OUTPUT_NOT_A_NEW_WHEEL_CALL",
++  "C": [
++    [
++      -1.0,
++      -1.0,
++      -1.0,
++      1.0
++    ],
++    [
++      -1.0,
++      -1.0,
++      1.0,
++      1.0
++    ],
++    [
++      -1.0,
++      1.0,
++      -1.0,
++      -1.0
++    ],
++    [
++      -1.0,
++      1.0,
++      1.0,
++      -1.0
++    ],
++    [
++      1.0,
++      -1.0,
++      -1.0,
++      -1.0
++    ],
++    [
++      1.0,
++      -1.0,
++      1.0,
++      -1.0
++    ],
++    [
++      1.0,
++      1.0,
++      -1.0,
++      1.0
++    ],
++    [
++      1.0,
++      1.0,
++      1.0,
++      1.0
++    ],
++    [
++      0.0,
++      0.0,
++      0.0,
++      0.0
++    ],
++    [
++      0.0,
++      0.0,
++      0.0,
++      0.0
++    ],
++    [
++      -2.0,
++      0.0,
++      0.0,
++      0.0
++    ],
++    [
++      2.0,
++      0.0,
++      0.0,
++      0.0
++    ],
++    [
++      0.0,
++      -2.0,
++      0.0,
++      0.0
++    ],
++    [
++      0.0,
++      2.0,
++      0.0,
++      0.0
++    ],
++    [
++      0.0,
++      0.0,
++      -2.0,
++      0.0
++    ],
++    [
++      0.0,
++      0.0,
++      2.0,
++      0.0
++    ],
++    [
++      0.0,
++      0.0,
++      0.0,
++      -2.0
++    ],
++    [
++      0.0,
++      0.0,
++      0.0,
++      2.0
++    ],
++    [
++      0.0,
++      0.0,
++      0.0,
++      0.0
++    ],
++    [
++      0.0,
++      0.0,
++      0.0,
++      0.0
++    ]
++  ]
++}
+diff --git a/tests/test_m1.py b/tests/test_m1.py
+new file mode 100644
+index 0000000..5bad1b2
+--- /dev/null
++++ b/tests/test_m1.py
+@@ -0,0 +1,236 @@
++"""Independent CPU oracles, named after contract §9 gates."""
++import itertools
++import json
++from fractions import Fraction
++from pathlib import Path
++
++import pytest
++import torch
++
++from torchoed import ff2n, full_factorial, lhs, polynomial_features, sobol
++
++
++def tensor(rows):
++    return torch.tensor(rows, dtype=torch.float64)
++
++
++def scalar_features(rows, degree=2, bias=True):
++    return [[*([1] if bias else []), *r,
++             *([x*x for x in r] + [r[i]*r[j] for i in range(len(r))
++                                    for j in range(i+1, len(r))] if degree == 2 else [])]
++            for r in rows]
++
++
++def exact_rank_det(features):
++    """Fraction Gaussian elimination, independent of torch.linalg."""
++    p = len(features[0])
++    a = [[sum(Fraction(r[i])*Fraction(r[j]) for r in features)
++          for j in range(p)] for i in range(p)]
++    rank, det = 0, Fraction(1)
++    for col in range(p):
++        pivot = next((i for i in range(rank, p) if a[i][col]), None)
++        if pivot is None:
++            det = Fraction(0)
++            continue
++        if pivot != rank:
++            a[pivot], a[rank] = a[rank], a[pivot]
++            det = -det
++        value = a[rank][col]
++        det *= value
++        for i in range(rank+1, p):
++            scale = a[i][col]/value
++            a[i] = [x-scale*y for x, y in zip(a[i], a[rank])]
++        rank += 1
++    return rank, det
++
++
++def strata(x):
++    n, k = x.shape
++    assert x.device.type == 'cpu'
++    assert bool(((x >= 0) & (x < 1)).all())
++    assert torch.equal(torch.floor(n*x).to(torch.int64).sort(dim=0).values,
++                       torch.arange(n)[:, None].expand(n, k))
++
++
++def test_F1_order():
++    expected = list(itertools.product(range(2), range(3)))
++    x = full_factorial((2, 3))
++    assert x.dtype == torch.int64 and x.tolist() == [list(r) for r in expected]
++
++
++def test_F2_singletons():
++    assert full_factorial((1, 3)).tolist() == [[0, 0], [0, 1], [0, 2]]
++    assert full_factorial([3]).tolist() == [[0], [1], [2]]
++
++
++def test_F3_signed_corners():
++    for k in (1, 2, 3):
++        x = ff2n(k)
++        assert x.dtype == torch.float64
++        assert x.tolist() == [list(r) for r in itertools.product((-1, 1), repeat=k)]
++        ids = full_factorial([2]*k)
++        assert len(torch.unique(ids, dim=0)) == 2**k
++    assert ff2n(2, dtype=torch.float32).dtype == torch.float32
++
++
++def test_F4_reject_before_allocation(monkeypatch):
++    def forbidden(*args, **kwargs):
++        pytest.fail('allocation attempted for invalid/budget input')
++    monkeypatch.setattr(torch, 'arange', forbidden)
++    for levels in ((), [], (0,), (-1,), (1.0,), (True,), (2**63,), (1001, 1001)):
++        with pytest.raises(ValueError):
++            full_factorial(levels)
++    with pytest.raises(ValueError):
++        full_factorial((2, 3), max_elements=11)
++    for k in (0, True, 64, 10**9):
++        with pytest.raises(ValueError):
++            ff2n(k)
++
++
++def test_L1_strata():
++    for dtype in (torch.float64, torch.float32):
++        for seed in range(10):
++            strata(lhs(5, 3, dtype=dtype, generator=torch.Generator().manual_seed(seed)))
++
++
++def test_L2_single_sample():
++    strata(lhs(1, 4, generator=torch.Generator().manual_seed(17)))
++
++
++def test_L3_generator_replay_isolation():
++    state = torch.random.get_rng_state().clone()
++    g = torch.Generator().manual_seed(42)
++    before = g.get_state().clone()
++    x = lhs(5, 3, generator=g)
++    assert not torch.equal(before, g.get_state())
++    assert torch.equal(state, torch.random.get_rng_state())
++    assert torch.equal(x, lhs(5, 3, generator=torch.Generator().manual_seed(42)))
++
++
++def test_L4_invalid():
++    for n, k in ((0, 2), (-1, 2), (2, 0), (True, 2), (2.5, 2)):
++        with pytest.raises(ValueError):
++            lhs(n, k)
++    for mode in ('maximin', 'centered', 'OA', 'sliced'):
++        with pytest.raises(ValueError):
++            lhs(5, 3, mode=mode)
++    with pytest.raises(TypeError):
++        lhs(5, 3, dtype=torch.int64)
++
++
++def test_lhs_boundary_rounding(monkeypatch):
++    def near_one(n, *, dtype, device, **kwargs):
++        return torch.nextafter(torch.ones(n, dtype=dtype, device=device),
++                               torch.zeros(n, dtype=dtype, device=device))
++    monkeypatch.setattr(torch, 'rand', near_one)
++    for dtype in (torch.float32, torch.float64):
++        strata(lhs(5, 3, dtype=dtype, generator=torch.Generator().manual_seed(4)))
++
++
++def test_S1_exact_points():
++    assert torch.equal(sobol(4, 2), tensor([[0, 0], [.5, .5], [.75, .25], [.25, .75]]))
++
++
++def test_S2_exact_count():
++    assert sobol(3, 2).shape == (3, 2)
++
++
++def test_S3_skip():
++    assert torch.equal(sobol(3, 2, skip=1), tensor([[.5, .5], [.75, .25], [.25, .75]]))
++
++
++def test_S4_scramble():
++    state = torch.random.get_rng_state().clone()
++    a = sobol(7, 3, scramble=True, seed=91)
++    assert torch.equal(a, sobol(7, 3, scramble=True, seed=91))
++    assert not torch.equal(a, sobol(7, 3, scramble=True, seed=92))
++    assert torch.equal(state, torch.random.get_rng_state())
++    assert bool(((a >= 0) & (a < 1)).all())
++
++
++def test_S5_invalid_zero():
++    assert sobol(0, 2).shape == (0, 2)
++    for args in ((-1, 2), (1, 0), (True, 2), (1, 21202)):
++        with pytest.raises(ValueError):
++            sobol(*args)
++    for kw in ({'skip': -1}, {'skip': 2**30}, {'balance': 'power2'},
++               {'seed': -1}, {'seed': 2**63}, {'seed': True}):
++        with pytest.raises(ValueError):
++            sobol(3, 2, **kw)
++    with pytest.raises(TypeError):
++        sobol(3, 2, dtype=torch.int64)
++    with pytest.raises(TypeError):
++        sobol(3, 2, scramble=1)
++
++
++def test_P1_degrees_order():
++    c = tensor([[-1], [0], [1]])
++    assert torch.equal(polynomial_features(c, 1), tensor([[1, -1], [1, 0], [1, 1]]))
++    assert torch.equal(polynomial_features(c, 2), tensor([[1, -1, 1], [1, 0, 0], [1, 1, 1]]))
++    rows = [[2, 3, 5], [-1, 4, 2]]
++    assert torch.equal(polynomial_features(tensor(rows)), tensor(scalar_features(rows)))
++
++
++def test_P2_bias():
++    rows = [[2, 3], [-1, 4]]
++    for degree in (1, 2):
++        assert torch.equal(polynomial_features(tensor(rows), degree, False),
++                           tensor(scalar_features(rows, degree, False)))
++
++
++def test_P3_rank():
++    for rows, rank in (([[-1], [0], [1]], 3), ([[-1], [1]], 2),
++                       (list(itertools.product((-1, 1), repeat=2)), 4)):
++        f = polynomial_features(tensor(rows))
++        assert torch.linalg.matrix_rank(f).item() == rank
++        assert exact_rank_det(scalar_features(rows))[0] == rank
++
++
++def test_P4_batch():
++    rows = [[[-1, 2], [3, 4]], [[0, 1], [-2, -3]]]
++    for degree in (1, 2):
++        for bias in (True, False):
++            f = polynomial_features(tensor(rows), degree, bias)
++            assert torch.equal(f, tensor([scalar_features(r, degree, bias) for r in rows]))
++            assert torch.equal(f, torch.stack([polynomial_features(tensor(r), degree, bias) for r in rows]))
++
++
++def test_P5_autograd_dtype_device():
++    c = tensor([[.2, -.3], [.7, .9]]).requires_grad_()
++    for degree in (1, 2):
++        assert torch.autograd.gradcheck(lambda x: polynomial_features(x, degree), (c,),
++                                       eps=1e-6, atol=1e-5, rtol=1e-3)
++    for dtype in (torch.float64, torch.float32):
++        x = c.detach().to(dtype)
++        f = polynomial_features(x)
++        assert f.dtype == dtype and f.device == x.device
++        torch.testing.assert_close(f.double(), tensor(scalar_features(x.tolist())),
++                                   atol=1e-6 if dtype == torch.float32 else 1e-9,
++                                   rtol=1e-6 if dtype == torch.float32 else 1e-9)
++
++
++def test_P6_actual_e0_and_separate_negative():
++    fixture = json.loads((Path(__file__).parent/'fixtures/e0_p1.json').read_text())
++    positive = fixture['C']
++    cube = [[a, b, c, a*b*c] for a, b, c in itertools.product((-1, 1), repeat=3)]
++    negative = cube + positive[8:]
++    for rows, rank, determinant in ((positive, 15, 18014398509481984), (negative, 12, 0)):
++        f = polynomial_features(tensor(rows))
++        assert f.shape == (20, 15)
++        assert torch.equal(f, tensor(scalar_features(rows)))
++        assert torch.linalg.matrix_rank(f).item() == rank
++        assert exact_rank_det(f.tolist()) == (rank, determinant)
++
++
++def test_feature_rejections_and_empty():
++    for c in (torch.ones(2, 1, dtype=torch.int64), tensor([[float('nan')]]),
++              tensor([[float('inf')]]), torch.empty(2, 0), torch.ones(2)):
++        with pytest.raises((ValueError, TypeError)):
++            polynomial_features(c)
++    for degree in (0, 3, True, 2.0):
++        with pytest.raises(ValueError):
++            polynomial_features(tensor([[1]]), degree)
++    with pytest.raises(ValueError):
++        polynomial_features(torch.empty(0, 10000))
++    assert polynomial_features(torch.empty(0, 2)).shape == (0, 6)
++    assert polynomial_features(torch.empty(0, 3, 2)).shape == (0, 3, 6)
+diff --git a/tests/test_smoke.py b/tests/test_smoke.py
+index 517787c..374cb92 100644
+--- a/tests/test_smoke.py
++++ b/tests/test_smoke.py
+@@ -39,7 +39,7 @@ def test_package_imports_only_torch():
+     for source in Path(torchoed.__file__).parent.glob("*.py"):
+         tree = ast.parse(source.read_text(encoding="utf-8"))
+         imports = {node.module.split(".")[0] for node in ast.walk(tree)
+-                   if isinstance(node, ast.ImportFrom)}
++                   if isinstance(node, ast.ImportFrom) and not node.level}
+         imports |= {name.name.split(".")[0] for node in ast.walk(tree)
+                     if isinstance(node, ast.Import) for name in node.names}
+         assert imports <= {"torch"}
+diff --git a/tools/validate_m1.py b/tools/validate_m1.py
+new file mode 100644
+index 0000000..116e0a8
+--- /dev/null
++++ b/tools/validate_m1.py
+@@ -0,0 +1,105 @@
++"""Bounded CPU validation. Run with an installed editable package and pytest.
++
++python tools/validate_m1.py --output <D-drive-evidence-dir> --temp <D-drive-temp>
++Uses the current interpreter; never installs dependencies or starts GPU/CI.
++"""
++import argparse
++import hashlib
++import json
++import os
++from pathlib import Path
++import platform
++import subprocess
++import sys
++import time
++import xml.etree.ElementTree as ET
++
++import torch
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('--output', required=True, type=Path)
++    parser.add_argument('--temp', required=True, type=Path)
++    args = parser.parse_args()
++    root = Path(__file__).resolve().parents[1]
++    out, temp = args.output.resolve(), args.temp.resolve()
++    out.mkdir(parents=True, exist_ok=True)
++    temp.mkdir(parents=True, exist_ok=True)
++    env = os.environ.copy()
++    env.update(TMP=str(temp), TEMP=str(temp), PYTHONDONTWRITEBYTECODE='1',
++               PIP_DISABLE_PIP_VERSION_CHECK='1', PIP_CACHE_DIR=str(out/'pip-cache'))
++    def git(*argv):
++        return subprocess.check_output(['git', *argv], cwd=root, text=True).strip()
++    def run(name, argv, cwd, timeout):
++        start = time.time()
++        result = subprocess.run(argv, cwd=cwd, env=env, capture_output=True,
++                                text=True, timeout=timeout)
++        (out/(name+'.log')).write_text(result.stdout+result.stderr, encoding='utf-8')
++        record = dict(name=name, argv=argv, cwd=str(cwd), timeout_seconds=timeout,
++                      elapsed_seconds=time.time()-start, exit_code=result.returncode)
++        commands.append(record)
++        if result.returncode:
++            raise RuntimeError(f'{name} failed; see log')
++    commands = []
++    sources = {p: hashlib.sha256(subprocess.check_output(['git', 'show', 'HEAD:'+p],
++                cwd=root)).hexdigest() for p in git('ls-files').splitlines()
++               if p.startswith(('src/', 'tests/', 'tools/')) or p == 'pyproject.toml'}
++    report = dict(tested_sha=git('rev-parse', 'HEAD'), source_sha256=sources,
++                  python=sys.version, executable=sys.executable, platform=platform.platform(),
++                  torch=torch.__version__, cuda_build=torch.version.cuda,
++                  device='cpu', commands=commands, scientific_performance='NOT_RUN',
++                  gpu='NOT_RUN_USER_CPU_ONLY', actions='NOT_RUN_USER_PROHIBITED',
++                  environment='fresh task venv with system-site-packages; not hermetic')
++    try:
++        run('pytest', [sys.executable, '-m', 'pytest', '-q',
++                      '--junitxml='+str(out/'pytest.xml')], root, 180)
++        cases = ET.parse(out/'pytest.xml').findall('.//testcase')
++        report['gates'] = {gate: ('PASS' if any(c.attrib['name'].startswith('test_'+gate+'_')
++                  and not list(c) for c in cases) else 'FAIL')
++                  for family, count in [('F',4),('L',4),('S',5),('P',6)]
++                  for gate in [family+str(i) for i in range(1,count+1)]}
++        assert set(report['gates'].values()) == {'PASS'}
++        report['pytest_testcases'] = len(cases)
++        run('wheel_build', [sys.executable, '-m', 'pip', 'wheel', '--no-deps',
++                           '--no-build-isolation', '--wheel-dir', str(out/'wheel'), '.'], root, 120)
++        wheel = next((out/'wheel').glob('torchoed-*.whl'))
++        report['wheel_sha256'] = hashlib.sha256(wheel.read_bytes()).hexdigest()
++        wheel_env = out/'wheel-venv'
++        run('wheel_venv', [sys.executable, '-m', 'venv', '--system-site-packages',
++                          str(wheel_env)], out, 120)
++        wheel_python = wheel_env/('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
++        run('wheel_install', [str(wheel_python), '-m', 'pip', 'install', '--no-deps',
++                             str(wheel)], out, 120)
++        smoke = """import importlib.util,torch,torchoed
++assert importlib.util.find_spec('pydoe') is None
++assert 'site-packages' in torchoed.__file__
++assert len(torchoed.__all__)==5
++assert torchoed.full_factorial((2,3)).tolist()==[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]]
++assert torchoed.polynomial_features(torchoed.ff2n(2)).shape==(4,6)
++assert torchoed.lhs(5,3,generator=torch.Generator().manual_seed(4)).shape==(5,3)
++assert torchoed.sobol(3,2).shape==(3,2)
++print('PASS',torchoed.__file__,torch.__version__)
++"""
++        run('outside_checkout_wheel_smoke', [str(wheel_python), '-c', smoke], out, 60)
++        from torchoed import polynomial_features
++        c64 = torch.tensor([[.2,-.3],[.7,.9]],dtype=torch.float64)
++        def expected(c):
++            return torch.tensor([[1,a,b,a*a,b*b,a*b] for a,b in c.tolist()],dtype=torch.float64)
++        report['floating_errors'] = {}
++        for dtype, tol in [(torch.float64,1e-9),(torch.float32,1e-6)]:
++            c = c64.to(dtype)
++            error = (polynomial_features(c).double()-expected(c)).abs().max().item()
++            assert error <= tol
++            report['floating_errors'][str(dtype)] = dict(max_abs_error=error,atol=tol,rtol=tol)
++        report['status'] = 'PASS'
++    except Exception as exc:
++        report.update(status='FAIL', error=repr(exc))
++        raise
++    finally:
++        (out/'validation.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
++    print(json.dumps({k:report[k] for k in ('status','tested_sha','gates','floating_errors')},indent=2))
++
++
++if __name__ == '__main__':
++    main()

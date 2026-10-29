@@ -1,0 +1,19 @@
+Obtaining file:///<TASK_ROOT>/checkout
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torchoed
+  Building editable for torchoed (pyproject.toml): started
+  Building editable for torchoed (pyproject.toml): finished with status 'done'
+  Created wheel for torchoed: filename=torchoed-0.0.1-0.editable-py3-none-any.whl size=3847 sha256=f7f6840ad36fef99dfc625adc59d645919b5b8a6ad527ad64a6c903f0ee8ec6a
+  Stored in directory: <D_BUILD_TEMP>\pip-ephem-wheel-cache-3nm2y_9k\wheels\3d\d1\ca\1b02e184d5c7e295718702893f103dd785b1aad65038f45c27
+Successfully built torchoed
+Installing collected packages: torchoed
+Successfully installed torchoed-0.0.1
+
+[notice] A new release of pip is available: 26.1.2 -> 26.2.2
+[notice] To update, run: <TASK_ROOT>\venv\Scripts\python.exe -m pip install --upgrade pip
+
+.........................                                                [100%]
+25 passed in 4.54s

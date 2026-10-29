@@ -1,0 +1,70 @@
+{
+  "pin": "d84942e4890d9837ae0e6cbb379b85c3a95aba84",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "d3c7e57c7e507049e561db0c063563c4503ce81a10ad587927ef378e7a6304be",
+      "bytes": 10613
+    },
+    {
+      "path": "SAE_BOOTSTRAP.md",
+      "sha256": "37b24c9247cd6730a61377441b541fcea3a1d9e2c77cf69f0aeb47249dd0baf1",
+      "bytes": 4523
+    },
+    {
+      "path": "protocols/ENGINEER.md",
+      "sha256": "db65be632bb28a5e7d5e1cfe60cc83b9fd329aec9a3eaf444a24641af983c7a2",
+      "bytes": 8763
+    },
+    {
+      "path": "workflows/UNIVERSAL_COLD_START.md",
+      "sha256": "3e1dcc3ea0bee3dd8da24f88a58c3b0fa14b73b1c7b06da623272a4df04eebb7",
+      "bytes": 10048
+    },
+    {
+      "path": "workflows/AGENT_WARM_START.md",
+      "sha256": "1afbab278e7bca56f9396f41605846fc5a7d4b8c74f74db174a18d1a26c00c10",
+      "bytes": 5189
+    },
+    {
+      "path": "workflows/TASK_MANAGEMENT.md",
+      "sha256": "f8c2079153981c4eee8ee1bed083388bb37145d4fdd07f437774824ab462b33f",
+      "bytes": 6738
+    },
+    {
+      "path": "workflows/SECURITY.md",
+      "sha256": "e81212259be4ff23caca9fe123b387709baaf93bac64fe36da32a8f2c74d5e3c",
+      "bytes": 1758
+    },
+    {
+      "path": "workflows/MATHEMATICAL_RESEARCH.md",
+      "sha256": "b88ff1904cdae62a060e6b34e456d50b8285362376d851315803fdc3a11f5cd9",
+      "bytes": 5519
+    },
+    {
+      "path": "workflows/ECOSYSTEM_REVIEW.md",
+      "sha256": "b666b3176cd63adb54956cd68a5e52545b0def9d2ba8a8d23b5f89960f2cbe5d",
+      "bytes": 3993
+    },
+    {
+      "path": "workflows/LEAN_RESEARCH_LAB.md",
+      "sha256": "22b91b1ac6a5cb710c5910a9c217959cb9fcd12a65d6a951ad9311ffa73578cf",
+      "bytes": 6463
+    },
+    {
+      "path": "governance/COMPUTE_THROUGHPUT_POLICY.md",
+      "sha256": "cd6b4631da23ce706ad4c001f98383e1eceff75e8d4acc427edeca037373ff2b",
+      "bytes": 2390
+    },
+    {
+      "path": "governance/STANDING_AUTHORIZATION.md",
+      "sha256": "aa00df8c7fe6d0a302eeb282447423fd54b65eb62c5d128053c62bf24b597131",
+      "bytes": 12401
+    },
+    {
+      "path": "workflows/NEXT_ACTION.md",
+      "sha256": "adb4042a2b4aeb0d7861e38871b1262236a3873ec8503541f10e96633d473ca0",
+      "bytes": 6304
+    }
+  ]
+}

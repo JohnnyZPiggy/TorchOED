@@ -1,5 +1,7 @@
 # TorchOED — SAE V3.3 Experiment Protocol / Engineer Handoff
 
+> **E0 2026-10-29 correction:** Codex delivered actual original-wheel data in [Draft PR #3](https://github.com/JohnnyZPiggy/TorchOED/pull/3). P1's original rank-12 mathematical hypothesis was disproved: the actual PyDOE design is rank **15/15**. See Scientific Mentor §25. The preserved initial E0 scope is historical; do not conflate a failed oracle prediction with a PyDOE bug.
+
 > **Chief Architect | 2026-10-29 | EXPLORE → VALIDATE | Reuse-First | evidence over claims**
 >
 > References: [DEVELOPMENT_PLAN](DEVELOPMENT_PLAN.md), [SCIENTIFIC_MENTOR_RESEARCH](SCIENTIFIC_MENTOR_RESEARCH.md) §§17–24, [ARCHITECT_ECOSYSTEM_SURVEY](ARCHITECT_ECOSYSTEM_SURVEY.md), [M0 Issue #1](https://github.com/JohnnyZPiggy/TorchOED/issues/1).
@@ -33,7 +35,7 @@
 | Case ID | Actual PyDOE invocation / frozen inputs | Independently specified math oracle and acceptance | Common misinterpretation |
 |---|---|---|---|
 | **P0 wheel** | `import pydoe`; `importlib.metadata.version("pydoe")`; compute wheel SHA | Installed distribution 1.6.0; local SHA equals published metadata; exact import path / environment captured | PyPI webpage evidence ≠ wheel locally installed |
-| **P1 full-rank** | `small_composite_design(n=4, center=(2,2))` | Count output, build **full** quadratic feature basis with intercept, linear, squares, pairwise products. Check shape `(20,4)` and feature rank **12 of 15**; if source variant diverges, report actual result, not forced expected | N≥p does NOT imply model identifiability |
+| **P1 full-rank** | `small_composite_design(n=4, center=(2,2))` | Count output, build **full** quadratic feature basis with intercept, linear, squares, pairwise products. **Corrected after E0 PR #3:** expect `(20,4)` with full quadratic feature **rank 15 of 15** for actual PyDOE 1.6.0. Keep the former **rank-12** `D=ABC` reference as a *different negative control*, not a valid wheel expectation. Preserve original failed-hypothesis evidence | N≥p does NOT imply model identifiability |
 | **P2 shell** | `doehlert_shell_design(num_factors=k,num_center_points=1)`, k=1,2,3,4 | Source-math predicts k=1 **IndexError**, and k=2/3/4 output row count **6/10/15**, rank 2; compare source predictions to wheel exact rows and docs claim 7/13/21 | A source mathematical issue is not already a measured wheel defect |
 | **P3 digital net** | `niederreiter_sequence(num_points=16,dimension=1,n_bits=b)` for b=3,5,8,30 | Source Hankel GF(2) generator rank **2**, observed first-coordinate distinct counts **4** (or record exact disparity). Independent GF(2) elimination on generator polynomial verifies rank, not `torch.SobolEngine` parity | Valid Niederreiter theory ≠ PyDOE implementation |
 | **P4 sparse point cloud** | `doe_sparse_grid(n_level=L,n_factors=2,grid_type=g)`, L=0,1,2,3; g=clenshaw_curtis, gauss_patterson, chebyshev. Also `sparse_grid_dimension(7,2)` and `(8,2)` | Verify `grid_type` makes **no coordinate difference** in frozen implementation (strict array comparison), expected counts 1/5/13/29 for small levels and 705/705 formula for 7/8; compare against **separate true Smolyak weighted quadrature** but label it a different API target | Same node count ≠ same nodes/weights/quadrature order |
@@ -93,4 +95,4 @@ Measure **actual end-to-end** candidate scoring and selected-swap quality, not j
 - Codex running in a separate local/Desktop session **cannot be inferred** from a GitHub issue; status is only verified through a CLAIM/handoff/branch/PR or provided terminal evidence.
 - Once M0 PR appears, Architect can decide whether E0 waits or proceeds independently; no automatic expansion of the M0 implementation or accidental merging of E0 artifacts into M0.
 
-**ADR (Architect status 2026-10-29):** `E0_READY_FOR_CLAIM`; `E1_NOT_DISPATCHED`; `E2_NOT_DISPATCHED`; `M0_ISSUE_1_OPEN`; `NO_E0_CODE_RUN_YET`.
+**ADR (updated 2026-10-29):** `E0_ENGINEER_CLAIM_AND_HANDOFF_RECEIVED`; `DRAFT_PR_3_INITIAL_REVIEW_WITH_P1_ERRATUM`; `E1_NOT_DISPATCHED`; `E2_NOT_DISPATCHED`; `M0_ISSUE_1_OPEN`; `NO_ENGINEER_MERGE`. Original READY status was a dated snapshot.

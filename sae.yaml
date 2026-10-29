@@ -25,6 +25,6 @@ workflow:
   task_timeout_required: true
   max_self_repair_attempts_per_failure_class: 3
 current_dispatch:
-  issue: 7
-  milestone: "M2-A"
+  issue: 9
+  milestone: "M3-A"
   compute: "cpu_only"

@@ -16,4 +16,4 @@ This is a reference entrypoint, not a copied snapshot, CLI, grant or claim of ru
 - [Security](https://github.com/JohnnyZPiggy/SAE-Framework/blob/d84942e4890d9837ae0e6cbb379b85c3a95aba84/workflows/SECURITY.md)
 - [Next action](https://github.com/JohnnyZPiggy/SAE-Framework/blob/d84942e4890d9837ae0e6cbb379b85c3a95aba84/workflows/NEXT_ACTION.md)
 
-User instructions and the project AGENTS.md govern scope. Issue #7 / current dispatch authorizes only scoped CPU M2-A information and D/A/E criteria, not other M2, M3, E0 edits or accelerators. The Engineer never self-merges.
+User instructions and the project AGENTS.md govern scope. Issue #9 / current dispatch authorizes only CPUfloat64 exact-ID no-repeat Fedorov 1-swap search, not M3-B, E0 edits or accelerators. The Engineer never self-merges.

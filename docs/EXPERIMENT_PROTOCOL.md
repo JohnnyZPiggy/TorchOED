@@ -96,3 +96,39 @@ Measure **actual end-to-end** candidate scoring and selected-swap quality, not j
 - Once M0 PR appears, Architect can decide whether E0 waits or proceeds independently; no automatic expansion of the M0 implementation or accidental merging of E0 artifacts into M0.
 
 **ADR (updated 2026-10-29):** `E0_ENGINEER_CLAIM_AND_HANDOFF_RECEIVED`; `DRAFT_PR_3_INITIAL_REVIEW_WITH_P1_ERRATUM`; `E1_NOT_DISPATCHED`; `E2_NOT_DISPATCHED`; `M0_ISSUE_1_OPEN`; `NO_ENGINEER_MERGE`. Original READY status was a dated snapshot.
+
+
+
+---
+
+## 6. E0 final Chief Architect evidence gate: scoped science accepted, PR merge held (2026-10-29)
+
+> Final independent review of [Draft PR #3](https://github.com/JohnnyZPiggy/TorchOED/pull/3) at frozen PR head `8a4f2e8cc51653594387196c9bac95279f1bbe3d`, base `e6c0052adb2bff559c625a8319f89b061c971e9f`. **Do not merge**. E0 scientific findings are accepted on the documented evidence; a small follow-up correction is required to promote the experiment runner to an ongoing clean regression baseline. This review does NOT approve M0 code, GPU, external E1/E2 experiments or automatic merges.
+
+### 6.1 Scope and integrity verification: PASS
+
+- PR remains OPEN/DRAFT/UNMERGED; 11 changed files, all under `experiments/reference_e0/**`. No M0 runtime, setup, CI or original research code changed by the PR.
+- GitHub `results/SHA256SUMS` lists **10** other files; a **separately implemented JavaScript SHA-256** hash over the real GitHub-fetched UTF-8/LF content matched **10/10** expected values. The manifest itself is the 11th file, not self-listed. The independent implementation passed the standard SHA-256 "abc" known-answer test.
+- Exact `run_reference.py` and `test_reference.py` Git blob IDs were identical at tested commit `f5e9fde69fb31e5e4e9691158f213fe181c38260` and current reviewed PR head `8a4f2e8cc51653594387196c9bac95279f1bbe3d`. Their SHA-256 checksums independently match both manifest and `results/environment.json` `committed_source_sha256`.
+- Reviewed entire ~405-line `run_reference.py`, all tests (~22 lines), remaining per-file patches and results manifests. 39 case records parse, with **25 PASS_MATCH, 1 FAIL_MISMATCH, 2 EXPECTED_EXCEPTION, 11 SOURCE_SEMANTIC_DIFFERENCE**; this matches the handoff, summary and recorded runner log.
+- P0 Engineer reports original wheel downloaded/locally hashed, original `pydoe==1.6.0` actually imported, **76** installed Python files matched the wheel and **six** critical frozen Git blobs matched the source commit. Independently checked **six pinned Git blob SHA strings match the corresponding 76-file evidence map**. However original wheel archive itself was **not available to this Architect execution environment**, so its on-disk bytes and independent install were **NOT_RUN locally**, not falsely labeled Architect-reexecuted.
+- `results/commands.json` records finite Windows execution commands/timeout and **intentional comparator exit 1** due P1 old expected hypothesis; `results/tests.txt` records **3 passed**, exit 0. Those exact Windows processes were **NOT_RUN again by Architect**; their tracked logs/source are consistent. The three Python unit tests cover math helpers (determinant, GF(2), Smolyak), **not** the full 39-case original-wheel regression.
+
+### 6.2 Independent mathematical audit: PASS for measured evidence; generalization limited
+
+- **P1 corrects prior Mentor conjecture**: direct independent NumPy/SymPy reconstruction from actual wheel's 20×4 P1 rows gives full quadratic design `20×15` rank **15**, exact Gram determinant **18,014,398,509,481,984**, and clear smallest singular values (~1.748). The wheel's cube is `D=AB`; prior `D=ABC` **different** cube gives rank **12**, a legitimate counterexample only for that other design. This scientific hypothesis failure **must remain visible** in raw original P1 case and handoff; the correct *future* P1 regression expects rank 15.
+- **P2/P3/P4 replay**: from each stored original array, independently rechecked 3 shell rank/count cases (k=2..4, rank2), four Niederreiter integer/GF(2) recurrence first-axis cases (4 unique each), 12 sparse point counts and four exact cross-option coordinate equalities. P2 k=1 IndexError and P5 skip ValueError independently verified as **recorded upstream exceptions**, without claiming a fresh Architect upstream import.
+- **P6 eight independent exact-coordinate index/score reconstructions**: eight output designs map to unique original candidate IDs; separate numeric Gram determinants reproduce stored normalized scores within float64 tolerance and reproduce closed 1-swap optima. Four methods on each of 2 small pools gave `global_gap=0` in submitted data, matching independently evaluated scores and exhaustive finite candidate checks; no claim of general global optimality.
+- Independent local CPU helper tests re-implemented exact 1D D variance, GF(2) rank+digital first-axis recurrence, and rational-weight Smolyak polynomial integration; mathematical replica suite **PASS**. It is not a byte-for-byte rerun of Codex's Windows pytest file, nor actual installed-wheel execution.
+
+### 6.3 Evidence-label and regression-cleanup requirements (no loss of original results)
+
+**E0 SCIENTIFIC ACCEPTANCE: PASS_WITH_CORRECTED_HYPOTHESIS.** Four-plus nontrivial actual wheel families, negative cases, provenance documentation and scope gates all met on Engineer evidence reinforced by independent source/data/math review.
+
+**PR #3 MERGE GATE: HOLD, NOT APPROVED.** Before considering this experimental branch as a reusable **clean regression**:
+1. **P1 add a separately named corrected oracle** for the frozen actual wheel: positive-case rank 15/15 and exact `det(FᵀF)>0`, retaining the old P1=FAIL_MISMATCH original run unchanged as historical falsification. Prefer a small `P1-corrected` test and a new evidence/run summary rather than retroactively changing old `cases.json` or rewriting original logs.
+2. **P4 four derived `grid_type` comparisons** are calculated from the 12 actual PyDOE calls, but they are appended directly with `actual.called_original_pydoe=true` without a per-row wheel/source provenance object. Mark them explicitly **DERIVED_FROM_ACTUAL_CASES** with the three constituent case IDs each, and do not count them as four extra direct PyDOE calls. Thus there are **39 evidence records, 35 provenance-marked original-call/installation records, four derived cross-option comparisons**. The original 39 remains intact; append supplement/correct presentation rather than suppressing findings.
+3. **P6 clarify** that `PASS_MATCH` in `run_reference.py` checks ID legality and numerical D-score agreement; `one_swap_local_exact`, `global_gap` are reported diagnostics rather than `PASS` predicates. The two current pools are globally best; this is not an algorithm-level performance guarantee. No need to expand E0 to harder or paid tests.
+4. Preserve original wheel SHA/Source SHA, exact tested commit, script hashes, environments, finite commands, negative cases, corrected research §25, and the transparent GPU NOT_RUN/COLD-WARM caveat. Maintain experiment-only paths. If any runner code changes, rerun finite CPU comparisons on same pinned wheel and record a **new tested commit**. Do not edit the original raw evidence to manufacture PASS.
+
+**Scientist/Architect boundary:** This is a completed *E0 evidence audit*, **not** permission to merge Draft PR #3. E1, E2, M0, CUDA, release and deployment remain separately gated. Architect will verify any Engineer follow-up before changing MERGE_GATE=HOLD.

@@ -39,7 +39,7 @@ def test_package_imports_only_torch():
     for source in Path(torchoed.__file__).parent.glob("*.py"):
         tree = ast.parse(source.read_text(encoding="utf-8"))
         imports = {node.module.split(".")[0] for node in ast.walk(tree)
-                   if isinstance(node, ast.ImportFrom)}
+                   if isinstance(node, ast.ImportFrom) and not node.level}
         imports |= {name.name.split(".")[0] for node in ast.walk(tree)
                     if isinstance(node, ast.Import) for name in node.names}
         assert imports <= {"torch"}

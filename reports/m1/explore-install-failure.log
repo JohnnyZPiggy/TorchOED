@@ -1,0 +1,24 @@
+Obtaining file:///<TASK_ROOT>/checkout
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torchoed
+  Building editable for torchoed (pyproject.toml): started
+  Building editable for torchoed (pyproject.toml): finished with status 'done'
+Failed to build torchoed
+   ERROR: Failed building editable for torchoed
+
+[notice] A new release of pip is available: 26.1.2 -> 26.2.2
+[notice] To update, run: <TASK_ROOT>\venv\Scripts\python.exe -m pip install --upgrade pip
+error: failed-wheel-build-for-install
+
+Failed to build installable wheels for some pyproject.toml based projects
+
+torchoed
+
+Traceback (most recent call last):
+  File "<TASK_ROOT>\explore.py", line 6, in <module>
+    t=time.time();x=subprocess.run(args,cwd=c,env=env,capture_output=True,text=True,timeout=limit);print(x.stdout,x.stderr);assert x.returncode==0
+                                                                                                                                   ^^^^^^^^^^^^^^^
+AssertionError

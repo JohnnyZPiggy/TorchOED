@@ -1,0 +1,75 @@
+{
+  "base_sha": "0dfbc41923e9f9b5dfdb82bde03691415ccf6f3d",
+  "tested_sha": "21d747aa6ea2b9a4bf82a6ce87770df7b0ee6923",
+  "branch": "feat/5-m1-constructors",
+  "frozen_sae": "d84942e4890d9837ae0e6cbb379b85c3a95aba84",
+  "cold": "PASS_REUSED_IMMUTABLE_PROTOCOLS_LIVE_STATE_REFRESHED",
+  "cpu_warm": "PASS_FRESH",
+  "M0_history_license_contract_roadmap_unchanged": true,
+  "E0_head_unchanged": "1d59ae5da6c694230aba2e95f217b517cea692c8",
+  "PASS_gates": {
+    "F1": "PASS",
+    "F2": "PASS",
+    "F3": "PASS",
+    "F4": "PASS",
+    "L1": "PASS",
+    "L2": "PASS",
+    "L3": "PASS",
+    "L4": "PASS",
+    "S1": "PASS",
+    "S2": "PASS",
+    "S3": "PASS",
+    "S4": "PASS",
+    "S5": "PASS",
+    "P1": "PASS",
+    "P2": "PASS",
+    "P3": "PASS",
+    "P4": "PASS",
+    "P5": "PASS",
+    "P6": "PASS"
+  },
+  "P6": {
+    "actual_E0": {
+      "shape": [
+        20,
+        15
+      ],
+      "rank": 15,
+      "exact_gram_det": "18014398509481984"
+    },
+    "separate_D_equals_ABC_negative": {
+      "shape": [
+        20,
+        15
+      ],
+      "rank": 12,
+      "exact_gram_det": "0"
+    },
+    "rank_tolerance": "torch default max(m,p)*float64_eps*sigma_max; independent Fraction rank confirms exactly; no eigen gate used"
+  },
+  "failures": [
+    {
+      "class": "editable build failures: first WinError32 cleanup, second generic pip build failure",
+      "observed_attempts": 2,
+      "repair": "D-drive task-owned build temp outside Dropbox; successful third install",
+      "first_trace": "first root exception observed in tool output; second generic pip trace retained in explore-install-failure.log"
+    },
+    {
+      "class": "public exports lost during docs preparation",
+      "observed_attempts": 1,
+      "repair_commit": "21d747aa6ea2b9a4bf82a6ce87770df7b0ee6923",
+      "trace": "validation-export-failure.log"
+    }
+  ],
+  "NOT_RUN": [
+    "GPU",
+    "Actions",
+    "paid services",
+    "benchmarks",
+    "M2",
+    "M3",
+    "cross-platform/version validation",
+    "fresh PyDOE call"
+  ],
+  "workflow": "M1_F_L_S_P_CPU_ORACLES_PASS / TORCH_ONLY / ARCHITECT_REVIEW_PENDING"
+}

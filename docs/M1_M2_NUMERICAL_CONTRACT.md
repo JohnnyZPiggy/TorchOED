@@ -97,3 +97,45 @@ Three tiers: `(B,m,n,p)=(1,32,8,4)`, `(8,512,32,16)`, `(8,4096,64,32)`. Compare 
 | E0 Draft PR #3 | EXPERIMENT_ACCEPTED; pending separate Scientist merge approval |
 
 **Next Architect gate:** when an M0 Engineer PR appears, independently review import/install/torch-only dependency, 91-name inventory, minimal smoke and explicit limits. Then Scientist may authorize discrete M1 work. This contract provides the mathematical definitions and independent A1–A10 targets, but **must not be interpreted as a request to modify M0**. No new issue, PR or merge is created here.
+
+
+---
+
+## 9. M1 Constructor architecture and independent CPU fixtures (2026-10-29)
+
+**ARCHITECTURE_ONLY / M1_NOT_DISPATCHED.** Existing M0 Issue #1 remains OPEN and unclaimed on visible GitHub: no M0 branch, no M0 PR or package on main. Only `main` and E0's independent experiment branch exist. This chapter refines future M1 criteria; it does not authorize Codex to implement M1 under M0. Runtime `torch` only; reuse `torch.cartesian_prod`, `randperm`, `rand`, `torch.quasirandom.SobolEngine` and tensor broadcasting. PyDOE 1.6.0 is dev-only, not a runtime backend.
+
+### 9.1 Full factorial: factor ordering must be explicit
+
+Proposed `full_factorial(levels, *, device=None)`: positive integer tuple levels `(q_0,...,q_{k-1})`, `k>=1`, default output `torch.int64[N,k]`, `N=prod(q_i)`, lexicographic rows **last factor varies fastest**. Tiny exact CPU fixture `(2,3)` -> `[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]]`. `(1,3)` yields first coordinate always 0; `(2,2,2)` gives all eight unique 3-bit vectors. Invalid level<=0, noninteger, empty dimensions or excessive `N` must be rejected **before** tensor allocation. Output complexity Θ(k N). This explicit ordering need not equal PyDOE `fullfact`; distinguish set equivalence from exact row-order compatibility.
+
+Proposed `ff2n(k)` is separately named and uses signed levels `{-1,+1}`: `2*full_factorial([2]*k)-1` with explicit floating dtype. `ff2n(1)` -> two rows [-1],[+1]; k=2 -> four corners. Do not silently return int indices for signed DOE and do not confuse physical coordinates with features.
+
+### 9.2 Latin Hypercube: one permutation per dimension
+
+Proposed minimal `lhs(n_samples, n_factors, *, generator=None, device=None, dtype=torch.float64, mode='random')`. For each column j draw independent `pi_j=randperm(n)` and jitters `u_ij=rand(n)`, then `x_ij=(pi_j(i)+u_ij)/n`. Validate `0<=x_ij<1` to floating tolerance and `sort(floor(n*x[:,j])) == [0,..,n-1]` **exactly** for every column. `n=5,k=3` is a bounded 5×3 stratum oracle; `n=1,k=4` is valid; n<=0 or k<=0 reject. Preserve caller-provided `torch.Generator` and state; same seed, torch version and device should replay identically. Never demand SciPy/PyDOE CPU/CUDA RNG bitwise equality. Optimized, maximin, centered, OA/sliced LHS modes **DEFERRED** rather than pretending they equal random LHS. Work Θ(n k) plus permutation cost; GPU benefit not established.
+
+### 9.3 Sobol: reuse native engine, freeze skip and count policies
+
+Proposed `sobol(n,d,*,scramble=False,seed=None,skip=0,balance='exact',dtype=torch.float64,device=None)` wraps `torch.quasirandom.SobolEngine(d,scramble=scramble,seed=seed)`, `fast_forward(skip)` and `draw(n)`. The default proposed policy is **exact n output**; n=0 recommended `(0,d)` if backend supports, otherwise documented rejection. Optional power-of-two mode must be specified separately, never silently pad. `skip>=0`, valid `d`, documented direction-number/dimension limit. Real CPU Oracle: unscrambled d=2 first four `[[0,0],[.5,.5],[.75,.25],[.25,.75]]`; n=3 yields shape `(3,2)` under exact policy, skip=1/n=3 matches indices 1..3 of original first-four sequence. A fixed scrambling seed is deterministic only within an identified torch implementation/device; no cross-library guarantee. Frozen PyDOE's `use_pow_of_2=True` can pad 3→4, and SciPy `skip=1,random_base2(2)` can throw ValueError; do not import those backend quirks as implicit TorchOED semantics. Cost Θ(nd) plus device copy if needed, no GPU speedup assumed.
+
+### 9.4 Polynomial model features: exact column order and rank
+
+Proposed `polynomial_features(C, degree=1|2, include_bias=True)` accepting floating `C[m,k]` or explicit batched `C[B,m,k]`. degree1 column order `[1,x_0,...,x_{k-1}]`, size `p=1+k`; degree2 column order `[1, x_j by increasing j, x_j² by increasing j, x_i*x_j with i<j lex]`, size `p=1+2k+k(k-1)/2`. `include_bias=False` removes only the leading 1. Preserve dtype, device and autograd; integer factorial indices require explicit input coding rather than hidden scaling.
+
+Independent small fixtures: C=[[-1],[0],[1]] degree2 -> rows `[1,-1,1]`, `[1,0,0]`, `[1,1,1]`, rank 3; degree1 yields 3×2. A two-level one-factor `[-1,+1]` degree2 has rank 2 because `x²=1`; rank is not equal to term count by default. Two-factor signed full factorial produces 4×6 full-quadratic features, rank≤4. Independent E0 positive fixture `small_composite_design(4,center=(2,2))` produces 20×15 full-quadratic **rank 15** and exact Gram determinant `18014398509481984`; *different* D=ABC cube with axial and centers has rank 12/Gram det0. Never revive the superseded rank12 claim for original PyDOE. Batched B=2 feature output must match stacked independent scalar calls.
+
+### 9.5 M1 acceptance gates and priority
+
+| Test | Requirement |
+|---|---|
+| F1–F3 | (2,3) precise row order, singleton levels, 2^k signed corners, uniqueness and exact IDs |
+| F4 | invalid levels/overflow/out-of-budget checked before allocation |
+| L1–L3 | random LHS strata uniqueness; n=1; same-seed CPU replay & generator isolation |
+| L4 | invalid n/k, unsupported LHS optimization mode explicitly rejected |
+| S1–S3 | four exact unscrambled 2D Sobol points, exact n=3 count, skip subsequence |
+| S4–S5 | controlled scramble replay and invalid/zero-size contract |
+| P1–P5 | degree1/2 exact column order, bias removal, rank-deficient signed grid, batched equality and autograd |
+| P6 | E0 actual PyDOE 20×15 rank15 positive vs separate D=ABC rank12 negative mathematical fixture |
+
+CPU float64 analytic oracles first, `atol=rtol=1e-9` for well-conditioned floating calculations; exact integer indices/strata require exact equality. No code was implemented or tested in TorchOED by this architecture action; GPU, CPU benchmark, paid resources, E1/E2, M3 and external runtime packages are NOT_RUN/NOT_AUTHORIZED. **M0 must pass its separate import/install/coverage/CPU-smoke gate before any M1 Engineer dispatch and explicit Scientist scope approval.**

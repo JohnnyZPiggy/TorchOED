@@ -1,5 +1,8 @@
 # TorchOED — Scientific Mentor Mathematical Research
 
+> **2026-10-29 E0 ERRATUM — READ BEFORE HISTORICAL §§18/23/24:** The earlier 4-factor `small_composite_design(4, center=(2,2))` **rank 12/15** conjecture was FALSE for the frozen PyDOE 1.6.0 implementation. The actual hash-verified wheel was run in [E0 Draft PR #3](https://github.com/JohnnyZPiggy/TorchOED/pull/3): actual full quadratic feature rank **15/15**. The former rank-12 oracle constructed a *different* fractional cube `D=ABC`; frozen PyDOE uses `D=AB` for this input. Old examples remain **superseded historical research evidence**, not valid upstream correctness claims. See §25 and E0 Issue #2.
+
+
 > **SAE V3.3 | Chief Architect + Scientific Mentor | Research dossier v1.0 | 2026-10-28**
 >
 > **Scope:** Mathematical research, upstream source audit, small independent CPU checks, and future research hypotheses. This is **not** an implemented TorchOED feature list, performance benchmark, merged PR, or Engineer authorization.
@@ -1554,3 +1557,33 @@ sha256sum /tmp/torchoed-wheel/pydoe-1.6.0-py3-none-any.whl
 If `numpy/scipy` are absent from venv, install pinned compatible versions in the **isolated** environment (or use `--system-site-packages` with recorded inherited versions), not into TorchOED. Then run direct actual package functions `small_composite_design`, `doehlert_shell_design`, `niederreiter_sequence`, `doe_sparse_grid` with each `grid_type`, `sobol_sequence` with both skip/pow2 branches, `fedorov`, `detmax` on frozen finite candidate sets. Capture exact candidate rows/IDs, function returns/exception class, numpy/scipy/pydoe versions, deterministic seeds and tolerances (e.g. float64 well-conditioned `atol=1e−9, rtol=1e−9`; structural/combinatorial indexing exact; ill-conditioned examples flagged). Compare independent scalar/Torch oracle and math postconditions separately from **API parity**. Keep PyDOE installed source read-only; do not add/edit TorchOED production package code.
 
 **Final this-turn status:** wheel provenance **VERIFIED_FROM_PYPI_METADATA**; wheel bytes/checksum local **BLOCKED**; frozen source semantics **REVIEWED**; bounded independent CPU math & genuine SciPy/PyTorch behavior **PASS on named cases**; upstream real PyDOE direct invocation **NOT_RUN/BLOCKED**; CUDA **NOT_RUN**; TorchOED M0 code and PR **UNCHANGED**. Reuse only existing Issue #1; do not open another Issue/PR for this limitation.
+
+---
+
+## 25. E0 actual PyDOE 1.6.0 wheel evidence, corrected full-quadratic Oracle and Architect review (2026-10-29)
+
+**Status: REAL_UPSTREAM_WHEEL_EXECUTED (Engineer evidence), ARCHITECT_INITIAL_MATH_REVIEWED (independent recheck), FINAL_PR_ACCEPTANCE_PENDING.** E0 [Issue #2](https://github.com/JohnnyZPiggy/TorchOED/issues/2), [Draft PR #3](https://github.com/JohnnyZPiggy/TorchOED/pull/3) at reviewed head `8a4f2e8cc51653594387196c9bac95279f1bbe3d`. Engineer reports Python 3.14.6, NumPy 2.4.6, SciPy 1.18.0, PyTorch 2.14.1+cpu, actual PyDOE 1.6.0 imported from a separate Windows venv; hash-verified wheel SHA-256 `5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec`. Claims of installed-byte verification and all 76 wheel source files are **Engineer evidence reviewed in PR**; our independent environment did **not** download and execute the wheel itself. Earlier §24's BLOCKED network status is a historical description of the *separate earlier environment* and no longer the global experiment status.
+
+### 25.1 Critical erratum: Small Composite is full-rank for actual upstream 4-factor input
+
+The actual hash-verified original wheel returned 20×4:
+- first eight cube rows correspond to independent binary `A,B,C` and **`D=A·B`**, *not* previously assumed `D=A·B·C`;
+- two cube-center rows, eight axial rows `±2 e_j`, two more center rows.
+
+Define `F(x)=[1, x_1,...,x_4, x_1²,...,x_4², x_1x_2,...,x_3x_4]` with 15 columns, where all 20 design rows count separately. **Independent Architect Python/NumPy** reconstruction from the actual PR cases (without importing any PyDOE code) obtains `shape(F)=(20,15)`, `rank(F)=15`, and **exact integer** `det(FᵀF)=18014398509481984 > 0` (SymPy integer arithmetic). Four smallest singular values are approximately 1.77961,1.74806,1.74806,1.74806, well separated from numerical rank loss.
+
+As a negative control, the **different** cube `D=ABC`, together with the same axial and center rows, yields full-quadratic rank **12/15**, due to aliases `AB=CD`, `AC=BD`, `AD=BC`. This former reference is mathematically valid **for its own different candidate design**, but it was **not** a correct oracle of the original PyDOE Small Composite output. In the real PyDOE design, `AB=D` holds on the **fractional cube**, but axial rows allow separation of the main effect D and interaction AB; no blanket inference of rank deficiency should be made based on its cube portion alone.
+
+**Supersession:** Every reference in historical §§18/23/24 or E0 protocol to “actual PyDOE small composite rank 12” is **superseded**; it represents an incorrect assumption, not an observed library defect. For the actual frozen input the expected correct full-quadratic rank is **15**, and the two constructions should remain in a paired *positive vs negative* structural oracle. Do not rewrite PR evidence to hide that the original E0 hypothesis failed.
+
+### 25.2 Original-wheel results now observed by Codex; evidence types
+
+Draft PR #3 contains only `experiments/reference_e0/**` (11 changed files), 39 individual observations: **25 PASS_MATCH, 1 FAIL_MISMATCH (the prior P1 hypothesis), 2 EXPECTED_EXCEPTION, 11 SOURCE_SEMANTIC_DIFFERENCE**. The 1 mismatch is a *research oracle* failure; the package design is actually full-rank on P1. Engineer P0 shows actual wheel SHA, 76 source-byte comparisons and six pinned Git blob matches. Actual-PyDOE P2 Shell has k=1 IndexError, k=2/3/4 sizes 6/10/15 and rank 2. Actual-PyDOE P3 Niederreiter shows four distinct first-axis values at b=3,5,8,30. Actual-PyDOE P4 returns same coordinates for three grid_type options at levels 0–3; its point-cloud output alone is **not** a weighted Smolyak quadrature rule. Actual-PyDOE P5 Sobol uses 4/3 points depending pow2 and raises the expected skip1+random_base2 ValueError. P6 invoked four search algorithms on two **small selected** candidate pools and compared independent exact determinant/enumerations; no global general guarantee.
+
+**Architect independent checks this turn:** verify PR meta: Draft/open/unmerged, base `e6c0052adb2bff559c625a8319f89b061c971e9f`, head `8a4f2e8cc51653594387196c9bac95279f1bbe3d`; all 11 paths limited to experiments/reference_e0; cases.json has 39 records matching the reported aggregate; independently calculate P1 actual shape, rank, exact Gram determinant and compare alternate D=ABC rank 12. **Not independently rerun:** Windows wheel download/installation, P0 checksums from physical wheel, all 39 actual original-function outputs, Windows test commands, GPU (E0 CPU-only). These remain distinct Engineer attestations, not newly executed local tests.
+
+### 25.3 Decision / remaining Architect gate
+
+**Decision:** `E0_ARCHITECT_INITIAL_REVIEW_PASS_WITH_RESEARCH_ERRATUM` but **DRAFT_PR_3_NOT_MERGED / FORMAL_ACCEPTANCE_PENDING**. The invalid historical rank hypothesis has been formally corrected in this dossier and E0 protocol. Continue strict candidate-ID and source-vs-mathematical distinctions; no automatic M0 changes, E1 dispatch or CUDA start. Engineer may preserve original `FAIL_MISMATCH` and attach a supplemental corrected expectation as a separate test/report if needed; never silently falsify original 39 results. Before any acceptance/merge, review script+data integrity, scoped files, repro commands and source provenance fully, and decide whether any corrections need a separate Engineer follow-up.
+
+**Architect next science:** prepare M1/M2 numerical interface contracts (candidate IDs, repetitions, fixed moment matrices, noise, rank/regularization, batched score shapes) and small GPU break-even *design* only. Do not claim code exists or move experimental/survey code into M0.

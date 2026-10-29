@@ -16,4 +16,4 @@ This is a reference entrypoint, not a copied snapshot, CLI, grant or claim of ru
 - [Security](https://github.com/JohnnyZPiggy/SAE-Framework/blob/d84942e4890d9837ae0e6cbb379b85c3a95aba84/workflows/SECURITY.md)
 - [Next action](https://github.com/JohnnyZPiggy/SAE-Framework/blob/d84942e4890d9837ae0e6cbb379b85c3a95aba84/workflows/NEXT_ACTION.md)
 
-User instructions and the project AGENTS.md govern scope. Issue #1 / current dispatch authorizes CPU-only M0, not M1–M3, E0 edits or accelerators. The Engineer never self-merges.
+User instructions and the project AGENTS.md govern scope. Issue #5 / current dispatch authorizes scoped CPU-only M1 constructors and features, not M2/M3, E0 edits or accelerators. The Engineer never self-merges.

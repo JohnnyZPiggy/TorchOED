@@ -1505,3 +1505,52 @@ TaguchiObjective is a unique three-member Enum; list_orthogonal_arrays exposes 1
 All 91 names are now categorized with real function-level mathematics or metadata inspection; **89 MATH_CPU (targeted property only), 2 METADATA_VERIFIED, 0 SOURCE_MATH, 0 FAMILY_ONLY**. The 91 include nonalgorithm helpers, registries and an Enum. **Full installed PyDOE 1.6.0 function-by-function equivalence, complete option matrices, all mathematical correctness proofs, TorchOED production code and CUDA remain NOT_RUN**.
 
 The natural next scientific phase is a *separately scoped* bounded installed-upstream reference harness to compare actual frozen function outputs and exceptions against these independent mathematics; prioritize negative cases (small-composite rank, Doehlert Shell, Niederreiter, strict sparse quadrature, Sobol skip, exchange-loop candidate IDs). For performance, distinguish integer combinatorial generators/metadata (CPU-first) from batched D/I/A/Fisher/rank/GP matrix scoring (potential GPU benefits only after measured break-even). Do not create another Issue/PR, alter M0 or claim a measured GPU speedup.
+
+
+
+---
+
+## 24. Bounded original PyDOE 1.6.0 wheel-parity attempt: acquisition BLOCKED, real CPU dependencies and mathematical oracles PASS (2026-10-29)
+
+> **SAE V3.3 Scientific Mentor · research only.** This chapter is an evidence **correction** to the expectation of running the installed PyDOE 1.6.0 distribution, **not** an assertion of actual original-PyDOE function execution. Existing math chapters 17–23 remain distinct from package-binary equivalence. No TorchOED M0 code changes, new Issue/PR or merges.
+
+### 24.1 Frozen distribution provenance and actual installation blocker
+
+- Frozen upstream Git commit: `pydoe/pydoe@866d3f411942cb662af8054562dc1f7e07372401`; source file Git Blob SHAs were independently read from GitHub at this commit.
+- Official PyPI release URL: https://pypi.org/project/pydoe/1.6.0/ (released October 21, 2026). PyPI provenance claims wheel/sdist published from the exact frozen GitHub commit.
+- Distribution wheel name: `pydoe-1.6.0-py3-none-any.whl`, PyPI-published SHA-256 (expected) `5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec`. Sdist expected SHA-256 `f08dac190923892f7419744986fdbab28057998128ad4f01061f5dcde81ec7c3`. **Neither archive was locally downloaded; no local checksum match is claimed.**
+- **Actual attempted command:** `python -m pip download --only-binary=:all: --no-deps --disable-pip-version-check --dest /tmp/torchoed_upstream_wheel 'pydoe==1.6.0'` → DNS `Temporary failure in name resolution`, after bounded pip retries, followed by `No matching distribution found` as an **environment connectivity symptom, not evidence that the version does not exist**. Direct access to `pypi.org` and `files.pythonhosted.org` from the CPU container also raises `URLError [Errno -3]`. An alternate network-backed download attempt failed. Initial and final `importlib.util.find_spec('pydoe')` → None.
+- Result: **PYDOE_1_6_0_INSTALLED_PACKAGE=BLOCKED; PYDOE_DIRECT_API_PARITY=NOT_RUN.** Do not silently replace with a different PyDOE/pyDOE2 version, infer success from source excerpts, or claim checksum validation against a missing wheel.
+
+Actual CPU environment: Python `3.13.5`, NumPy `2.3.5`, SciPy `1.17.0`, PyTorch `2.10.0+cpu`, CUDA unavailable. Independent probe executed in isolated temporary path `/tmp/torchoed_scientific_parity_probe.py` (not committed to project); script SHA256 `56e7261a728a46ab9ec746b5cba533a7c30cfc3b95f6310a3d7ab515d96e67f1`, results JSON SHA256 `93b8de33d6620f68d05225aea4432803a1cbdf8677c4d2873287efe41afdbee4`. These local temporary hashes are evidence identity only, **not downloadable GitHub artifacts**.
+
+### 24.2 Three-way evidentiary distinction and actual numerical outcomes
+
+| Target | Frozen-source basis | Actual CPU reference evidence (fresh run) | Original PyDOE wheel |
+|---|---|---|---|
+| Small Composite | `response_surface/small_composite.py`, blob `25d025b8d9d95981db6a36771488922ebdb0642d` | Independently assembled documented 4-factor cube `D=ABC` (8 rows) + 8 axial `±2e_i` + four centers: physical 20×4; quadratic features 20×15; rank **12**, AB=CD residual 0 | BLOCKED |
+| Doehlert Shell | `response_surface/doehlert.py`, blob `bc443e2364335a0594087df9f2c87e9d60abc975` | Exact relevant polar-loop *source transcription*, **not imported upstream**: k=2/3/4 yields rows 6/10/15, rank2 all; k=1 raises `IndexError`. Code docstring expects rows 7/13/21 | BLOCKED |
+| Niederreiter | `space_filling/quasi_random/niederreiter.py`, blob `809a31f447024b98f07f8f67e82efafe447373ee` | Exact GF(2) LFSR + Hankel generating-matrix *source transcription*: first dimension n_bits 3/5/8/30 all GF(2) rank **2**, first 16 sample indices yield **4** unique first-coordinate values | BLOCKED |
+| Sparse Grid | `sparse_grid/sparse_grid.py`, blob `b9e5e3d5ca81b1974c163a8e3897909b24aa74fc` | Exact piecewise **point-count formula** re-evaluated for d=2, levels 0..9: **1,5,13,29,65,145,321,705,705,705**. Code receives `grid_type` but does not read it in point-generation body; it pads point sets and has no quadrature weights. Formula/source audit, not direct wheel invocation | BLOCKED |
+| Genuine Smolyak | Independent Newton–Cotes difference tensor rules, **not PyDOE** and **not** CC/GP | Exact rational-weight 2D multi-index oracle: nested counts 1/5/13 for levels 0/1/2, all weight sums 1, `Q[x²y²]`=1/16, 5/48, **1/9**, and one negative coefficient at level2 | Not an upstream function parity test |
+| Sobol | `space_filling/quasi_random/sobol.py`, blob `33ecd3aedf676bb5af4d60cc5a8532715fde0905` | **Actual imported SciPy and PyTorch calls**: unscrambled d=2 first 4 points exactly equal, max abs diff **0**. For `skip=1,n=4,pow2=True`, actual `scipy.stats.qmc.Sobol(...).fast_forward(1); random_base2(2)` raises **ValueError**. With pow2=False, 3 requested gives 3 points; with pow2=True source requests 4. | BLOCKED |
+| DETMAX / Fedorov | `optimal/algorithms.py`, blob `ce48f41018d7819435883d8336c8d8a98a2cec59` | Independent 4-feature determinant example: initial two vectors raw det1; all single swaps raw det≤**0.81**; two-swap pair det **2.6244**. This is mathematical search-neighborhood evidence, **not** an observed detmax/fedorov invocation. **Actual NumPy** `isclose(1,1.000005,atol=1e−12)` returns True under default rtol and False with rtol=0. Frozen availability masks use default rtol. | BLOCKED |
+
+**Source discrepancy vs implementation defect:** (1) Small-composite rank deficiency is a **model-specific aliasing property** and does not automatically make a reduced model invalid; (2) Doehlert Shell and Niederreiter generator-source behavior are **source-level mathematical limitations** independently reconstructed, but require wheel invocation to prove the distributed artifact contains identical runtime behavior; (3) Sparse Grid naming/unused grid_type/no weights is a **source-API mathematical-definition mismatch**, not proof of numerical quadrature in a function which only returns points; (4) Sobol skip failure is a **real SciPy backend behavior** with the exact frozen call sequence; (5) DETMAX one-swap trapping is a **mathematical conditional-state proof**, not evidence that its frozen initializer actually reached that state.
+
+### 24.3 Strict actual-wheel acceptance instructions when network access is available
+
+This is a **read-only isolated Python comparison environment** plan, not an M0 engineering implementation task. Run in an authorized networked environment with existing compute entitlement:
+
+```bash
+python -m venv /tmp/torchoed-pydoe-160
+/tmp/torchoed-pydoe-160/bin/python -m pip download --no-deps --only-binary=:all: --dest /tmp/torchoed-wheel pydoe==1.6.0
+sha256sum /tmp/torchoed-wheel/pydoe-1.6.0-py3-none-any.whl
+# Must equal 5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec
+/tmp/torchoed-pydoe-160/bin/python -m pip install /tmp/torchoed-wheel/pydoe-1.6.0-py3-none-any.whl
+/tmp/torchoed-pydoe-160/bin/python -c "from importlib.metadata import version; import pydoe; print(version('pydoe'),pydoe.__file__)"
+```
+
+If `numpy/scipy` are absent from venv, install pinned compatible versions in the **isolated** environment (or use `--system-site-packages` with recorded inherited versions), not into TorchOED. Then run direct actual package functions `small_composite_design`, `doehlert_shell_design`, `niederreiter_sequence`, `doe_sparse_grid` with each `grid_type`, `sobol_sequence` with both skip/pow2 branches, `fedorov`, `detmax` on frozen finite candidate sets. Capture exact candidate rows/IDs, function returns/exception class, numpy/scipy/pydoe versions, deterministic seeds and tolerances (e.g. float64 well-conditioned `atol=1e−9, rtol=1e−9`; structural/combinatorial indexing exact; ill-conditioned examples flagged). Compare independent scalar/Torch oracle and math postconditions separately from **API parity**. Keep PyDOE installed source read-only; do not add/edit TorchOED production package code.
+
+**Final this-turn status:** wheel provenance **VERIFIED_FROM_PYPI_METADATA**; wheel bytes/checksum local **BLOCKED**; frozen source semantics **REVIEWED**; bounded independent CPU math & genuine SciPy/PyTorch behavior **PASS on named cases**; upstream real PyDOE direct invocation **NOT_RUN/BLOCKED**; CUDA **NOT_RUN**; TorchOED M0 code and PR **UNCHANGED**. Reuse only existing Issue #1; do not open another Issue/PR for this limitation.

@@ -57,6 +57,7 @@ def main(root):
         report['environment'] = dict(gpu=torch.cuda.get_device_name(0), torch=torch.__version__,
             cuda=torch.version.cuda, python=sys.version, driver=driver.stdout.strip(),
             device_total_bytes=device.total_memory, cpu_threads=4, tf32=False)
+        report['environment']['compiled_cuda_arches']=torch.cuda.get_arch_list()
         env = dict(os.environ, M2B_TEST_DEVICE='cuda', M2B_ERRORS=str(root/'gpu-errors.json'),
                    PYTHONPATH=os.pathsep.join([str(root/'src'), str(root/'tests')]))
         report['active_stage']='G1'; save()
@@ -137,13 +138,17 @@ def main(root):
                 report['active_stage']=f'G4/p{p}/B{B}'; save()
                 mg=M.detach().requires_grad_(); cg=c.detach().requires_grad_()
                 dm,dc=torch.autograd.grad(c_optimality(mg,cg,max_elements=limit).sum(),(mg,cg))
-                z=torch.linalg.solve(M,c.unsqueeze(-1)).squeeze(-1)
+                torch.cuda.synchronize()
+                # Independent LU reference on CPU: this Colab build's batched
+                # CUDA solve dispatch failed on observed T4 at p30/B32.
+                z=torch.linalg.solve(M.cpu(),c.cpu().unsqueeze(-1)).squeeze(-1).cuda()
                 expectedM=z[:,:,None]*z[:,None,:]; expectedc=-2*z
                 # Global relative infinity norm avoids zero-entry division artifacts.
                 errorM=((dm-expectedM).abs().amax()/expectedM.abs().amax()).item()
                 errorc=((dc-expectedc).abs().amax()/expectedc.abs().amax()).item()
                 report['G4'].append(dict(p=p,B=B,status='PASS' if max(errorM,errorc)<=1e-8 else 'FAIL',
-                                         relative_inf_M=errorM,relative_inf_c=errorc))
+                                         relative_inf_M=errorM,relative_inf_c=errorc,
+                                         analytic_reference='CPU torch.linalg.solve; actual gradient CUDA'))
                 if max(errorM,errorc)>1e-8:
                     raise AssertionError('G4_ANALYTIC_FAILED')
                 del mg,cg,dm,dc,z,expectedM,expectedc

@@ -206,7 +206,8 @@ def main(root):
                 gc.collect();torch.cuda.empty_cache()
                 if criterion_peak>=.68*properties.total_memory:break
                 batch=next_batch(batch,criterion_peak,properties.total_memory)
-        report['scientific_status']='PASS_CONSTRUCTIBLE_GRID_WITH_BLOCKS'
+        report['scientific_status']=('PARTIAL_HOST_MEMORY_BLOCKS' if any(r['status']!='PASS' for r in report['G5'])
+                                     else 'PASS_CONSTRUCTIBLE_GRID_WITH_BLOCKS')
         report['active_stage']='COMPLETE'
     except Exception as exc:
         report.update(scientific_status='FAIL' if isinstance(exc,AssertionError) else 'BLOCKED',

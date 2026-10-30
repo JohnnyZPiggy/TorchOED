@@ -40,5 +40,8 @@ raw=path.read_bytes()
 print('ARTIFACT',path.name,len(raw),hashlib.sha256(raw).hexdigest())
 ''' % (packed,hashes)
 (repo/'tools/m2b_gpu_driver.py').write_text(driver,encoding='utf-8',newline='\n')
+tail=driver.replace("main('+repr(str(root))+')'", "main('+repr(str(root))+',start_p=100,start_B=16384)'")
+assert tail!=driver
+(repo/'tools/m2b_tail_driver.py').write_text(tail,encoding='utf-8',newline='\n')
 (repo/'tools/m2b_artifacts.json').write_text('{"artifacts":[{"name":"m2b-gpu.json"}]}\n',encoding='utf-8')
 print(json.dumps(hashes,indent=2))

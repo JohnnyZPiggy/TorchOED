@@ -14,13 +14,15 @@ import torch
 from torchoed import c_optimality
 
 
-def main(root):
+def main(root, start_p=3, start_B=1):
     root = Path(root)
     started = time.monotonic()
     deadline = started + 340  # Reserve transport's 420s workload window for final output.
     report = dict(source_sha=os.environ['SAE_CANDIDATE_SHA'], status='PASS',
                   transport_semantics='DELIVERY_ONLY_CHECK_SCIENTIFIC_STATUS',
                   scientific_status='IN_PROGRESS', G1={}, G2=[], G3=[], G4=[], G5=[])
+    report['workload_plan']=dict(start_p=start_p,start_B=start_B,
+                                 purpose='CONTINUATION' if start_B!=1 else 'FULL_MATRIX')
     path = Path('/content/m2b-gpu.json')
 
     def save():
@@ -100,7 +102,9 @@ def main(root):
 
         # Increasing batches; stop only for measured memory, allocation failure or finite deadline.
         for p in (3, 10, 30, 100):
-            B = 1
+            if p < start_p:
+                continue
+            B = start_B if p==start_p else 1
             while True:
                 remaining()
                 report['active_stage']=f'G2/p{p}/B{B}/allocate'; save()

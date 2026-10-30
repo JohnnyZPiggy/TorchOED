@@ -54,7 +54,7 @@ installed, `--no-build-isolation` can be added. The recorded full regression
 result is 65 passing Windows CPU tests at the source SHA in M3-B1 evidence;
 historical manifests describe their own snapshots, not later documentation.
 
-No verified CUDA/TPU support, acceleration claim, full PyDOE parity, two-swap
-search, Modified Fedorov or DETMAX.
+No verified CUDA/TPU support, acceleration claim, full PyDOE parity,
+Modified Fedorov or DETMAX.
 M5-A improves usability only. See [release readiness](docs/RELEASE_READINESS.md)
 and the [MIT license](LICENSE).

@@ -31,23 +31,26 @@ def test_S2_all_205_starts_exact_locality_and_dominance():
     optimum = max(determinants.values())
     F = torch.tensor(rows, dtype=torch.float64)
     global_count = 0
+    nonlocal_endpoints = []
     for start in valid:
         ids = torch.tensor(start)
         result = k2_exchange(F, ids)
         endpoint = tuple(sorted(result['ids'].tolist()))
         value = determinants[endpoint]
-        assert all(value >= other for s, other in determinants.items()
-                   if len(set(s) - set(endpoint)) <= 2)
+        if any(value < other for s, other in determinants.items()
+               if len(set(s) - set(endpoint)) <= 2):
+            nonlocal_endpoints.append((start, endpoint, result['stop_reason']))
         global_count += value == optimum
         one = fedorov_exchange(F, ids)
         assert value >= determinants[tuple(sorted(one['ids'].tolist()))]
         assert all(b > a for a, b in zip(result['objective_history'], result['objective_history'][1:]))
+    assert not nonlocal_endpoints, (len(nonlocal_endpoints), global_count, nonlocal_endpoints[0])
     assert global_count == 145
 
 
 def test_S7_empty_two_swap_neighborhood_after_phase1():
     for rows, selected in [([[1], [2], [3]], [0]),
-                           ([[1,0], [0,1], [2,2]], [0,1])]:
+                           ([[1], [1], [2]], [0,1])]:
         F = torch.tensor(rows, dtype=torch.float64)
         ids = torch.tensor(selected)
         one = fedorov_exchange(F, ids)

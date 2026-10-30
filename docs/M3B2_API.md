@@ -9,6 +9,7 @@ Phase 1 calls `fedorov_exchange` until numerical 1-locality. Phase 2 calls
 `score_two_swaps`, selects the greatest VALID direct gain exceeding its own
 tolerance (first row on exact ties), applies that move and returns to Phase 1.
 Both scorers rebuild information/factors; no gather kernel or factor updates.
+An earlier Phase-1 stop propagates unchanged; it does not certify locality.
 `max_iter` bounds total accepted one- and two-swaps, not outer VND cycles.
 Workspace/output limits are enforced by the reused APIs; no new limit policy.
 
@@ -26,4 +27,4 @@ Unresolved two-swap rows prevent certification when no verified move remains.
 Only completed final N1/N2 scans yield `certificate="LOCAL_2_NUMERICAL"`
 and `full_neighborhood_checked=True`; every other stop is `NOT_CERTIFIED`.
 This is numerical 1-/2-locality, never exact or global optimality.
-The exhaustive integer control retains 60 non-global 2-local endpoints.
+The gate's exact reference retains 60 non-global 2-local endpoints.

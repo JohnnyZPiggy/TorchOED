@@ -27,20 +27,20 @@ path=pathlib.Path('/content/m2b-gpu.json')
 try:
     result=subprocess.run([sys.executable,'-B','-c',
         'from m2b_gpu_matrix import main; main('+repr(str(root))+')'],
-        env=env,timeout=350,capture_output=True,text=True)
+        env=env,timeout=410,capture_output=True,text=True)
     if result.returncode:
         raise RuntimeError('MATRIX_CHILD_EXIT_'+str(result.returncode))
 except (subprocess.TimeoutExpired,RuntimeError) as exc:
     data=json.loads(path.read_text()) if path.exists() else dict(source_sha=os.environ['SAE_CANDIDATE_SHA'],G1={},G2=[],G3=[],G4=[],G5=[])
     data.update(status='PASS',scientific_status='BLOCKED',failure_type=type(exc).__name__,
-                failure='FINITE_MATRIX_CHILD_BOUND_OR_EXIT',child_timeout_seconds=350,
+                failure='FINITE_MATRIX_CHILD_BOUND_OR_EXIT',child_timeout_seconds=410,
                 uncompleted_configs='NOT_RUN')
     path.write_text(json.dumps(data,indent=2,allow_nan=False)+'\\n')
 raw=path.read_bytes()
 print('ARTIFACT',path.name,len(raw),hashlib.sha256(raw).hexdigest())
 ''' % (packed,hashes)
 (repo/'tools/m2b_gpu_driver.py').write_text(driver,encoding='utf-8',newline='\n')
-tail=driver.replace("main('+repr(str(root))+')'", "main('+repr(str(root))+',start_p=100,start_B=16384)'")
+tail=driver.replace("main('+repr(str(root))+')'", "main('+repr(str(root))+',start_p=100,start_B=18150)'")
 assert tail!=driver
 (repo/'tools/m2b_tail_driver.py').write_text(tail,encoding='utf-8',newline='\n')
 (repo/'tools/m2b_artifacts.json').write_text('{"artifacts":[{"name":"m2b-gpu.json"}]}\n',encoding='utf-8')

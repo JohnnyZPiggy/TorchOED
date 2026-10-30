@@ -17,7 +17,7 @@ from torchoed import c_optimality
 def main(root, start_p=3, start_B=1):
     root = Path(root)
     started = time.monotonic()
-    deadline = started + 340  # Reserve transport's 420s workload window for final output.
+    deadline = started + 400  # Leave20s inside transport's420s window for final output.
     report = dict(source_sha=os.environ['SAE_CANDIDATE_SHA'], status='PASS',
                   transport_semantics='DELIVERY_ONLY_CHECK_SCIENTIFIC_STATUS',
                   scientific_status='IN_PROGRESS', G1={}, G2=[], G3=[], G4=[], G5=[])

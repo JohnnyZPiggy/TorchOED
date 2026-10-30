@@ -1,0 +1,61 @@
+{
+  "framework_pin": "d84942e4890d9837ae0e6cbb379b85c3a95aba84",
+  "runtime": "WSL Ubuntu Python3.12.3",
+  "cli": "<WSL_HOME>/.local/bin/colab",
+  "cli_version": "0.7.4",
+  "tool_sha256": {
+    "colab_control.py": "1d564818b48c9d39d1209fb57d88d24c67316efeb1f2ce73172c56350cdc29af",
+    "environment_preflight.py": "45bd9eb029f563c7b1ea646576be44ce7eb5ca9dfd79dba2093d559884dea6e1",
+    "kernel_smoke.py": "63eedb51b7ac4710009df64d01cf9e33a6e6bdb498294766b215ee90d9490b03"
+  },
+  "supported_device_requests": [
+    "T4"
+  ],
+  "cli_help_gpu_variants": [
+    "T4",
+    "L4",
+    "G4",
+    "H100",
+    "A100"
+  ],
+  "other_devices": {
+    "L4": {
+      "status": "BLOCKED",
+      "reason": "PINNED_CONTROLLER_ARGPARSE_CHOICES_T4_ONLY",
+      "account_availability": "NOT_TESTED"
+    },
+    "G4": {
+      "status": "BLOCKED",
+      "reason": "PINNED_CONTROLLER_ARGPARSE_CHOICES_T4_ONLY",
+      "account_availability": "NOT_TESTED"
+    },
+    "H100": {
+      "status": "BLOCKED",
+      "reason": "PINNED_CONTROLLER_ARGPARSE_CHOICES_T4_ONLY",
+      "account_availability": "NOT_TESTED"
+    },
+    "A100": {
+      "status": "BLOCKED",
+      "reason": "PINNED_CONTROLLER_ARGPARSE_CHOICES_T4_ONLY",
+      "account_availability": "NOT_TESTED"
+    }
+  },
+  "tool_upgraded_or_patched": false,
+  "bundle_git_blob_checks": 14,
+  "bundle_status": "PASS",
+  "source_sha": "04cfaa816a8d8b7065f8c1d813f811228d39bba7",
+  "bounds": {
+    "task_seconds": 1200,
+    "allocation_window_seconds": 900,
+    "cleanup_reserve_seconds": 120,
+    "kernel_seconds": 30,
+    "workload_seconds": 420,
+    "controller_max_workload_seconds": 420
+  },
+  "storage": {
+    "checkout_drive": "D:",
+    "transport_source": "D:/sae-m2b-20261030-temp/source",
+    "build_temp": "D:/sae-m2b-20261030-build",
+    "large_C_or_WSL_virtual_disk_files_created": false
+  }
+}

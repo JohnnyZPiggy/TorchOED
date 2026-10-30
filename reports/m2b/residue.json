@@ -1,0 +1,51 @@
+{
+  "status": "RETAINED_CLEANUP_BLOCKED_BY_AUTOMATIC_REVIEW",
+  "cleanup_attempt_executed": false,
+  "rejection_reason": "blocked by policy (no further reason supplied)",
+  "rejected_action": "Remove task-owned transport source clone and pip build cache",
+  "paths": {
+    "transport_temp": "D:/sae-m2b-20261030-temp",
+    "build_temp": "D:/sae-m2b-20261030-build",
+    "evidence": "<TASK_EVIDENCE>",
+    "checkout": "<CHECKOUT>"
+  },
+  "counts": {
+    "venv": {
+      "files": 883,
+      "bytes": 12387010,
+      "retained": true
+    },
+    "wheel-venv": {
+      "files": 902,
+      "bytes": 12468294,
+      "retained": true
+    },
+    "wheel": {
+      "files": 1,
+      "bytes": 15844,
+      "retained": true
+    },
+    "source-build-metadata": {
+      "files": 10,
+      "bytes": 29804,
+      "retained": true
+    },
+    "source-egg-metadata": {
+      "files": 5,
+      "bytes": 4432,
+      "retained": true
+    },
+    "transport_temp": {
+      "files": 268,
+      "bytes": 1608109,
+      "retained": true
+    },
+    "build_temp": {
+      "files": 6,
+      "bytes": 56804,
+      "retained": true
+    }
+  },
+  "raw_logs_and_source_retained": true,
+  "remote_session_cleanup": "CONFIRMED_AUTHENTICATED_ZERO"
+}

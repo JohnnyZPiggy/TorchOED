@@ -1,0 +1,187 @@
+{
+  "status": "PASS",
+  "source_sha": "e9654f4f578b03ffdb7cc816229ab2852cc3ce51",
+  "run_id": "m2b18-t4-isolate-20261030",
+  "created": true,
+  "cleanup_confirmed": true,
+  "utc_start": "2026-10-30T17:53:19.421921+00:00",
+  "commands": [
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0,
+      "timeout_seconds": 30,
+      "elapsed_seconds": 1.325830214000007
+    },
+    {
+      "operation": "new",
+      "status": "PASS",
+      "exit_code": 0,
+      "timeout_seconds": 120,
+      "elapsed_seconds": 3.706149804000006
+    },
+    {
+      "operation": "exec",
+      "status": "PASS",
+      "exit_code": 0,
+      "timeout_seconds": 35.0,
+      "elapsed_seconds": 4.145227178000027
+    },
+    {
+      "operation": "exec",
+      "status": "PASS",
+      "exit_code": 0,
+      "timeout_seconds": 425.0,
+      "elapsed_seconds": 27.017587109000033
+    },
+    {
+      "operation": "download",
+      "status": "PASS",
+      "exit_code": 0,
+      "timeout_seconds": 30,
+      "elapsed_seconds": 2.117657007000048
+    },
+    {
+      "operation": "stop",
+      "status": "PASS",
+      "exit_code": 0,
+      "timeout_seconds": 15,
+      "elapsed_seconds": 1.5367399110000406
+    },
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0,
+      "timeout_seconds": 15,
+      "elapsed_seconds": 1.2567329739999877
+    }
+  ],
+  "readbacks": [
+    {
+      "phase": "preallocation",
+      "method": "CLI_074_AUTHENTICATED_CCU_INFO",
+      "status": "AUTHENTICATED_ZERO",
+      "assignments": 0
+    },
+    {
+      "phase": "cleanup",
+      "method": "CLI_074_AUTHENTICATED_CCU_INFO",
+      "status": "AUTHENTICATED_ZERO",
+      "assignments": 0
+    }
+  ],
+  "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+  "events": {
+    "cli_resolution": {
+      "utc_start": "2026-10-30T17:53:19.432508+00:00",
+      "status": "PASS",
+      "utc_end": "2026-10-30T17:53:19.432787+00:00",
+      "elapsed_seconds": 0.00028828999995766935
+    },
+    "environment_preflight": {
+      "utc_start": "2026-10-30T17:53:19.441692+00:00",
+      "status": "PASS",
+      "utc_end": "2026-10-30T17:53:23.187313+00:00",
+      "elapsed_seconds": 3.7456456539999863
+    },
+    "adapter_validation": {
+      "utc_start": "2026-10-30T17:53:23.187344+00:00",
+      "status": "PASS",
+      "utc_end": "2026-10-30T17:53:23.502082+00:00",
+      "elapsed_seconds": 0.31474968500003797
+    },
+    "snapshot_extraction": {
+      "utc_start": "2026-10-30T17:53:20.549219+00:00",
+      "status": "PASS",
+      "utc_end": "2026-10-30T17:53:22.977238+00:00",
+      "elapsed_seconds": 2.4280360669999936
+    },
+    "wheel_pip_install": null,
+    "first_cpu_pass": null,
+    "exact_pinned_cpu_test": null,
+    "kernel_probe": {
+      "utc_start": "2026-10-30T17:53:28.545750+00:00",
+      "status": "PASS",
+      "utc_end": "2026-10-30T17:53:32.691264+00:00",
+      "elapsed_seconds": 4.145534900999905
+    },
+    "remote_workload": {
+      "utc_start": "2026-10-30T17:53:32.691288+00:00",
+      "status": "PASS",
+      "utc_end": "2026-10-30T17:54:01.324675+00:00",
+      "elapsed_seconds": 27.017620392000026
+    },
+    "artifact_download": {
+      "utc_start": "2026-10-30T17:54:01.324695+00:00",
+      "status": "PASS",
+      "utc_end": "2026-10-30T17:54:03.452579+00:00",
+      "elapsed_seconds": 2.127898764000065
+    },
+    "github_publication": null,
+    "cleanup": {
+      "utc_start": "2026-10-30T17:54:03.452596+00:00",
+      "status": "PASS",
+      "utc_end": "2026-10-30T17:54:06.246152+00:00",
+      "elapsed_seconds": 2.793559570999946
+    }
+  },
+  "per_attempt_approvals_actual": null,
+  "api_escalation_requests_actual": null,
+  "handoffs_actual": null,
+  "tool_script_sha256": {
+    "colab_control.py": "1d564818b48c9d39d1209fb57d88d24c67316efeb1f2ce73172c56350cdc29af",
+    "environment_preflight.py": "45bd9eb029f563c7b1ea646576be44ce7eb5ca9dfd79dba2093d559884dea6e1",
+    "kernel_smoke.py": "63eedb51b7ac4710009df64d01cf9e33a6e6bdb498294766b215ee90d9490b03"
+  },
+  "preflight": {
+    "status": "PASS",
+    "python_version": "3.12.3",
+    "source_sha": "e9654f4f578b03ffdb7cc816229ab2852cc3ce51",
+    "events": {
+      "cli_version": {
+        "utc_start": "2026-10-30T17:53:19.444750+00:00",
+        "status": "PASS",
+        "utc_end": "2026-10-30T17:53:20.024304+00:00",
+        "elapsed_seconds": 0.5795734899999161
+      },
+      "source_verification": {
+        "utc_start": "2026-10-30T17:53:20.024434+00:00",
+        "status": "PASS",
+        "utc_end": "2026-10-30T17:53:20.082660+00:00",
+        "elapsed_seconds": 0.0582426089999899
+      },
+      "temp_build_cache": {
+        "utc_start": "2026-10-30T17:53:20.518712+00:00",
+        "status": "PASS",
+        "utc_end": "2026-10-30T17:53:20.549129+00:00",
+        "elapsed_seconds": 0.030438484000001154
+      },
+      "snapshot_extraction": {
+        "utc_start": "2026-10-30T17:53:20.549219+00:00",
+        "status": "PASS",
+        "utc_end": "2026-10-30T17:53:22.977238+00:00",
+        "elapsed_seconds": 2.4280360669999936
+      },
+      "wheel_pip_install": null
+    },
+    "cli_verified": true,
+    "cli_version": "0.7.4",
+    "working_tree_dirty": false,
+    "temp_build_cache_writable": true,
+    "export_scope": "tracked project files excluding .sae/",
+    "exported_blobs": 146,
+    "elapsed_seconds": 3.7426810529999557
+  },
+  "driver_transport_sha256": "a641268fbdd2e4e733f02026fb335a2d8f3a9fd8b20d2e5dd4c63553318b2ce0",
+  "artifact_manifest_sha256": "431c85db1d66cc15fa005d66a2947ae0c0d2e7dadf66f535d0de77f0a293a0b8",
+  "artifact_sha256": {
+    "m2b-gpu.json": "0cebd47552db74e0ff3ab14aa88a56506c16431883e253d0816dce121bdaeba2"
+  },
+  "utc_cleanup_verified": "2026-10-30T17:54:06.246130+00:00",
+  "allocation_lifecycle_seconds": 39.79079118499999,
+  "transport_cleanup_confirmed": true,
+  "cleanup_seconds": 2.8015889659999402,
+  "total_seconds": 45.21657101100004,
+  "utc_end": "2026-10-30T17:54:06.254190+00:00",
+  "existing_entitlement_positive": true
+}

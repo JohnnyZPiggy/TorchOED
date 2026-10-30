@@ -1,0 +1,16 @@
+Obtaining file:///D:/Dropbox/study/ms-phd/PHD-EPFL/Doctoral%20proposal/EPFL/small%20interesting%20research/TorchOED/.sae-m2b-20261030
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torchoed
+  Building editable for torchoed (pyproject.toml): started
+  Building editable for torchoed (pyproject.toml): finished with status 'done'
+  Created wheel for torchoed: filename=torchoed-0.0.1-0.editable-py3-none-any.whl size=4005 sha256=f07ba83fc5a37b216e12087dcf587c0d59621b06998d1f2a50412f8e2028339e
+  Stored in directory: D:\sae-m2b-20261030-build\pip-ephem-wheel-cache-msu52pd_\wheels\d2\5c\75\3d64e54f1c259b0fcfabce1a7fcf96a6b38ab08631868f205a
+Successfully built torchoed
+Installing collected packages: torchoed
+Successfully installed torchoed-0.0.1
+
+[notice] A new release of pip is available: 26.1.2 -> 26.2.2
+[notice] To update, run: <TASK_EVIDENCE>\venv\Scripts\python.exe -m pip install --upgrade pip

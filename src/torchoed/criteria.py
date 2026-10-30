@@ -1,4 +1,4 @@
-"""Maximization-oriented D/A/E scores without implicit regularization."""
+"""Maximization-oriented D/A/E/c scores without implicit regularization."""
 import torch
 
 from ._validation import budget, floating
@@ -57,3 +57,27 @@ def e_optimality(M, *, max_elements=1_000_000):
     value = torch.linalg.eigvalsh(symmetric)[..., 0]
     _reject(value < -tolerance, "M must be positive semidefinite")
     return _score(value.clamp_min(0))
+
+
+def c_optimality(M, c, *, max_elements=1_000_000):
+    """Maximize -c.T M^-1 c on numerical SPD matrices; no broadcasting."""
+    if not isinstance(M, torch.Tensor) or not isinstance(c, torch.Tensor):
+        raise TypeError("M and c must be torch.Tensor objects")
+    floating(M.dtype)
+    floating(c.dtype)
+    if c.dtype != M.dtype:
+        raise TypeError("c must have the same dtype as M")
+    if c.device != M.device:
+        raise ValueError("c must have the same device as M")
+    if (M.ndim not in (2, 3) or M.shape[-1] < 1 or M.shape[-2] != M.shape[-1]
+            or (M.ndim == 3 and M.shape[0] == 0)):
+        raise ValueError("M must be square (p,p) or (B,p,p), p>=1 and B>=1")
+    if c.shape != M.shape[:-1]:
+        raise ValueError("c must have matched shape (p,) or (B,p); no broadcasting")
+    budget(M.shape, max_elements)
+    budget(c.shape, max_elements)
+    _reject(~torch.isfinite(c).all(dim=-1), "nonfinite c")
+    _reject((c == 0).all(dim=-1), "zero contrast c")
+    L = _cholesky(M, max_elements)
+    y = torch.linalg.solve_triangular(L, c.unsqueeze(-1), upper=False)
+    return _score(-y.square().sum(dim=(-2, -1)))

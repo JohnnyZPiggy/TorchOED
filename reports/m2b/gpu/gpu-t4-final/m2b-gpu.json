@@ -1,0 +1,418 @@
+{
+  "source_sha": "04cfaa816a8d8b7065f8c1d813f811228d39bba7",
+  "status": "PASS",
+  "transport_semantics": "DELIVERY_ONLY_CHECK_SCIENTIFIC_STATUS",
+  "scientific_status": "PASS",
+  "G1": {
+    "status": "PASS",
+    "exit_code": 0,
+    "log": "..........                                                               [100%]\n10 passed in 5.24s\n",
+    "oracle_errors": {
+      "C1/float64": 0.0,
+      "C2/float64": 4.440892098500626e-16,
+      "C3/float64": 1.3322676295501878e-15,
+      "C4/float64": 4.440892098500626e-16,
+      "C5/float64": 2.1316282072803006e-14,
+      "C6/float64": 1.7208456881689926e-15,
+      "C7/float64": 6.661338147750939e-16,
+      "C8/float64": 4.440892098500626e-16
+    }
+  },
+  "G2": [
+    {
+      "p": 100,
+      "B": 18150,
+      "seed": 1200150,
+      "status": "PASS",
+      "sampled_scores": 10000,
+      "sampled_matrix_elements": 100000000,
+      "max_relative_error": 7.208224373969749e-16,
+      "normalized_fp32_max": 0.40831848045862906,
+      "normalized_fp32_p99": 0.24785147767255578,
+      "float32_status": "OBSERVED",
+      "peak_bytes": 10943642112,
+      "peak_fraction": 0.699851747725301
+    }
+  ],
+  "G3": [
+    {
+      "seed": 18300,
+      "target_condition": 1,
+      "cpu64": {
+        "accepted": true,
+        "score": -5.000000000000002
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -5.0
+      },
+      "gpu32": {
+        "accepted": true,
+        "score": -5.0
+      },
+      "acceptance_disagreement": false
+    },
+    {
+      "seed": 18301,
+      "target_condition": 10,
+      "cpu64": {
+        "accepted": true,
+        "score": -27.085754304981474
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -27.085754304981474
+      },
+      "gpu32": {
+        "accepted": true,
+        "score": -27.085750579833984
+      },
+      "acceptance_disagreement": false
+    },
+    {
+      "seed": 18302,
+      "target_condition": 100,
+      "cpu64": {
+        "accepted": true,
+        "score": -97.40575020081609
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -97.40575020081603
+      },
+      "gpu32": {
+        "accepted": true,
+        "score": -97.40568542480469
+      },
+      "acceptance_disagreement": false
+    },
+    {
+      "seed": 18303,
+      "target_condition": 1000,
+      "cpu64": {
+        "accepted": true,
+        "score": -2037.2453944399122
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -2037.2453944399122
+      },
+      "gpu32": {
+        "accepted": true,
+        "score": -2037.2659912109375
+      },
+      "acceptance_disagreement": false
+    },
+    {
+      "seed": 18304,
+      "target_condition": 10000,
+      "cpu64": {
+        "accepted": true,
+        "score": -214.79678251981045
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -214.79678251980778
+      },
+      "gpu32": {
+        "accepted": true,
+        "score": -214.79751586914062
+      },
+      "acceptance_disagreement": false
+    },
+    {
+      "seed": 18305,
+      "target_condition": 100000,
+      "cpu64": {
+        "accepted": true,
+        "score": -110781.7379500691
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -110781.73795006328
+      },
+      "gpu32": {
+        "accepted": true,
+        "score": -110638.703125
+      },
+      "acceptance_disagreement": false
+    },
+    {
+      "seed": 18306,
+      "target_condition": 1000000,
+      "cpu64": {
+        "accepted": true,
+        "score": -2531376.2501755436
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -2531376.2501730765
+      },
+      "gpu32": {
+        "accepted": false,
+        "reason": "M is numerically singular/ill-conditioned (Cholesky pivot threshold)"
+      },
+      "acceptance_disagreement": true
+    },
+    {
+      "seed": 18307,
+      "target_condition": 10000000,
+      "cpu64": {
+        "accepted": true,
+        "score": -1695942.9090362745
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -1695942.909144254
+      },
+      "gpu32": {
+        "accepted": false,
+        "reason": "M is numerically singular/ill-conditioned (Cholesky pivot threshold)"
+      },
+      "acceptance_disagreement": true
+    },
+    {
+      "seed": 18308,
+      "target_condition": 100000000,
+      "cpu64": {
+        "accepted": true,
+        "score": -232420.02028619422
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -232420.0202883786
+      },
+      "gpu32": {
+        "accepted": false,
+        "reason": "M is numerically singular/ill-conditioned (Cholesky pivot threshold)"
+      },
+      "acceptance_disagreement": true
+    },
+    {
+      "seed": 18309,
+      "target_condition": 1000000000,
+      "cpu64": {
+        "accepted": true,
+        "score": -426631056.07828254
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -426631055.77188283
+      },
+      "gpu32": {
+        "accepted": false,
+        "reason": "M is numerically singular/ill-conditioned (Cholesky pivot threshold)"
+      },
+      "acceptance_disagreement": true
+    },
+    {
+      "seed": 18310,
+      "target_condition": 10000000000,
+      "cpu64": {
+        "accepted": true,
+        "score": -18987963940.668644
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -18987964450.39849
+      },
+      "gpu32": {
+        "accepted": false,
+        "reason": "M is numerically singular/ill-conditioned (Cholesky pivot threshold)"
+      },
+      "acceptance_disagreement": true
+    },
+    {
+      "seed": 18311,
+      "target_condition": 100000000000,
+      "cpu64": {
+        "accepted": true,
+        "score": -15927687570.07944
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -15927677140.173944
+      },
+      "gpu32": {
+        "accepted": false,
+        "reason": "M is numerically singular/ill-conditioned (Cholesky pivot threshold)"
+      },
+      "acceptance_disagreement": true
+    },
+    {
+      "seed": 18312,
+      "target_condition": 1000000000000,
+      "cpu64": {
+        "accepted": true,
+        "score": -1210215952610.9922
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -1210217470896.4292
+      },
+      "gpu32": {
+        "accepted": false,
+        "reason": "M must be positive definite (Cholesky failed)"
+      },
+      "acceptance_disagreement": true
+    },
+    {
+      "seed": 18313,
+      "target_condition": 10000000000000,
+      "cpu64": {
+        "accepted": true,
+        "score": -677436580181.2186
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -677436438854.9354
+      },
+      "gpu32": {
+        "accepted": false,
+        "reason": "M must be positive definite (Cholesky failed)"
+      },
+      "acceptance_disagreement": true
+    },
+    {
+      "seed": 18314,
+      "target_condition": 100000000000000,
+      "cpu64": {
+        "accepted": true,
+        "score": -4063954692901.0317
+      },
+      "gpu64": {
+        "accepted": true,
+        "score": -4063542813677.672
+      },
+      "gpu32": {
+        "accepted": false,
+        "reason": "M must be positive definite (Cholesky failed)"
+      },
+      "acceptance_disagreement": true
+    }
+  ],
+  "G4": [
+    {
+      "p": 100,
+      "B": 18150,
+      "status": "PASS",
+      "relative_inf_M": 2.465642041000594e-15,
+      "relative_inf_c": 1.485994437613451e-15,
+      "analytic_reference": "CPU torch.linalg.solve; actual gradient CUDA"
+    }
+  ],
+  "G5": [
+    {
+      "p": 100,
+      "B": 18150,
+      "dtype": "float64",
+      "cpu_seconds": 7.101540666000005,
+      "gpu_seconds": 0.28005615899996883,
+      "gpu_including_H2D_D2H_seconds": 0.588770889999978,
+      "warmup": 3,
+      "repeats": 5,
+      "statistic": "median",
+      "cpu_threads": 4,
+      "peak_max_memory_allocated": 8039931392,
+      "includes_generation": false,
+      "scope": "MEASURED_CONFIG_ONLY"
+    },
+    {
+      "p": 100,
+      "B": 18150,
+      "dtype": "float32",
+      "cpu_seconds": 5.106764008000027,
+      "gpu_seconds": 0.10985656200000449,
+      "gpu_including_H2D_D2H_seconds": 0.26693890399997144,
+      "warmup": 3,
+      "repeats": 5,
+      "statistic": "median",
+      "cpu_threads": 4,
+      "peak_max_memory_allocated": 5128525312,
+      "includes_generation": false,
+      "scope": "MEASURED_CONFIG_ONLY"
+    }
+  ],
+  "workload_plan": {
+    "start_p": 100,
+    "start_B": 18150,
+    "purpose": "CONTINUATION"
+  },
+  "environment": {
+    "gpu": "Tesla T4",
+    "torch": "2.11.0+cu130",
+    "cuda": "13.0",
+    "python": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+    "driver": "580.82.07",
+    "device_total_bytes": 15637086208,
+    "cpu_threads": 4,
+    "tf32": false,
+    "compiled_cuda_arches": [
+      "sm_75",
+      "sm_80",
+      "sm_86",
+      "sm_90",
+      "sm_100",
+      "sm_120"
+    ]
+  },
+  "active_stage": "COMPLETE",
+  "G3_summary": {
+    "cpu64": {
+      "rejected": 0,
+      "total": 15
+    },
+    "gpu64": {
+      "rejected": 0,
+      "total": 15
+    },
+    "gpu32": {
+      "rejected": 9,
+      "total": 15
+    }
+  },
+  "float32_first_rejected_target_condition": 1000000,
+  "break_even_measured_B": {
+    "3/float64": {
+      "without_transfer": null,
+      "with_transfer": null,
+      "missing_means": "NOT_OBSERVED_IN_MEASURED_CONFIGS"
+    },
+    "3/float32": {
+      "without_transfer": null,
+      "with_transfer": null,
+      "missing_means": "NOT_OBSERVED_IN_MEASURED_CONFIGS"
+    },
+    "10/float64": {
+      "without_transfer": null,
+      "with_transfer": null,
+      "missing_means": "NOT_OBSERVED_IN_MEASURED_CONFIGS"
+    },
+    "10/float32": {
+      "without_transfer": null,
+      "with_transfer": null,
+      "missing_means": "NOT_OBSERVED_IN_MEASURED_CONFIGS"
+    },
+    "30/float64": {
+      "without_transfer": null,
+      "with_transfer": null,
+      "missing_means": "NOT_OBSERVED_IN_MEASURED_CONFIGS"
+    },
+    "30/float32": {
+      "without_transfer": null,
+      "with_transfer": null,
+      "missing_means": "NOT_OBSERVED_IN_MEASURED_CONFIGS"
+    },
+    "100/float64": {
+      "without_transfer": 18150,
+      "with_transfer": 18150,
+      "missing_means": "NOT_OBSERVED_IN_MEASURED_CONFIGS"
+    },
+    "100/float32": {
+      "without_transfer": 18150,
+      "with_transfer": 18150,
+      "missing_means": "NOT_OBSERVED_IN_MEASURED_CONFIGS"
+    }
+  },
+  "elapsed_seconds": 203.76107383800002
+}

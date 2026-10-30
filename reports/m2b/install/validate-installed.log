@@ -1,0 +1,32 @@
+........................................................................ [ 92%]
+......                                                                   [100%]
+78 passed in 4.54s
+
+{
+  "source_sha": "8819053de506902ca37984d4917a6e649b3fd35d",
+  "status": "PASS",
+  "phase": "VALIDATE",
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+  "torch": "2.14.1+cpu",
+  "os": "Windows",
+  "command": [
+    "<TASK_EVIDENCE>\\venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "tests",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--junitxml=<TASK_EVIDENCE>\\validate-installed\\junit.xml"
+  ],
+  "timeout_seconds": 240,
+  "exit_code": 0,
+  "elapsed_seconds": 8.302319499998703,
+  "source_sha256": {
+    "src\\torchoed\\criteria.py": "b40265ac856b5c592e0307764c6a5915b85edc3eeeb86b96707928d7708a21cf",
+    "src\\torchoed\\__init__.py": "a96fe30e473212b0ea0c8c1126cdec2c1d29b1bdbe210b782ba46205a5e81858",
+    "tests\\test_m2b.py": "94ec1e796fdc8c9dbc3be56e29ff2f7e66596a692084fac9f2e533d64a252620",
+    "tests\\oracle_contrast.py": "0ffd3e7c0d272ff68ff911938a42488c2de8040a219670223b5cbc15c145e26a"
+  }
+}

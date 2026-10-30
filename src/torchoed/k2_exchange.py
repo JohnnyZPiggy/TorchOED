@@ -38,7 +38,9 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000):
         eligible = ((phase2['status'] == 0) &
                     (phase2['gains'] > phase2['tolerances'])).nonzero().flatten()
         if not eligible.numel():
-            reason = ('NUMERICAL_INCONCLUSIVE' if phase2['counts']['NUMERICAL_INCONCLUSIVE']
+            unresolved_improving = ((phase2['status'] == 2) &
+                (phase2['ratios'].isnan() | (phase2['ratios'] > 1))).any().item()
+            reason = ('NUMERICAL_INCONCLUSIVE' if unresolved_improving
                       else 'LOCAL_2_NUMERICAL')
             break
         # argmax returns the first maximum in the scorer's deterministic row order.

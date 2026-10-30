@@ -24,7 +24,7 @@ the one-swap scorer's direct tie rechecks in verification attempts.
 
 Stop reasons: `LOCAL_2_NUMERICAL`, `NUMERICAL_INCONCLUSIVE`, `MAX_ITER`,
 `NO_K2_NEIGHBORHOOD` (n<2 or m-n<2 after Phase 1), `NO_LEGAL_SWAP`.
-Unresolved two-swap rows prevent certification when no verified move remains.
+Unresolved two-swap rows block certification only for NaN or >1 ratios when no verified move remains.
 Only completed final N1/N2 scans yield `certificate="LOCAL_2_NUMERICAL"`
 and `full_neighborhood_checked=True`; every other stop is `NOT_CERTIFIED`.
 This is numerical 1-/2-locality, never exact or global optimality.

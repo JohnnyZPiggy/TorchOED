@@ -38,8 +38,8 @@ zero numerical R diagonal is recorded as `qr_zero` (a numerical rank-loss
 diagnostic, **not** a rigorous algebraic certificate). A nonzero QR diagonal with
 M2 rejection remains unresolved, including mathematically SPD near-singular
 cases: `M2_REJECT_QR_NONZERO`. Nonpositive/nonfinite Γ or ratio/direct disagreement
-on a directly SPD trial is unresolved. Any such unresolved neighbor stops the
-whole sweep with NUMERICAL_INCONCLUSIVE, even if another move looks attractive.
+on a directly SPD trial is unresolved.
+An unresolved neighbor blocks only if Γ is NaN, Γ>1, or its available direct gain>0; otherwise count `uncertain_nonimproving` and continue.
 
 Tiny positive Δ<=g is recorded separately as marginal, with heuristic upper
 gain Δ+g. If a verified best move's lower gain Δ_best-g_best exceeds every

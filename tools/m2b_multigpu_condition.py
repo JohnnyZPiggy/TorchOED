@@ -5,7 +5,6 @@ import torch
 from torchoed import c_optimality
 from m2b_multigpu_exact import cayley, exact_case, strict_rational_geometric
 
-
 def fixture_grid():
     for p in (3,10,30):
         rotations={}
@@ -23,7 +22,6 @@ def fixture_grid():
                 matrix,contrasts=exact_case(rotations[seed],spectrum,seed+17)
                 yield dict(status='CONSTRUCTED',p=p,exponent=exponent,seed=seed,
                            matrix=matrix,contrasts=contrasts)
-
 
 def run_condition(devices=('cpu',),check=None,checkpoint=None):
     report=dict(status='IN_PROGRESS',construction_policy='STRICT_RATIONAL_GEOMETRIC_NO_APPROXIMATION',
@@ -43,8 +41,8 @@ def run_condition(devices=('cpu',),check=None,checkpoint=None):
                 for contrast in case['contrasts']:
                     c=torch.tensor([float(x) for x in contrast['c']],dtype=dtype,device=device)
                     record=dict(p=p,exponent=e,seed=seed,device=device,dtype=str(dtype).removeprefix('torch.'),
-                        contrast=contrast['name'],kappa=10**e,kappa_c=str(contrast['kappa_c']),
-                        exact_q=str(contrast['quadratic']),below_A_bound=below_A)
+                        contrast=contrast['name'],kappa=10**e,kappa_c=float(contrast['kappa_c']),
+                        exact_q=float(contrast['quadratic']),below_A_bound=below_A)
                     try:
                         actual=float(c_optimality(matrix,c).item())
                         error=abs(F.from_float(actual)+contrast['quadratic'])/contrast['quadratic']

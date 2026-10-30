@@ -1,0 +1,107 @@
+[
+  {
+    "name": "venv",
+    "argv": [
+      "<BASE_ENV>\\python.exe",
+      "-m",
+      "venv",
+      "--system-site-packages",
+      "<TASK_EVIDENCE>\\venv"
+    ],
+    "cwd": "<CHECKOUT>",
+    "timeout": 120,
+    "exit_code": 0,
+    "elapsed_seconds": 10.381349900002533
+  },
+  {
+    "name": "editable",
+    "argv": [
+      "<TASK_EVIDENCE>\\venv\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "install",
+      "--no-deps",
+      "--no-build-isolation",
+      "-e",
+      "."
+    ],
+    "cwd": "<CHECKOUT>",
+    "timeout": 120,
+    "exit_code": 0,
+    "elapsed_seconds": 7.849526799996966
+  },
+  {
+    "name": "validate-installed",
+    "argv": [
+      "<TASK_EVIDENCE>\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/validate_m2b.py",
+      "--output",
+      "<TASK_EVIDENCE>\\validate-installed"
+    ],
+    "cwd": "<CHECKOUT>",
+    "timeout": 300,
+    "exit_code": 0,
+    "elapsed_seconds": 8.94525430000067
+  },
+  {
+    "name": "wheel",
+    "argv": [
+      "<TASK_EVIDENCE>\\venv\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "wheel",
+      "--no-deps",
+      "--no-build-isolation",
+      "--wheel-dir",
+      "<TASK_EVIDENCE>\\wheel",
+      "."
+    ],
+    "cwd": "<CHECKOUT>",
+    "timeout": 120,
+    "exit_code": 0,
+    "elapsed_seconds": 3.99957749999885
+  },
+  {
+    "name": "wheel-venv",
+    "argv": [
+      "<BASE_ENV>\\python.exe",
+      "-m",
+      "venv",
+      "--system-site-packages",
+      "<TASK_EVIDENCE>\\wheel-venv"
+    ],
+    "cwd": "<CHECKOUT>",
+    "timeout": 120,
+    "exit_code": 0,
+    "elapsed_seconds": 6.702411599995685
+  },
+  {
+    "name": "wheel-install",
+    "argv": [
+      "<TASK_EVIDENCE>\\wheel-venv\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "install",
+      "--no-deps",
+      "<TASK_EVIDENCE>\\wheel\\torchoed-0.0.1-py3-none-any.whl"
+    ],
+    "cwd": "<CHECKOUT>",
+    "timeout": 120,
+    "exit_code": 0,
+    "elapsed_seconds": 3.2311606999937794
+  },
+  {
+    "name": "outside-wheel-import",
+    "argv": [
+      "<TASK_EVIDENCE>\\wheel-venv\\Scripts\\python.exe",
+      "-B",
+      "-c",
+      "import torch,torchoed,importlib.metadata as m; assert len(torchoed.__all__)==13; assert m.version('torchoed')=='0.0.1'; v=torchoed.c_optimality(torch.diag(torch.tensor([2.,5.,1/3],dtype=torch.float64)),torch.tensor([1.,-2.,3.],dtype=torch.float64)); torch.testing.assert_close(v,torch.tensor(-28.3,dtype=torch.float64)); print('WHEEL_OUTSIDE_IMPORT_PASS',v.item(),torchoed.__file__)"
+    ],
+    "cwd": "<TASK_EVIDENCE>",
+    "timeout": 60,
+    "exit_code": 0,
+    "elapsed_seconds": 3.7290992999987793
+  }
+]

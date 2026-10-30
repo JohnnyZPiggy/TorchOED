@@ -1,0 +1,38 @@
+[
+  {
+    "phase": "preflight",
+    "command": [
+      "wsl",
+      "-e",
+      "env",
+      "TMPDIR=/mnt/d/sae-m2b-20261030-temp",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "python3",
+      "<TASK_EVIDENCE>/tools/colab_control.py",
+      "--cli",
+      "<WSL_HOME>/.local/bin/colab",
+      "--repo-path",
+      "<CHECKOUT>",
+      "--source-sha",
+      "8819053de506902ca37984d4917a6e649b3fd35d",
+      "--temp-root",
+      "/mnt/d/sae-m2b-20261030-temp",
+      "--task-seconds",
+      "1200",
+      "--allocation-seconds",
+      "900",
+      "--cleanup-seconds",
+      "120",
+      "--work-timeout",
+      "420",
+      "--kernel-timeout",
+      "30",
+      "--run-id",
+      "m2b18-preflight-20261030",
+      "--out",
+      "<TASK_EVIDENCE>/gpu-preflight",
+      "--preflight-only"
+    ],
+    "exit_code": 1
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "source_sha": "7b5c190bff3cbce8fff8865357d0d832e81d7851",
+  "status": "PASS",
+  "phase": "EXPLORE",
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+  "torch": "2.14.1+cpu",
+  "os": "Windows",
+  "command": [
+    "<BASE_ENV>\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "tests/test_m2b.py",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--junitxml=<TASK_EVIDENCE>\\explore\\junit.xml"
+  ],
+  "timeout_seconds": 240,
+  "exit_code": 0,
+  "elapsed_seconds": 10.068159800001013,
+  "source_sha256": {
+    "src\\torchoed\\criteria.py": "b40265ac856b5c592e0307764c6a5915b85edc3eeeb86b96707928d7708a21cf",
+    "src\\torchoed\\__init__.py": "a96fe30e473212b0ea0c8c1126cdec2c1d29b1bdbe210b782ba46205a5e81858",
+    "tests\\test_m2b.py": "94ec1e796fdc8c9dbc3be56e29ff2f7e66596a692084fac9f2e533d64a252620",
+    "tests\\oracle_contrast.py": "0ffd3e7c0d272ff68ff911938a42488c2de8040a219670223b5cbc15c145e26a"
+  }
+}

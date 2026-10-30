@@ -1,0 +1,34 @@
+[
+  {
+    "device": "L4",
+    "status": "BLOCKED",
+    "exit_code": 2,
+    "error": "collect-evidence.py: error: argument --device: invalid choice: 'L4' (choose from 'T4')",
+    "allocation_attempted": false,
+    "scope": "OFFLINE_ARGPARSE_ONLY"
+  },
+  {
+    "device": "G4",
+    "status": "BLOCKED",
+    "exit_code": 2,
+    "error": "collect-evidence.py: error: argument --device: invalid choice: 'G4' (choose from 'T4')",
+    "allocation_attempted": false,
+    "scope": "OFFLINE_ARGPARSE_ONLY"
+  },
+  {
+    "device": "H100",
+    "status": "BLOCKED",
+    "exit_code": 2,
+    "error": "collect-evidence.py: error: argument --device: invalid choice: 'H100' (choose from 'T4')",
+    "allocation_attempted": false,
+    "scope": "OFFLINE_ARGPARSE_ONLY"
+  },
+  {
+    "device": "A100",
+    "status": "BLOCKED",
+    "exit_code": 2,
+    "error": "collect-evidence.py: error: argument --device: invalid choice: 'A100' (choose from 'T4')",
+    "allocation_attempted": false,
+    "scope": "OFFLINE_ARGPARSE_ONLY"
+  }
+]

@@ -1,0 +1,69 @@
+........................................................................ [ 92%]
+..F...                                                                   [100%]
+================================== FAILURES ===================================
+____________________ test_installed_package_without_pydoe _____________________
+
+cls = <class 'importlib.metadata.Distribution'>, name = 'torchoed'
+
+    @classmethod
+    def from_name(cls, name: str) -> Distribution:
+        """Return the Distribution for the given package name.
+
+        :param name: The name of the distribution package to search for.
+        :return: The Distribution instance (or subclass thereof) for the named
+            package, if found.
+        :raises PackageNotFoundError: When the named package's distribution
+            metadata cannot be found.
+        :raises ValueError: When an invalid value is supplied for name.
+        """
+        if not name:
+            raise ValueError("A distribution name is required.")
+        try:
+>           return next(iter(cls.discover(name=name)))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           StopIteration
+
+<BASE_ENV>\Lib\importlib\metadata\__init__.py:407: StopIteration
+
+During handling of the above exception, another exception occurred:
+
+    def test_installed_package_without_pydoe():
+        assert util.find_spec("pydoe") is None
+>       assert metadata.version("torchoed") == torchoed.__version__
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_smoke.py:13:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+<BASE_ENV>\Lib\importlib\metadata\__init__.py:987: in version
+    return distribution(distribution_name).version
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<BASE_ENV>\Lib\importlib\metadata\__init__.py:960: in distribution
+    return Distribution.from_name(distribution_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cls = <class 'importlib.metadata.Distribution'>, name = 'torchoed'
+
+    @classmethod
+    def from_name(cls, name: str) -> Distribution:
+        """Return the Distribution for the given package name.
+
+        :param name: The name of the distribution package to search for.
+        :return: The Distribution instance (or subclass thereof) for the named
+            package, if found.
+        :raises PackageNotFoundError: When the named package's distribution
+            metadata cannot be found.
+        :raises ValueError: When an invalid value is supplied for name.
+        """
+        if not name:
+            raise ValueError("A distribution name is required.")
+        try:
+            return next(iter(cls.discover(name=name)))
+        except StopIteration:
+>           raise PackageNotFoundError(name)
+E           importlib.metadata.PackageNotFoundError: No package metadata was found for torchoed
+
+<BASE_ENV>\Lib\importlib\metadata\__init__.py:409: PackageNotFoundError
+=========================== short test summary info ===========================
+FAILED tests/test_smoke.py::test_installed_package_without_pydoe - importlib....
+1 failed, 77 passed in 6.91s

@@ -1,0 +1,12 @@
+Processing .\.
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: torchoed
+  Building wheel for torchoed (pyproject.toml): started
+  Building wheel for torchoed (pyproject.toml): finished with status 'done'
+  Created wheel for torchoed: filename=torchoed-0.0.1-py3-none-any.whl size=15844 sha256=c2019d8fb868f152456e1f0ea425cd4222441170d2c1c525ca2884afdbd5acd5
+  Stored in directory: d:\sae-m2b-20261030-build\pip-cache\wheels\d2\5c\75\3d64e54f1c259b0fcfabce1a7fcf96a6b38ab08631868f205a
+Successfully built torchoed
+
+[notice] A new release of pip is available: 26.1.2 -> 26.2.2
+[notice] To update, run: <TASK_EVIDENCE>\venv\Scripts\python.exe -m pip install --upgrade pip

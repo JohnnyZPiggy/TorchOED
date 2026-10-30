@@ -1,0 +1,470 @@
+{
+  "explore/validation.json": {
+    "raw_sha256": "c4bf5dc851cb1f66c6be721229bd3389fbb6da9415872f9259e94bf3208f2efb",
+    "raw_bytes": 1128,
+    "public_sha256": "0c97a5c158da60689ffd3d3271253a18aa6aa347b3f17c951e14797d24b825f6",
+    "sanitized": true
+  },
+  "explore/oracle-errors.json": {
+    "raw_sha256": "cbc959b5f09fc49d5dc3f101c46a48d8d8ff3566833ac740067852d070e3164e",
+    "raw_bytes": 260,
+    "public_sha256": "ea61213a2f5811529ac8325f42b873cc1fa1b0ec1a07bab5c767f13ac4fb2a5a",
+    "sanitized": true
+  },
+  "explore/pytest.log": {
+    "raw_sha256": "c04029f1fa05fb36f7d48f75e2a60c552dbf1496abb8bd41b3230f6c44b4a41c",
+    "raw_bytes": 101,
+    "public_sha256": "da76ea697a48651060b89be4d4c678c25ef82daaa475e521bc795f07ec30c7af",
+    "sanitized": true
+  },
+  "explore/junit.xml": {
+    "raw_sha256": "1e9519d84face912f50d4997191dcbc81b1663fc866134f5f72656b498630d73",
+    "raw_bytes": 1316,
+    "public_sha256": "c99f21d68e3a0cd7906a22e4905f3da3fef6f1cc9c625a31d6ed85acc086df70",
+    "sanitized": true
+  },
+  "explore-gpu-source/validation.json": {
+    "raw_sha256": "806a51b5a9fe5c2bbdb22e2e4b3bbb80214fb72dcda3a9d0c1732001eeaa2653",
+    "raw_bytes": 1138,
+    "public_sha256": "b2d8cf6fe433e3e3af457a4c3b6b508a45a5569f9bfe85886c2a7136ea69c054",
+    "sanitized": true
+  },
+  "explore-gpu-source/oracle-errors.json": {
+    "raw_sha256": "cbc959b5f09fc49d5dc3f101c46a48d8d8ff3566833ac740067852d070e3164e",
+    "raw_bytes": 260,
+    "public_sha256": "ea61213a2f5811529ac8325f42b873cc1fa1b0ec1a07bab5c767f13ac4fb2a5a",
+    "sanitized": true
+  },
+  "explore-gpu-source/pytest.log": {
+    "raw_sha256": "f30f1decd909534690c9f07e148a158802bc2c929a1187865d04312d950baf7c",
+    "raw_bytes": 101,
+    "public_sha256": "0c61b381b3faba3990d27388304db9fed59c277184bd3e97f2e8f4bac15cd2bc",
+    "sanitized": true
+  },
+  "explore-gpu-source/junit.xml": {
+    "raw_sha256": "2715ce7c8144c7d65ecff0fcf7f1aea3c68da3452c1d79fa60f7bc6f751084d3",
+    "raw_bytes": 1316,
+    "public_sha256": "4eca9474e2220b1a6e53ca73b43777750fe07805c76fb03ca4674cdf1af5b5bb",
+    "sanitized": true
+  },
+  "validate/validation.json": {
+    "raw_sha256": "9e5e602ae7bc8137fc215ec68ca64416a32e583e39e383c2869528c1d776962c",
+    "raw_bytes": 1118,
+    "public_sha256": "caf0693827d299aa8f8a945212de484a6e469d5dc4d67484147e737707bfce12",
+    "sanitized": true
+  },
+  "validate/oracle-errors.json": {
+    "raw_sha256": "cbc959b5f09fc49d5dc3f101c46a48d8d8ff3566833ac740067852d070e3164e",
+    "raw_bytes": 260,
+    "public_sha256": "ea61213a2f5811529ac8325f42b873cc1fa1b0ec1a07bab5c767f13ac4fb2a5a",
+    "sanitized": true
+  },
+  "validate/pytest.log": {
+    "raw_sha256": "05d423050546322bbce61897f663d111e2894e038c5c2b767720e582357cadf8",
+    "raw_bytes": 3286,
+    "public_sha256": "77d6476c20fb36bcf0fa7c4ac99e9ee7b2f7f7f153d1365413e057f138ac3a4e",
+    "sanitized": true
+  },
+  "validate/junit.xml": {
+    "raw_sha256": "cf0175ceca662089904b7d6d5c299d20d8f7fd86033e64715195e8d4b7a72710",
+    "raw_bytes": 10104,
+    "public_sha256": "023955f0ba1c80b1b08874e9cc6bd635bb40c65b09b355698b0b224891fb60da",
+    "sanitized": true
+  },
+  "validate-installed/validation.json": {
+    "raw_sha256": "a0d8cb5345a78ca4f9af225c240eeece751d4a226e997148944a535f09aadb9e",
+    "raw_bytes": 1246,
+    "public_sha256": "4a186f237cfe5d441a084d5f03637fccba0154c33cde070b5e43c4ff795ba194",
+    "sanitized": true
+  },
+  "validate-installed/oracle-errors.json": {
+    "raw_sha256": "cbc959b5f09fc49d5dc3f101c46a48d8d8ff3566833ac740067852d070e3164e",
+    "raw_bytes": 260,
+    "public_sha256": "ea61213a2f5811529ac8325f42b873cc1fa1b0ec1a07bab5c767f13ac4fb2a5a",
+    "sanitized": true
+  },
+  "validate-installed/pytest.log": {
+    "raw_sha256": "d25183062efeb18dd8a732557dccf6ba62637d2dbf91f73c4d3a54e4a70c08c9",
+    "raw_bytes": 182,
+    "public_sha256": "4bf23cf67e81aa3155e7a15fac7854723972242926d73c5619c8040d042ac78b",
+    "sanitized": true
+  },
+  "validate-installed/junit.xml": {
+    "raw_sha256": "cc6e53ddd8d091225baac701d2d0d4a4cef3e9d2364b5c20237a5cd58ee68158",
+    "raw_bytes": 7190,
+    "public_sha256": "0f372de36c3d0a6f8e9e7274d10d2c7c0d491d84ea987662dfcb60999f4a0514",
+    "sanitized": true
+  },
+  "explore-repair/validation.json": {
+    "raw_sha256": "2d2b1f629b71216c1995058a7402274c383afa2d24fecf33e9156df5af6b8e9d",
+    "raw_bytes": 1134,
+    "public_sha256": "c7adf911a24d47bfc3132a570fbb2412927c4b3e765a1523729f4da87e71bcb2",
+    "sanitized": true
+  },
+  "explore-repair/oracle-errors.json": {
+    "raw_sha256": "dffd04b6108dd4d2c1d203f7a27f481deb8f9d832398a36931df95ba4a91814b",
+    "raw_bytes": 427,
+    "public_sha256": "31fd054767ee0b901413685c42011d2e038f7f0057855acc755b6163cfd829d8",
+    "sanitized": true
+  },
+  "explore-repair/pytest.log": {
+    "raw_sha256": "ab93d4535be59f00e38ab13fd583e1771d2dff5c92e7de5843b29bee5532b262",
+    "raw_bytes": 101,
+    "public_sha256": "7091b3dbb8359bae316fe49daf24cecdb779823bba4c070b28e13e5c41439a21",
+    "sanitized": true
+  },
+  "explore-repair/junit.xml": {
+    "raw_sha256": "282dec2ca82e688c427a4fe5298668430f6f4f2b42a947471408f905566b720c",
+    "raw_bytes": 1316,
+    "public_sha256": "1bd6c8b695bcbf8dc50aa22173046cde2b78f66ae4a72df7d5beb068341f382f",
+    "sanitized": true
+  },
+  "validate-repair/validation.json": {
+    "raw_sha256": "43f1c6fe964e969e09ed7df7ac26295b8b64c2428867291636c609d08abc8444",
+    "raw_bytes": 1244,
+    "public_sha256": "0fd3138adf795404fd2b528ca21f43f066359511fb3ce57b6ac17b9ec52f319e",
+    "sanitized": true
+  },
+  "validate-repair/oracle-errors.json": {
+    "raw_sha256": "dffd04b6108dd4d2c1d203f7a27f481deb8f9d832398a36931df95ba4a91814b",
+    "raw_bytes": 427,
+    "public_sha256": "31fd054767ee0b901413685c42011d2e038f7f0057855acc755b6163cfd829d8",
+    "sanitized": true
+  },
+  "validate-repair/pytest.log": {
+    "raw_sha256": "d8de7f894a6215afb58f06ecd63c96b4b45e697681c4fee33ef2e458c28ecf23",
+    "raw_bytes": 182,
+    "public_sha256": "edca7facaaa59138de8802fb693a9929acc4517b918361142f71ba9e6053d7be",
+    "sanitized": true
+  },
+  "validate-repair/junit.xml": {
+    "raw_sha256": "991dfd48d311b7751e9cc8649ae2a6bcbef9df240f633f2631b9d7a39b9b08b5",
+    "raw_bytes": 7190,
+    "public_sha256": "799c519cfe6edad633efc0db56a905ff27d5e6b175dff5b883cdd0be960c7a33",
+    "sanitized": true
+  },
+  "explore-isolation/validation.json": {
+    "raw_sha256": "94acbf593538b983fe5849cec2a57e220c620ce3e1ffa8dddabd020cadefabf8",
+    "raw_bytes": 1136,
+    "public_sha256": "737607b0ceb662a99e9e4405baeb1865439015a24d3ad5d7902e28564e0635b6",
+    "sanitized": true
+  },
+  "explore-isolation/oracle-errors.json": {
+    "raw_sha256": "dffd04b6108dd4d2c1d203f7a27f481deb8f9d832398a36931df95ba4a91814b",
+    "raw_bytes": 427,
+    "public_sha256": "31fd054767ee0b901413685c42011d2e038f7f0057855acc755b6163cfd829d8",
+    "sanitized": true
+  },
+  "explore-isolation/pytest.log": {
+    "raw_sha256": "c566322516361247c10bc70d844b3bad0bcc5916d8b023c37f98fc55683e82e5",
+    "raw_bytes": 101,
+    "public_sha256": "b7a526028441101e951d533b6b4716d7800ad556faf7565b9cfb7cfcb7aa3249",
+    "sanitized": true
+  },
+  "explore-isolation/junit.xml": {
+    "raw_sha256": "0e843a23ff4f20f78d07eb109dc545927e649beb19f42c89d134f75593eecf4c",
+    "raw_bytes": 1316,
+    "public_sha256": "274a618eecff05a1763f2c657de1a385fb3acf2122af554b811a41f08dc7ca02",
+    "sanitized": true
+  },
+  "explore-lu-reference/validation.json": {
+    "raw_sha256": "5abc83b7cf6d45fc151ece59dd5f5b9c2e4319724ac0035ff49706aabaef6758",
+    "raw_bytes": 1140,
+    "public_sha256": "71f60212a2a8af5ad82112557d4351700c1135ef2b2ca8b5b9fc6c63df562892",
+    "sanitized": true
+  },
+  "explore-lu-reference/oracle-errors.json": {
+    "raw_sha256": "dffd04b6108dd4d2c1d203f7a27f481deb8f9d832398a36931df95ba4a91814b",
+    "raw_bytes": 427,
+    "public_sha256": "31fd054767ee0b901413685c42011d2e038f7f0057855acc755b6163cfd829d8",
+    "sanitized": true
+  },
+  "explore-lu-reference/pytest.log": {
+    "raw_sha256": "dfdd7700a26b3c350ecd10a67d1b30f2d93e46dde99b86b7a515ff24a6d2f502",
+    "raw_bytes": 101,
+    "public_sha256": "f4017513ed219ae924d3de4215e6eb6cf622277bf57fed89ca75bbad134c4907",
+    "sanitized": true
+  },
+  "explore-lu-reference/junit.xml": {
+    "raw_sha256": "c4f01231c79d53e81b1ba890cc8eef23be11aeefea184affd8ffe3405e82630c",
+    "raw_bytes": 1316,
+    "public_sha256": "48e54c9df2f9254414a53566f094fea5cb9cf6a176f2f681ca7ca761c4311f78",
+    "sanitized": true
+  },
+  "explore-tail/validation.json": {
+    "raw_sha256": "6870b46e974e276af15ec870bef5414b1a99103c5cd7b507a191bfd5f7b69463",
+    "raw_bytes": 1132,
+    "public_sha256": "8e443e671bb5031c5c6fcded5c7cc17fcf3e6429a25d28aab5b14dd9bf467b04",
+    "sanitized": true
+  },
+  "explore-tail/oracle-errors.json": {
+    "raw_sha256": "dffd04b6108dd4d2c1d203f7a27f481deb8f9d832398a36931df95ba4a91814b",
+    "raw_bytes": 427,
+    "public_sha256": "31fd054767ee0b901413685c42011d2e038f7f0057855acc755b6163cfd829d8",
+    "sanitized": true
+  },
+  "explore-tail/pytest.log": {
+    "raw_sha256": "4da2c48704dffba1c3bd56189628d02607ad48a91363dfbe429957b69afb8689",
+    "raw_bytes": 101,
+    "public_sha256": "4ddd7a74b81d17c5504ff2f93f53dbb9fba32fbedb3d300276e3e5117c3cc1fc",
+    "sanitized": true
+  },
+  "explore-tail/junit.xml": {
+    "raw_sha256": "861d89e7e8c97ac8d162b6f4caf750457181f49a58f18bc2ecf4229d8ee8f30c",
+    "raw_bytes": 1316,
+    "public_sha256": "8563ae9fc77e37d14e72e23314fb80a6813fcb097b7eec42440db67d93ef2f7e",
+    "sanitized": true
+  },
+  "explore-final-tail/validation.json": {
+    "raw_sha256": "6fcdf3c072e81091b283983d6945838e52f93fba13b4a3314ef1102495fc7af5",
+    "raw_bytes": 1138,
+    "public_sha256": "ac4ccca6dc68f686069c92ebd3287096823dbc89c42841f18199ec4f90b9651f",
+    "sanitized": true
+  },
+  "explore-final-tail/oracle-errors.json": {
+    "raw_sha256": "dffd04b6108dd4d2c1d203f7a27f481deb8f9d832398a36931df95ba4a91814b",
+    "raw_bytes": 427,
+    "public_sha256": "31fd054767ee0b901413685c42011d2e038f7f0057855acc755b6163cfd829d8",
+    "sanitized": true
+  },
+  "explore-final-tail/pytest.log": {
+    "raw_sha256": "9f6214ff6dd41e8416eac7afdc1429dded94100e5d3d667954ab3f9cb4a6bbb5",
+    "raw_bytes": 101,
+    "public_sha256": "3ac7c3125ee4bbd0bf88fdf22f0f9b51fa33db51a53981f4e58b08ea2036075d",
+    "sanitized": true
+  },
+  "explore-final-tail/junit.xml": {
+    "raw_sha256": "e7f9d5ebf39ae32b0b739627c872a03843c01ee08f4c141b41cefea8d791eab0",
+    "raw_bytes": 1316,
+    "public_sha256": "0619fb3678a75e5658f4723194df299259dc8db974f96ebb05a479fb27d36feb",
+    "sanitized": true
+  },
+  "install/editable.log": {
+    "raw_sha256": "7f85ee2f57dfcdc27fd6069bc888fa4f8093267327d6a58306368e188db8eea2",
+    "raw_bytes": 1287,
+    "public_sha256": "0f6353bc7b1c8df1c99878fbadcc0af72fc4e30d715e00964c1d34c59273fa97",
+    "sanitized": true
+  },
+  "install/outside-wheel-import.log": {
+    "raw_sha256": "6521f2f3a4e8ce264a11b0ce890c8481770f6ee1fbc425b987a2aad3c321caca",
+    "raw_bytes": 202,
+    "public_sha256": "1fd0aa37db7743f724723ae1225fb5b9758091df0dcb6629c8c6d0e16addf380",
+    "sanitized": true
+  },
+  "install/validate-installed.log": {
+    "raw_sha256": "51badf28f30a9dfcd53077d72053d58080f0b6667df0f0a0605d835b1dcadc7f",
+    "raw_bytes": 1430,
+    "public_sha256": "03fad7c4b937f7f4c0d4a52735f2a1fde5e8852df2ccd3ec65e66d5adeafbc29",
+    "sanitized": true
+  },
+  "install/venv.log": {
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_bytes": 0,
+    "public_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "sanitized": true
+  },
+  "install/wheel-install.log": {
+    "raw_sha256": "869b88a885987830bb0b28b3d4b2c3760f050c54d1161ccc5d23abd68240d13d",
+    "raw_bytes": 517,
+    "public_sha256": "9d2727290ecae0d258f1268ffd3f7e98969d100c28378dc0b4c18b9e8970ad4e",
+    "sanitized": true
+  },
+  "install/wheel-venv.log": {
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_bytes": 0,
+    "public_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "sanitized": true
+  },
+  "install/wheel.log": {
+    "raw_sha256": "5e06a6ec260f7a276b28f69d7239992d725a7a77b11523b7278ce4e28fadb100",
+    "raw_bytes": 889,
+    "public_sha256": "29ae211f7ab279e0b101fb00aed972428ff506b42628148b2a2e1ce220bdf24e",
+    "sanitized": true
+  },
+  "install/install-commands.json": {
+    "raw_sha256": "a92200d5ab5df5b708ef9f999e7ed140124a13f989160c5b553f4fd5b36edb7f",
+    "raw_bytes": 4591,
+    "public_sha256": "ba3cb06a23906b3652029df27d2747cd42d7a00372fc905027cbb7ce5211cb8f",
+    "sanitized": true
+  },
+  "install/wheel-sha256.json": {
+    "raw_sha256": "cd77a0a876a91a1a5a363fe583e05eaa00a5a7fdfb87f744f943f83e88a12929",
+    "raw_bytes": 111,
+    "public_sha256": "c12bc6f5df246c8a42d39f101b46cfcfe262be398cb136865b490d5900f17898",
+    "sanitized": true
+  },
+  "gpu/gpu-commands.json": {
+    "raw_sha256": "97de6e797d3083d7d7bd259a371f9f2ac055579f73690feb795a30ef88fa696a",
+    "raw_bytes": 1173,
+    "public_sha256": "a4bb1b6f1291bdae16c4681f3929ab6656692a8b9fd5528970f92a34ea1b1df1",
+    "sanitized": true
+  },
+  "gpu/gpu-cpu-lu-commands.json": {
+    "raw_sha256": "a49d45b43055321519a6863a512da6f291b30fc27a1d93b11252d3d11527167d",
+    "raw_bytes": 2307,
+    "public_sha256": "b72825523f1b20b026228d9227d655996ff13fa36320166cf2b06ac987cdb69e",
+    "sanitized": true
+  },
+  "gpu/gpu-final-commands.json": {
+    "raw_sha256": "24fd61ce85955d145e3223ebfcedd9d00bf8ef39a9f485d07a0e0397f68248ec",
+    "raw_bytes": 2304,
+    "public_sha256": "f63e51bed44f166b948daf587dc3d847c53efe476bd6b2e75b8c37f306463347",
+    "sanitized": true
+  },
+  "gpu/gpu-isolate-commands.json": {
+    "raw_sha256": "d3a621d855cad5183adc77b3e4ce8fbedbae4f9a166849fbc0418c3b4c78dbd4",
+    "raw_bytes": 2311,
+    "public_sha256": "280eef06684ed8779d47860d701faca4262919a3f86f4f4facacc021ff4159cb",
+    "sanitized": true
+  },
+  "gpu/gpu-repair-commands.json": {
+    "raw_sha256": "b4e473510c00cb99afdeed88810bd26d6c6a0ee684bce985ff637eb0d196f5ba",
+    "raw_bytes": 2307,
+    "public_sha256": "1dc2c16fb2b31e3ccf19518260417c3f364a233e5852f3e89df533a303e0525c",
+    "sanitized": true
+  },
+  "gpu/gpu-retry-commands.json": {
+    "raw_sha256": "24bc9e48790b51b5c84b24548dab65cd0b242c2e88a2fc4c492703b2580b65a4",
+    "raw_bytes": 2303,
+    "public_sha256": "6c2d33fff3a40d2260bdebfe1bb9616f200d2fd762a84d14e8af5639e41fab38",
+    "sanitized": true
+  },
+  "gpu/gpu-tail-commands.json": {
+    "raw_sha256": "f86e971e03629e4814a5241c7204c4708d6e39f1543f6ecfa6210b2cb173981b",
+    "raw_bytes": 2300,
+    "public_sha256": "c7f15ea82d40a898e0659093ae1ace643ec8ef852b3867fd889a8561dc90cf6b",
+    "sanitized": true
+  },
+  "source-boundary.json": {
+    "raw_sha256": "313abbd410002c9fe7ac2324b01222006dbb3365a9ebb35393912a84b3e7c66a",
+    "raw_bytes": 267,
+    "public_sha256": "24fcd9a32d156ca490ca9d11f8cb10ac38144a5509f1f95de8c78440bacc9dea",
+    "sanitized": true
+  },
+  "gpu/gpu-preflight/colab-control.json": {
+    "raw_sha256": "4ad8dc3c319a007631c9d94f38906f3b79f60e63b3cbbb2a787a87bff08590d1",
+    "raw_bytes": 2371,
+    "public_sha256": "4ad8dc3c319a007631c9d94f38906f3b79f60e63b3cbbb2a787a87bff08590d1",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-preflight-cpu-lu/colab-control.json": {
+    "raw_sha256": "1ead9fb3daba6c979c8d84259a76aa3978f2f6f1002972b85aa5a2abc80ad25a",
+    "raw_bytes": 3088,
+    "public_sha256": "1ead9fb3daba6c979c8d84259a76aa3978f2f6f1002972b85aa5a2abc80ad25a",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-preflight-final/colab-control.json": {
+    "raw_sha256": "f99d1fc6ac999521a9a26dfdfd214635d70a826b6e7c95e1de603f4978864669",
+    "raw_bytes": 3104,
+    "public_sha256": "f99d1fc6ac999521a9a26dfdfd214635d70a826b6e7c95e1de603f4978864669",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-preflight-isolate/colab-control.json": {
+    "raw_sha256": "25a0ac2fdae8340614560653e7ea16842e14c844d9b8375f58d75375772fca35",
+    "raw_bytes": 3122,
+    "public_sha256": "25a0ac2fdae8340614560653e7ea16842e14c844d9b8375f58d75375772fca35",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-preflight-repair/colab-control.json": {
+    "raw_sha256": "4f10af7f43f2c90902f4ec66c54e7ede929655038b258d38abd98e40e07bc157",
+    "raw_bytes": 3100,
+    "public_sha256": "4f10af7f43f2c90902f4ec66c54e7ede929655038b258d38abd98e40e07bc157",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-preflight-retry/colab-control.json": {
+    "raw_sha256": "f48b71b96ad9450fe269f920986696ac6b25acd09fb05d5a6daf4d8ca52e7509",
+    "raw_bytes": 3122,
+    "public_sha256": "f48b71b96ad9450fe269f920986696ac6b25acd09fb05d5a6daf4d8ca52e7509",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-preflight-tail/colab-control.json": {
+    "raw_sha256": "4cce52a340e88bbd8b0ab2ec05ff99f1d4d6352a77150c2de739fdb5dedd4b56",
+    "raw_bytes": 3093,
+    "public_sha256": "4cce52a340e88bbd8b0ab2ec05ff99f1d4d6352a77150c2de739fdb5dedd4b56",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-t4-cpu-lu/colab-control.json": {
+    "raw_sha256": "14bc085ecd67c67cff6ee1c5a877f8702c44d0a1766b8fd1b36cdf9dc4ef7339",
+    "raw_bytes": 5912,
+    "public_sha256": "db3a582e84de0cb22dfb8b2c3249bd164524054429f72d318ad77e5e56395e9c",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-t4-cpu-lu/m2b-gpu.json": {
+    "raw_sha256": "42a3b988e2be1bca52e4052882a68dc55b82e1a17ccd2577bd9189da92330b47",
+    "raw_bytes": 102229,
+    "public_sha256": "42a3b988e2be1bca52e4052882a68dc55b82e1a17ccd2577bd9189da92330b47",
+    "sanitized": false,
+    "download_byte_count_and_sha256_verified_by_pinned_controller": true
+  },
+  "gpu/gpu-t4-final/colab-control.json": {
+    "raw_sha256": "e74aaaf6252efa432a61e46aeaba605a631990c85d7b16024d7c2eca6921f622",
+    "raw_bytes": 5916,
+    "public_sha256": "780e30d2bb25a4ec1e7fc72664db9db747912b01c81b2055b1ad61dec15c7855",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-t4-final/m2b-gpu.json": {
+    "raw_sha256": "b597edd365f343bf994c5d7313458788c78cb83ddd05586b92492a39e30f8527",
+    "raw_bytes": 10313,
+    "public_sha256": "b597edd365f343bf994c5d7313458788c78cb83ddd05586b92492a39e30f8527",
+    "sanitized": false,
+    "download_byte_count_and_sha256_verified_by_pinned_controller": true
+  },
+  "gpu/gpu-t4-isolate/colab-control.json": {
+    "raw_sha256": "5c33995152410ad5ecb5a6be1c0e30021f5f49d156e099df8766c4dd7a2a50a0",
+    "raw_bytes": 5937,
+    "public_sha256": "dedbf37877c9806d6cfca923c963a114c45bb2301251bc1a372db360567172c7",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-t4-isolate/m2b-gpu.json": {
+    "raw_sha256": "0cebd47552db74e0ff3ab14aa88a56506c16431883e253d0816dce121bdaeba2",
+    "raw_bytes": 63238,
+    "public_sha256": "0cebd47552db74e0ff3ab14aa88a56506c16431883e253d0816dce121bdaeba2",
+    "sanitized": false,
+    "download_byte_count_and_sha256_verified_by_pinned_controller": true
+  },
+  "gpu/gpu-t4-repair/colab-control.json": {
+    "raw_sha256": "8bdb446ce10f2f65e57cc090ca445cbdb5d050be92f1a6d8045ee66500bdb87c",
+    "raw_bytes": 5500,
+    "public_sha256": "d60c110ed79b194a677eaba551cd02db8bb5a9f8ea8c53e900241a773c2a2340",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-t4-retry/colab-control.json": {
+    "raw_sha256": "d8a549caae929e87d534b4d88f04d830127c008791752574c640ef534ea602a1",
+    "raw_bytes": 5930,
+    "public_sha256": "c8a726dab02e85ebd9561cce4584078fe83895ed86dafe03a9d277e8926618a8",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-t4-retry/m2b-gpu.json": {
+    "raw_sha256": "38ff9b46b90b9d1e577ad296874c0a760ed1c8f30fd1f5bc14bd33933b660910",
+    "raw_bytes": 31410,
+    "public_sha256": "38ff9b46b90b9d1e577ad296874c0a760ed1c8f30fd1f5bc14bd33933b660910",
+    "sanitized": false,
+    "download_byte_count_and_sha256_verified_by_pinned_controller": true
+  },
+  "gpu/gpu-t4-tail/colab-control.json": {
+    "raw_sha256": "459fd2bf0ba85da18a3091946989dde614aad924bc73c7a490476b1bfd2dcd51",
+    "raw_bytes": 5914,
+    "public_sha256": "f5d5f2ddf7f12a3e8aedf8dfc0a20cf708118891a0e6300aff4c2cbf1ef619d0",
+    "sanitized": true,
+    "transform": "Remove account balance; preserve positive entitlement and authenticated assignment count."
+  },
+  "gpu/gpu-t4-tail/m2b-gpu.json": {
+    "raw_sha256": "96304b601473cbdc69a7f415a57c4131599c6bc65b4e83e32dcedba7e6902557",
+    "raw_bytes": 11993,
+    "public_sha256": "96304b601473cbdc69a7f415a57c4131599c6bc65b4e83e32dcedba7e6902557",
+    "sanitized": false,
+    "download_byte_count_and_sha256_verified_by_pinned_controller": true
+  }
+}

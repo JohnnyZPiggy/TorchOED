@@ -1,0 +1,9 @@
+{
+  "rows": 91,
+  "counts": {
+    "DEFERRED": 73,
+    "VERIFIED": 11,
+    "PLANNED": 7
+  },
+  "status": "PASS"
+}

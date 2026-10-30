@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "base": "2bab7cf6190e6a57a12f6502a84a7ffbf34e9952",
+  "protected": [
+    "README.md",
+    "docs/RELEASE_READINESS.md",
+    "pyproject.toml",
+    "AGENTS.md",
+    "sae.yaml",
+    "LICENSE"
+  ],
+  "original_tests_unchanged": true
+}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="78" time="6.907" timestamp="2026-10-30T18:40:31.439019+01:00" hostname="REDACTED"><testcase classname="tests.test_m1" name="test_F1_order" time="0.002" /><testcase classname="tests.test_m1" name="test_F2_singletons" time="0.002" /><testcase classname="tests.test_m1" name="test_F3_signed_corners" time="0.004" /><testcase classname="tests.test_m1" name="test_F4_reject_before_allocation" time="0.001" /><testcase classname="tests.test_m1" name="test_L1_strata" time="0.016" /><testcase classname="tests.test_m1" name="test_L2_single_sample" time="0.002" /><testcase classname="tests.test_m1" name="test_L3_generator_replay_isolation" time="0.002" /><testcase classname="tests.test_m1" name="test_L4_invalid" time="0.001" /><testcase classname="tests.test_m1" name="test_lhs_boundary_rounding" time="0.004" /><testcase classname="tests.test_m1" name="test_S1_exact_points" time="0.004" /><testcase classname="tests.test_m1" name="test_S2_exact_count" time="0.001" /><testcase classname="tests.test_m1" name="test_S3_skip" time="0.002" /><testcase classname="tests.test_m1" name="test_S4_scramble" time="0.004" /><testcase classname="tests.test_m1" name="test_S5_invalid_zero" time="0.001" /><testcase classname="tests.test_m1" name="test_P1_degrees_order" time="0.002" /><testcase classname="tests.test_m1" name="test_P2_bias" time="0.001" /><testcase classname="tests.test_m1" name="test_P3_rank" time="0.013" /><testcase classname="tests.test_m1" name="test_P4_batch" time="0.002" /><testcase classname="tests.test_m1" name="test_P5_autograd_dtype_device" time="1.216" /><testcase classname="tests.test_m1" name="test_P6_actual_e0_and_separate_negative" time="0.059" /><testcase classname="tests.test_m1" name="test_feature_rejections_and_empty" time="0.003" /><testcase classname="tests.test_m2a" name="test_A1_exact_normalized" time="0.003" /><testcase classname="tests.test_m2a" name="test_A2_id_identity" time="0.003" /><testcase classname="tests.test_m2a" name="test_A3_probability_weights" time="0.002" /><testcase classname="tests.test_m2a" name="test_A4_diagonal" time="0.019" /><testcase classname="tests.test_m2a" name="test_A5_singular_psd" time="0.004" /><testcase classname="tests.test_m2a" name="test_A6_indefinite" time="0.002" /><testcase classname="tests.test_m2a" name="test_A7_correlated" time="0.005" /><testcase classname="tests.test_m2a" name="test_A8_independent_event_scaling" time="0.002" /><testcase classname="tests.test_m2a" name="test_A9_invalid_and_preallocation" time="0.003" /><testcase classname="tests.test_m2a" name="test_A10_matched_batch_and_error_index" time="0.016" /><testcase classname="tests.test_m2a" name="test_A11_float64_gradcheck" time="0.054" /><testcase classname="tests.test_m2a" name="test_A12_actual_e0_vs_separate_negative" time="0.060" /><testcase classname="tests.test_m2a" name="test_empty_flags_dtype_and_overflow" time="0.002" /><testcase classname="tests.test_m2a" name="test_float32_separate_tolerance" time="0.011" /><testcase classname="tests.test_m2a" name="test_symmetric_psd_roundoff_policy" time="0.005" /><testcase classname="tests.test_m2b" name="test_C1_diagonal[dtype0]" time="0.002" /><testcase classname="tests.test_m2b" name="test_C1_diagonal[dtype1]" time="0.002" /><testcase classname="tests.test_m2b" name="test_C2_line" time="0.004" /><testcase classname="tests.test_m2b" name="test_C3_units_independent[dtype0]" time="0.081" /><testcase classname="tests.test_m2b" name="test_C3_units_independent[dtype1]" time="0.087" /><testcase classname="tests.test_m2b" name="test_C4_rotation" time="0.002" /><testcase classname="tests.test_m2b" name="test_C5_homogeneity" time="0.071" /><testcase classname="tests.test_m2b" name="test_C6_rank_one" time="0.043" /><testcase classname="tests.test_m2b" name="test_C7_gradient" time="0.014" /><testcase classname="tests.test_m2b" name="test_C8_batch[dtype0]" time="0.019" /><testcase classname="tests.test_m2b" name="test_C8_batch[dtype1]" time="0.009" /><testcase classname="tests.test_m2b" name="test_C9_negatives" time="0.004" /><testcase classname="tests.test_m2b" name="test_budget_before_factorization" time="0.001" /><testcase classname="tests.test_m3a" name="test_F1_gain_log_four" time="0.014" /><testcase classname="tests.test_m3a" name="test_F2_saturated_delete_singular" time="0.004" /><testcase classname="tests.test_m3a" name="test_F3_different_id_equal_features_legal" time="0.004" /><testcase classname="tests.test_m3a" name="test_F4_repeats_rejected" time="0.001" /><testcase classname="tests.test_m3a" name="test_F5_no_initializer" time="0.002" /><testcase classname="tests.test_m3a" name="test_F6_best_full_scan_and_stop" time="0.006" /><testcase classname="tests.test_m3a" name="test_F7_deterministic_ties_tiles_rng_order" time="0.039" /><testcase classname="tests.test_m3a" name="test_F8_all_legal_ratios_exact_reference" time="0.002" /><testcase classname="tests.test_m3a" name="test_F9_saturated_no_inverse" time="0.005" /><testcase classname="tests.test_m3a" name="test_F10_iteration_and_no_legal_statuses" time="0.006" /><testcase classname="tests.test_m3a" name="test_F11_local_trap_all_six_subsets" time="0.047" /><testcase classname="tests.test_m3a" name="test_F12_singular_near_singular_and_disagreement" time="0.011" /><testcase classname="tests.test_m3a" name="test_exhaustive_integer_fixture_best_move_and_local_check" time="0.035" /><testcase classname="tests.test_m3a" name="test_input_budget_ownership_and_reproducibility" time="0.010" /><testcase classname="tests.test_m3b1" name="test_B1_four_individual_swaps_are_worse" time="0.001" /><testcase classname="tests.test_m3b1" name="test_B2_simultaneous_trap_exact_six_subsets" time="0.008" /><testcase classname="tests.test_m3b1" name="test_B4_add_drop_identity_not_two_swap" time="0.004" /><testcase classname="tests.test_m3b1" name="test_B6_k1_identity_independent_of_search" time="0.003" /><testcase classname="tests.test_m3b1" name="test_B7_all_150_integer_pairs_exact_fraction_bareiss" time="0.235" /><testcase classname="tests.test_m3b1" name="test_B8_saturated_without_delete_only_inverse" time="0.004" /><testcase classname="tests.test_m3b1" name="test_B9_duplicate_features_distinct_ids" time="0.005" /><testcase classname="tests.test_m3b1" name="test_B10_order_tiles_rng_unsorted_ids" time="0.397" /><testcase classname="tests.test_m3b1" name="test_B11_scoring_coverage_not_search_certificate" time="0.003" /><testcase classname="tests.test_m3b1" name="test_B12_boundaries_pathological_ratio_and_budget" time="0.015" /><testcase classname="tests.test_m3b1" name="test_empty_pairs_ownership_and_limited_tile" time="0.005" /><testcase classname="tests.test_smoke" name="test_installed_package_without_pydoe" time="0.003"><failure message="importlib.metadata.PackageNotFoundError: No package metadata was found for torchoed">cls = &lt;class 'importlib.metadata.Distribution'&gt;, name = 'torchoed'
+
+    @classmethod
+    def from_name(cls, name: str) -&gt; Distribution:
+        """Return the Distribution for the given package name.
+
+        :param name: The name of the distribution package to search for.
+        :return: The Distribution instance (or subclass thereof) for the named
+            package, if found.
+        :raises PackageNotFoundError: When the named package's distribution
+            metadata cannot be found.
+        :raises ValueError: When an invalid value is supplied for name.
+        """
+        if not name:
+            raise ValueError("A distribution name is required.")
+        try:
+&gt;           return next(iter(cls.discover(name=name)))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           StopIteration
+
+&lt;BASE_ENV&gt;\Lib\importlib\metadata\__init__.py:407: StopIteration
+
+During handling of the above exception, another exception occurred:
+
+    def test_installed_package_without_pydoe():
+        assert util.find_spec("pydoe") is None
+&gt;       assert metadata.version("torchoed") == torchoed.__version__
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_smoke.py:13:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+&lt;BASE_ENV&gt;\Lib\importlib\metadata\__init__.py:987: in version
+    return distribution(distribution_name).version
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;BASE_ENV&gt;\Lib\importlib\metadata\__init__.py:960: in distribution
+    return Distribution.from_name(distribution_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cls = &lt;class 'importlib.metadata.Distribution'&gt;, name = 'torchoed'
+
+    @classmethod
+    def from_name(cls, name: str) -&gt; Distribution:
+        """Return the Distribution for the given package name.
+
+        :param name: The name of the distribution package to search for.
+        :return: The Distribution instance (or subclass thereof) for the named
+            package, if found.
+        :raises PackageNotFoundError: When the named package's distribution
+            metadata cannot be found.
+        :raises ValueError: When an invalid value is supplied for name.
+        """
+        if not name:
+            raise ValueError("A distribution name is required.")
+        try:
+            return next(iter(cls.discover(name=name)))
+        except StopIteration:
+&gt;           raise PackageNotFoundError(name)
+E           importlib.metadata.PackageNotFoundError: No package metadata was found for torchoed
+
+&lt;BASE_ENV&gt;\Lib\importlib\metadata\__init__.py:409: PackageNotFoundError</failure></testcase><testcase classname="tests.test_smoke" name="test_deterministic_cpu_gram" time="0.001" /><testcase classname="tests.test_smoke" name="test_private_smoke_has_no_hidden_regularization" time="0.001" /><testcase classname="tests.test_smoke" name="test_package_imports_only_torch" time="0.035" /></testsuite></testsuites>

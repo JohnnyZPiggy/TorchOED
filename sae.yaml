@@ -1,4 +1,4 @@
-sae_version: "3.3"
+sae_version: "3.4"
 project:
   repository: "JohnnyZPiggy/TorchOED"
   name: "TorchOED"
@@ -6,7 +6,7 @@ project:
   scientific_goal: "PyTorch-native DOE/OED with explicit numerical contracts"
 framework:
   repository: "JohnnyZPiggy/SAE-Framework"
-  commit_sha: "de9833b56768a522cbc438244a941737b63293e9"
+  commit_sha: "f2a05e12a542282ec9bdcb84cb551f97226c52ff"
   adoption: "minimal_reference"
   entrypoint: ".sae/README.md"
 roles:
@@ -20,6 +20,14 @@ collaboration:
   actions_enabled: false
   hosted_ci_required: false
   engineer_may_merge: false
+simplicity:
+  contract: "governance/SIMPLICITY_CONTRACT.md"
+  dispatch_requires: ["definition_of_done", "size_budget", "required_tests", "not_required"]
+  size_budgets_net_lines: {S: 50, M: 200, L: 500}
+  stop_when_over_budget_factor: 1.5
+  review_outcomes: ["ACCEPTED", "REQUEST_CHANGES", "REQUEST_SIMPLIFY"]
+  evidence_file_caps: {docs: 0, code: 3, compute: 10}
+  hash_git_tracked_files: false
 workflow:
   supported_modes: ["EXPLORE", "VALIDATE"]
   task_timeout_required: true

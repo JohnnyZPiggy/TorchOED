@@ -1,7 +1,33 @@
-# TorchOED — SAE V3.3 project entrypoint
+# TorchOED — SAE V3.4 project entrypoint
 
-SAE pin: `de9833b56768a522cbc438244a941737b63293e9` (adopted 2026-10-30 from `d84942e`; delta is `tools/compute` multi-GPU controller only, SAE-Framework PR #67). Configuration: [sae.yaml](sae.yaml).
-Read the actual [pinned constitution](https://github.com/JohnnyZPiggy/SAE-Framework/blob/de9833b56768a522cbc438244a941737b63293e9/AGENTS.md), assigned role and task-relevant workflows via [.sae/README.md](.sae/README.md); do not silently upgrade or assume links were read.
+SAE pin: `f2a05e12a542282ec9bdcb84cb551f97226c52ff` (V3.4, adopted 2026-10-30 from `de9833b`; delta is the Simplicity Contract, SAE-Framework PR #71). Configuration: [sae.yaml](sae.yaml).
+Read the actual [pinned constitution](https://github.com/JohnnyZPiggy/SAE-Framework/blob/f2a05e12a542282ec9bdcb84cb551f97226c52ff/AGENTS.md), assigned role and task-relevant workflows via [.sae/README.md](.sae/README.md); do not silently upgrade or assume links were read.
+
+## Simplicity first (Engineer: read before writing code)
+
+The [Simplicity Contract](https://github.com/JohnnyZPiggy/SAE-Framework/blob/f2a05e12a542282ec9bdcb84cb551f97226c52ff/governance/SIMPLICITY_CONTRACT.md) overrides any older rule or habit that asks for more. The smallest change that meets the Issue's Definition of Done is the correct change.
+
+1. **Validate only at trust boundaries** (CLI args, files, provider output), only the fields you use. Trust internal code: no re-checking shapes/dtypes/types your own code produced. Let torch and Python raise.
+2. **Catch an exception only if you then do something different.** No catch-and-rename, no custom error-code taxonomies.
+3. **No speculative code:** no "future" abstractions, flags, fallbacks, length caps, hand-written JSON/schema validators, `ast`/regex enforcement of conventions.
+4. **Tests:** one per changed behavior, plus an independent oracle (e.g. dense `torch.linalg`, PyDOE reference) for numerical claims. No randomized/adversarial suites unless the Issue asks. Test lines ≲ source lines.
+5. **Evidence:** Git SHA is the integrity layer — never hash tracked files. Handoff = one PR comment; ≤ 3 evidence files for code, ≤ 10 for a GPU run.
+6. **Budget:** every Issue states a size budget (S ≤ 50 / M ≤ 200 / L ≤ 500 net lines) and a *Not required* list. Over 1.5× → stop, ship the Definition of Done, list extras as suggestions.
+
+```python
+# Not this
+def d_criterion(X):
+    if not isinstance(X, torch.Tensor): raise TypeError("X must be a tensor")
+    if X.ndim != 2: raise ValueError(f"bad shape {X.shape}")
+    try:
+        return torch.linalg.slogdet(X.T @ X).logabsdet
+    except RuntimeError as e:
+        raise CriterionError("D_FAILED") from e
+
+# This
+def d_criterion(X):
+    return torch.linalg.slogdet(X.T @ X).logabsdet
+```
 
 ## Scope and roles
 

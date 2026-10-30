@@ -39,7 +39,8 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000):
                     (phase2['gains'] > phase2['tolerances'])).nonzero().flatten()
         if not eligible.numel():
             unresolved_improving = ((phase2['status'] == 2) &
-                (phase2['ratios'].isnan() | (phase2['ratios'] > 1))).any().item()
+                (phase2['ratios'].isnan() | (phase2['ratios'] > 1)
+                 | (phase2['direct_scores'] > phase2['initial_objective']))).any().item()
             reason = ('NUMERICAL_INCONCLUSIVE' if unresolved_improving
                       else 'LOCAL_2_NUMERICAL')
             break

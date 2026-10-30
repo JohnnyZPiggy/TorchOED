@@ -28,3 +28,5 @@ score = d_optimality(M)  # log(4), maximize; singular inputs raise
 ```
 
 M3-A adds `fedorov_exchange(F, ids)` for provided-initial-ID CPUfloat64 best-improvement search. [API/error/certificate policy](docs/M3_API.md), [CPU evidence](reports/m3a/ENGINEER_HANDOFF.md). Numerical 1-swap stopping is not global optimality or a rigorous certificate. No initializer, repeats, GPU or M3-B.
+
+M3-B1 adds `score_two_swaps(F, ids)` for all legal simultaneous k=2 exchange scores and validity diagnostics. It does not select/apply a swap or search. [API/schema](docs/M3B1_API.md), [CPU exact-oracle evidence](reports/m3b1/ENGINEER_HANDOFF.md).

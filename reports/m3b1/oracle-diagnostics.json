@@ -1,0 +1,5192 @@
+{
+  "total_candidates": 11,
+  "selected_count": 6,
+  "incoming_count": 5,
+  "legal_pairs": 150,
+  "initial_gram": [
+    [
+      "6",
+      "-15",
+      "55"
+    ],
+    [
+      "-15",
+      "55",
+      "-225"
+    ],
+    [
+      "55",
+      "-225",
+      "979"
+    ]
+  ],
+  "exact_initial_determinant": "3920",
+  "pairs": [
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "19"
+        ],
+        [
+          "-3",
+          "19",
+          "-27"
+        ],
+        [
+          "19",
+          "-27",
+          "115"
+        ]
+      ],
+      "exact_determinant": "3920",
+      "exact_ratio": "1",
+      "ratio": 1.000000000000001,
+      "ratio_abs_error": 1.1102230246251565e-15,
+      "gain": 1.7763568394002505e-15,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "24"
+        ],
+        [
+          "-2",
+          "24",
+          "-8"
+        ],
+        [
+          "24",
+          "-8",
+          "180"
+        ]
+      ],
+      "exact_determinant": "11760",
+      "exact_ratio": "3",
+      "ratio": 3.0000000000000027,
+      "ratio_abs_error": 2.6645352591003757e-15,
+      "gain": 1.098612288668111,
+      "gain_abs_error": 1.1102230246251565e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "31"
+        ],
+        [
+          "-1",
+          "31",
+          "29"
+        ],
+        [
+          "31",
+          "29",
+          "355"
+        ]
+      ],
+      "exact_determinant": "29040",
+      "exact_ratio": "363/49",
+      "ratio": 7.408163265306138,
+      "ratio_abs_error": 1.5987211554602254e-14,
+      "gain": 2.0025825361542253,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "0",
+          "40"
+        ],
+        [
+          "0",
+          "40",
+          "90"
+        ],
+        [
+          "40",
+          "90",
+          "724"
+        ]
+      ],
+      "exact_determinant": "61160",
+      "exact_ratio": "1529/98",
+      "ratio": 15.602040816326546,
+      "ratio_abs_error": 1.5987211554602254e-14,
+      "gain": 2.7474017272584934,
+      "gain_abs_error": 3.1086244689504383e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "27"
+        ],
+        [
+          "-1",
+          "27",
+          "-1"
+        ],
+        [
+          "27",
+          "-1",
+          "195"
+        ]
+      ],
+      "exact_determinant": "11760",
+      "exact_ratio": "3",
+      "ratio": 2.9999999999999982,
+      "ratio_abs_error": 1.7763568394002505e-15,
+      "gain": 1.0986122886681127,
+      "gain_abs_error": 2.886579864025407e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "0",
+          "34"
+        ],
+        [
+          "0",
+          "34",
+          "36"
+        ],
+        [
+          "34",
+          "36",
+          "370"
+        ]
+      ],
+      "exact_determinant": "28400",
+      "exact_ratio": "355/49",
+      "ratio": 7.244897959183689,
+      "ratio_abs_error": 1.509903313490213e-14,
+      "gain": 1.9802974913647908,
+      "gain_abs_error": 1.5543122344752192e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "1",
+          "43"
+        ],
+        [
+          "1",
+          "43",
+          "97"
+        ],
+        [
+          "43",
+          "97",
+          "739"
+        ]
+      ],
+      "exact_determinant": "62304",
+      "exact_ratio": "3894/245",
+      "ratio": 15.89387755102041,
+      "ratio_abs_error": 1.7763568394002505e-15,
+      "gain": 2.765933975387421,
+      "gain_abs_error": 3.1086244689504383e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "1",
+          "39"
+        ],
+        [
+          "1",
+          "39",
+          "55"
+        ],
+        [
+          "39",
+          "55",
+          "435"
+        ]
+      ],
+      "exact_determinant": "28176",
+      "exact_ratio": "1761/245",
+      "ratio": 7.187755102040817,
+      "ratio_abs_error": 8.881784197001252e-16,
+      "gain": 1.9723788979514811,
+      "gain_abs_error": 1.9984014443252818e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "2",
+          "48"
+        ],
+        [
+          "2",
+          "48",
+          "116"
+        ],
+        [
+          "48",
+          "116",
+          "804"
+        ]
+      ],
+      "exact_determinant": "59280",
+      "exact_ratio": "741/49",
+      "ratio": 15.122448979591805,
+      "ratio_abs_error": 3.197442310920451e-14,
+      "gain": 2.7161803271854623,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        1
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "3",
+          "55"
+        ],
+        [
+          "3",
+          "55",
+          "153"
+        ],
+        [
+          "55",
+          "153",
+          "979"
+        ]
+      ],
+      "exact_determinant": "57920",
+      "exact_ratio": "724/49",
+      "ratio": 14.775510204081565,
+      "ratio_abs_error": 6.750155989720952e-14,
+      "gain": 2.692971094275091,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "26"
+        ],
+        [
+          "-4",
+          "26",
+          "-64"
+        ],
+        [
+          "26",
+          "-64",
+          "290"
+        ]
+      ],
+      "exact_determinant": "11760",
+      "exact_ratio": "3",
+      "ratio": 3.0000000000000067,
+      "ratio_abs_error": 6.661338147750939e-15,
+      "gain": 1.098612288668111,
+      "gain_abs_error": 1.1102230246251565e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "31"
+        ],
+        [
+          "-3",
+          "31",
+          "-45"
+        ],
+        [
+          "31",
+          "-45",
+          "355"
+        ]
+      ],
+      "exact_determinant": "29264",
+      "exact_ratio": "1829/245",
+      "ratio": 7.465306122448989,
+      "ratio_abs_error": 8.881784197001252e-15,
+      "gain": 2.0102664378461395,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "38"
+        ],
+        [
+          "-2",
+          "38",
+          "-8"
+        ],
+        [
+          "38",
+          "-8",
+          "530"
+        ]
+      ],
+      "exact_determinant": "64680",
+      "exact_ratio": "33/2",
+      "ratio": 16.50000000000004,
+      "ratio_abs_error": 3.907985046680551e-14,
+      "gain": 2.803360380906536,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "47"
+        ],
+        [
+          "-1",
+          "47",
+          "53"
+        ],
+        [
+          "47",
+          "53",
+          "899"
+        ]
+      ],
+      "exact_determinant": "126960",
+      "exact_ratio": "1587/49",
+      "ratio": 32.38775510204086,
+      "ratio_abs_error": 4.973799150320701e-14,
+      "gain": 3.4777804224157833,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "34"
+        ],
+        [
+          "-2",
+          "34",
+          "-38"
+        ],
+        [
+          "34",
+          "-38",
+          "370"
+        ]
+      ],
+      "exact_determinant": "31200",
+      "exact_ratio": "390/49",
+      "ratio": 7.959183673469392,
+      "ratio_abs_error": 3.552713678800501e-15,
+      "gain": 2.074326441013067,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "41"
+        ],
+        [
+          "-1",
+          "41",
+          "-1"
+        ],
+        [
+          "41",
+          "-1",
+          "545"
+        ]
+      ],
+      "exact_determinant": "64680",
+      "exact_ratio": "33/2",
+      "ratio": 16.500000000000036,
+      "ratio_abs_error": 3.552713678800501e-14,
+      "gain": 2.803360380906536,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "0",
+          "50"
+        ],
+        [
+          "0",
+          "50",
+          "60"
+        ],
+        [
+          "50",
+          "60",
+          "914"
+        ]
+      ],
+      "exact_determinant": "127600",
+      "exact_ratio": "1595/49",
+      "ratio": 32.551020408163275,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 3.4828087171083197,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "0",
+          "46"
+        ],
+        [
+          "0",
+          "46",
+          "18"
+        ],
+        [
+          "46",
+          "18",
+          "610"
+        ]
+      ],
+      "exact_determinant": "69080",
+      "exact_ratio": "1727/98",
+      "ratio": 17.622448979591837,
+      "ratio_abs_error": 0.0,
+      "gain": 2.869173599476108,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "1",
+          "55"
+        ],
+        [
+          "1",
+          "55",
+          "79"
+        ],
+        [
+          "55",
+          "79",
+          "979"
+        ]
+      ],
+      "exact_determinant": "126960",
+      "exact_ratio": "1587/49",
+      "ratio": 32.38775510204075,
+      "ratio_abs_error": 6.394884621840902e-14,
+      "gain": 3.477780422415785,
+      "gain_abs_error": 2.6645352591003757e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        2
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "2",
+          "62"
+        ],
+        [
+          "2",
+          "62",
+          "116"
+        ],
+        [
+          "62",
+          "116",
+          "1154"
+        ]
+      ],
+      "exact_determinant": "134376",
+      "exact_ratio": "16797/490",
+      "ratio": 34.279591836734554,
+      "ratio_abs_error": 1.4210854715202004e-13,
+      "gain": 3.534550186912332,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "31"
+        ],
+        [
+          "-5",
+          "31",
+          "-83"
+        ],
+        [
+          "31",
+          "-83",
+          "355"
+        ]
+      ],
+      "exact_determinant": "11760",
+      "exact_ratio": "3",
+      "ratio": 3.0000000000000053,
+      "ratio_abs_error": 5.329070518200751e-15,
+      "gain": 1.0986122886681127,
+      "gain_abs_error": 2.886579864025407e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "36"
+        ],
+        [
+          "-4",
+          "36",
+          "-64"
+        ],
+        [
+          "36",
+          "-64",
+          "420"
+        ]
+      ],
+      "exact_determinant": "31200",
+      "exact_ratio": "390/49",
+      "ratio": 7.959183673469398,
+      "ratio_abs_error": 9.769962616701378e-15,
+      "gain": 2.074326441013067,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "43"
+        ],
+        [
+          "-3",
+          "43",
+          "-27"
+        ],
+        [
+          "43",
+          "-27",
+          "595"
+        ]
+      ],
+      "exact_determinant": "71240",
+      "exact_ratio": "1781/98",
+      "ratio": 18.17346938775515,
+      "ratio_abs_error": 4.973799150320701e-14,
+      "gain": 2.8999628046190917,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "52"
+        ],
+        [
+          "-2",
+          "52",
+          "34"
+        ],
+        [
+          "52",
+          "34",
+          "964"
+        ]
+      ],
+      "exact_determinant": "142296",
+      "exact_ratio": "363/10",
+      "ratio": 36.300000000000054,
+      "ratio_abs_error": 5.684341886080802e-14,
+      "gain": 3.591817741270807,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "39"
+        ],
+        [
+          "-3",
+          "39",
+          "-57"
+        ],
+        [
+          "39",
+          "-57",
+          "435"
+        ]
+      ],
+      "exact_determinant": "32400",
+      "exact_ratio": "405/49",
+      "ratio": 8.26530612244898,
+      "ratio_abs_error": 0.0,
+      "gain": 2.1120667689959145,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "46"
+        ],
+        [
+          "-2",
+          "46",
+          "-20"
+        ],
+        [
+          "46",
+          "-20",
+          "610"
+        ]
+      ],
+      "exact_determinant": "69864",
+      "exact_ratio": "8733/490",
+      "ratio": 17.82244897959188,
+      "ratio_abs_error": 4.263256414560601e-14,
+      "gain": 2.8804588413090624,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "55"
+        ],
+        [
+          "-1",
+          "55",
+          "41"
+        ],
+        [
+          "55",
+          "41",
+          "979"
+        ]
+      ],
+      "exact_determinant": "141120",
+      "exact_ratio": "36",
+      "ratio": 36.000000000000014,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 3.583518938456111,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "51"
+        ],
+        [
+          "-1",
+          "51",
+          "-1"
+        ],
+        [
+          "51",
+          "-1",
+          "675"
+        ]
+      ],
+      "exact_determinant": "73320",
+      "exact_ratio": "1833/98",
+      "ratio": 18.70408163265306,
+      "ratio_abs_error": 0.0,
+      "gain": 2.928741769169134,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "0",
+          "60"
+        ],
+        [
+          "0",
+          "60",
+          "60"
+        ],
+        [
+          "60",
+          "60",
+          "1044"
+        ]
+      ],
+      "exact_determinant": "138240",
+      "exact_ratio": "1728/49",
+      "ratio": 35.26530612244891,
+      "ratio_abs_error": 6.394884621840902e-14,
+      "gain": 3.5628996512533764,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        3
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "1",
+          "67"
+        ],
+        [
+          "1",
+          "67",
+          "97"
+        ],
+        [
+          "67",
+          "97",
+          "1219"
+        ]
+      ],
+      "exact_determinant": "144600",
+      "exact_ratio": "3615/98",
+      "ratio": 36.88775510204066,
+      "ratio_abs_error": 1.5631940186722204e-13,
+      "gain": 3.6078796559222948,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "34"
+        ],
+        [
+          "-6",
+          "34",
+          "-90"
+        ],
+        [
+          "34",
+          "-90",
+          "370"
+        ]
+      ],
+      "exact_determinant": "10976",
+      "exact_ratio": "14/5",
+      "ratio": 2.800000000000004,
+      "ratio_abs_error": 3.9968028886505635e-15,
+      "gain": 1.0296194171811592,
+      "gain_abs_error": 1.1102230246251565e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "39"
+        ],
+        [
+          "-5",
+          "39",
+          "-71"
+        ],
+        [
+          "39",
+          "-71",
+          "435"
+        ]
+      ],
+      "exact_determinant": "29040",
+      "exact_ratio": "363/49",
+      "ratio": 7.408163265306131,
+      "ratio_abs_error": 8.881784197001252e-15,
+      "gain": 2.0025825361542253,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "46"
+        ],
+        [
+          "-4",
+          "46",
+          "-34"
+        ],
+        [
+          "46",
+          "-34",
+          "610"
+        ]
+      ],
+      "exact_determinant": "66840",
+      "exact_ratio": "1671/98",
+      "ratio": 17.051020408163307,
+      "ratio_abs_error": 4.263256414560601e-14,
+      "gain": 2.836210049924823,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "55"
+        ],
+        [
+          "-3",
+          "55",
+          "27"
+        ],
+        [
+          "55",
+          "27",
+          "979"
+        ]
+      ],
+      "exact_determinant": "134600",
+      "exact_ratio": "3365/98",
+      "ratio": 34.336734693877595,
+      "ratio_abs_error": 4.263256414560601e-14,
+      "gain": 3.536215763408258,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "42"
+        ],
+        [
+          "-4",
+          "42",
+          "-64"
+        ],
+        [
+          "42",
+          "-64",
+          "450"
+        ]
+      ],
+      "exact_determinant": "29040",
+      "exact_ratio": "363/49",
+      "ratio": 7.408163265306123,
+      "ratio_abs_error": 8.881784197001252e-16,
+      "gain": 2.0025825361542253,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "49"
+        ],
+        [
+          "-3",
+          "49",
+          "-27"
+        ],
+        [
+          "49",
+          "-27",
+          "625"
+        ]
+      ],
+      "exact_determinant": "64040",
+      "exact_ratio": "1601/98",
+      "ratio": 16.336734693877585,
+      "ratio_abs_error": 3.197442310920451e-14,
+      "gain": 2.793416234326143,
+      "gain_abs_error": 0.0,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "58"
+        ],
+        [
+          "-2",
+          "58",
+          "34"
+        ],
+        [
+          "58",
+          "34",
+          "994"
+        ]
+      ],
+      "exact_determinant": "132000",
+      "exact_ratio": "1650/49",
+      "ratio": 33.673469387755105,
+      "ratio_abs_error": 0.0,
+      "gain": 3.516710268784001,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "54"
+        ],
+        [
+          "-2",
+          "54",
+          "-8"
+        ],
+        [
+          "54",
+          "-8",
+          "690"
+        ]
+      ],
+      "exact_determinant": "64680",
+      "exact_ratio": "33/2",
+      "ratio": 16.500000000000004,
+      "ratio_abs_error": 3.552713678800501e-15,
+      "gain": 2.803360380906536,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "63"
+        ],
+        [
+          "-1",
+          "63",
+          "53"
+        ],
+        [
+          "63",
+          "53",
+          "1059"
+        ]
+      ],
+      "exact_determinant": "125664",
+      "exact_ratio": "1122/35",
+      "ratio": 32.057142857142786,
+      "ratio_abs_error": 7.105427357601002e-14,
+      "gain": 3.467520024593229,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        4
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "0",
+          "70"
+        ],
+        [
+          "0",
+          "70",
+          "90"
+        ],
+        [
+          "70",
+          "90",
+          "1234"
+        ]
+      ],
+      "exact_determinant": "126680",
+      "exact_ratio": "3167/98",
+      "ratio": 32.316326530612095,
+      "ratio_abs_error": 1.4921397450962104e-13,
+      "gain": 3.4755725678680687,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "35"
+        ],
+        [
+          "-7",
+          "35",
+          "-91"
+        ],
+        [
+          "35",
+          "-91",
+          "371"
+        ]
+      ],
+      "exact_determinant": "11760",
+      "exact_ratio": "3",
+      "ratio": 3.0000000000000053,
+      "ratio_abs_error": 5.329070518200751e-15,
+      "gain": 1.0986122886681127,
+      "gain_abs_error": 2.886579864025407e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "40"
+        ],
+        [
+          "-6",
+          "40",
+          "-72"
+        ],
+        [
+          "40",
+          "-72",
+          "436"
+        ]
+      ],
+      "exact_determinant": "28400",
+      "exact_ratio": "355/49",
+      "ratio": 7.24489795918368,
+      "ratio_abs_error": 6.217248937900877e-15,
+      "gain": 1.9802974913647908,
+      "gain_abs_error": 1.5543122344752192e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "47"
+        ],
+        [
+          "-5",
+          "47",
+          "-35"
+        ],
+        [
+          "47",
+          "-35",
+          "611"
+        ]
+      ],
+      "exact_determinant": "62304",
+      "exact_ratio": "3894/245",
+      "ratio": 15.893877551020445,
+      "ratio_abs_error": 3.730349362740526e-14,
+      "gain": 2.765933975387421,
+      "gain_abs_error": 3.1086244689504383e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "56"
+        ],
+        [
+          "-4",
+          "56",
+          "26"
+        ],
+        [
+          "56",
+          "26",
+          "980"
+        ]
+      ],
+      "exact_determinant": "122280",
+      "exact_ratio": "3057/98",
+      "ratio": 31.193877551020442,
+      "ratio_abs_error": 3.552713678800501e-14,
+      "gain": 3.4402218432202645,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "43"
+        ],
+        [
+          "-5",
+          "43",
+          "-65"
+        ],
+        [
+          "43",
+          "-65",
+          "451"
+        ]
+      ],
+      "exact_determinant": "28176",
+      "exact_ratio": "1761/245",
+      "ratio": 7.1877551020408195,
+      "ratio_abs_error": 3.552713678800501e-15,
+      "gain": 1.9723788979514811,
+      "gain_abs_error": 1.9984014443252818e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "50"
+        ],
+        [
+          "-4",
+          "50",
+          "-28"
+        ],
+        [
+          "50",
+          "-28",
+          "626"
+        ]
+      ],
+      "exact_determinant": "59280",
+      "exact_ratio": "741/49",
+      "ratio": 15.122448979591871,
+      "ratio_abs_error": 3.375077994860476e-14,
+      "gain": 2.7161803271854623,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "59"
+        ],
+        [
+          "-3",
+          "59",
+          "33"
+        ],
+        [
+          "59",
+          "33",
+          "995"
+        ]
+      ],
+      "exact_determinant": "119680",
+      "exact_ratio": "1496/49",
+      "ratio": 30.530612244897974,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 3.418729860423797,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "55"
+        ],
+        [
+          "-3",
+          "55",
+          "-9"
+        ],
+        [
+          "55",
+          "-9",
+          "691"
+        ]
+      ],
+      "exact_determinant": "57920",
+      "exact_ratio": "724/49",
+      "ratio": 14.775510204081627,
+      "ratio_abs_error": 5.329070518200751e-15,
+      "gain": 2.692971094275091,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "64"
+        ],
+        [
+          "-2",
+          "64",
+          "52"
+        ],
+        [
+          "64",
+          "52",
+          "1060"
+        ]
+      ],
+      "exact_determinant": "111120",
+      "exact_ratio": "1389/49",
+      "ratio": 28.34693877551015,
+      "ratio_abs_error": 5.3290705182007514e-14,
+      "gain": 3.344519044643718,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        0,
+        5
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "71"
+        ],
+        [
+          "-1",
+          "71",
+          "89"
+        ],
+        [
+          "71",
+          "89",
+          "1235"
+        ]
+      ],
+      "exact_determinant": "106800",
+      "exact_ratio": "1335/49",
+      "ratio": 27.244897959183536,
+      "ratio_abs_error": 1.3855583347321954e-13,
+      "gain": 3.3048662727237232,
+      "gain_abs_error": 0.0,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "35"
+        ],
+        [
+          "-5",
+          "35",
+          "-125"
+        ],
+        [
+          "35",
+          "-125",
+          "659"
+        ]
+      ],
+      "exact_determinant": "29040",
+      "exact_ratio": "363/49",
+      "ratio": 7.408163265306138,
+      "ratio_abs_error": 1.5987211554602254e-14,
+      "gain": 2.0025825361542253,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "40"
+        ],
+        [
+          "-4",
+          "40",
+          "-106"
+        ],
+        [
+          "40",
+          "-106",
+          "724"
+        ]
+      ],
+      "exact_determinant": "64680",
+      "exact_ratio": "33/2",
+      "ratio": 16.50000000000002,
+      "ratio_abs_error": 2.1316282072803006e-14,
+      "gain": 2.803360380906538,
+      "gain_abs_error": 3.1086244689504383e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "47"
+        ],
+        [
+          "-3",
+          "47",
+          "-69"
+        ],
+        [
+          "47",
+          "-69",
+          "899"
+        ]
+      ],
+      "exact_determinant": "132496",
+      "exact_ratio": "169/5",
+      "ratio": 33.80000000000009,
+      "ratio_abs_error": 9.237055564881302e-14,
+      "gain": 3.5204608024889747,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "56"
+        ],
+        [
+          "-2",
+          "56",
+          "-8"
+        ],
+        [
+          "56",
+          "-8",
+          "1268"
+        ]
+      ],
+      "exact_determinant": "246768",
+      "exact_ratio": "15423/245",
+      "ratio": 62.95102040816339,
+      "ratio_abs_error": 1.2079226507921703e-13,
+      "gain": 4.14235697017889,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "43"
+        ],
+        [
+          "-3",
+          "43",
+          "-99"
+        ],
+        [
+          "43",
+          "-99",
+          "739"
+        ]
+      ],
+      "exact_determinant": "71240",
+      "exact_ratio": "1781/98",
+      "ratio": 18.173469387755105,
+      "ratio_abs_error": 3.552713678800501e-15,
+      "gain": 2.8999628046190917,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "50"
+        ],
+        [
+          "-2",
+          "50",
+          "-62"
+        ],
+        [
+          "50",
+          "-62",
+          "914"
+        ]
+      ],
+      "exact_determinant": "134880",
+      "exact_ratio": "1686/49",
+      "ratio": 34.40816326530617,
+      "ratio_abs_error": 4.973799150320701e-14,
+      "gain": 3.5382938404511766,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "59"
+        ],
+        [
+          "-1",
+          "59",
+          "-1"
+        ],
+        [
+          "59",
+          "-1",
+          "1283"
+        ]
+      ],
+      "exact_determinant": "247632",
+      "exact_ratio": "2211/35",
+      "ratio": 63.17142857142857,
+      "ratio_abs_error": 0.0,
+      "gain": 4.145852119368035,
+      "gain_abs_error": 2.6645352591003757e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "55"
+        ],
+        [
+          "-1",
+          "55",
+          "-43"
+        ],
+        [
+          "55",
+          "-43",
+          "979"
+        ]
+      ],
+      "exact_determinant": "149352",
+      "exact_ratio": "381/10",
+      "ratio": 38.100000000000016,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 3.640214282132657,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "0",
+          "64"
+        ],
+        [
+          "0",
+          "64",
+          "18"
+        ],
+        [
+          "64",
+          "18",
+          "1348"
+        ]
+      ],
+      "exact_determinant": "253544",
+      "exact_ratio": "31693/490",
+      "ratio": 64.67959183673464,
+      "ratio_abs_error": 4.263256414560601e-14,
+      "gain": 4.169445724187058,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        2
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "1",
+          "71"
+        ],
+        [
+          "1",
+          "71",
+          "55"
+        ],
+        [
+          "71",
+          "55",
+          "1523"
+        ]
+      ],
+      "exact_determinant": "279024",
+      "exact_ratio": "17439/245",
+      "ratio": 71.17959183673443,
+      "ratio_abs_error": 2.5579538487363607e-13,
+      "gain": 4.265206145824735,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "40"
+        ],
+        [
+          "-6",
+          "40",
+          "-144"
+        ],
+        [
+          "40",
+          "-144",
+          "724"
+        ]
+      ],
+      "exact_determinant": "28400",
+      "exact_ratio": "355/49",
+      "ratio": 7.244897959183688,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 1.9802974913647908,
+      "gain_abs_error": 1.5543122344752192e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "45"
+        ],
+        [
+          "-5",
+          "45",
+          "-125"
+        ],
+        [
+          "45",
+          "-125",
+          "789"
+        ]
+      ],
+      "exact_determinant": "64680",
+      "exact_ratio": "33/2",
+      "ratio": 16.50000000000002,
+      "ratio_abs_error": 2.1316282072803006e-14,
+      "gain": 2.803360380906536,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "52"
+        ],
+        [
+          "-4",
+          "52",
+          "-88"
+        ],
+        [
+          "52",
+          "-88",
+          "964"
+        ]
+      ],
+      "exact_determinant": "134880",
+      "exact_ratio": "1686/49",
+      "ratio": 34.40816326530622,
+      "ratio_abs_error": 9.947598300641403e-14,
+      "gain": 3.5382938404511766,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "61"
+        ],
+        [
+          "-3",
+          "61",
+          "-27"
+        ],
+        [
+          "61",
+          "-27",
+          "1333"
+        ]
+      ],
+      "exact_determinant": "254408",
+      "exact_ratio": "649/10",
+      "ratio": 64.90000000000016,
+      "ratio_abs_error": 1.5631940186722204e-13,
+      "gain": 4.172847623710046,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "48"
+        ],
+        [
+          "-4",
+          "48",
+          "-118"
+        ],
+        [
+          "48",
+          "-118",
+          "804"
+        ]
+      ],
+      "exact_determinant": "69864",
+      "exact_ratio": "8733/490",
+      "ratio": 17.822448979591847,
+      "ratio_abs_error": 1.0658141036401503e-14,
+      "gain": 2.8804588413090624,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "55"
+        ],
+        [
+          "-3",
+          "55",
+          "-81"
+        ],
+        [
+          "55",
+          "-81",
+          "979"
+        ]
+      ],
+      "exact_determinant": "135248",
+      "exact_ratio": "8453/245",
+      "ratio": 34.502040816326584,
+      "ratio_abs_error": 5.684341886080802e-14,
+      "gain": 3.5410184763842025,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "64"
+        ],
+        [
+          "-2",
+          "64",
+          "-20"
+        ],
+        [
+          "64",
+          "-20",
+          "1348"
+        ]
+      ],
+      "exact_determinant": "252816",
+      "exact_ratio": "15801/245",
+      "ratio": 64.49387755102042,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 4.166570297606773,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "60"
+        ],
+        [
+          "-2",
+          "60",
+          "-62"
+        ],
+        [
+          "60",
+          "-62",
+          "1044"
+        ]
+      ],
+      "exact_determinant": "147480",
+      "exact_ratio": "3687/98",
+      "ratio": 37.622448979591844,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 3.6276009195635748,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "69"
+        ],
+        [
+          "-1",
+          "69",
+          "-1"
+        ],
+        [
+          "69",
+          "-1",
+          "1413"
+        ]
+      ],
+      "exact_determinant": "255192",
+      "exact_ratio": "651/10",
+      "ratio": 65.09999999999998,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 4.175924549214525,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        3
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "0",
+          "76"
+        ],
+        [
+          "0",
+          "76",
+          "36"
+        ],
+        [
+          "76",
+          "36",
+          "1588"
+        ]
+      ],
+      "exact_determinant": "277376",
+      "exact_ratio": "17336/245",
+      "ratio": 70.75918367346912,
+      "ratio_abs_error": 2.7000623958883807e-13,
+      "gain": 4.25928233267147,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "43"
+        ],
+        [
+          "-7",
+          "43",
+          "-151"
+        ],
+        [
+          "43",
+          "-151",
+          "739"
+        ]
+      ],
+      "exact_determinant": "29040",
+      "exact_ratio": "363/49",
+      "ratio": 7.408163265306134,
+      "ratio_abs_error": 1.1546319456101628e-14,
+      "gain": 2.002582536154227,
+      "gain_abs_error": 3.1086244689504383e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "48"
+        ],
+        [
+          "-6",
+          "48",
+          "-132"
+        ],
+        [
+          "48",
+          "-132",
+          "804"
+        ]
+      ],
+      "exact_determinant": "63504",
+      "exact_ratio": "81/5",
+      "ratio": 16.200000000000014,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 2.7850112422383404,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "55"
+        ],
+        [
+          "-5",
+          "55",
+          "-95"
+        ],
+        [
+          "55",
+          "-95",
+          "979"
+        ]
+      ],
+      "exact_determinant": "130320",
+      "exact_ratio": "1629/49",
+      "ratio": 33.24489795918375,
+      "ratio_abs_error": 7.815970093361102e-14,
+      "gain": 3.50390131049142,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "64"
+        ],
+        [
+          "-4",
+          "64",
+          "-34"
+        ],
+        [
+          "64",
+          "-34",
+          "1348"
+        ]
+      ],
+      "exact_determinant": "244392",
+      "exact_ratio": "30549/490",
+      "ratio": 62.344897959183776,
+      "ratio_abs_error": 9.947598300641403e-14,
+      "gain": 4.132681839735104,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "51"
+        ],
+        [
+          "-5",
+          "51",
+          "-125"
+        ],
+        [
+          "51",
+          "-125",
+          "819"
+        ]
+      ],
+      "exact_determinant": "67488",
+      "exact_ratio": "4218/245",
+      "ratio": 17.216326530612246,
+      "ratio_abs_error": 0.0,
+      "gain": 2.845858150493994,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "58"
+        ],
+        [
+          "-4",
+          "58",
+          "-88"
+        ],
+        [
+          "58",
+          "-88",
+          "994"
+        ]
+      ],
+      "exact_determinant": "129264",
+      "exact_ratio": "8079/245",
+      "ratio": 32.97551020408168,
+      "ratio_abs_error": 4.973799150320701e-14,
+      "gain": 3.495765170934982,
+      "gain_abs_error": 4.440892098500626e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "67"
+        ],
+        [
+          "-3",
+          "67",
+          "-27"
+        ],
+        [
+          "67",
+          "-27",
+          "1363"
+        ]
+      ],
+      "exact_determinant": "241376",
+      "exact_ratio": "15086/245",
+      "ratio": 61.575510204081624,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 4.12026422986885,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "63"
+        ],
+        [
+          "-3",
+          "63",
+          "-69"
+        ],
+        [
+          "63",
+          "-69",
+          "1059"
+        ]
+      ],
+      "exact_determinant": "138240",
+      "exact_ratio": "1728/49",
+      "ratio": 35.265306122448976,
+      "ratio_abs_error": 0.0,
+      "gain": 3.5628996512533764,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "72"
+        ],
+        [
+          "-2",
+          "72",
+          "-8"
+        ],
+        [
+          "72",
+          "-8",
+          "1428"
+        ]
+      ],
+      "exact_determinant": "239856",
+      "exact_ratio": "14991/245",
+      "ratio": 61.18775510204077,
+      "ratio_abs_error": 4.973799150320701e-14,
+      "gain": 4.1139470894675885,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        4
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "79"
+        ],
+        [
+          "-1",
+          "79",
+          "29"
+        ],
+        [
+          "79",
+          "29",
+          "1603"
+        ]
+      ],
+      "exact_determinant": "255552",
+      "exact_ratio": "15972/245",
+      "ratio": 65.19183673469361,
+      "ratio_abs_error": 2.7000623958883807e-13,
+      "gain": 4.177334257638387,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-8",
+          "44"
+        ],
+        [
+          "-8",
+          "44",
+          "-152"
+        ],
+        [
+          "44",
+          "-152",
+          "740"
+        ]
+      ],
+      "exact_determinant": "31200",
+      "exact_ratio": "390/49",
+      "ratio": 7.959183673469405,
+      "ratio_abs_error": 1.687538997430238e-14,
+      "gain": 2.074326441013067,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "49"
+        ],
+        [
+          "-7",
+          "49",
+          "-133"
+        ],
+        [
+          "49",
+          "-133",
+          "805"
+        ]
+      ],
+      "exact_determinant": "64680",
+      "exact_ratio": "33/2",
+      "ratio": 16.50000000000002,
+      "ratio_abs_error": 2.1316282072803006e-14,
+      "gain": 2.803360380906536,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "56"
+        ],
+        [
+          "-6",
+          "56",
+          "-96"
+        ],
+        [
+          "56",
+          "-96",
+          "980"
+        ]
+      ],
+      "exact_determinant": "127600",
+      "exact_ratio": "1595/49",
+      "ratio": 32.55102040816335,
+      "ratio_abs_error": 8.526512829121202e-14,
+      "gain": 3.4828087171083197,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "65"
+        ],
+        [
+          "-5",
+          "65",
+          "-35"
+        ],
+        [
+          "65",
+          "-35",
+          "1349"
+        ]
+      ],
+      "exact_determinant": "233160",
+      "exact_ratio": "5829/98",
+      "ratio": 59.479591836734805,
+      "ratio_abs_error": 1.1368683772161603e-13,
+      "gain": 4.08563325937498,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "52"
+        ],
+        [
+          "-6",
+          "52",
+          "-126"
+        ],
+        [
+          "52",
+          "-126",
+          "820"
+        ]
+      ],
+      "exact_determinant": "69080",
+      "exact_ratio": "1727/98",
+      "ratio": 17.622448979591844,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 2.869173599476108,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "59"
+        ],
+        [
+          "-5",
+          "59",
+          "-89"
+        ],
+        [
+          "59",
+          "-89",
+          "995"
+        ]
+      ],
+      "exact_determinant": "126960",
+      "exact_ratio": "1587/49",
+      "ratio": 32.38775510204087,
+      "ratio_abs_error": 5.684341886080802e-14,
+      "gain": 3.477780422415785,
+      "gain_abs_error": 2.6645352591003757e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "68"
+        ],
+        [
+          "-4",
+          "68",
+          "-28"
+        ],
+        [
+          "68",
+          "-28",
+          "1364"
+        ]
+      ],
+      "exact_determinant": "230784",
+      "exact_ratio": "14424/245",
+      "ratio": 58.873469387755094,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 4.075390554338428,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "64"
+        ],
+        [
+          "-4",
+          "64",
+          "-70"
+        ],
+        [
+          "64",
+          "-70",
+          "1060"
+        ]
+      ],
+      "exact_determinant": "134376",
+      "exact_ratio": "16797/490",
+      "ratio": 34.2795918367347,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 3.534550186912332,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "73"
+        ],
+        [
+          "-3",
+          "73",
+          "-9"
+        ],
+        [
+          "73",
+          "-9",
+          "1429"
+        ]
+      ],
+      "exact_determinant": "227480",
+      "exact_ratio": "5687/98",
+      "ratio": 58.03061224489794,
+      "ratio_abs_error": 2.1316282072803006e-14,
+      "gain": 4.060970668636228,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        1,
+        5
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "80"
+        ],
+        [
+          "-2",
+          "80",
+          "28"
+        ],
+        [
+          "80",
+          "28",
+          "1604"
+        ]
+      ],
+      "exact_determinant": "237840",
+      "exact_ratio": "2973/49",
+      "ratio": 60.67346938775488,
+      "ratio_abs_error": 2.2737367544323206e-13,
+      "gain": 4.105506524887472,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "47"
+        ],
+        [
+          "-7",
+          "47",
+          "-181"
+        ],
+        [
+          "47",
+          "-181",
+          "899"
+        ]
+      ],
+      "exact_determinant": "28176",
+      "exact_ratio": "1761/245",
+      "ratio": 7.187755102040829,
+      "ratio_abs_error": 1.3322676295501878e-14,
+      "gain": 1.9723788979514811,
+      "gain_abs_error": 1.9984014443252818e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "52"
+        ],
+        [
+          "-6",
+          "52",
+          "-162"
+        ],
+        [
+          "52",
+          "-162",
+          "964"
+        ]
+      ],
+      "exact_determinant": "69080",
+      "exact_ratio": "1727/98",
+      "ratio": 17.622448979591866,
+      "ratio_abs_error": 2.842170943040401e-14,
+      "gain": 2.869173599476108,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "59"
+        ],
+        [
+          "-5",
+          "59",
+          "-125"
+        ],
+        [
+          "59",
+          "-125",
+          "1139"
+        ]
+      ],
+      "exact_determinant": "149352",
+      "exact_ratio": "381/10",
+      "ratio": 38.10000000000009,
+      "ratio_abs_error": 8.526512829121202e-14,
+      "gain": 3.640214282132657,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "68"
+        ],
+        [
+          "-4",
+          "68",
+          "-64"
+        ],
+        [
+          "68",
+          "-64",
+          "1508"
+        ]
+      ],
+      "exact_determinant": "286944",
+      "exact_ratio": "366/5",
+      "ratio": 73.20000000000013,
+      "ratio_abs_error": 1.2789769243681803e-13,
+      "gain": 4.293195420967267,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "55"
+        ],
+        [
+          "-5",
+          "55",
+          "-155"
+        ],
+        [
+          "55",
+          "-155",
+          "979"
+        ]
+      ],
+      "exact_determinant": "73320",
+      "exact_ratio": "1833/98",
+      "ratio": 18.704081632653068,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 2.928741769169134,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "62"
+        ],
+        [
+          "-4",
+          "62",
+          "-118"
+        ],
+        [
+          "62",
+          "-118",
+          "1154"
+        ]
+      ],
+      "exact_determinant": "147480",
+      "exact_ratio": "3687/98",
+      "ratio": 37.62244897959192,
+      "ratio_abs_error": 8.526512829121202e-14,
+      "gain": 3.6276009195635748,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "71"
+        ],
+        [
+          "-3",
+          "71",
+          "-57"
+        ],
+        [
+          "71",
+          "-57",
+          "1523"
+        ]
+      ],
+      "exact_determinant": "281968",
+      "exact_ratio": "17623/245",
+      "ratio": 71.93061224489799,
+      "ratio_abs_error": 2.842170943040401e-14,
+      "gain": 4.275701935519644,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "67"
+        ],
+        [
+          "-3",
+          "67",
+          "-99"
+        ],
+        [
+          "67",
+          "-99",
+          "1219"
+        ]
+      ],
+      "exact_determinant": "159296",
+      "exact_ratio": "9956/245",
+      "ratio": 40.63673469387756,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 3.7046724529427575,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "76"
+        ],
+        [
+          "-2",
+          "76",
+          "-38"
+        ],
+        [
+          "76",
+          "-38",
+          "1588"
+        ]
+      ],
+      "exact_determinant": "281688",
+      "exact_ratio": "35211/490",
+      "ratio": 71.8591836734694,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 4.274708421663563,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        3
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-1",
+          "83"
+        ],
+        [
+          "-1",
+          "83",
+          "-1"
+        ],
+        [
+          "83",
+          "-1",
+          "1763"
+        ]
+      ],
+      "exact_determinant": "304584",
+      "exact_ratio": "777/10",
+      "ratio": 77.70000000000009,
+      "ratio_abs_error": 8.526512829121202e-14,
+      "gain": 4.352855257373603,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-8",
+          "50"
+        ],
+        [
+          "-8",
+          "50",
+          "-188"
+        ],
+        [
+          "50",
+          "-188",
+          "914"
+        ]
+      ],
+      "exact_determinant": "29040",
+      "exact_ratio": "363/49",
+      "ratio": 7.408163265306138,
+      "ratio_abs_error": 1.5987211554602254e-14,
+      "gain": 2.0025825361542235,
+      "gain_abs_error": 4.440892098500626e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "55"
+        ],
+        [
+          "-7",
+          "55",
+          "-169"
+        ],
+        [
+          "55",
+          "-169",
+          "979"
+        ]
+      ],
+      "exact_determinant": "67488",
+      "exact_ratio": "4218/245",
+      "ratio": 17.216326530612267,
+      "ratio_abs_error": 2.1316282072803006e-14,
+      "gain": 2.845858150493994,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "62"
+        ],
+        [
+          "-6",
+          "62",
+          "-132"
+        ],
+        [
+          "62",
+          "-132",
+          "1154"
+        ]
+      ],
+      "exact_determinant": "143080",
+      "exact_ratio": "73/2",
+      "ratio": 36.50000000000008,
+      "ratio_abs_error": 7.815970093361102e-14,
+      "gain": 3.5973122605884473,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "71"
+        ],
+        [
+          "-5",
+          "71",
+          "-71"
+        ],
+        [
+          "71",
+          "-71",
+          "1523"
+        ]
+      ],
+      "exact_determinant": "272976",
+      "exact_ratio": "17061/245",
+      "ratio": 69.63673469387766,
+      "ratio_abs_error": 9.947598300641403e-14,
+      "gain": 4.243292225430183,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "58"
+        ],
+        [
+          "-6",
+          "58",
+          "-162"
+        ],
+        [
+          "58",
+          "-162",
+          "994"
+        ]
+      ],
+      "exact_determinant": "70304",
+      "exact_ratio": "4394/245",
+      "ratio": 17.934693877551023,
+      "ratio_abs_error": 3.552713678800501e-15,
+      "gain": 2.8867370423998278,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "65"
+        ],
+        [
+          "-5",
+          "65",
+          "-125"
+        ],
+        [
+          "65",
+          "-125",
+          "1169"
+        ]
+      ],
+      "exact_determinant": "139560",
+      "exact_ratio": "3489/98",
+      "ratio": 35.602040816326586,
+      "ratio_abs_error": 5.684341886080802e-14,
+      "gain": 3.572402962516202,
+      "gain_abs_error": 0.0,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "74"
+        ],
+        [
+          "-4",
+          "74",
+          "-64"
+        ],
+        [
+          "74",
+          "-64",
+          "1538"
+        ]
+      ],
+      "exact_determinant": "266352",
+      "exact_ratio": "16647/245",
+      "ratio": 67.94693877551022,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 4.2187270884492865,
+      "gain_abs_error": 2.6645352591003757e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "70"
+        ],
+        [
+          "-4",
+          "70",
+          "-106"
+        ],
+        [
+          "70",
+          "-106",
+          "1234"
+        ]
+      ],
+      "exact_determinant": "147480",
+      "exact_ratio": "3687/98",
+      "ratio": 37.62244897959182,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 3.6276009195635748,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "79"
+        ],
+        [
+          "-3",
+          "79",
+          "-45"
+        ],
+        [
+          "79",
+          "-45",
+          "1603"
+        ]
+      ],
+      "exact_determinant": "261536",
+      "exact_ratio": "16346/245",
+      "ratio": 66.71836734693875,
+      "ratio_abs_error": 2.842170943040401e-14,
+      "gain": 4.200480287531349,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        4
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-2",
+          "86"
+        ],
+        [
+          "-2",
+          "86",
+          "-8"
+        ],
+        [
+          "86",
+          "-8",
+          "1778"
+        ]
+      ],
+      "exact_determinant": "276648",
+      "exact_ratio": "34581/490",
+      "ratio": 70.57346938775515,
+      "ratio_abs_error": 5.684341886080802e-14,
+      "gain": 4.25665428616445,
+      "gain_abs_error": 0.0,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-9",
+          "51"
+        ],
+        [
+          "-9",
+          "51",
+          "-189"
+        ],
+        [
+          "51",
+          "-189",
+          "915"
+        ]
+      ],
+      "exact_determinant": "32400",
+      "exact_ratio": "405/49",
+      "ratio": 8.265306122448996,
+      "ratio_abs_error": 1.5987211554602254e-14,
+      "gain": 2.1120667689959145,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-8",
+          "56"
+        ],
+        [
+          "-8",
+          "56",
+          "-170"
+        ],
+        [
+          "56",
+          "-170",
+          "980"
+        ]
+      ],
+      "exact_determinant": "69864",
+      "exact_ratio": "8733/490",
+      "ratio": 17.822448979591858,
+      "ratio_abs_error": 2.1316282072803006e-14,
+      "gain": 2.8804588413090624,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "63"
+        ],
+        [
+          "-7",
+          "63",
+          "-133"
+        ],
+        [
+          "63",
+          "-133",
+          "1155"
+        ]
+      ],
+      "exact_determinant": "141120",
+      "exact_ratio": "36",
+      "ratio": 36.000000000000085,
+      "ratio_abs_error": 8.526512829121202e-14,
+      "gain": 3.583518938456111,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "72"
+        ],
+        [
+          "-6",
+          "72",
+          "-72"
+        ],
+        [
+          "72",
+          "-72",
+          "1524"
+        ]
+      ],
+      "exact_determinant": "261360",
+      "exact_ratio": "3267/49",
+      "ratio": 66.67346938775523,
+      "ratio_abs_error": 1.2789769243681803e-13,
+      "gain": 4.199807113490445,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "59"
+        ],
+        [
+          "-7",
+          "59",
+          "-163"
+        ],
+        [
+          "59",
+          "-163",
+          "995"
+        ]
+      ],
+      "exact_determinant": "73320",
+      "exact_ratio": "1833/98",
+      "ratio": 18.70408163265307,
+      "ratio_abs_error": 1.0658141036401503e-14,
+      "gain": 2.928741769169134,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "66"
+        ],
+        [
+          "-6",
+          "66",
+          "-126"
+        ],
+        [
+          "66",
+          "-126",
+          "1170"
+        ]
+      ],
+      "exact_determinant": "138240",
+      "exact_ratio": "1728/49",
+      "ratio": 35.26530612244906,
+      "ratio_abs_error": 8.526512829121202e-14,
+      "gain": 3.5628996512533746,
+      "gain_abs_error": 4.440892098500626e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "75"
+        ],
+        [
+          "-5",
+          "75",
+          "-65"
+        ],
+        [
+          "75",
+          "-65",
+          "1539"
+        ]
+      ],
+      "exact_determinant": "255600",
+      "exact_ratio": "3195/49",
+      "ratio": 65.20408163265309,
+      "ratio_abs_error": 2.842170943040401e-14,
+      "gain": 4.177522068701009,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "71"
+        ],
+        [
+          "-5",
+          "71",
+          "-107"
+        ],
+        [
+          "71",
+          "-107",
+          "1235"
+        ]
+      ],
+      "exact_determinant": "144600",
+      "exact_ratio": "3615/98",
+      "ratio": 36.887755102040806,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 3.6078796559222948,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "80"
+        ],
+        [
+          "-4",
+          "80",
+          "-46"
+        ],
+        [
+          "80",
+          "-46",
+          "1604"
+        ]
+      ],
+      "exact_determinant": "249000",
+      "exact_ratio": "6225/98",
+      "ratio": 63.5204081632653,
+      "ratio_abs_error": 7.105427357601002e-15,
+      "gain": 4.151361242662338,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        2,
+        5
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "87"
+        ],
+        [
+          "-3",
+          "87",
+          "-9"
+        ],
+        [
+          "87",
+          "-9",
+          "1779"
+        ]
+      ],
+      "exact_determinant": "258336",
+      "exact_ratio": "16146/245",
+      "ratio": 65.90204081632658,
+      "ratio_abs_error": 4.263256414560601e-14,
+      "gain": 4.188169409410234,
+      "gain_abs_error": 0.0,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-9",
+          "55"
+        ],
+        [
+          "-9",
+          "55",
+          "-207"
+        ],
+        [
+          "55",
+          "-207",
+          "979"
+        ]
+      ],
+      "exact_determinant": "25232",
+      "exact_ratio": "1577/245",
+      "ratio": 6.436734693877559,
+      "ratio_abs_error": 7.993605777301127e-15,
+      "gain": 1.8620213764183138,
+      "gain_abs_error": 2.220446049250313e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-8",
+          "60"
+        ],
+        [
+          "-8",
+          "60",
+          "-188"
+        ],
+        [
+          "60",
+          "-188",
+          "1044"
+        ]
+      ],
+      "exact_determinant": "61440",
+      "exact_ratio": "768/49",
+      "ratio": 15.673469387755116,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 2.751969435037047,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "67"
+        ],
+        [
+          "-7",
+          "67",
+          "-151"
+        ],
+        [
+          "67",
+          "-151",
+          "1219"
+        ]
+      ],
+      "exact_determinant": "134376",
+      "exact_ratio": "16797/490",
+      "ratio": 34.27959183673477,
+      "ratio_abs_error": 7.105427357601002e-14,
+      "gain": 3.534550186912332,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "76"
+        ],
+        [
+          "-6",
+          "76",
+          "-90"
+        ],
+        [
+          "76",
+          "-90",
+          "1588"
+        ]
+      ],
+      "exact_determinant": "261464",
+      "exact_ratio": "667/10",
+      "ratio": 66.7000000000001,
+      "ratio_abs_error": 9.947598300641403e-14,
+      "gain": 4.200204952921579,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "63"
+        ],
+        [
+          "-7",
+          "63",
+          "-181"
+        ],
+        [
+          "63",
+          "-181",
+          "1059"
+        ]
+      ],
+      "exact_determinant": "61440",
+      "exact_ratio": "768/49",
+      "ratio": 15.673469387755093,
+      "ratio_abs_error": 8.881784197001252e-15,
+      "gain": 2.7519694350370454,
+      "gain_abs_error": 0.0,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "70"
+        ],
+        [
+          "-6",
+          "70",
+          "-144"
+        ],
+        [
+          "70",
+          "-144",
+          "1234"
+        ]
+      ],
+      "exact_determinant": "127400",
+      "exact_ratio": "65/2",
+      "ratio": 32.50000000000005,
+      "ratio_abs_error": 4.973799150320701e-14,
+      "gain": 3.4812400893356923,
+      "gain_abs_error": 4.440892098500626e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "79"
+        ],
+        [
+          "-5",
+          "79",
+          "-83"
+        ],
+        [
+          "79",
+          "-83",
+          "1603"
+        ]
+      ],
+      "exact_determinant": "250944",
+      "exact_ratio": "15684/245",
+      "ratio": 64.01632653061226,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 4.159138152867497,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "75"
+        ],
+        [
+          "-5",
+          "75",
+          "-125"
+        ],
+        [
+          "75",
+          "-125",
+          "1299"
+        ]
+      ],
+      "exact_determinant": "130200",
+      "exact_ratio": "465/14",
+      "ratio": 33.214285714285694,
+      "ratio_abs_error": 2.1316282072803006e-14,
+      "gain": 3.502980075972099,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "84"
+        ],
+        [
+          "-4",
+          "84",
+          "-64"
+        ],
+        [
+          "84",
+          "-64",
+          "1668"
+        ]
+      ],
+      "exact_determinant": "239712",
+      "exact_ratio": "14982/245",
+      "ratio": 61.15102040816322,
+      "ratio_abs_error": 4.263256414560601e-14,
+      "gain": 4.1133465489631025,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        4
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-3",
+          "91"
+        ],
+        [
+          "-3",
+          "91",
+          "-27"
+        ],
+        [
+          "91",
+          "-27",
+          "1843"
+        ]
+      ],
+      "exact_determinant": "246488",
+      "exact_ratio": "30811/490",
+      "ratio": 62.87959183673451,
+      "ratio_abs_error": 1.8474111129762605e-13,
+      "gain": 4.141221656953807,
+      "gain_abs_error": 0.0,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-10",
+          "56"
+        ],
+        [
+          "-10",
+          "56",
+          "-208"
+        ],
+        [
+          "56",
+          "-208",
+          "980"
+        ]
+      ],
+      "exact_determinant": "29040",
+      "exact_ratio": "363/49",
+      "ratio": 7.408163265306136,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 2.0025825361542235,
+      "gain_abs_error": 4.440892098500626e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-9",
+          "61"
+        ],
+        [
+          "-9",
+          "61",
+          "-189"
+        ],
+        [
+          "61",
+          "-189",
+          "1045"
+        ]
+      ],
+      "exact_determinant": "64040",
+      "exact_ratio": "1601/98",
+      "ratio": 16.336734693877567,
+      "ratio_abs_error": 1.4210854715202004e-14,
+      "gain": 2.793416234326143,
+      "gain_abs_error": 0.0,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-8",
+          "68"
+        ],
+        [
+          "-8",
+          "68",
+          "-152"
+        ],
+        [
+          "68",
+          "-152",
+          "1220"
+        ]
+      ],
+      "exact_determinant": "132000",
+      "exact_ratio": "1650/49",
+      "ratio": 33.67346938775518,
+      "ratio_abs_error": 7.815970093361102e-14,
+      "gain": 3.516710268784001,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "77"
+        ],
+        [
+          "-7",
+          "77",
+          "-91"
+        ],
+        [
+          "77",
+          "-91",
+          "1589"
+        ]
+      ],
+      "exact_determinant": "248136",
+      "exact_ratio": "633/10",
+      "ratio": 63.30000000000008,
+      "ratio_abs_error": 8.526512829121202e-14,
+      "gain": 4.147885329150132,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-8",
+          "64"
+        ],
+        [
+          "-8",
+          "64",
+          "-182"
+        ],
+        [
+          "64",
+          "-182",
+          "1060"
+        ]
+      ],
+      "exact_determinant": "64680",
+      "exact_ratio": "33/2",
+      "ratio": 16.49999999999999,
+      "ratio_abs_error": 1.0658141036401503e-14,
+      "gain": 2.803360380906536,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "71"
+        ],
+        [
+          "-7",
+          "71",
+          "-145"
+        ],
+        [
+          "71",
+          "-145",
+          "1235"
+        ]
+      ],
+      "exact_determinant": "125664",
+      "exact_ratio": "1122/35",
+      "ratio": 32.05714285714292,
+      "ratio_abs_error": 6.394884621840902e-14,
+      "gain": 3.467520024593229,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "80"
+        ],
+        [
+          "-6",
+          "80",
+          "-84"
+        ],
+        [
+          "80",
+          "-84",
+          "1604"
+        ]
+      ],
+      "exact_determinant": "238480",
+      "exact_ratio": "2981/49",
+      "ratio": 60.836734693877574,
+      "ratio_abs_error": 2.1316282072803006e-14,
+      "gain": 4.108193795567447,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "76"
+        ],
+        [
+          "-6",
+          "76",
+          "-126"
+        ],
+        [
+          "76",
+          "-126",
+          "1300"
+        ]
+      ],
+      "exact_determinant": "126680",
+      "exact_ratio": "3167/98",
+      "ratio": 32.316326530612244,
+      "ratio_abs_error": 0.0,
+      "gain": 3.4755725678680687,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "85"
+        ],
+        [
+          "-5",
+          "85",
+          "-65"
+        ],
+        [
+          "85",
+          "-65",
+          "1669"
+        ]
+      ],
+      "exact_determinant": "225240",
+      "exact_ratio": "5631/98",
+      "ratio": 57.459183673469326,
+      "ratio_abs_error": 6.394884621840902e-14,
+      "gain": 4.051074846584047,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        3,
+        5
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-4",
+          "92"
+        ],
+        [
+          "-4",
+          "92",
+          "-28"
+        ],
+        [
+          "92",
+          "-28",
+          "1844"
+        ]
+      ],
+      "exact_determinant": "225600",
+      "exact_ratio": "2820/49",
+      "ratio": 57.55102040816309,
+      "ratio_abs_error": 1.7763568394002505e-13,
+      "gain": 4.052671865821532,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        7
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-11",
+          "59"
+        ],
+        [
+          "-11",
+          "59",
+          "-215"
+        ],
+        [
+          "59",
+          "-215",
+          "995"
+        ]
+      ],
+      "exact_determinant": "28176",
+      "exact_ratio": "1761/245",
+      "ratio": 7.187755102040832,
+      "ratio_abs_error": 1.5987211554602254e-14,
+      "gain": 1.9723788979514794,
+      "gain_abs_error": 2.220446049250313e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-10",
+          "64"
+        ],
+        [
+          "-10",
+          "64",
+          "-196"
+        ],
+        [
+          "64",
+          "-196",
+          "1060"
+        ]
+      ],
+      "exact_determinant": "59280",
+      "exact_ratio": "741/49",
+      "ratio": 15.122448979591837,
+      "ratio_abs_error": 0.0,
+      "gain": 2.7161803271854605,
+      "gain_abs_error": 4.440892098500626e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-9",
+          "71"
+        ],
+        [
+          "-9",
+          "71",
+          "-159"
+        ],
+        [
+          "71",
+          "-159",
+          "1235"
+        ]
+      ],
+      "exact_determinant": "119680",
+      "exact_ratio": "1496/49",
+      "ratio": 30.53061224489801,
+      "ratio_abs_error": 4.973799150320701e-14,
+      "gain": 3.418729860423797,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        6,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-8",
+          "80"
+        ],
+        [
+          "-8",
+          "80",
+          "-98"
+        ],
+        [
+          "80",
+          "-98",
+          "1604"
+        ]
+      ],
+      "exact_determinant": "223080",
+      "exact_ratio": "5577/98",
+      "ratio": 56.90816326530622,
+      "ratio_abs_error": 9.947598300641403e-14,
+      "gain": 4.041438797718984,
+      "gain_abs_error": 1.7763568394002505e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        8
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-9",
+          "67"
+        ],
+        [
+          "-9",
+          "67",
+          "-189"
+        ],
+        [
+          "67",
+          "-189",
+          "1075"
+        ]
+      ],
+      "exact_determinant": "57920",
+      "exact_ratio": "724/49",
+      "ratio": 14.775510204081622,
+      "ratio_abs_error": 1.0658141036401503e-14,
+      "gain": 2.692971094275091,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-8",
+          "74"
+        ],
+        [
+          "-8",
+          "74",
+          "-152"
+        ],
+        [
+          "74",
+          "-152",
+          "1250"
+        ]
+      ],
+      "exact_determinant": "111120",
+      "exact_ratio": "1389/49",
+      "ratio": 28.346938775510278,
+      "ratio_abs_error": 7.460698725481052e-14,
+      "gain": 3.344519044643718,
+      "gain_abs_error": 8.881784197001252e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        7,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "83"
+        ],
+        [
+          "-7",
+          "83",
+          "-91"
+        ],
+        [
+          "83",
+          "-91",
+          "1619"
+        ]
+      ],
+      "exact_determinant": "211200",
+      "exact_ratio": "2640/49",
+      "ratio": 53.87755102040819,
+      "ratio_abs_error": 2.842170943040401e-14,
+      "gain": 3.986713898029736,
+      "gain_abs_error": 4.440892098500626e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        9
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-7",
+          "79"
+        ],
+        [
+          "-7",
+          "79",
+          "-133"
+        ],
+        [
+          "79",
+          "-133",
+          "1315"
+        ]
+      ],
+      "exact_determinant": "106800",
+      "exact_ratio": "1335/49",
+      "ratio": 27.244897959183625,
+      "ratio_abs_error": 4.973799150320701e-14,
+      "gain": 3.3048662727237232,
+      "gain_abs_error": 0.0,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        8,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-6",
+          "88"
+        ],
+        [
+          "-6",
+          "88",
+          "-72"
+        ],
+        [
+          "88",
+          "-72",
+          "1684"
+        ]
+      ],
+      "exact_determinant": "191984",
+      "exact_ratio": "11999/245",
+      "ratio": 48.97551020408142,
+      "ratio_abs_error": 2.1316282072803006e-13,
+      "gain": 3.8913203814196624,
+      "gain_abs_error": 4.440892098500626e-16,
+      "status": "VALID"
+    },
+    {
+      "outgoing_positions": [
+        4,
+        5
+      ],
+      "incoming_ids": [
+        9,
+        10
+      ],
+      "exact_trial_gram": [
+        [
+          "6",
+          "-5",
+          "95"
+        ],
+        [
+          "-5",
+          "95",
+          "-35"
+        ],
+        [
+          "95",
+          "-35",
+          "1859"
+        ]
+      ],
+      "exact_determinant": "181680",
+      "exact_ratio": "2271/49",
+      "ratio": 46.346938775510324,
+      "ratio_abs_error": 1.2079226507921703e-13,
+      "gain": 3.8361552439949307,
+      "gain_abs_error": 1.3322676295501878e-15,
+      "status": "VALID"
+    }
+  ],
+  "trap_six_subsets": [
+    {
+      "ids": [
+        0,
+        1
+      ],
+      "exact_determinant": "1"
+    },
+    {
+      "ids": [
+        0,
+        2
+      ],
+      "exact_determinant": "81/100"
+    },
+    {
+      "ids": [
+        0,
+        3
+      ],
+      "exact_determinant": "81/100"
+    },
+    {
+      "ids": [
+        1,
+        2
+      ],
+      "exact_determinant": "81/100"
+    },
+    {
+      "ids": [
+        1,
+        3
+      ],
+      "exact_determinant": "81/100"
+    },
+    {
+      "ids": [
+        2,
+        3
+      ],
+      "exact_determinant": "6561/2500"
+    }
+  ],
+  "boundaries": [
+    {
+      "name": "singular",
+      "exact_trial_determinant": "0",
+      "status": "INVALID",
+      "reason": "NUMERICAL_QR_ZERO",
+      "ratio": 0.0,
+      "gain_defined": false
+    },
+    {
+      "name": "near_singular_spd",
+      "exact_trial_determinant": "1/100000000000000000000",
+      "status": "NUMERICAL_INCONCLUSIVE",
+      "reason": "M2_REJECT_QR_NONZERO",
+      "ratio": 1.0000000000000001e-20,
+      "gain_defined": false
+    }
+  ],
+  "B3": "NOT_RUN",
+  "B5": "NOT_RUN",
+  "B11": "NOT_APPLICABLE",
+  "search": "NOT_IMPLEMENTED"
+}

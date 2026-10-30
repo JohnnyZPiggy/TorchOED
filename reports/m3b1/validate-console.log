@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "tested_sha": "427674b71647c03f6ec4a8105614c449202a8fcd",
+  "gates": {
+    "B1": "PASS",
+    "B2": "PASS",
+    "B3": "NOT_RUN",
+    "B4": "PASS",
+    "B5": "NOT_RUN",
+    "B6": "PASS",
+    "B7": "PASS",
+    "B8": "PASS",
+    "B9": "PASS",
+    "B10": "PASS",
+    "B11": "NOT_APPLICABLE",
+    "B12": "PASS"
+  },
+  "floating_errors": {
+    "max_ratio_abs_error": 2.7000623958883807e-13,
+    "max_gain_abs_error": 3.1086244689504383e-15,
+    "atol": 1e-09,
+    "rtol": 1e-09,
+    "dtype": "float64"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "python": "3.14.6",
+  "torch": "2.14.1+cpu",
+  "pytest": "9.0.3",
+  "device": "cpu",
+  "dtype": "float64",
+  "max_abs_error": 0.0,
+  "roundtrip_path": "<TASK_ROOT>\\scratch\\warm-roundtrip.json",
+  "roundtrip_sha256": "e2584e1cff274cb7bcdf840428122d87eff485d719ee28b0afe31478db995ad7",
+  "cleanup_confirmed": true,
+  "gpu": "NOT_RUN_USER_CPU_ONLY"
+}

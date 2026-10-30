@@ -8,6 +8,7 @@ import pytest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 from m2b_multigpu_exact import cayley, exact_case, product, transpose, strict_rational_geometric
 from m2b_multigpu_plan import next_batch, sample_positions, break_even_union
+from oracle_contrast import solve
 
 
 def test_cayley_exact_orthogonality_and_oracles():
@@ -20,6 +21,11 @@ def test_cayley_exact_orthogonality_and_oracles():
     assert contrasts[0]['quadratic']==contrasts[0]['kappa_c']==1
     assert contrasts[1]['quadratic']==contrasts[1]['kappa_c']==100
     assert 1<=contrasts[2]['kappa_c']<=100
+    c=contrasts[2]['c']
+    z=solve(matrix,c)
+    quadratic=sum(x*y for x,y in zip(c,z))
+    assert contrasts[2]['quadratic']==quadratic
+    assert contrasts[2]['kappa_c']==sum(x*x for x in z)/quadratic
 
 
 def test_exact_geometric_domain_is_not_silently_approximated():

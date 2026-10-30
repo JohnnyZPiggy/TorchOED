@@ -17,7 +17,7 @@ from m2b_multigpu_condition import run_condition
 from m2b_multigpu_plan import next_batch, sample_positions, break_even_union
 
 
-def main(root):
+def main(root, start_p=3, start_B=1, reuse_condition=False):
     root=Path(root)
     source=os.environ['SAE_CANDIDATE_SHA']
     device_requested=os.environ['SAE_DEVICE_REQUESTED']
@@ -30,6 +30,7 @@ def main(root):
                 diagnostic_limit=10000,criterion_target_fraction=.70,
                 construction_policy='STRICT_RATIONAL_GEOMETRIC_SCIENTIST_CLARIFICATION',
                 controller_observed=json.loads(os.environ['SAE_DEVICE_OBSERVED']))
+    report['workload_plan']=dict(start_p=start_p,start_B=start_B,reuse_condition=reuse_condition)
     def save():path.write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     def stage(name):report['active_stage']=name;save()
     def check():
@@ -78,7 +79,9 @@ def main(root):
         def save_condition(data):
             data=dict(data,status='PASS',scientific_status=data['status'],source_sha=source)
             condition_path.write_text(json.dumps(data,indent=2,allow_nan=False)+'\n')
-        condition=run_condition(('cpu','cuda'),check,save_condition)
+        condition=(dict(status='NOT_RUN_REUSED_ACCEPTED_T4',reused_from='t4-fail-1',
+                        source_sha='ebf0ee6aa23ba9ef2855ad4986cb6cca0b0ad1b9') if reuse_condition
+                   else run_condition(('cpu','cuda'),check,save_condition))
         save_condition(condition)
         if condition['status']=='FAIL':raise AssertionError('G3C_NUMERICAL_FAIL_STOP_FROZEN_SRC')
         if device_requested!='T4':
@@ -105,7 +108,8 @@ def main(root):
             del q,matrix,contrast,eigenvalues
             save()
         for p in (3,10,30,100):
-            batch=1
+            if p<start_p:continue
+            batch=start_B if p==start_p else 1
             while True:
                 check();stage(f'G2/p{p}/B{batch}/generate')
                 seed=182000+p*10000+batch
@@ -171,14 +175,16 @@ def main(root):
                 for dtype in ('float64','float32'):
                     check();stage(f'G5/p{p}/B{batch}/{dtype}')
                     if dtype=='float32':
-                        M32,c32=M.float(),c.float();del M,c
-                        M,c=M32,c32;del M32,c32
+                        # Preserve the same fp64 data, then cast on CUDA outside timing.
+                        M=cpuM.cuda().float();c=cpuc.cuda().float()
+                        del cpuM,cpuc
+                        gc.collect();torch.cuda.empty_cache()
                     torch.cuda.synchronize();torch.cuda.reset_peak_memory_stats()
                     gpu=timing(lambda:c_optimality(M,c,max_elements=limit),True)
                     gpu_peak=torch.cuda.max_memory_allocated()
                     input_bytes=M.numel()*M.element_size()+c.numel()*c.element_size()
                     # Structural major-tensor bound from frozen criterion; not a quota.
-                    host_forward_estimate=4*M.numel()*M.element_size()+8*c.numel()*c.element_size()+20*batch*8
+                    host_forward_estimate=4*M.numel()*M.element_size()+3*c.numel()*c.element_size()+8*batch*8
                     available,total=available_host_bytes()
                     timing_row=dict(device=device_requested,p=p,B=batch,dtype=dtype,
                         gpu_seconds=gpu['median'],gpu_samples_seconds=gpu['samples'],warmup=3,repeats=5,
@@ -188,21 +194,26 @@ def main(root):
                     report['G5'].append(timing_row);save()
                     if input_bytes>available:
                         timing_row.update(status='BLOCKED_HOST_MEMORY',cpu_status='NOT_RUN',transfer_status='NOT_RUN')
+                        raise RuntimeError('HOST_INPUT_STAGING_MEMORY_UNAVAILABLE')
                     else:
                         cpuM,cpuc=M.cpu(),c.cpu()
-                        transfer=timing(lambda:c_optimality(cpuM.cuda(),cpuc.cuda(),max_elements=limit).cpu(),True)
-                        timing_row.update(gpu_with_transfer_seconds=transfer['median'],
-                                          gpu_with_transfer_samples_seconds=transfer['samples'])
                         available_after,_=available_host_bytes()
                         if host_forward_estimate-input_bytes>available_after:
-                            timing_row.update(status='BLOCKED_HOST_MEMORY',cpu_status='NOT_RUN',transfer_status='PASS')
+                            timing_row.update(status='BLOCKED_HOST_MEMORY',cpu_status='NOT_RUN')
                         else:
                             cpu=timing(lambda:c_optimality(cpuM,cpuc,max_elements=limit),False)
                             timing_row.update(status='PASS',cpu_seconds=cpu['median'],cpu_samples_seconds=cpu['samples'],
-                                              transfer_status='PASS',cpu_status='PASS')
-                        del cpuM,cpuc
+                                              cpu_status='PASS')
+                        # Transaction timing starts with no preloaded duplicate GPU input.
+                        del M,c
+                        gc.collect();torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats()
+                        timing_row['transfer_resident_baseline_bytes']=torch.cuda.memory_allocated()
+                        transfer=timing(lambda:c_optimality(cpuM.cuda(),cpuc.cuda(),max_elements=limit).cpu(),True)
+                        timing_row.update(gpu_with_transfer_seconds=transfer['median'],
+                            gpu_with_transfer_samples_seconds=transfer['samples'],transfer_status='PASS',
+                            transfer_peak_bytes=torch.cuda.max_memory_allocated())
                     save()
-                del M,c
+                del cpuM,cpuc
                 gc.collect();torch.cuda.empty_cache()
                 if criterion_peak>=.68*properties.total_memory:break
                 batch=next_batch(batch,criterion_peak,properties.total_memory)

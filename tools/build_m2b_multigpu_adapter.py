@@ -25,7 +25,7 @@ for name,encoded in json.loads(zlib.decompress(base64.b64decode(PAYLOAD))).items
 env=dict(os.environ,PYTHONPATH=os.pathsep.join([str(root/'src'),str(root/'tools')]),PYTHONDONTWRITEBYTECODE='1')
 names=['m2b-multigpu.json','m2b-g3c.json','m2b-g1.json']
 try:
-    plan=',start_p=10,start_B=3316894,reuse_condition=True' if os.environ['SAE_DEVICE_REQUESTED']=='T4' else ''
+    plan=',reuse_condition=True' if os.environ['SAE_DEVICE_REQUESTED']=='T4' else ''
     result=subprocess.run([sys.executable,'-B','-c','from m2b_multigpu_run import main; main('+repr(str(root))+plan+')'],
                           env=env,timeout=3450,capture_output=True,text=True)
     if result.returncode:raise RuntimeError('MATRIX_CHILD_EXIT_'+str(result.returncode))

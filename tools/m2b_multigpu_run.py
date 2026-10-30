@@ -187,6 +187,7 @@ def main(root, start_p=3, start_B=1, reuse_condition=False):
                     host_forward_estimate=4*M.numel()*M.element_size()+3*c.numel()*c.element_size()+8*batch*8
                     available,total=available_host_bytes()
                     timing_row=dict(device=device_requested,p=p,B=batch,dtype=dtype,
+                        measurement_protocol='UNLOADED_TRANSFER_V2',
                         gpu_seconds=gpu['median'],gpu_samples_seconds=gpu['samples'],warmup=3,repeats=5,
                         criterion_gpu_peak_bytes=gpu_peak,host_available_bytes=available,
                         host_forward_major_tensor_estimate_bytes=host_forward_estimate,

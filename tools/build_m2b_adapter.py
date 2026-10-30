@@ -14,7 +14,7 @@ payload={name:base64.b64encode(raw).decode() for name,raw in blobs.items()}
 hashes={name:hashlib.sha256(raw).hexdigest() for name,raw in blobs.items()}
 packed=base64.b64encode(zlib.compress(json.dumps(payload).encode())).decode()
 driver='''# Self-contained exact-source adapter; original TorchOED MIT license included.
-import base64, hashlib, json, os, pathlib, sys, tempfile, zlib
+import base64, hashlib, json, os, pathlib, sys, tempfile, zlib, subprocess
 PAYLOAD = %r
 HASHES = %r
 root=pathlib.Path(tempfile.mkdtemp(prefix='m2b-source-',dir='/content'))
@@ -22,9 +22,20 @@ for name,encoded in json.loads(zlib.decompress(base64.b64decode(PAYLOAD))).items
     raw=base64.b64decode(encoded)
     assert hashlib.sha256(raw).hexdigest()==HASHES[name]
     path=root/name; path.parent.mkdir(parents=True,exist_ok=True); path.write_bytes(raw)
-sys.path[:0]=[str(root/'src'),str(root/'tools')]
-from m2b_gpu_matrix import main
-path=main(root)
+env=dict(os.environ,PYTHONPATH=os.pathsep.join([str(root/'src'),str(root/'tools')]))
+path=pathlib.Path('/content/m2b-gpu.json')
+try:
+    result=subprocess.run([sys.executable,'-B','-c',
+        'from m2b_gpu_matrix import main; main('+repr(str(root))+')'],
+        env=env,timeout=350,capture_output=True,text=True)
+    if result.returncode:
+        raise RuntimeError('MATRIX_CHILD_EXIT_'+str(result.returncode))
+except (subprocess.TimeoutExpired,RuntimeError) as exc:
+    data=json.loads(path.read_text()) if path.exists() else dict(source_sha=os.environ['SAE_CANDIDATE_SHA'],G1={},G2=[],G3=[],G4=[],G5=[])
+    data.update(status='PASS',scientific_status='BLOCKED',failure_type=type(exc).__name__,
+                failure='FINITE_MATRIX_CHILD_BOUND_OR_EXIT',child_timeout_seconds=350,
+                uncompleted_configs='NOT_RUN')
+    path.write_text(json.dumps(data,indent=2,allow_nan=False)+'\\n')
 raw=path.read_bytes()
 print('ARTIFACT',path.name,len(raw),hashlib.sha256(raw).hexdigest())
 ''' % (packed,hashes)

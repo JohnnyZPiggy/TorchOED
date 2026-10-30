@@ -59,6 +59,7 @@ def main(root):
             device_total_bytes=device.total_memory, cpu_threads=4, tf32=False)
         env = dict(os.environ, M2B_TEST_DEVICE='cuda', M2B_ERRORS=str(root/'gpu-errors.json'),
                    PYTHONPATH=os.pathsep.join([str(root/'src'), str(root/'tests')]))
+        report['active_stage']='G1'; save()
         result = subprocess.run([sys.executable, '-B', '-m', 'pytest', 'tests/test_m2b.py',
                                  '-q', '-p', 'no:cacheprovider'], cwd=root, env=env,
                                 capture_output=True, text=True, timeout=100)
@@ -73,6 +74,7 @@ def main(root):
         # Reproduce each matrix identically on CPU/GPU; controlled orthogonal rotation.
         for exponent in range(15):
             remaining()
+            report['active_stage']=f'G3/condition10^{exponent}'; save()
             seed = 18300+exponent
             gen = torch.Generator().manual_seed(seed)
             Q, _ = torch.linalg.qr(torch.randn(5, 5, generator=gen, dtype=torch.float64))
@@ -100,6 +102,7 @@ def main(root):
             B = 1
             while True:
                 remaining()
+                report['active_stage']=f'G2/p{p}/B{B}/allocate'; save()
                 seed = 182000+p*10000+B
                 gen = torch.Generator(device='cuda').manual_seed(seed)
                 torch.cuda.empty_cache()
@@ -118,6 +121,7 @@ def main(root):
                 hostM, hostc = M[sample].cpu(), c[sample].cpu()
                 reference = c_optimality(hostM,hostc,max_elements=hostM.numel())
                 relative = (v64[sample].cpu()-reference).abs()/reference.abs().clamp_min(torch.finfo(torch.float64).tiny)
+                report['active_stage']=f'G2/p{p}/B{B}/eigvalsh'; save()
                 eigen = torch.linalg.eigvalsh(M)
                 condition = eigen[:,-1]/eigen[:,0]
                 normalized = (v32.double()-v64).abs()/v64.abs().clamp_min(torch.finfo(torch.float64).tiny)
@@ -130,6 +134,7 @@ def main(root):
                     raise AssertionError('G2_FP64_PARITY_FAILED')
                 del eigen,condition,normalized,hostM,hostc,reference
 
+                report['active_stage']=f'G4/p{p}/B{B}'; save()
                 mg=M.detach().requires_grad_(); cg=c.detach().requires_grad_()
                 dm,dc=torch.autograd.grad(c_optimality(mg,cg,max_elements=limit).sum(),(mg,cg))
                 z=torch.linalg.solve(M,c.unsqueeze(-1)).squeeze(-1)
@@ -147,6 +152,7 @@ def main(root):
                 # Equal full inputs and criterion/validation semantics, float32 and float64.
                 for dtype, gpuM, gpuc in [('float64',M,c),('float32',M32,c32)]:
                     remaining()
+                    report['active_stage']=f'G5/p{p}/B{B}/{dtype}'; save()
                     cpuM,cpuc=gpuM.cpu(),gpuc.cpu()
                     torch.cuda.reset_peak_memory_stats()
                     cpu=timing(lambda:c_optimality(cpuM,cpuc,max_elements=limit))
@@ -168,6 +174,7 @@ def main(root):
                 # interpolate that final batch rather than overshooting device capacity.
                 B=min(B*2,max(B+1,int(B*.70*device.total_memory/peak)))
         report['scientific_status']='PASS'
+        report['active_stage']='COMPLETE'
     except Exception as exc:
         report['scientific_status']='FAIL' if isinstance(exc,AssertionError) else 'BLOCKED'
         report['failure_type']=type(exc).__name__

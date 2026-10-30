@@ -9,8 +9,9 @@ import zlib
 repo=Path(__file__).resolve().parents[1]
 names=subprocess.check_output(['git','ls-files','src/torchoed'],cwd=repo,text=True).splitlines()
 names += ['tests/test_m2b.py','tests/oracle_contrast.py','tools/m2b_gpu_matrix.py','LICENSE']
-payload={name:base64.b64encode((repo/name).read_bytes()).decode() for name in names}
-hashes={name:hashlib.sha256((repo/name).read_bytes()).hexdigest() for name in names}
+blobs={name:subprocess.check_output(['git','show',':'+name],cwd=repo) for name in names}
+payload={name:base64.b64encode(raw).decode() for name,raw in blobs.items()}
+hashes={name:hashlib.sha256(raw).hexdigest() for name,raw in blobs.items()}
 packed=base64.b64encode(zlib.compress(json.dumps(payload).encode())).decode()
 driver='''# Self-contained exact-source adapter; original TorchOED MIT license included.
 import base64, hashlib, json, os, pathlib, sys, tempfile, zlib

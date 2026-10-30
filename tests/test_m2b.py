@@ -33,7 +33,8 @@ def close(actual, expected, gate, tolerance=None):
     reference = torch.as_tensor(expected, dtype=actual.dtype, device=actual.device)
     tol = tolerance or (1e-9 if actual.dtype == torch.float64 else 1e-5)
     error = float((actual-reference).abs().max().item())
-    ERRORS[gate] = max(ERRORS.get(gate, 0.), error)
+    key = gate+'/'+str(actual.dtype).removeprefix('torch.')
+    ERRORS[key] = max(ERRORS.get(key, 0.), error)
     torch.testing.assert_close(actual, reference, atol=tol, rtol=tol)
 
 

@@ -142,11 +142,13 @@ def main(root):
                 if max(errorM,errorc)>1e-8:
                     raise AssertionError('G4_ANALYTIC_FAILED')
                 del mg,cg,dm,dc,z,expectedM,expectedc
+                diagnostic_peak=torch.cuda.max_memory_allocated()
 
                 # Equal full inputs and criterion/validation semantics, float32 and float64.
                 for dtype, gpuM, gpuc in [('float64',M,c),('float32',M32,c32)]:
                     remaining()
                     cpuM,cpuc=gpuM.cpu(),gpuc.cpu()
+                    torch.cuda.reset_peak_memory_stats()
                     cpu=timing(lambda:c_optimality(cpuM,cpuc,max_elements=limit))
                     gpu=timing(lambda:c_optimality(gpuM,gpuc,max_elements=limit),True)
                     transfer=timing(lambda:c_optimality(cpuM.cuda(),cpuc.cuda(),max_elements=limit).cpu(),True)
@@ -155,14 +157,16 @@ def main(root):
                         cpu_threads=4,peak_max_memory_allocated=torch.cuda.max_memory_allocated(),
                         includes_generation=False,scope='MEASURED_CONFIG_ONLY'))
                     del cpuM,cpuc
-                peak=torch.cuda.max_memory_allocated()
+                peak=max(diagnostic_peak,torch.cuda.max_memory_allocated())
                 report['G2'][-1].update(peak_bytes=peak,peak_fraction=peak/device.total_memory)
                 save()
                 del M,c,M32,c32,v64,v32,sample,gpuM,gpuc
                 gc.collect(); torch.cuda.empty_cache()
-                if peak >= .70*device.total_memory:
+                if peak >= .68*device.total_memory:
                     break
-                B *= 2
+                # Double until the next measured-peak extrapolation crosses 70%;
+                # interpolate that final batch rather than overshooting device capacity.
+                B=min(B*2,max(B+1,int(B*.70*device.total_memory/peak)))
         report['scientific_status']='PASS'
     except Exception as exc:
         report['scientific_status']='FAIL' if isinstance(exc,AssertionError) else 'BLOCKED'

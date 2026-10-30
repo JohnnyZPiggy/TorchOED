@@ -17,6 +17,8 @@ def main():
     torch.testing.assert_close(torch.linalg.det(information), torch.tensor(16., dtype=torch.float64))
     print("Initial logdet:", d_optimality(information).item())
     result = fedorov_exchange(features, ids, max_iter=1, tile_size=2)
+    assert result["stop_reason"] == "LOCAL_1_SWAP_NUMERICAL"
+    assert result["certificate"] == "NUMERICAL_ONLY"
     print("1-swap stop:", result["stop_reason"], "certificate:", result["certificate"])
 
     # Six scalar candidates provide a tiny nonempty two-swap neighborhood.

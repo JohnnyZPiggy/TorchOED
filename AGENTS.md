@@ -1,7 +1,7 @@
 # TorchOED — SAE V3.3 project entrypoint
 
-SAE pin: `d84942e4890d9837ae0e6cbb379b85c3a95aba84`. Configuration: [sae.yaml](sae.yaml).
-Read the actual [pinned constitution](https://github.com/JohnnyZPiggy/SAE-Framework/blob/d84942e4890d9837ae0e6cbb379b85c3a95aba84/AGENTS.md), assigned role and task-relevant workflows via [.sae/README.md](.sae/README.md); do not silently upgrade or assume links were read.
+SAE pin: `de9833b56768a522cbc438244a941737b63293e9` (adopted 2026-10-30 from `d84942e`; delta is `tools/compute` multi-GPU controller only, SAE-Framework PR #67). Configuration: [sae.yaml](sae.yaml).
+Read the actual [pinned constitution](https://github.com/JohnnyZPiggy/SAE-Framework/blob/de9833b56768a522cbc438244a941737b63293e9/AGENTS.md), assigned role and task-relevant workflows via [.sae/README.md](.sae/README.md); do not silently upgrade or assume links were read.
 
 ## Scope and roles
 
@@ -13,5 +13,5 @@ Read the actual [pinned constitution](https://github.com/JohnnyZPiggy/SAE-Framew
 - Production numerical dependency: torch only. PyDOE/NumPy/SciPy are development references, never numerical backends. Prefer native torch primitives; no custom CUDA.
 - Reuse COLD/WARM evidence when source/runtime is unchanged; refresh relevant git/gh/Issue/PR state before work. Use EXPLORE → VALIDATE with exact source, real commands and PASS/FAIL/NOT_RUN/BLOCKED.
 - Use the designated D: workspace, including Dropbox, for owned scratch/caches/results. Clean only task-owned disposable files and report residue.
-- **Current state (2026-10-30): two explicit Scientist-sanctioned Engineer dispatches are active.** (1) M5-A Issue #16 (usability docs/example only; Draft PR #17). (2) M2-B Issue #18 (`c_optimality` criterion; its binding mathematical amendment comment freezes API, oracles C1–C9 and an optional bounded GPU PROBE_ONLY). Nothing else is dispatched. Issue #11 (M3-B1) is completed via PR #12; do not reclaim, rerun or extend it. Issue #13 (M3-B2-P0) and its CPU/GPU probe were explicitly stopped by the Scientist; branch `feat/13-m3b2p0-gather-scores@9cf7d1f` is historical, unreviewed and not permission to continue. No k=2 search, Modified Fedorov, DETMAX or other new implementation/GPU work without a new explicit dispatch Issue.
+- **Current state (2026-10-30): one explicit Engineer dispatch is active: M5-A2 Issue #20** (docs/example follow-up only; started by Architect START comment after #18 merged). M2-B Issue #18 (`c_optimality`) is merged via PR #21; its remaining open item is the multi-GPU rerun (L4/A100, H100 if granted, G4 after the SAE-Framework family-map fix), which requires its own Architect START comment on #18. M5-A Issue #16 is merged via PR #17. Issue #11 (M3-B1) is completed via PR #12; do not reclaim, rerun or extend it. Issue #13 (M3-B2-P0) and its CPU/GPU probe were explicitly stopped by the Scientist; branch `feat/13-m3b2p0-gather-scores@9cf7d1f` is historical, unreviewed and not permission to continue. No k=2 search, Modified Fedorov, DETMAX or other new implementation/GPU work without a new explicit dispatch Issue or START comment.
 - Preserve existing historical Issue/PR evidence and branches. The latest Scientist stop overrides older task descriptions and open Issue status. Future authorized Engineer tasks require a fresh scoped instruction and independent review; Engineers never self-merge.

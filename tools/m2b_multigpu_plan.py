@@ -20,8 +20,8 @@ def break_even_union(rows):
     result=[]
     from statistics import median
     for (device,p,dtype),batches in sorted(groups.items()):
-        points=[dict(B=b,cpu=median(r['cpu_seconds'] for r in values),
-                     gpu_with_transfer=median(r['gpu_with_transfer_seconds'] for r in values),
+        points=[dict(B=b,cpu=median(x for r in values for x in r.get('cpu_samples_seconds',[r['cpu_seconds']])),
+                     gpu_with_transfer=median(x for r in values for x in r.get('gpu_with_transfer_samples_seconds',[r['gpu_with_transfer_seconds']])),
                      observations=len(values)) for b,values in sorted(batches.items())]
         index=next((i for i,r in enumerate(points) if r['gpu_with_transfer']<r['cpu']),None)
         interval=None if index is None else [0 if index==0 else points[index-1]['B'],points[index]['B']]

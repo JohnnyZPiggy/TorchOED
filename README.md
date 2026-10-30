@@ -30,6 +30,8 @@ M = exact_information(F, torch.tensor([0,2]))  # diag(2,2), raw event count
 score = d_optimality(M)  # log(4), maximize; singular inputs raise
 ```
 
+M2-B adds `c_optimality(M, c)`; see [API and SPD-only boundaries](docs/M2B_API.md) and [acceptance evidence](reports/m2b/ENGINEER_HANDOFF.md).
+
 M3-A adds `fedorov_exchange(F, ids)` for provided-initial-ID CPUfloat64 best-improvement 1-swap search. [API/error/certificate policy](docs/M3_API.md), [CPU evidence](reports/m3a/ENGINEER_HANDOFF.md). Numerical 1-swap stopping is not global optimality or a rigorous certificate. No initializer, repeats or GPU acceptance.
 
 M3-B1 adds `score_two_swaps(F, ids)` for all legal simultaneous k=2 exchange scores and validity diagnostics. It does not select/apply a swap or search. [API/schema](docs/M3B1_API.md), [CPU exact-oracle evidence](reports/m3b1/ENGINEER_HANDOFF.md).
@@ -51,7 +53,6 @@ result is 65 passing Windows CPU tests at the source SHA in M3-B1 evidence;
 historical manifests describe their own snapshots, not later documentation.
 
 No verified CUDA/TPU support, acceleration claim, full PyDOE parity, two-swap
-search, Modified Fedorov or DETMAX. Issue #11 is complete via PR #12; Issue #13
-remains stopped by the Scientist. Its old branch grants no permission to resume.
+search, Modified Fedorov or DETMAX.
 M5-A improves usability only. See [release readiness](docs/RELEASE_READINESS.md)
 and the [MIT license](LICENSE).

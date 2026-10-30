@@ -9,7 +9,8 @@ Phase 1 calls `fedorov_exchange` until numerical 1-locality. Phase 2 calls
 `score_two_swaps`, selects the greatest VALID direct gain exceeding its own
 tolerance (first row on exact ties), applies that move and returns to Phase 1.
 Both scorers rebuild information/factors; no gather kernel or factor updates.
-An earlier Phase-1 stop propagates unchanged; it does not certify locality.
+An empty N2 reports `NO_K2_NEIGHBORHOOD` after Phase 1 unless no legal swap exists.
+Other earlier Phase-1 stops propagate unchanged; they do not certify locality.
 `max_iter` bounds total accepted one- and two-swaps, not outer VND cycles.
 Workspace/output limits are enforced by the reused APIs; no new limit policy.
 

@@ -50,7 +50,7 @@ def test_S2_all_205_starts_exact_locality_and_dominance():
 
 def test_S7_empty_two_swap_neighborhood_after_phase1():
     for rows, selected in [([[1], [2], [3]], [0]),
-                           ([[1], [1], [2]], [0,1])]:
+                           ([[1,0], [0,1], [2,2]], [0,1])]:
         F = torch.tensor(rows, dtype=torch.float64)
         ids = torch.tensor(selected)
         one = fedorov_exchange(F, ids)

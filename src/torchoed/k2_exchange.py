@@ -27,10 +27,9 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000):
         scanned['k1'] += phase1['evaluated_candidates']
         verification_attempts += phase1['direct_trial_evaluations']
         reason = phase1['stop_reason']
-        if reason != 'LOCAL_1_SWAP_NUMERICAL':
-            break
-        if current.numel() < 2 or F.shape[0] - current.numel() < 2:
+        if reason != 'NO_LEGAL_SWAP' and (current.numel() < 2 or F.shape[0] - current.numel() < 2):
             reason = 'NO_K2_NEIGHBORHOOD'
+        if reason != 'LOCAL_1_SWAP_NUMERICAL':
             break
         phase2 = score_two_swaps(F, current, tile_size=tile_size,
                                  max_elements=max_elements)

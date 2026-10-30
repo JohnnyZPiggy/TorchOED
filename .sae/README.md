@@ -16,4 +16,4 @@ This is a reference entrypoint, not a copied snapshot, CLI, grant or claim of ru
 - [Security](https://github.com/JohnnyZPiggy/SAE-Framework/blob/d84942e4890d9837ae0e6cbb379b85c3a95aba84/workflows/SECURITY.md)
 - [Next action](https://github.com/JohnnyZPiggy/SAE-Framework/blob/d84942e4890d9837ae0e6cbb379b85c3a95aba84/workflows/NEXT_ACTION.md)
 
-User instructions and the project AGENTS.md govern scope. Issue #11 / current dispatch authorizes only CPUfloat64 exact-ID no-repeat k=2 simultaneous scores, not search, Modified Fedorov, DETMAX, E0 edits or accelerators. The Engineer never self-merges.
+User instructions and project AGENTS.md govern scope. **No active Engineer dispatch:** Issue #11 is completed through merged PR #12; Issue #13's CPU/GPU probe was stopped by the Scientist. Open historical Issues or branches do not grant permission to resume experiments, search, or development. Preserve existing evidence. A new explicit Scientist instruction is required to start fresh engineering work. The Engineer never self-merges.

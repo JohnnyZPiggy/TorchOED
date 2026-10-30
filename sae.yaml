@@ -24,7 +24,3 @@ workflow:
   supported_modes: ["EXPLORE", "VALIDATE"]
   task_timeout_required: true
   max_self_repair_attempts_per_failure_class: 3
-current_dispatch:
-  issue: 11
-  milestone: "M3-B1"
-  compute: "cpu_only"

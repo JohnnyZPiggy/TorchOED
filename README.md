@@ -1,5 +1,7 @@
 # TorchOED
 
+[![CPU CI](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml/badge.svg)](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml)
+
 Experimental PyTorch-native design of experiments: M1 constructors/features,
 M2-A information/criteria, M3-A initialized 1-swap search and M3-B1 simultaneous
 two-swap scoring. Version 0.0.1; CPU acceptance only, not a stable release or

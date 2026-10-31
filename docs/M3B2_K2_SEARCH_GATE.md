@@ -42,6 +42,24 @@ Take outgoing IDs `O={a,b}⊂S` (positions `i1<i2`), incoming IDs `N={c,d}⊂S�
 
 The observed error is about `0.65·eps·cond₂M`. The M3-B1 tolerance `256·eps·p·max(…)·cond` keeps a margin of roughly 10³. This is a heuristic, not an interval bound.
 
+### 1.3 Two-swap pruning bound (PROVED; added 2026-10-31 for B3)
+
+For outgoing `O={a,b}` define, using only gather determinants of `I+J·G` (no inverse):
+- `ρ(O)=det(I₂−G[O,O])` — the ratio for deleting a and b;
+- `w_O(j)=det(I₃+diag(−1,−1,1)·G[(a,b,j),(a,b,j)])` for each `j∈Sᶜ` — the ratio for the 3-point exchange `{a,b}→{j}`.
+
+**Theorem.** For every incoming pair `N={c,d}`: `ρ(O)·Γ₂(O→N) ≤ w_O(c)·w_O(d)`, and `ρ(O)≥0`, `w_O(j)≥0`.
+
+*Proof.* `G[O,O]=F_O M⁻¹F_Oᵀ ⪯ I` because `F_OᵀF_O ⪯ M`, so `ρ≥0`; `w_O(j)` is a determinant ratio of the Gram matrix `M−f_af_aᵀ−f_bf_bᵀ+f_jf_jᵀ ⪰ 0`, so `w≥0`. If `ρ=0` the claim is `0 ≤ w_cw_d`. If `ρ>0`, `M_r=M−F_OᵀF_O ≻ 0` and `Γ₂=ρ·det(I₂+H)` with `H=F_N M_r⁻¹F_Nᵀ ⪰ 0`. By Woodbury, `H_jj=G_jj+G_Ojᵀ(I−G_OO)⁻¹G_Oj`, and the Schur form of the 3×3 determinant gives `w_O(j)=ρ(1+H_jj)`. Hadamard's inequality `det(I₂+H) ≤ (1+H_cc)(1+H_dd)` completes the proof; equality iff `H_cd=0`. ∎
+
+**Use (search only, never as a score).** For each O with `ρ(O) ≥ ρ_min`, a pair N with `w_O(c)·w_O(d) ≤ (1+τ/2)·ρ(O)` has `Γ₂ ≤ 1+τ/2` and is not eligible, so it may be skipped without computing its 4×4 determinant. Sort `w_O` descending; the surviving pairs form a prefix-bounded set enumerable by a two-pointer scan. Every surviving pair is still scored by the exact gather4 determinant of §1 item 1, so eligibility, order and verification are unchanged. Cost: `O(n²q)` for all `w_O` (same order as Phase 1) plus `O(n² q log q)` sorting, instead of `C(n,2)·C(q,2)` 4×4 determinants.
+
+**Exact evidence (Architect, Fraction, 2026-10-31).** 54 random integer fixtures (p=3; m=9,n=5 and m=8,n=3), 2490 two-swaps: identity `Γ₂=det(I₄+JG)` exact, `ρ·Γ₂ ≤ w_c·w_d` **0 violations**, 847 equalities, 115 outgoing pairs with `ρ=0` exactly.
+
+**Floating-point guard (HYPOTHESIS).** Like delete-first (§1 item 5), the bound degenerates as `ρ→0`: when `n−2<p`, `ρ=0` exactly and float64 `ρ≈1e−17` makes the test meaningless. Apply the bound only when `ρ(O) ≥ ρ_min = 1e−2`; otherwise scan all pairs of that O exactly. In float64 at 1-local states this kept the following fraction of 4×4 determinants (OBSERVED, NumPy reference, 3 seeds each unless noted): random500 p=10 n=20 **2.6e−3**; grid3 p=10 n=20 1.0e−3–6.8e−3; grid4 p=15 n=30 2.7e−5–9.2e−5; saturated n=p (grid3 n=10, grid4 n=15, random500 n=10) **1.0** (no pruning, as the theorem predicts). Without the guard, the n=p=10 random500 case gave a spurious, noise-driven pruning pattern; the guard is required.
+
+**Open.** No pruning bound is known here for `n−2<p`; that is a Mentor question, not an Engineer task.
+
 ## 2. Search algorithm: `k2_exchange` (VND, deterministic)
 
 The public name must be explicit, for example `k2_exchange`. It must **not** be called `detmax`, and must not be confused with Modified Fedorov or a multi-level excursion.
@@ -92,6 +110,7 @@ The reference is an exact-rational VND using `Fraction` and `itertools`. It neit
 | S6 | Ties: B9 duplicate feature rows with distinct IDs | Deterministic lexicographic choice; IDs not deduplicated by coordinates; identical histories across tile sizes |
 | S7 | n=p saturated, n<2, q<2 | Add-first/gather scoring stays defined; `NO_K2_NEIGHBORHOOD` path covered; no deletion-first factorization |
 | S8 | Efficiency bound | `opt/det M(S) ≤ (n·max G_jj/p)^p` at every start of S1–S3 (0 violations observed) and equality at 2/6 trap starts |
+| S9 | Pair bound §1.3 | With pruning enabled, the retained top-8 two-swap candidates at any state equal those computed from the unpruned `score_two_swaps` ratios; `ρ·Γ₂ ≤ w_c·w_d` on every S1–S3 pair |
 
 Aggregate random exhaustive evidence (OBSERVED, exact):
 - **m10 n4 p3, integers ±2, 10 fixtures, 2033 starts:** 1-swap global 1939; traps 34; VND global 1973.

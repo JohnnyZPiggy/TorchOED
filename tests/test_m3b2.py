@@ -37,6 +37,8 @@ def test_S2_all_205_starts_exact_locality_and_dominance():
         result = k2_exchange(F, ids)
         endpoint = tuple(sorted(result['ids'].tolist()))
         value = determinants[endpoint]
+        assert (math.log(float(optimum)) - result['final_objective']
+                <= result['efficiency_gap_bound'] + 1e-12)
         if any(value < other for s, other in determinants.items()
                if len(set(s) - set(endpoint)) <= 2):
             nonlocal_endpoints.append((start, endpoint, result['stop_reason']))
@@ -59,3 +61,13 @@ def test_S7_empty_two_swap_neighborhood_after_phase1():
         assert result['certificate'] == 'NOT_CERTIFIED'
         assert result['ids'].tolist() == one['ids'].tolist()
         assert result['scanned_pairs']['k2'] == 0
+
+
+def test_grid4_default_budget_and_fedorov_dominance():
+    from torchoed import full_factorial, polynomial_features
+    F = polynomial_features(full_factorial([3]*4).double()-1, degree=2)
+    ids = torch.randperm(81, generator=torch.Generator().manual_seed(0))[:30].sort().values
+    one = fedorov_exchange(F, ids)
+    result = k2_exchange(F, ids)
+    assert result['stop_reason'] == 'LOCAL_2_NUMERICAL'
+    assert result['final_objective'] >= one['final_objective'] - 1e-12

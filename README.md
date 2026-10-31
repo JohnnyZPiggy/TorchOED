@@ -2,10 +2,10 @@
 
 [![CPU CI](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml/badge.svg)](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml)
 
-Experimental PyTorch-native design of experiments: M1 constructors/features,
-M2-A information/criteria, M3-A initialized 1-swap search and M3-B1 simultaneous
-two-swap scoring. Version 0.0.1; CPU acceptance only, not a stable release or
-general PyDOE replacement. Python >=3.11; runtime dependency: torch>=2.0 only.
+Alpha 0.1.0, experimental API. PyTorch-native design of experiments with
+`d_optimal_design` as the one-call entry point from model features to a design.
+CPU acceptance only, not a stable API or general PyDOE replacement.
+Python >=3.11; runtime dependency: torch>=2.0 only.
 
 ```powershell
 python -m pip install -e .
@@ -13,9 +13,11 @@ python examples/cpu_quickstart.py
 ```
 
 ```python
-from torchoed import full_factorial, ff2n, lhs, sobol, polynomial_features
-C = ff2n(2)  # CPU float64 signed corners
-F = polynomial_features(C, degree=1)  # shape (4,3): bias, x1, x2
+import torch
+from torchoed import d_optimal_design
+F = torch.tensor([[1., -1.], [1., 0.], [1., 1.], [1., 2.]], dtype=torch.float64)
+result = d_optimal_design(F, 2, generator=torch.Generator().manual_seed(0))
+print(result["ids"].tolist(), result["objective"], result["stop_reason"])
 ```
 
 See [API contract](docs/M1_API.md), [91-export coverage](docs/ALGORITHM_COVERAGE.md), [M1 evidence](reports/m1/ENGINEER_HANDOFF.md), and [SAE entrypoint](.sae/README.md).

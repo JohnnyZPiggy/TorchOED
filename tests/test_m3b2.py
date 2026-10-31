@@ -109,7 +109,7 @@ def test_S9_pruned_top8_against_public_scores(monkeypatch):
                     Z[:,ids].mT@Z[:,ids],Z[:,ids].mT@Z[:,incoming],64,1024,tol)
             # Compare retained identities; lower raw-ratio ties can differ by roundoff.
             expected, actual = sorted((row,gamma) for gamma,row in expected), sorted((row,gamma) for gamma,row in actual)
-            assert [row for row,_ in actual] == [row for row,_ in expected]
+            assert [row for row,_ in actual] == [row for row,_ in expected], (selection, pruning, tol, actual, expected)
             torch.testing.assert_close(torch.tensor([g for _,g in actual],dtype=torch.float64),
                 torch.tensor([g for _,g in expected],dtype=torch.float64),atol=1e-9,rtol=1e-9)
             if pruning:

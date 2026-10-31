@@ -40,7 +40,7 @@ def main():
     digest = hashlib.sha256(wheel).hexdigest()
     assert version('pydoe') == '1.6.0'
     assert digest == '5050cd6925db5c83fb3f6a6318b8f7b59250fa2e6f36e27309db8be128fb71ec'
-    out = ROOT/'reports/b0'
+    out = ROOT/'reports'/(sys.argv[2] if len(sys.argv)>2 else 'b0')
     out.mkdir(parents=True, exist_ok=True)
     data = dict(source_sha=subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),
         environment=dict(python=platform.python_version(), platform=platform.platform(), cpu=platform.processor(),
@@ -94,14 +94,17 @@ def main():
 
 
 def summary(data, out):
-    lines = ['# B0: fixed CPU comparison', '',
+    before = json.loads((ROOT/'reports/b0/results.json').read_text(encoding='utf-8')) if out.name=='b1' else None
+    lines = ['# '+out.name.upper()+': fixed CPU comparison', '',
         'Command: `python tools/bench_b0.py <pydoe-1.6.0-py3-none-any.whl>` in the PyDOE 1.6.0 dev environment; one thread, three calls/configuration, seeds 0..4 and 10 TorchOED restarts.',
         'Grids use {-1,0,1}; random500 uses torch float64 seed 0. Shared logdet uses TorchOED quadratic features and numerical-SPD guard; rejected integer designs are checked with Fraction, not a floating determinant residual.',
         'TorchOED logdet/efficiency cells are min/median/max; time is median of per-seed three-call medians. Feature generation/shared rescoring excluded; PyDOE internal feature work included. Efficiency is relative to best found per n, including flagged repeats; n/a means no finite reference or incomplete call.',
         'Comparisons are TorchOED versus each PyDOE row (quality tolerance 1e-9); repeated IDs are not comparable. Certificates, exact attainment, IDs, errors and timings are in results.json. No new parameters or cases were tuned.']
+    if before:
+        lines += ['', 'B1 command appends `b1` to the command above; only the output directory/report changes. B0 median seconds and B0/current time ratios are shown beside the rerun timings for both libraries. grid2 n=12 remains infeasible (12 distinct IDs from 9 candidates); it is retained unchanged.']
     for pool, label in (('grid2','grid2: m=9, p=6; n=12 exceeds candidate count'),('grid3','grid3: m=27, p=10'),('grid4','grid4: m=81, p=15'),('random500','random500: m=500, p=10')):
         exact = [f"n={c['n']} det={c['exact_optimum_det']}" for c in data['cases'] if c['pool']==pool and 'exact_optimum_det' in c]
-        lines += ['', '## '+label+('; exact optima: '+', '.join(exact) if exact else ''), '', '| n | Method | logdet | D-eff | Median s | Status / repeats / exact optimum | TorchOED quality / time versus row |', '|---|---|---|---|---|---|---|']
+        lines += ['', '## '+label+('; exact optima: '+', '.join(exact) if exact else ''), '', '| n | Method | logdet | D-eff | Median s | B0 median s (B0/current) | Status / repeats / exact optimum | TorchOED quality / time versus row |', '|---|---|---|---|---|---|---|---|']
         for case in (c for c in data['cases'] if c['pool']==pool):
             tor = [r for r in case['rows'] if r['method']=='TorchOED' and 'error' not in r and r.get('logdet') is not None]
             for method in ('TorchOED','sequential','fedorov','modified_fedorov','detmax'):
@@ -119,7 +122,14 @@ def summary(data, out):
                     quality = ('better: finite vs -inf' if r.get('exact_determinant')=='0' else 'not comparable: rejected metric') if delta is None else ('equal' if abs(delta)<=1e-9 else 'better' if delta>0 else 'worse')+f' (delta {delta:.6g})'
                     seconds = stats.median(t['median_seconds'] for t in tor)
                     comparison = quality+' / '+('better' if seconds<r['median_seconds'] else 'worse' if seconds>r['median_seconds'] else 'equal')+' CPU time'
-                lines.append(f"| {case['n']} | {method} | {values('logdet')} | {values('D_efficiency')} | {format(stats.median(r['median_seconds'] for r in ok),'.6g') if ok else 'n/a'} | {status} | {comparison} |")
+                baseline = 'n/a'
+                if before:
+                    old = next(c for c in before['cases'] if c['pool']==pool and c['n']==case['n'])
+                    times = [r['median_seconds'] for r in old['rows'] if r['method']==method and 'median_seconds' in r]
+                    if times and ok:
+                        previous = stats.median(times)
+                        baseline = f"{previous:.6g} ({previous/stats.median(r['median_seconds'] for r in ok):.3g}x)"
+                lines.append(f"| {case['n']} | {method} | {values('logdet')} | {values('D_efficiency')} | {format(stats.median(r['median_seconds'] for r in ok),'.6g') if ok else 'n/a'} | {baseline} | {status} | {comparison} |")
     (out/'summary.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
 
 

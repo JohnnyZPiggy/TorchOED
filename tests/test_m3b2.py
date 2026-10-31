@@ -107,10 +107,15 @@ def test_S9_pruned_top8_against_public_scores(monkeypatch):
                 patch.setattr(torch.linalg,'det',counted)
                 actual, passes = _ordered_top(_two_candidates,Z,ids,incoming,
                     Z[:,ids].mT@Z[:,ids],Z[:,ids].mT@Z[:,incoming],64,1024,tol)
-            # Compare retained identities; lower raw-ratio ties can differ by roundoff.
-            expected, actual = sorted((row,gamma) for gamma,row in expected), sorted((row,gamma) for gamma,row in actual)
-            assert [row for row,_ in actual] == [row for row,_ in expected], (selection, pruning, tol, actual, expected)
-            torch.testing.assert_close(torch.tensor([g for _,g in actual],dtype=torch.float64),
-                torch.tensor([g for _,g in expected],dtype=torch.float64),atol=1e-9,rtol=1e-9)
+            assert len(actual) == len(expected)
+            ratios = dict(zip(map(tuple,rows4.tolist()),oracle['ratios'].tolist()))
+            torch.testing.assert_close(torch.tensor([g for g,_ in actual],dtype=torch.float64),
+                torch.tensor([ratios[row] for _,row in actual],dtype=torch.float64),atol=1e-9,rtol=1e-9)
+            # The 8th place can be an exact tie.
+            difference = {row for _,row in actual} ^ {row for _,row in expected}
+            if difference:
+                cutoff = min(g for g,_ in expected)
+                band = tol*max(1.,abs(cutoff))
+                assert all(abs(ratios[row]-cutoff) <= band for row in difference)
             if pruning:
                 assert seen[0] < passes*oracle['evaluated_pairs']

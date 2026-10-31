@@ -58,7 +58,22 @@ For outgoing `O={a,b}` define, using only gather determinants of `I+J·G` (no in
 
 **Floating-point guard (HYPOTHESIS).** Like delete-first (§1 item 5), the bound degenerates as `ρ→0`: when `n−2<p`, `ρ=0` exactly and float64 `ρ≈1e−17` makes the test meaningless. Apply the bound only when `ρ(O) ≥ ρ_min = 1e−2`; otherwise scan all pairs of that O exactly. In float64 at 1-local states this kept the following fraction of 4×4 determinants (OBSERVED, NumPy reference, 3 seeds each unless noted): random500 p=10 n=20 **2.6e−3**; grid3 p=10 n=20 1.0e−3–6.8e−3; grid4 p=15 n=30 2.7e−5–9.2e−5; saturated n=p (grid3 n=10, grid4 n=15, random500 n=10) **1.0** (no pruning, as the theorem predicts). Without the guard, the n=p=10 random500 case gave a spurious, noise-driven pruning pattern; the guard is required.
 
-**Open.** No pruning bound is known here for `n−2<p`; that is a Mentor question, not an Engineer task.
+**Open.** No pruning bound is known here for `p<n<p+2`, that is `n=p+1` (there `ρ=0` too). That is a Mentor question, not an Engineer task. The saturated case `n=p` is covered by §1.4.
+
+### 1.4 Saturated two-swap closed form and bound (PROVED; added 2026-10-31 for B5)
+
+Let `n=p` and `M(S)≻0`. Then `F_S` is square and invertible, `M⁻¹=F_S⁻¹F_S⁻ᵀ`, and `G[S,S]=I_p` exactly. Moreover `G[S,j]=F_S⁻ᵀf_j` is the coordinate vector of `f_j` in the basis of the selected rows.
+
+**Identity.** For outgoing positions `O={a,b}` and incoming `N={c,d}`: `Γ₂(O→N) = (G_ac·G_bd − G_ad·G_bc)²`.
+*Proof.* Replacing rows a,b of `F_S` by `f_c,f_d` multiplies `det F_S` by the 2×2 minor of `F_S⁻ᵀ[f_c f_d]` on rows a,b (Cramer), and `Γ₂ = det(F_{S'})²/det(F_S)²`. Equivalently, with `G_OO=I`, `G_ab=0` the 4×4 block `I+J·G` is `[[0,−X],[Xᵀ,I+G_NN]]` with `X=G[O,N]`, whose determinant is `det(X)²`. ∎ The 1-swap ratio is likewise `G_aj²`.
+
+**Bound.** With `u_O(j)=G_aj²+G_bj²`: `Γ₂(O→{c,d}) ≤ u_O(c)·u_O(d)` (Hadamard's inequality on the columns of `X`). ∎ This is exactly §1.3 with `ρ:=1` and `w_O:=u_O`. So the same sorted-prefix enumeration applies: skip pairs with `u_O(c)·u_O(d) ≤ 1+τ/2`, which are never eligible, and score all survivors exactly by the existing gather4 determinant.
+
+**Exact evidence (Architect, Fraction, 2026-10-31).** 30 random integer fixtures (p∈{3,4}, m=p+5), every nonsingular saturated start, 5190 two-swaps: `G_SS=I` exact in all of them, identity **0 mismatches**, bound **0 violations**.
+
+**Floating point (HYPOTHESIS).** The rule is selected structurally (`n==p`), never by testing `ρ`. In float64, `G_SS=I+E` with `|E|` at roundoff, and the τ/2 margin is meant to absorb it. Survivors are still scored by the 4×4 determinant and verified directly, so a roundoff error can only change *which* near-threshold pairs are skipped. An S9-style comparison against the public `score_two_swaps` is the required check.
+
+**OBSERVED (NumPy float64 reference, random500-like pool p=10 n=10, 5 seeds, every Phase-2 state reached by 1-swap then best-2-swap descent).** Fraction of `C(n,2)·C(q,2)` pairs surviving: **2.2e−6 to 3.8e−4**, including states where an improving 2-swap exists (best Γ₂ up to 1.41, always among the survivors).
 
 ## 2. Search algorithm: `k2_exchange` (VND, deterministic)
 

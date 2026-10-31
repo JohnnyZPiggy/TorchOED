@@ -40,6 +40,8 @@ M3-B1 adds `score_two_swaps(F, ids)` for all legal simultaneous k=2 exchange sco
 
 M3-B2 adds `k2_exchange(F, ids)` for deterministic CPU float64 1-/2-swap VND; see [API and numerical locality policy](docs/M3B2_API.md).
 
+M3-C adds `d_optimal_design(F, n)` for seeded feasible starts and D-optimal VND restarts; see [API and reproducibility](docs/M3C_API.md).
+
 Both M3 APIs require finite CPU float64 model features, unique CPU int64 IDs
 and an initially numerically SPD Gram matrix. Check two-swap statuses before
 using gains: invalid/inconclusive rows carry undefined NaN gain sentinels.

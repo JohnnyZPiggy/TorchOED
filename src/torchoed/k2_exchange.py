@@ -51,8 +51,7 @@ def _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing, rho,
     q = incoming.numel()
     diagonal = Z[:, incoming].square().sum(dim=0)
     indices = torch.arange(q, device=Z.device)
-    signs = Z.new_tensor([-1., -1., 1., 1.])
-    identity = torch.eye(4, dtype=Z.dtype, device=Z.device)
+    # Reserve half the tile budget for prefixes.
     batch = max(1, capacity*128 // (32*q))
     capacity = max(1, capacity*64 // (16*Z.shape[0]+128))
     for start in range(0, len(outgoing), batch):
@@ -77,14 +76,19 @@ def _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing, rho,
             N = order[index[:,None],torch.stack((first, second), dim=1)].sort(dim=1).values
             rows = torch.cat((O[index], incoming[N]), dim=1)
             key = ((rows[:,0]*len(current)+rows[:,1])*Z.shape[1]+rows[:,2])*Z.shape[1]+rows[:,3]
-            rows = rows[key.argsort()]
-            columns = torch.cat((current[rows[:, :2]], rows[:, 2:]), dim=1)
-            W = Z[:, columns].permute(1, 2, 0)
-            # Gather survivors' G blocks; reserve half the tile budget for prefixes.
-            block = W @ W.mT
-            block *= signs[None, :, None]
-            block += identity
-            _keep_top(top, torch.linalg.det(block), rows, tolerance, anchor)
+            permutation = key.argsort()
+            rows, index, N = rows[permutation], index[permutation], N[permutation]
+            xc, xd = x[index,N[:,0]], x[index,N[:,1]]
+            yc, yd = y[index,N[:,0]], y[index,N[:,1]]
+            if len(current) == Z.shape[0]:
+                v = xc*xd+yc*yd
+            else:
+                a, b = rows[:, :2].mT
+                gcd = (Z[:,rows[:,2]]*Z[:,rows[:,3]]).sum(dim=0)
+                v = (r[index,0]*gcd + (1-Gss[b,b])*xc*xd + (1-Gss[a,a])*yc*yd
+                     + Gss[a,b]*(xc*yd+yc*xd))
+            ratios = (w[index,N[:,0]]*w[index,N[:,1]]-v.square())/r[index,0]
+            _keep_top(top, ratios, rows, tolerance, anchor)
 
 
 def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, anchor=None):

@@ -46,10 +46,57 @@ def _one_candidates(Gss, Gsn, diagonal, incoming, width, tolerance, anchor=None)
     return top
 
 
+def _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing, rho,
+                       capacity, tolerance, anchor):
+    q = incoming.numel()
+    diagonal = Z[:, incoming].square().sum(dim=0)
+    indices = torch.arange(q, device=Z.device)
+    signs = Z.new_tensor([-1., -1., 1., 1.])
+    identity = torch.eye(4, dtype=Z.dtype, device=Z.device)
+    batch = max(1, capacity*128 // (32*q))
+    capacity = max(1, capacity*64 // (16*Z.shape[0]+128))
+    for start in range(0, len(outgoing), batch):
+        O, r = outgoing[start:start+batch], rho[start:start+batch, None]
+        a, b = O.mT
+        x, y = Gsn[a], Gsn[b]
+        w = (r*(1+diagonal) + (1-Gss[b,b,None])*x.square()
+             + (1-Gss[a,a,None])*y.square() + 2*Gss[a,b,None]*x*y)
+        values, order = w.sort(dim=1, descending=True, stable=True)
+        ends = torch.searchsorted(-values, -(1+tolerance/2)*r/values)
+        counts = (ends-indices-1).clamp_min(0)
+        cumulative = counts.flatten().cumsum(0)
+        total = cumulative[-1].item()
+        for offset in range(0, total, capacity):
+            flat = torch.arange(offset, min(offset+capacity, total), device=Z.device)
+            slot = torch.searchsorted(cumulative, flat, right=True)
+            first, index = slot % q, slot // q
+            second = first+1+flat-(cumulative-counts.flatten())[slot]
+            N = order[index[:,None],torch.stack((first, second), dim=1)].sort(dim=1).values
+            rows = torch.cat((O[index], incoming[N]), dim=1)
+            key = ((rows[:,0]*len(current)+rows[:,1])*Z.shape[1]+rows[:,2])*Z.shape[1]+rows[:,3]
+            rows = rows[key.argsort()]
+            columns = torch.cat((current[rows[:, :2]], rows[:, 2:]), dim=1)
+            W = Z[:, columns].permute(1, 2, 0)
+            # Gather survivors' G blocks; reserve half the tile budget for prefixes.
+            block = W @ W.mT
+            block *= signs[None, :, None]
+            block += identity
+            _keep_top(top, torch.linalg.det(block), rows, tolerance, anchor)
+
+
 def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, anchor=None):
     top = []
     n, q = current.numel(), incoming.numel()
     outgoing = torch.triu_indices(n, n, 1, device=Z.device).mT
+    a, b = outgoing.mT
+    rho = (1-Gss[a,a])*(1-Gss[b,b])-Gss[a,b].square()
+    guarded = rho >= 1e-2
+    if guarded.any():
+        _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing[guarded],
+                           rho[guarded], capacity, tolerance, anchor)
+        outgoing = outgoing[~guarded]
+        if not len(outgoing):
+            return top
     signs = Z.new_tensor([-1., -1., 1., 1.])
     identity = torch.eye(4, dtype=Z.dtype, device=Z.device)
     for a in range(0, q, width):

@@ -4,7 +4,7 @@ CPU float64; PyDOE 1.6.0 comparison. G1/G3 reuse B6 (one thread, fixed cases, se
 
 | Goal / target | Measured result | Source file and source SHA | Status |
 |---|---|---|---|
-| G1: time ≤3× fastest eligible PyDOE | grid4 n=30: 2.3055×; random500 n=10: 2.3572×; n=20: **3.1329×** (1.330804 / 0.424786 s) | [B6 JSON](../b6/results.json), `c6a86d1` | **NOT MET** (random500 n=20) |
+| G1: time ≤3× fastest eligible PyDOE | grid4 n=30: 2.6038×; random500 n=10: 2.4165×; n=20: **2.8491×** (1.219047 / 0.427866 s); B8 regression gate fails | [B8 JSON](../b8/results.json), `8f0b2ce` | **MET** (speed only; regression review pending) |
 | G2: random2000 p=10 n=20, ten restarts, ≤120 s each; checked bound | Seeds 0/1/2: 8.046611 / 7.454587 / 10.242654 s; certified floors 0.843561018467; max independent difference 1.11e−16 | [G2 JSON](g2.json), `823749a` | **MET** |
 | G3: certified floor on finite distinct-ID designs | 63 floors: 40 TorchOED + 23 PyDOE; 18 n/a: 9 infeasible-control errors, 8 singular, 1 repeated-ID result | [B6 JSON](../b6/results.json), `c6a86d1` | **MET** |
 | G4: one-page consolidated Beta report and release preparation | This report, version bump and CHANGELOG; tag/pre-release awaiting post-merge Architect TAG | This report and PR diff | **MET** (preparation) |

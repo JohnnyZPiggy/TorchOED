@@ -53,30 +53,34 @@ def _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing, rho,
     indices = torch.arange(q, device=Z.device)
     signs = Z.new_tensor([-1., -1., 1., 1.])
     identity = torch.eye(4, dtype=Z.dtype, device=Z.device)
-    capacity = max(1, capacity*128 // (16*Z.shape[0]+128))
-    for O, r in zip(outgoing, rho):
-        a, b = O
+    batch = max(1, capacity*128 // (32*q))
+    capacity = max(1, capacity*64 // (16*Z.shape[0]+128))
+    for start in range(0, len(outgoing), batch):
+        O, r = outgoing[start:start+batch], rho[start:start+batch, None]
+        a, b = O.mT
         x, y = Gsn[a], Gsn[b]
-        w = (r*(1+diagonal) + (1-Gss[b,b])*x.square()
-             + (1-Gss[a,a])*y.square() + 2*Gss[a,b]*x*y)
-        values, order = w.sort(descending=True, stable=True)
+        w = (r*(1+diagonal) + (1-Gss[b,b,None])*x.square()
+             + (1-Gss[a,a,None])*y.square() + 2*Gss[a,b,None]*x*y)
+        values, order = w.sort(dim=1, descending=True, stable=True)
         ends = torch.searchsorted(-values, -(1+tolerance/2)*r/values)
         counts = (ends-indices-1).clamp_min(0)
-        cumulative = counts.cumsum(0)
-        for start in range(0, cumulative[-1].item(), capacity):
-            flat = torch.arange(start, min(start+capacity, cumulative[-1].item()), device=Z.device)
-            first = torch.searchsorted(cumulative, flat, right=True)
-            second = first+1+flat-(cumulative-counts)[first]
-            N = order[torch.stack((first, second), dim=1)].sort(dim=1).values
-            N = N[(N[:,0]*q+N[:,1]).argsort()]
-            rows = torch.cat((O.expand(len(N), 2), incoming[N]), dim=1)
-            columns = torch.cat((current[rows[:, :2]], rows[:, 2:]), dim=1)
-            W = Z[:, columns].permute(1, 2, 0)
-            # Gather the survivors' G blocks from the already whitened columns.
-            block = W @ W.mT
-            block *= signs[None, :, None]
-            block += identity
-            _keep_top(top, torch.linalg.det(block), rows, tolerance, anchor)
+        cumulative = counts.cumsum(1)
+        for index in (cumulative[:,-1]>0).nonzero().flatten():
+            total = cumulative[index,-1].item()
+            for offset in range(0, total, capacity):
+                flat = torch.arange(offset, min(offset+capacity, total), device=Z.device)
+                first = torch.searchsorted(cumulative[index], flat, right=True)
+                second = first+1+flat-(cumulative[index]-counts[index])[first]
+                N = order[index,torch.stack((first, second), dim=1)].sort(dim=1).values
+                N = N[(N[:,0]*q+N[:,1]).argsort()]
+                rows = torch.cat((O[index].expand(len(N), 2), incoming[N]), dim=1)
+                columns = torch.cat((current[rows[:, :2]], rows[:, 2:]), dim=1)
+                W = Z[:, columns].permute(1, 2, 0)
+                # Gather survivors' G blocks; reserve half the tile budget for prefixes.
+                block = W @ W.mT
+                block *= signs[None, :, None]
+                block += identity
+                _keep_top(top, torch.linalg.det(block), rows, tolerance, anchor)
 
 
 def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, anchor=None):

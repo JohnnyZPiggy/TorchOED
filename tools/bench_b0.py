@@ -107,6 +107,7 @@ def summary(data, out):
     baseline_name = 'b1' if out.name=='b2' else 'b0'
     before = json.loads((ROOT/f'reports/{baseline_name}/results.json').read_text(encoding='utf-8')) if out.name in ('b1','b2') else None
     if out.name=='b3': baseline_name, before = 'b2', json.loads((ROOT/'reports/b2/results.json').read_text(encoding='utf-8'))
+    if out.name=='b5': baseline_name, before = 'b3', json.loads((ROOT/'reports/b3/results.json').read_text(encoding='utf-8'))
     lines = ['# '+out.name.upper()+': fixed CPU comparison', '',
         'Command: `python tools/bench_b0.py <pydoe-1.6.0-py3-none-any.whl>` in the PyDOE 1.6.0 dev environment; one thread, three calls/configuration, seeds 0..4 and 10 TorchOED restarts.',
         'Grids use {-1,0,1}; random500 uses torch float64 seed 0. Shared logdet uses TorchOED quadratic features and numerical-SPD guard; rejected integer designs are checked with Fraction, not a floating determinant residual.',

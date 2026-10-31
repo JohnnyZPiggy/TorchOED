@@ -59,8 +59,11 @@ def _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing, rho,
         O, r = outgoing[start:start+batch], rho[start:start+batch, None]
         a, b = O.mT
         x, y = Gsn[a], Gsn[b]
-        w = (r*(1+diagonal) + (1-Gss[b,b,None])*x.square()
-             + (1-Gss[a,a,None])*y.square() + 2*Gss[a,b,None]*x*y)
+        if len(current) == Z.shape[0]:
+            w = x.square()+y.square()
+        else:
+            w = (r*(1+diagonal) + (1-Gss[b,b,None])*x.square()
+                 + (1-Gss[a,a,None])*y.square() + 2*Gss[a,b,None]*x*y)
         values, order = w.sort(dim=1, descending=True, stable=True)
         ends = torch.searchsorted(-values, -(1+tolerance/2)*r/values)
         counts = (ends-indices-1).clamp_min(0)
@@ -90,6 +93,8 @@ def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, 
     outgoing = torch.triu_indices(n, n, 1, device=Z.device).mT
     a, b = outgoing.mT
     rho = (1-Gss[a,a])*(1-Gss[b,b])-Gss[a,b].square()
+    if n == Z.shape[0]:
+        rho = torch.ones_like(rho)
     guarded = rho >= 1e-2
     if guarded.any():
         _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing[guarded],

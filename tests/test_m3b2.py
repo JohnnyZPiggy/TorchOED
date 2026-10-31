@@ -119,3 +119,43 @@ def test_S9_pruned_top8_against_public_scores(monkeypatch):
                 assert all(abs(ratios[row]-cutoff) <= band for row in difference)
             if pruning:
                 assert seen[0] < passes*oracle['evaluated_pairs']
+
+
+def test_S10_saturated_top8_against_public_scores(monkeypatch):
+    from torchoed import full_factorial, polynomial_features, score_two_swaps
+    from torchoed.k2_exchange import _two_candidates, _ordered_top, _keep_top, _tolerance
+    grid = polynomial_features(full_factorial([3]*3).double()-1, degree=2)
+    random = torch.randn(40,6,dtype=torch.float64,generator=torch.Generator().manual_seed(0))
+    native_det, seen = torch.linalg.det, [0]
+    def counted(block):
+        seen[0] += len(block)
+        return native_det(block)
+    monkeypatch.setattr(torch.linalg,'det',counted)
+    for F in (grid,random):
+        p = F.shape[1]
+        ids = torch.randperm(len(F),generator=torch.Generator().manual_seed(0))[:p].sort().values
+        incoming = torch.tensor(sorted(set(range(len(F)))-set(ids.tolist())))
+        M = F[ids].mT@F[ids]
+        Z = torch.linalg.solve_triangular(torch.linalg.cholesky(M),F.mT,upper=False)
+        condition = torch.linalg.cond(M).item()
+        tol = _tolerance(1.,1.,condition,condition,p)
+        oracle = score_two_swaps(F,ids)
+        rows4 = torch.cat((oracle['outgoing_positions'],oracle['incoming_ids']),dim=1)
+        def reference(tolerance,anchor=None):
+            top = []
+            _keep_top(top,oracle['ratios'],rows4,tolerance,anchor)
+            return top
+        expected, _ = _ordered_top(reference,tol)
+        seen[0] = 0
+        actual, passes = _ordered_top(_two_candidates,Z,ids,incoming,
+            Z[:,ids].mT@Z[:,ids],Z[:,ids].mT@Z[:,incoming],64,1024,tol)
+        assert len(actual) == len(expected)
+        ratios = dict(zip(map(tuple,rows4.tolist()),oracle['ratios'].tolist()))
+        torch.testing.assert_close(torch.tensor([g for g,_ in actual],dtype=torch.float64),
+            torch.tensor([ratios[row] for _,row in actual],dtype=torch.float64),atol=1e-9,rtol=1e-9)
+        # The 8th place can be an exact tie.
+        difference = {row for _,row in actual} ^ {row for _,row in expected}
+        if difference:
+            cutoff = min(g for g,_ in expected)
+            assert all(abs(ratios[row]-cutoff)<=tol*max(1.,abs(cutoff)) for row in difference)
+        assert seen[0] < passes*oracle['evaluated_pairs']

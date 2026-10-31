@@ -75,6 +75,28 @@ Let `n=p` and `M(S)≻0`. Then `F_S` is square and invertible, `M⁻¹=F_S⁻¹F
 
 **OBSERVED (NumPy float64 reference, random500-like pool p=10 n=10, 5 seeds, every Phase-2 state reached by 1-swap then best-2-swap descent).** Fraction of `C(n,2)·C(q,2)` pairs surviving: **2.2e−6 to 3.8e−4**, including states where an improving 2-swap exists (best Γ₂ up to 1.41, always among the survivors).
 
+### 1.5 Closed-form survivor score (PROVED; added 2026-10-31 for B6)
+
+Notation is that of §1.3, with `x=G[a,·]` and `y=G[b,·]` restricted to `Sᶜ` (already formed as `Gsn` rows). For incoming `c,d`, define
+`v_O(c,d) = ρ·G_cd + (1−G_bb)·x_c x_d + (1−G_aa)·y_c y_d + G_ab·(x_c y_d + y_c x_d)`.
+
+**Identity (ρ(O) > 0).** `Γ₂(O→{c,d}) = (w_O(c)·w_O(d) − v_O(c,d)²) / ρ(O)`.
+*Proof.* From the §1.3 proof, `Γ₂ = ρ·det(I₂+H)`, `ρ(1+H_jj) = w_O(j)`, and by Woodbury `ρ·H_cd = ρ·G_cd + g_cᵀ adj(I−G_OO) g_d = v_O(c,d)`, with `g_j=(G_aj,G_bj)` and `adj(I−G_OO)=[[1−G_bb, G_ab],[G_ab, 1−G_aa]]`. Expanding the 2×2 determinant gives `ρ·det(I+H) = (w_c w_d − v²)/ρ`. ∎ The Hadamard bound of §1.3 is this identity with `v` dropped.
+
+**Saturated form (n = p, §1.4).** With `ρ:=1`, `w:=u`, `v_sat(c,d) = G_ac G_ad + G_bc G_bd`: `Γ₂ = u_c u_d − v_sat²`, which equals `(G_ac G_bd − G_ad G_bc)²` by Lagrange's identity. ∎
+
+**Cost.** Per survivor, `G_cd = Z_cᵀZ_d` costs O(p) and the rest is O(1), using values already formed for pruning. The gather4 path costs a 4×p gather, a 4×4 Gram matrix and a batched 4×4 LU.
+
+**Exact evidence (Architect, Fraction, 2026-10-31).**
+- General form: 20 random integer fixtures (m=10, p=3, n=5), 1880 two-swaps with ρ>0. The identity against `det M(S')/det M(S)` had **0 mismatches**.
+- Saturated form: 30 fixtures (p∈{3,4}, m=p+5, n=p), 1170 two-swaps, **0 mismatches**.
+
+**Floating point (OBSERVED, NumPy float64; HYPOTHESIS for torch).**
+- Accuracy: on random500-like pools (p=10, n=20, 3 seeds, every 1-swap descent state, highest-bound pairs), the closed form agreed with the direct `det M(S')/det M(S)` to a max relative difference of **6.1e−14**. That is far below the `_tolerance` ratio band (≥ 128·ε·p ≈ 2.8e−13 before score/condition scaling). The subtraction `w_c w_d − v²` loses at most a factor `w_c w_d/(ρ·Γ₂)`. That factor is bounded on survivors, since `ρ ≥ ρ_min = 1e−2` on the guarded path.
+- Speed: on 1e5 synthetic survivors (p=10), NumPy took 59.5 ms for gather4 and 16.8 ms for the closed form. This is not a torch measurement.
+
+**Use.** The closed form may replace the gather4 determinant **only for pruned survivors** (guarded `ρ ≥ ρ_min` and saturated paths). Unpruned outgoing pairs keep gather4. Eligibility, `_keep_top` ordering and exact verification of the top 8 are unchanged. The required check is S9-style agreement with the public `score_two_swaps`.
+
 ## 2. Search algorithm: `k2_exchange` (VND, deterministic)
 
 The public name must be explicit, for example `k2_exchange`. It must **not** be called `detmax`, and must not be confused with Modified Fedorov or a multi-level excursion.

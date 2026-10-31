@@ -25,6 +25,7 @@ from oracle_exchange import determinant
 
 
 def score_design(F, row, exact_F):
+    row['d_efficiency_lower_bound'] = None
     X = F[row["ids"]]
     M = X.mT@X
     try:
@@ -32,6 +33,15 @@ def score_design(F, row, exact_F):
     except ValueError as exc:
         row.update(logdet=None, metric_error=str(exc), raw_slogdet=str(torch.linalg.slogdet(M).logabsdet.item()))
         if exact_F is not None: row["exact_determinant"] = str(determinant(exact_F,row["ids"]))
+    else:
+        if not row['repeats']:
+            L = torch.linalg.cholesky(M)
+            maximum = 0.
+            # Bound the whitening tile by the unchanged default max_elements.
+            for tile in F.split(1_000_000 // F.shape[1]):
+                Z = torch.linalg.solve_triangular(L, tile.mT, upper=False)
+                maximum = max(maximum, Z.square().sum(dim=0).max().item())
+            row['d_efficiency_lower_bound'] = F.shape[1] / (len(row['ids']) * maximum)
 
 
 def main():
@@ -94,17 +104,20 @@ def main():
 
 
 def summary(data, out):
-    before = json.loads((ROOT/'reports/b0/results.json').read_text(encoding='utf-8')) if out.name=='b1' else None
+    baseline_name = 'b1' if out.name=='b2' else 'b0'
+    before = json.loads((ROOT/f'reports/{baseline_name}/results.json').read_text(encoding='utf-8')) if out.name in ('b1','b2') else None
     lines = ['# '+out.name.upper()+': fixed CPU comparison', '',
         'Command: `python tools/bench_b0.py <pydoe-1.6.0-py3-none-any.whl>` in the PyDOE 1.6.0 dev environment; one thread, three calls/configuration, seeds 0..4 and 10 TorchOED restarts.',
         'Grids use {-1,0,1}; random500 uses torch float64 seed 0. Shared logdet uses TorchOED quadratic features and numerical-SPD guard; rejected integer designs are checked with Fraction, not a floating determinant residual.',
         'TorchOED logdet/efficiency cells are min/median/max; time is median of per-seed three-call medians. Feature generation/shared rescoring excluded; PyDOE internal feature work included. Efficiency is relative to best found per n, including flagged repeats; n/a means no finite reference or incomplete call.',
         'Comparisons are TorchOED versus each PyDOE row (quality tolerance 1e-9); repeated IDs are not comparable. Certificates, exact attainment, IDs, errors and timings are in results.json. No new parameters or cases were tuned.']
     if before:
-        lines += ['', 'B1 command appends `b1` to the command above; only the output directory/report changes. B0 median seconds and B0/current time ratios are shown beside the rerun timings for both libraries. grid2 n=12 remains infeasible (12 distinct IDs from 9 candidates); it is retained unchanged.']
+        lines += ['', f'Append `{out.name}` to the command above. Baseline: {baseline_name.upper()}; grid2 n=12 remains an unchanged infeasible control.']
+    if out.name=='b2':
+        lines += ['', 'B2 search/timing protocol is unchanged from B1; timings are repeat measurements, not a speedup claim. Certified D-eff >= is p/(n max_j G_jj), a lower bound against the true exact optimum, not achieved efficiency. It is recomputed from each finite, distinct-ID design using shared float64 features and tiled whitening, outside timing. Singular or repeated-ID rows are n/a. The theorem is exact-arithmetic; float64 evaluations are not interval certificates.']
     for pool, label in (('grid2','grid2: m=9, p=6; n=12 exceeds candidate count'),('grid3','grid3: m=27, p=10'),('grid4','grid4: m=81, p=15'),('random500','random500: m=500, p=10')):
         exact = [f"n={c['n']} det={c['exact_optimum_det']}" for c in data['cases'] if c['pool']==pool and 'exact_optimum_det' in c]
-        lines += ['', '## '+label+('; exact optima: '+', '.join(exact) if exact else ''), '', '| n | Method | logdet | D-eff | Median s | B0 median s (B0/current) | Status / repeats / exact optimum | TorchOED quality / time versus row |', '|---|---|---|---|---|---|---|---|']
+        lines += ['', '## '+label+('; exact optima: '+', '.join(exact) if exact else ''), '', f'| n | Method | logdet | D-eff | certified D-eff ≥ | Median s | {baseline_name.upper()} median s | Status / repeats / exact optimum | TorchOED quality / time versus row |', '|---|---|---|---|---|---|---|---|---|']
         for case in (c for c in data['cases'] if c['pool']==pool):
             tor = [r for r in case['rows'] if r['method']=='TorchOED' and 'error' not in r and r.get('logdet') is not None]
             for method in ('TorchOED','sequential','fedorov','modified_fedorov','detmax'):
@@ -128,8 +141,8 @@ def summary(data, out):
                     times = [r['median_seconds'] for r in old['rows'] if r['method']==method and 'median_seconds' in r]
                     if times and ok:
                         previous = stats.median(times)
-                        baseline = f"{previous:.6g} ({previous/stats.median(r['median_seconds'] for r in ok):.3g}x)"
-                lines.append(f"| {case['n']} | {method} | {values('logdet')} | {values('D_efficiency')} | {format(stats.median(r['median_seconds'] for r in ok),'.6g') if ok else 'n/a'} | {baseline} | {status} | {comparison} |")
+                        baseline = f'{previous:.6g}'
+                lines.append(f"| {case['n']} | {method} | {values('logdet')} | {values('D_efficiency')} | {values('d_efficiency_lower_bound')} | {format(stats.median(r['median_seconds'] for r in ok),'.6g') if ok else 'n/a'} | {baseline} | {status} | {comparison} |")
     (out/'summary.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
 
 

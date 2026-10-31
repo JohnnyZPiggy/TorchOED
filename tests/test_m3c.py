@@ -27,3 +27,14 @@ def test_reproducibility_with_same_seed():
     assert torch.equal(first['ids'], second['ids'])
     assert first['starts'] == second['starts']
     assert first['restart_objectives'] == second['restart_objectives']
+
+
+def test_certified_efficiency_against_exact_grid_optimum():
+    from torchoed import full_factorial, polynomial_features
+    F = polynomial_features(full_factorial([3]*2).double()-1, degree=2)
+    optimum = max(determinant(F.tolist(), ids) for ids in combinations(range(9), 6))
+    assert optimum == 256
+    result = d_optimal_design(F, 6, generator=torch.Generator().manual_seed(0))
+    achieved = (math.exp(result['objective']) / float(optimum)) ** (1/6)
+    assert 0 < result['d_efficiency_lower_bound'] <= achieved + 1e-12
+    assert result['efficiency_gap_bound'] >= math.log(float(optimum)) - result['objective'] - 1e-12

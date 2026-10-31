@@ -36,5 +36,8 @@ def d_optimal_design(F, n, *, restarts=10, generator=None, max_iter=100,
         if best is None or result['final_objective'] > best['final_objective']:
             best, best_restart = result, restart
     return dict(ids=best['ids'], objective=best['final_objective'],
+                efficiency_gap_bound=best['efficiency_gap_bound'],
+                d_efficiency_lower_bound=torch.tensor(-best['efficiency_gap_bound'] / p,
+                                                     dtype=torch.float64).exp().item(),
                 stop_reason=best['stop_reason'], certificate=best['certificate'],
                 restart_objectives=objectives, best_restart=best_restart, starts=starts)

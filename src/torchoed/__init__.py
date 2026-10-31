@@ -9,7 +9,8 @@ from .information import exact_information, weighted_information
 from .criteria import d_optimality, a_optimality, e_optimality, c_optimality
 from .exchange import fedorov_exchange
 from .two_swap import score_two_swaps
+from .k2_exchange import k2_exchange
 
 __all__ = ["full_factorial", "ff2n", "lhs", "sobol", "polynomial_features",
            "exact_information", "weighted_information", "d_optimality",
-           "a_optimality", "e_optimality", "c_optimality", "fedorov_exchange", "score_two_swaps"]
+           "a_optimality", "e_optimality", "c_optimality", "fedorov_exchange", "score_two_swaps", "k2_exchange"]

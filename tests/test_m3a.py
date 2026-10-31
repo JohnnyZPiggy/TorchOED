@@ -140,9 +140,10 @@ def test_F12_singular_near_singular_and_disagreement(monkeypatch):
     rows=[[1,0],[0,1],[1,1e-10]]
     assert determinant(rows,[0,2])>0  # mathematically SPD, not rank deficient
     uncertain=run(rows,[0,1])
-    assert uncertain['stop_reason']=='NUMERICAL_INCONCLUSIVE'
-    assert uncertain['scans'][0]['first_uncertain']['reason']=='M2_REJECT_QR_NONZERO'
-    assert uncertain['certificate']=='NONE' and uncertain['accepted_swaps']==0
+    assert uncertain['stop_reason']=='LOCAL_1_SWAP_NUMERICAL'
+    assert uncertain['scans'][0]['uncertain_nonimproving']==1
+    assert uncertain['scans'][0]['first_uncertain'] is None
+    assert uncertain['certificate']=='NUMERICAL_ONLY' and uncertain['accepted_swaps']==0
     overflow=run([[1,0],[0,1],[1e200,0]],[0,1])
     assert overflow['stop_reason']=='NUMERICAL_INCONCLUSIVE'
     # Controlled inconsistent gain verifies that the direct check is a real gate.

@@ -76,7 +76,7 @@ def fedorov_exchange(F, ids, *, max_iter=100, tile_size=64,
         selected = torch.zeros(m, dtype=torch.bool)
         selected[current] = True
         incoming = (~selected).nonzero().flatten()  # exact IDs, ascending
-        diagnostics = dict(evaluated=0, verified_spd=0, qr_zero=0, uncertain=0,
+        diagnostics = dict(evaluated=0, verified_spd=0, qr_zero=0, uncertain=0, uncertain_nonimproving=0,
                            marginal=0, marginal_upper_gain=0.,
                            max_ratio_log_error=0., condition=condition,
                            max_gain_tolerance=0., first_uncertain=None)
@@ -104,10 +104,13 @@ def fedorov_exchange(F, ids, *, max_iter=100, tile_size=64,
                         if bool((qr.diagonal() == 0).any()):
                             diagnostics['qr_zero'] += 1
                             continue
+                        if gamma <= 1:
+                            diagnostics['uncertain_nonimproving'] += 1
+                            continue
                         diagnostics['uncertain'] += 1
                         if diagnostics['first_uncertain'] is None:
                             diagnostics['first_uncertain'] = dict(position=i, incoming_id=j,
-                                                                  reason="M2_REJECT_QR_NONZERO")
+                                                                  gamma=gamma, reason="M2_REJECT_QR_NONZERO")
                         continue
                     diagnostics['verified_spd'] += 1
                     trial_condition = torch.linalg.cond(trial_M).item()
@@ -118,10 +121,13 @@ def fedorov_exchange(F, ids, *, max_iter=100, tile_size=64,
                     error = abs(ratio_log - delta)
                     if not (torch.isfinite(torch.tensor([gamma, ratio_log, tolerance], dtype=torch.float64)).all()
                             and error <= tolerance):
+                        if gamma <= 1 and delta <= 0:
+                            diagnostics['uncertain_nonimproving'] += 1
+                            continue
                         diagnostics['uncertain'] += 1
                         if diagnostics['first_uncertain'] is None:
                             diagnostics['first_uncertain'] = dict(position=i, incoming_id=j,
-                                                                  reason="RATIO_DIRECT_DISAGREEMENT")
+                                                                  gamma=gamma, reason="RATIO_DIRECT_DISAGREEMENT")
                         continue
                     diagnostics['max_ratio_log_error'] = max(diagnostics['max_ratio_log_error'], error)
                     if 0 < delta <= tolerance:

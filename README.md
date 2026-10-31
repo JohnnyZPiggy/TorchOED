@@ -36,6 +36,8 @@ M3-A adds `fedorov_exchange(F, ids)` for provided-initial-ID CPUfloat64 best-imp
 
 M3-B1 adds `score_two_swaps(F, ids)` for all legal simultaneous k=2 exchange scores and validity diagnostics. It does not select/apply a swap or search. [API/schema](docs/M3B1_API.md), [CPU exact-oracle evidence](reports/m3b1/ENGINEER_HANDOFF.md).
 
+M3-B2 adds `k2_exchange(F, ids)` for deterministic CPU float64 1-/2-swap VND; see [API and numerical locality policy](docs/M3B2_API.md).
+
 Both M3 APIs require finite CPU float64 model features, unique CPU int64 IDs
 and an initially numerically SPD Gram matrix. Check two-swap statuses before
 using gains: invalid/inconclusive rows carry undefined NaN gain sentinels.
@@ -52,7 +54,7 @@ installed, `--no-build-isolation` can be added. The recorded full regression
 result is 65 passing Windows CPU tests at the source SHA in M3-B1 evidence;
 historical manifests describe their own snapshots, not later documentation.
 
-No verified CUDA/TPU support, acceleration claim, full PyDOE parity, two-swap
-search, Modified Fedorov or DETMAX.
+No verified CUDA/TPU support, acceleration claim, full PyDOE parity,
+Modified Fedorov or DETMAX.
 M5-A improves usability only. See [release readiness](docs/RELEASE_READINESS.md)
 and the [MIT license](LICENSE).

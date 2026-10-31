@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0] — 2026-10-31
+
+### Added
+- Certified `d_efficiency_lower_bound` on search results and comparable benchmark designs.
+- Fixed CPU comparisons with PyDOE 1.6.0 and a consolidated [Beta report](reports/beta/summary.md).
+
+### Changed
+- `k2_exchange` ranks two-swaps using G-based scores, exact verification of survivors, prefix pruning, and closed-form survivor scores (B1–B6).
+- The fixed random500 n=20 case takes 1.331 s (3.13× sequential; the ≤3× target is not met); G2 scale results are recorded in the Beta report.
+
+### Known limitations
+- CPU float64 only for M3 search; numerical local certificates and efficiency floors do not establish global optimality. No GPU or PyDOE parity claim.
+- Experimental API; compatibility is not guaranteed.
+
 ## [0.1.0] — 2026-10-31
 
 ### Added

@@ -18,3 +18,9 @@ guarantee of global optimality; the chosen run's certificate is unchanged.
 Recreate a CPU `torch.Generator().manual_seed(seed)` for repeatable calls;
 the supplied generator is advanced. With None, the global RNG is used.
 There is no parallel restart execution, GPU support or smarter initializer.
+
+Also returns the best run's `efficiency_gap_bound` without recomputing it,
+and `d_efficiency_lower_bound = exp(-efficiency_gap_bound / p)`. This is a
+certified lower bound on D-efficiency against the true exact n-subset optimum,
+never achieved efficiency or optimality. The theorem holds in exact arithmetic;
+the returned float64 values carry numerical error (no interval arithmetic).

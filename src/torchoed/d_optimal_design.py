@@ -1,5 +1,6 @@
 """Seeded feasible random starts followed by CPU D-optimal VND restarts."""
 import torch
+from math import exp
 
 from .criteria import d_optimality
 from .information import exact_information
@@ -36,5 +37,7 @@ def d_optimal_design(F, n, *, restarts=10, generator=None, max_iter=100,
         if best is None or result['final_objective'] > best['final_objective']:
             best, best_restart = result, restart
     return dict(ids=best['ids'], objective=best['final_objective'],
+                efficiency_gap_bound=best['efficiency_gap_bound'],
+                d_efficiency_lower_bound=exp(-best['efficiency_gap_bound'] / p),
                 stop_reason=best['stop_reason'], certificate=best['certificate'],
                 restart_objectives=objectives, best_restart=best_restart, starts=starts)

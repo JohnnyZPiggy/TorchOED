@@ -88,10 +88,6 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000):
     integer(max_iter, 'max_iter', 0)
     integer(tile_size, 'tile_size')
     M = exact_information(F, ids, max_elements=max_elements)
-    if F.dtype != torch.float64:
-        raise TypeError('F must be float64')
-    if F.ndim != 2:
-        raise ValueError('F must be unbatched')
     m, p = F.shape
     n, q = ids.numel(), m - ids.numel()
     if not m >= n >= p >= 1:

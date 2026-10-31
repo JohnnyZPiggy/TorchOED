@@ -20,8 +20,18 @@ import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT/'src'), str(ROOT/'tests')]
-from torchoed import d_optimal_design, full_factorial, polynomial_features
+from torchoed import d_optimal_design, d_optimality, full_factorial, polynomial_features
 from oracle_exchange import determinant
+
+
+def score_design(F, row, exact_F):
+    X = F[row["ids"]]
+    M = X.mT@X
+    try:
+        row["logdet"] = d_optimality(M).item()
+    except ValueError as exc:
+        row.update(logdet=None, metric_error=str(exc), raw_slogdet=str(torch.linalg.slogdet(M).logabsdet.item()))
+        if exact_F is not None: row["exact_determinant"] = str(determinant(exact_F,row["ids"]))
 
 
 def main():
@@ -48,8 +58,8 @@ def main():
         for n in sizes:
             case = dict(pool=name, n=n, p=p, candidates=C.tolist(), rows=[])
             data['cases'].append(case)
+            exact_F = [[1,*x,*(v*v for v in x),*(a*b for a,b in combinations(x,2))] for x in C.tolist()] if name.startswith('grid') else None
             if name=='grid2' and n in (6,7):
-                exact_F = [[1,*x,*(v*v for v in x),x[0]*x[1]] for x in C.tolist()]
                 optimum = max(determinant(exact_F, s) for s in combinations(range(9),n))
                 case['exact_optimum_det'] = str(optimum)
             for method, seed in [('TorchOED',s) for s in range(5)] + [(m,None) for m in ('sequential','fedorov','modified_fedorov','detmax')]:
@@ -63,10 +73,8 @@ def main():
                         row['times_seconds'].append(time.perf_counter()-begin)
                         if repeat==0:
                             ids = result['ids'].tolist() if seed is not None else [lookup[tuple(x)] for x in result[0].tolist()]
-                            X = F[ids]
-                            sign, score = torch.linalg.slogdet(X.mT@X)
-                            row.update(ids=ids, actual_n=len(ids), repeats=len(ids)-len(set(ids)),
-                                logdet=score.item() if sign.item()>0 and math.isfinite(score.item()) else None)
+                            row.update(ids=ids, actual_n=len(ids), repeats=len(ids)-len(set(ids)))
+                            score_design(F,row,exact_F)
                             if seed is not None:
                                 row.update(stop_reason=result['stop_reason'], certificate=result['certificate'])
                             if 'exact_optimum_det' in case:
@@ -74,46 +82,44 @@ def main():
                     row['median_seconds'] = stats.median(row['times_seconds'])
                 except Exception as exc:
                     row['error'] = type(exc).__name__+': '+str(exc)
-                print(name,n,method,seed,row.get('logdet'),row.get('median_seconds'),row.get('error',''),flush=True)
+                print(name,n,method,seed,row.get('logdet'),row.get('median_seconds'),row.get('error',row.get('metric_error','')),flush=True)
                 save()
             scores = [r['logdet'] for r in case['rows'] if r.get('logdet') is not None and 'error' not in r]
             for row in case['rows']:
                 if row.get('logdet') is not None and 'error' not in row:
                     row['D_efficiency'] = math.exp((row['logdet']-max(scores))/p)
+                elif row.get('exact_determinant')=='0': row['D_efficiency'] = 0.
             save()
     summary(data, out)
 
 
 def summary(data, out):
     lines = ['# B0: fixed CPU comparison', '',
-        'Command: `python tools/bench_b0.py <pydoe-1.6.0-py3-none-any.whl>`; use the dev-only PyDOE 1.6.0 environment.',
-        'One thread; 3 calls per configuration; TorchOED seeds 0..4, 10 restarts. Times exclude feature generation and shared rescoring; PyDOE internal feature work is included.',
-        'Grid coordinates are {-1,0,1}; random500 uses CPU torch float64 seed 0. D-efficiency uses the best found per n, including flagged replicate designs.',
-        'TorchOED cells: logdet min/median/max; D-eff min/median/max; time = median of per-seed three-call medians. Errors are not counted as quality results.',
-        'All returned rows use exact candidate matches; repeated IDs are scored but not comparable to no-replacement designs. See results.json for IDs, all errors, timings and certificates.']
-    for pool in ('grid2','grid3','grid4','random500'):
-        lines += ['', '## '+pool, '| n | Method | logdet | D-efficiency | Median seconds | Status / repeats |', '|---|---|---|---|---|---|']
+        'Command: `python tools/bench_b0.py <pydoe-1.6.0-py3-none-any.whl>` in the PyDOE 1.6.0 dev environment; one thread, three calls/configuration, seeds 0..4 and 10 TorchOED restarts.',
+        'Grids use {-1,0,1}; random500 uses torch float64 seed 0. Shared logdet uses TorchOED quadratic features and numerical-SPD guard; rejected integer designs are checked with Fraction, not a floating determinant residual.',
+        'TorchOED logdet/efficiency cells are min/median/max; time is median of per-seed three-call medians. Feature generation/shared rescoring excluded; PyDOE internal feature work included. Efficiency is relative to best found per n, including flagged repeats.',
+        'Comparisons are TorchOED versus each PyDOE row (quality tolerance 1e-9); repeated IDs are not comparable. Certificates, exact attainment, IDs, errors and timings are in results.json. No new parameters or cases were tuned.']
+    for pool, label in (('grid2','grid2: m=9, p=6; n=12 exceeds candidate count'),('grid3','grid3: m=27, p=10'),('grid4','grid4: m=81, p=15'),('random500','random500: m=500, p=10')):
+        exact = [f"n={c['n']} det={c['exact_optimum_det']}" for c in data['cases'] if c['pool']==pool and 'exact_optimum_det' in c]
+        lines += ['', '## '+label+('; exact optima: '+', '.join(exact) if exact else ''), '', '| n | Method | logdet | D-eff | Median s | Status / repeats / exact optimum | TorchOED quality / time versus row |', '|---|---|---|---|---|---|---|']
         for case in (c for c in data['cases'] if c['pool']==pool):
-            if 'exact_optimum_det' in case:
-                lines.append(f"Exact oracle n={case['n']}: det={case['exact_optimum_det']}; attaining methods: "+', '.join(sorted({r['method'] for r in case['rows'] if r.get('attains_exact_optimum')}))+'.')
+            tor = [r for r in case['rows'] if r['method']=='TorchOED' and 'error' not in r and r.get('logdet') is not None]
             for method in ('TorchOED','sequential','fedorov','modified_fedorov','detmax'):
                 rows = [r for r in case['rows'] if r['method']==method]
-                ok = [r for r in rows if 'error' not in r and r.get('logdet') is not None]
-                values = lambda key: '/'.join(f'{x:.6g}' for x in (min(r[key] for r in ok),stats.median(r[key] for r in ok),max(r[key] for r in ok))) if method=='TorchOED' else f"{ok[0][key]:.6g}"
-                status = '; '.join(sorted({r.get('error', r.get('stop_reason','OK')+' / repeats='+str(r.get('repeats',0))) for r in rows}))
-                lines.append(f"| {case['n']} | {method} | {values('logdet') if ok else 'n/a'} | {values('D_efficiency') if ok else 'n/a'} | {stats.median(r['median_seconds'] for r in ok) if ok else 'n/a'} | {status} |")
-    lines += ['', '## Better, equal, worse (quality tolerance 1e-9 logdet; measured time only)']
-    for case in data['cases']:
-        tor = [r for r in case['rows'] if r['method']=='TorchOED' and 'error' not in r]
-        comparisons = []
-        for r in case['rows']:
-            if r['method']=='TorchOED' or 'error' in r or r.get('logdet') is None: continue
-            if not tor or r['repeats'] or r['actual_n']!=case['n']: comparisons.append(r['method']+': not comparable'); continue
-            delta = stats.median(t['logdet'] for t in tor)-r['logdet']
-            quality = 'equal' if abs(delta)<=1e-9 else 'better' if delta>0 else 'worse'
-            seconds = stats.median(t['median_seconds'] for t in tor)
-            comparisons.append(f"{r['method']}: quality {quality} (delta {delta:.6g}); time {'better' if seconds<r['median_seconds'] else 'worse' if seconds>r['median_seconds'] else 'equal'} ({seconds:.6g} vs {r['median_seconds']:.6g}s)")
-        lines.append(f"- {case['pool']} n={case['n']}: "+('; '.join(comparisons) or 'no completed comparable results')+'.')
+                ok = [r for r in rows if 'error' not in r]
+                def values(key):
+                    numbers = [r.get(key) for r in ok]
+                    if not numbers or None in numbers: return '-inf (exact singular)' if key=='logdet' and ok and ok[0].get('exact_determinant')=='0' else 'n/a'
+                    return '/'.join(f'{x:.6g}' for x in (min(numbers),stats.median(numbers),max(numbers))) if method=='TorchOED' else f'{numbers[0]:.6g}'
+                status = '; '.join(sorted({r.get('error', r.get('metric_error',r.get('stop_reason','OK'))+' / '+r.get('certificate','')+' repeats='+str(r.get('repeats',0))) for r in rows}))
+                if 'exact_optimum_det' in case: status += ' / exact='+str(sum(bool(r.get('attains_exact_optimum')) for r in rows))+'/'+str(len(rows))
+                comparison = 'reference' if method=='TorchOED' else 'not comparable (error, repeats, or unavailable TorchOED)'
+                if method!='TorchOED' and tor and ok and not ok[0]['repeats'] and ok[0]['actual_n']==case['n']:
+                    r = ok[0]; delta = stats.median(t['logdet'] for t in tor)-r['logdet'] if r.get('logdet') is not None else None
+                    quality = ('better: finite vs -inf' if r.get('exact_determinant')=='0' else 'not comparable: rejected metric') if delta is None else ('equal' if abs(delta)<=1e-9 else 'better' if delta>0 else 'worse')+f' (delta {delta:.6g})'
+                    seconds = stats.median(t['median_seconds'] for t in tor)
+                    comparison = quality+' / '+('better' if seconds<r['median_seconds'] else 'worse' if seconds>r['median_seconds'] else 'equal')+' CPU time'
+                lines.append(f"| {case['n']} | {method} | {values('logdet')} | {values('D_efficiency')} | {stats.median(r['median_seconds'] for r in ok) if ok else 'n/a'} | {status} | {comparison} |")
     (out/'summary.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
 
 

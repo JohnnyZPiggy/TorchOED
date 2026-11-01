@@ -53,7 +53,8 @@ def _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing, rho,
     indices = torch.arange(q, device=Z.device)
     # Reserve half the tile budget for prefixes.
     batch = max(1, capacity*128 // (32*q))
-    capacity = max(1, capacity*64 // (16*Z.shape[0]+128))
+    # Closed-form survivors: three p-sized gathers/products plus scalar/index slack.
+    capacity = max(1, capacity*64 // (4*Z.shape[0]+64))
     for start in range(0, len(outgoing), batch):
         O, r = outgoing[start:start+batch], rho[start:start+batch, None]
         a, b = O.mT

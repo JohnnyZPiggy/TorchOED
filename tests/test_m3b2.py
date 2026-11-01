@@ -199,3 +199,31 @@ def test_S11_closed_form_top8_against_public_scores(monkeypatch):
             cutoff = min(g for g,_ in expected)
             assert all(abs(ratios[row]-cutoff)<=tol*max(1.,abs(cutoff)) for row in difference)
         assert 0 < seen[0] < passes*oracle['evaluated_pairs']
+
+
+def test_S12_survivor_chunk_partition_invariance(monkeypatch):
+    import importlib
+    search = importlib.import_module('torchoed.k2_exchange')
+    m,p,n = 60,10,20
+    F = torch.randn(m,p,dtype=torch.float64,generator=torch.Generator().manual_seed(0))
+    ids = torch.randperm(m,generator=torch.Generator().manual_seed(0))[:n].sort().values
+    incoming = torch.tensor(sorted(set(range(m))-set(ids.tolist())))
+    M = F[ids].mT@F[ids]
+    Z = torch.linalg.solve_triangular(torch.linalg.cholesky(M),F.mT,upper=False)
+    condition = torch.linalg.cond(M).item()
+    tol = search._tolerance(1.,1.,condition,condition,p)
+    Gss, Gsn = Z[:,ids].mT@Z[:,ids], Z[:,ids].mT@Z[:,incoming]
+    fixed = 2*m*p+2*n*m+8*p*p+8*m+8*n+128
+    capacity = (1_000_000-fixed-2*(n+2*40)**2-4*p*40)//128
+    expected, _ = search._ordered_top(search._two_candidates,Z,ids,incoming,Gss,Gsn,40,capacity,tol)
+    original, chunks = search._keep_top, []
+    def counted(top,ratios,*args):
+        chunks.append(len(ratios))
+        return original(top,ratios,*args)
+    monkeypatch.setattr(search,'_keep_top',counted)
+    actual, _ = search._ordered_top(search._two_candidates,Z,ids,incoming,Gss,Gsn,1,13,tol)
+    assert len(chunks)>1 and 0<max(chunks)<=8
+    assert len(actual)==len(expected)==8
+    assert [row for _,row in actual]==[row for _,row in expected]
+    torch.testing.assert_close(torch.tensor([g for g,_ in actual],dtype=torch.float64),
+        torch.tensor([g for g,_ in expected],dtype=torch.float64),rtol=1e-12,atol=1e-12)

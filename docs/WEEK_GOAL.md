@@ -1,4 +1,4 @@
-# Week goal — 2026-11-01 → 2026-11-08 (VISION.md phase P1, week 1)
+# Week 2 goal — 2026-11-01 → 2026-11-08 (VISION.md phase P1, first P1 week)
 
 Previous week (2026-10-31 → 11-07, G1–G4 + stretch) is **complete**: see `reports/beta/summary.md`, `reports/s1-gpu/`. Baseline now: `main@1795c26`, v0.5.0.
 

@@ -1,14 +1,16 @@
-# Week goal — 2026-10-31 → 2026-11-07 (Scientist-approved direction)
+# Week goal — 2026-11-01 → 2026-11-08 (VISION.md phase P1, week 1)
 
-Every Engineer dispatch this week must name the goal (G1–G4) it serves. When G1–G4 are all met, the loop stops creating new work and reports to the Scientist. Baseline: `main@f8a7e99`, `reports/b1/summary.md`.
+Previous week (2026-10-31 → 11-07, G1–G4 + stretch) is **complete**: see `reports/beta/summary.md`, `reports/s1-gpu/`. Baseline now: `main@1795c26`, v0.5.0.
 
-| Goal | Falsifiable target (CPU, one thread, `tools/bench_b0.py` protocol unless stated) | Baseline (B1) |
+Every Engineer dispatch must name the goal (W1–W4) it serves. When W1–W4 are all met, the loop stops creating new work and reports to the Scientist.
+
+| Goal | Falsifiable target | Baseline |
 |---|---|---|
-| **G1 Speed** | `d_optimal_design` median time ≤ 3× the fastest PyDOE 1.6.0 method that reaches equal-or-lower quality, on **grid4 n=30** and **random500 n=10/20**; quality (logdet) unchanged vs B1 within 1e-9 | grid4 n=30: 5.45 s vs 0.43 s; random500 n=20: 175.7 s vs 1.55 s |
-| **G2 Scale** | random 2000 candidates in [−1,1]³, full quadratic (p=10), n=20, `restarts=10`: completes ≤ 120 s with default `max_elements`, returns a certified efficiency bound | not run |
-| **G3 Certificates** | every TorchOED result and every PyDOE design in the benchmark reports a certified D-efficiency lower bound (Kiefer–Wolfowitz, B2 #47) | relative efficiency only |
-| **G4 Beta report** | `reports/beta/summary.md` (≤ 1 page) consolidating G1–G3 vs PyDOE, plus 0.5.0 release prep (version, CHANGELOG); tag delegated to the Engineer | — |
+| **W1 Generic criteria** | `optimal_design(F, n, criterion="D"\|"A"\|"I", ...)` runs the same 1-/2-swap exchange for each criterion from shared low-rank update identities (gate doc first), each returning a certified efficiency lower bound; independent `Fraction` exhaustive oracle on a small fixture for A and I; D results unchanged vs v0.5.0 | D only |
+| **W2 Augmentation + constraints** | `fixed_ids=` keeps given runs and optimizes the rest (augmentation); candidate constraints (linear inequalities and disallowed level combinations) and categorical factors via a documented coding; exhaustive oracle on a small constrained fixture | none |
+| **W3 Held-out external benchmark** | new `tools/bench_heldout.py` on cases the loop has never optimized against (incl. constrained and categorical), vs PyDOE 1.6.0 and R AlgDesign (dev-only oracle): report quality, certified floor and time as-is, run once at week end | PyDOE only, fixed cases |
+| **W4 Public basics** | typed public API; docs site on GitHub Pages (quick start, criteria, augmentation, PyDOE comparison, API reference); CI adds macOS and the minimum supported torch; TestPyPI dry run (real PyPI upload needs the Scientist's token) | README only |
 
-**Stretch (only after G1–G4):** one measured GPU run of the k=2 scoring on the G2 case (observed device, end-to-end time incl. transfer); no speedup claim beyond the measurement.
+**Safeguards this week:** every new gate document passes an independent fresh-context review before merge; W3 cases are frozen in the Issue before any W1/W2 code merges and are never tuned against.
 
-**Out of scope this week:** new criteria (A/I/…), Modified Fedorov / DETMAX, k ≥ 3, PyPI, API redesign, Issue #13.
+**Out of scope this week:** split-plot, mixture, nonlinear/Bayesian (P2/P3), GPU work, k ≥ 3, Modified Fedorov/DETMAX, Issue #13.

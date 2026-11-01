@@ -24,4 +24,5 @@ Today these capabilities are spread over a dozen tools with different languages,
 - **No claim without evidence.** "Beats X" only on a frozen public benchmark; "nobody else does Y" only after a Mentor landscape review.
 - **Held-out benchmark.** A case set the loop never optimizes against is run once per week and reported as-is.
 - **Independent math review.** Every new gate document is attacked by a reviewer without the author's context (fresh subagent or the Mentor) before it is merged.
+- **External oracles (R, Julia, PyDOE, …).** Dev-only references, never runtime dependencies. R and Julia run on Colab through the pinned SAE controller: exact interpreter and package versions recorded (`sessionInfo()`, `Pkg.status()`), inputs frozen as files in the repo, outputs re-scored by one shared TorchOED metric, ≤ 10 evidence files, remote session cleanup read back. A reference that cannot be reproduced from the recorded versions is reported as NOT_RUN, not approximated.
 - **Weekly Scientist check.** The Scientist reads the weekly report and redirects; the loop executes, it does not choose the destination.

@@ -2,7 +2,7 @@
 
 Previous week (2026-10-31 → 11-07, G1–G4 + stretch) is **complete**: see `reports/beta/summary.md`, `reports/s1-gpu/`. Baseline now: `main@1795c26`, v0.5.0.
 
-Every Engineer dispatch must name the goal (W1–W4) it serves. When W1–W4 are all met, the loop stops creating new work and reports to the Scientist.
+Every Engineer dispatch must name the goal (W1–W4) it serves. When W1–W4 are all met, the loop auto-advances to week 3 per `docs/VISION.md` (weekly cadence).
 
 | Goal | Falsifiable target | Baseline |
 |---|---|---|

@@ -11,8 +11,9 @@ torch.set_num_threads(1)
 device = sys.argv[2] if len(sys.argv)>2 else "cpu"
 design = importlib.import_module('torchoed.d_optimal_design')
 original = design.k2_exchange
-def capture(*args, **kwargs):
-    result = original(*args, **kwargs)
+def capture(F, ids, **kwargs):
+    result = original(F.to(device), ids.to(device), **kwargs)
+    if device=='cuda': result['ids'] = result['ids'].cpu()
     counts.append(dict(scanned_pairs=result['scanned_pairs'], history_length=len(result['swap_history']),
                        accepted_by_phase={str(k): sum(m['k']==k for m in result['swap_history']) for k in (1,2)}))
     return result
@@ -28,7 +29,7 @@ data = dict(source_sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=b.
 def measured(seed):
     if device=='cuda': torch.cuda.reset_peak_memory_stats(); torch.cuda.synchronize()
     begin = time.perf_counter()
-    result = design.d_optimal_design(F.to(device),20,restarts=10,generator=torch.Generator().manual_seed(seed))
+    result = design.d_optimal_design(F,20,restarts=10,generator=torch.Generator().manual_seed(seed))
     ids = result['ids'].cpu().tolist()
     if device=='cuda': torch.cuda.synchronize()
     return result, ids, time.perf_counter()-begin
@@ -67,7 +68,7 @@ lines = ['# B4: G2 scale measurement','', '**G2 '+('MET' if data['G2_met'] else 
 lines += [f"| {r['seed']} | {r['wall_seconds']:.6g} | {r['objective']:.12g} | {r['stop_reason']} / {r['certificate']} | {r['d_efficiency_lower_bound']:.12g} | {r['independent_bound']:.12g} | {r['bound_absolute_difference']:.3g} | {r['bound_check_passed']} |" for r in data['rows']]
 if not data['G2_met']: lines += ['',f"Slowest seed: {slowest}; existing per-restart scanned_pairs, history lengths and accepted moves per phase are in results.json."]
 if device=='cuda':
-    lines = ['# S1 GPU measurement', '', 'measurement only; no speedup or GPU-support claim.', '', '| Device | Seed | GPU wall s (transfer included) | CPU G2 s | Peak bytes | Floor check | Objective check | Same CPU IDs |', '|---|---|---|---|---|---|---|---|']
+    lines = ['# S1 GPU measurement', '', 'measurement only; no speedup or GPU-support claim.', '', 'd_optimal_design end-to-end; k2_exchange on CUDA, start draws on CPU. Transfers are included. First attempt BLOCKED at d_optimal_design device boundary (source98dd81f); this run follows the Architect amendment.', '', '| Device | Seed | GPU wall s (transfer included) | CPU G2 s | Peak bytes | Floor check | Objective check | Same CPU IDs |', '|---|---|---|---|---|---|---|---|']
     lines += [f"| {r['device']} | {r['seed']} | {r['wall_seconds']:.6g} | {r['cpu_wall_seconds']:.6g} | {r['peak_memory_bytes']} | {r['bound_check_passed']} | {abs(r['objective']-r['cpu_logdet'])<=1e-9} | {r['same_cpu_ids']} |" for r in data['rows']]
     lines += ['', f"Source {data['source_sha']}; one untimed seed0 warm-up ({data['warmup_seconds']:.6g}s); synchronization before timer stop. Environment: {data['environment']}. Certificates, IDs, objectives and CPU differences are in results.json."]
 if out.name!='beta': (out/'summary.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')

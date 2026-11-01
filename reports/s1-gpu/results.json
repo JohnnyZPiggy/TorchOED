@@ -1,0 +1,38 @@
+{
+  "source_sha": "98dd81f6dd9909e5c3e13cd6d0075b6562445f17",
+  "rows": [],
+  "status": "PASS",
+  "scientific_status": "BLOCKED",
+  "exit_code": 1,
+  "traceback": "Traceback (most recent call last):\n  File \"/content/torchoed-s1/tools/bench_g2.py\", line 40, in <module>\n    _, _, data['warmup_seconds'] = measured(0)\n                                   ~~~~~~~~^^^\n  File \"/content/torchoed-s1/tools/bench_g2.py\", line 31, in measured\n    result = design.d_optimal_design(F.to(device),20,restarts=10,generator=torch.Generator().manual_seed(seed))\n  File \"/usr/local/lib/python3.13/dist-packages/torch/utils/_contextlib.py\", line 124, in decorate_context\n    return func(*args, **kwargs)\n  File \"/content/torchoed-s1/src/torchoed/d_optimal_design.py\", line 22, in d_optimal_design\n    M = exact_information(F, ids, max_elements=max_elements)\n  File \"/content/torchoed-s1/src/torchoed/information.py\", line 39, in exact_information\n    raise ValueError(\"ids and F must have the same device\")\nValueError: ids and F must have the same device\n",
+  "device_observed": {
+    "nvidia_smi": [
+      {
+        "name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "memory_total_mib": 97887,
+        "driver_version": "580.82.07"
+      }
+    ],
+    "torch": {
+      "status": "AVAILABLE",
+      "version": "2.11.0+cu130",
+      "cuda": "13.0",
+      "name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "capability": [
+        12,
+        0
+      ]
+    }
+  },
+  "transport_status": "PASS",
+  "cleanup": {
+    "confirmed": true,
+    "assignments_before": 0,
+    "assignments_after": 0
+  },
+  "download": {
+    "sha256": "128b349f1f844d05189f4f7bd76102e9004504ae3c9ad45a733b2fe9d8db471d",
+    "bytes": 1360
+  },
+  "framework_pin": "5fb26304e4c85183aa215e6ad4db9ced928cab12"
+}

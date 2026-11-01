@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "source_sha": "3fc9ad8186e6de1afffe4ae468bbe9f6ee0c6c92",
+  "runtime": "Rscript in Colab Python runtime",
+  "r_install": "preinstalled Rscript",
+  "r_version": "R version 4.6.1 (2026-06-24) -- \"Happy Hop\"\nCopyright (C) 2026 The R Foundation for Statistical Computing\nPlatform: x86_64-pc-linux-gnu\n\nR is free software and comes with ABSOLUTELY NO WARRANTY.\nYou are welcome to redistribute it under the terms of the\nGNU General Public License versions 2 or 3.\nFor more information about these matters see\nhttps://www.gnu.org/licenses/.\n\n",
+  "device_observed": {
+    "nvidia_smi": [
+      {
+        "name": "Tesla T4",
+        "memory_total_mib": 15360,
+        "driver_version": "580.82.07"
+      }
+    ],
+    "torch": {
+      "status": "AVAILABLE",
+      "version": "2.11.0+cu130",
+      "cuda": "13.0",
+      "name": "Tesla T4",
+      "capability": [
+        7,
+        5
+      ]
+    }
+  },
+  "framework_pin": "5fb26304e4c85183aa215e6ad4db9ced928cab12",
+  "cleanup": {
+    "stop": "PASS",
+    "confirmed": true,
+    "assignments_before": 0,
+    "assignments_after": 0
+  },
+  "download": {
+    "sha256": "4629dba8aa8e79825945097f42f147accc360b59b1f714bee7b97c99271425ac",
+    "bytes": 1937
+  },
+  "julia": "NOT_RUN"
+}

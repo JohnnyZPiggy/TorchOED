@@ -1,0 +1,8 @@
+library(AlgDesign)
+data <- read.csv("reports/w3-probe/cand_3x3.csv")
+set.seed(20261101)
+fit <- optFederov(~quad(.), data, nTrials=14, criterion="D", nRepeats=5)
+number <- function(x) if (is.null(x)) "null" else sprintf("%.17g", x)
+fields <- vapply(c("D","A","I","Ge","Dea"), function(k) paste0('"',k,'":',number(fit[[k]])), "")
+writeLines(paste0('{"rows":[',paste(fit$rows,collapse=","),'],',paste(fields,collapse=","),'}'), "reports/w3-probe/algdesign_out.json")
+capture.output(print(sessionInfo()), print(packageVersion("AlgDesign")), file="reports/w3-probe/sessionInfo.txt")

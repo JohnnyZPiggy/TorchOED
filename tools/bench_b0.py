@@ -109,7 +109,7 @@ def summary(data, out):
     if out.name=='b3': baseline_name, before = 'b2', json.loads((ROOT/'reports/b2/results.json').read_text(encoding='utf-8'))
     if out.name=='b5': baseline_name, before = 'b3', json.loads((ROOT/'reports/b3/results.json').read_text(encoding='utf-8'))
     if out.name=='b6': baseline_name, before = 'b5', json.loads((ROOT/'reports/b5/results.json').read_text(encoding='utf-8'))
-    if out.name=='b8': baseline_name, before = 'b6', json.loads((ROOT/'reports/b6/results.json').read_text(encoding='utf-8'))
+    if out.name=='b8': baseline_name, before = 'B6R', json.loads((ROOT/'reports/b8/base.json').read_text(encoding='utf-8'))
     lines = ['# '+out.name.upper()+': fixed CPU comparison', '',
         'Command: `python tools/bench_b0.py <pydoe-1.6.0-py3-none-any.whl>` in the PyDOE 1.6.0 dev environment; one thread, three calls/configuration, seeds 0..4 and 10 TorchOED restarts.',
         'Grids use {-1,0,1}; random500 uses torch float64 seed 0. Shared logdet uses TorchOED quadratic features and numerical-SPD guard; rejected integer designs are checked with Fraction, not a floating determinant residual.',
@@ -121,7 +121,7 @@ def summary(data, out):
         lines += ['', 'B2 search/timing protocol is unchanged from B1; timings are repeat measurements, not a speedup claim. Certified D-eff >= is p/(n max_j G_jj), a lower bound against the true exact optimum, not achieved efficiency. It is recomputed from each finite, distinct-ID design using shared float64 features and tiled whitening, outside timing. Singular or repeated-ID rows are n/a. The theorem is exact-arithmetic; float64 evaluations are not interval certificates.']
     for pool, label in (('grid2','grid2: m=9, p=6; n=12 exceeds candidate count'),('grid3','grid3: m=27, p=10'),('grid4','grid4: m=81, p=15'),('random500','random500: m=500, p=10')):
         exact = [f"n={c['n']} det={c['exact_optimum_det']}" for c in data['cases'] if c['pool']==pool and 'exact_optimum_det' in c]
-        lines += ['', '## '+label+('; exact optima: '+', '.join(exact) if exact else ''), '', f'| n | Method | logdet | D-eff | certified D-eff â‰¥ | Median s | {baseline_name.upper()} median s | Status / repeats / exact optimum | TorchOED quality / time versus row |', '|---|---|---|---|---|---|---|---|---|']
+        lines += ['', '## '+label+('; exact optima: '+', '.join(exact) if exact else ''), '', f'| n | Method | logdet | D-eff | certified D-eff ≥ | Median s | {baseline_name.upper()} median s | Status / repeats / exact optimum | TorchOED quality / time versus row |', '|---|---|---|---|---|---|---|---|---|']
         for case in (c for c in data['cases'] if c['pool']==pool):
             tor = [r for r in case['rows'] if r['method']=='TorchOED' and 'error' not in r and r.get('logdet') is not None]
             for method in ('TorchOED','sequential','fedorov','modified_fedorov','detmax'):

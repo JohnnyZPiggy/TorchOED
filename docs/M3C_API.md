@@ -38,7 +38,6 @@ They return ids, objective, criterion, efficiency_lower_bound, stop_reason,
 certificate, restart_objectives, best_restart and starts.
 `LOCAL_1_NUMERICAL` certifies only numerical 1-swap locality, never global
 optimality; MAX_ITER/NUMERICAL_INCONCLUSIVE return NOT_CERTIFIED.
-
 ## Augmentation
 Both design functions accept `fixed_ids=None`, or distinct candidate IDs with length < n.
 Each restart draws the remaining IDs uniformly without replacement from non-fixed candidates.

@@ -5,8 +5,8 @@
 Alpha 0.1.0, experimental API. PyTorch-native design of experiments with
 `d_optimal_design` as the one-call entry point from model features to a design.
 CPU acceptance only, not a stable API or general PyDOE replacement.
-Python >=3.11; runtime dependency: torch>=2.1 only.
-Tested on Linux, Windows and macOS; minimum tested PyTorch: 2.1.0.
+Python >=3.11; runtime dependency: torch>=2.2 only.
+Tested on Linux, Windows and macOS; minimum tested PyTorch: 2.2.0.
 
 ```powershell
 python -m pip install -e .

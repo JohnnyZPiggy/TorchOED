@@ -1,20 +1,12 @@
-# Minimal immutable SAE reference
+# Pinned SAE reference
 
-Source: JohnnyZPiggy/SAE-Framework, commit `5fb26304e4c85183aa215e6ad4db9ced928cab12` (V3.4).
-This is a reference entrypoint, not a copied snapshot, CLI, grant or claim of runtime capability. Fetch and read applicable documents at the exact pin; do not substitute framework main.
+Source: JohnnyZPiggy/SAE-Framework at `4129001fffcb336f5203e4b0d6765d7a0ea3150c` (V3.4). Read files at this exact commit, not `main`.
 
-- [Simplicity Contract](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/governance/SIMPLICITY_CONTRACT.md) — read first
-- [Constitution](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/AGENTS.md)
-- [Engineer](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/protocols/ENGINEER.md)
-- [Role recovery](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/workflows/ROLE_RECOVERY.md)
-- [Cold start](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/workflows/UNIVERSAL_COLD_START.md)
-- [Warm start](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/workflows/AGENT_WARM_START.md)
-- [Task management](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/workflows/TASK_MANAGEMENT.md)
-- [Mathematical research](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/workflows/MATHEMATICAL_RESEARCH.md)
-- [Lean execution](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/workflows/LEAN_RESEARCH_LAB.md)
-- [Reuse first](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/workflows/ECOSYSTEM_REVIEW.md)
-- [Compute policy](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/governance/COMPUTE_THROUGHPUT_POLICY.md)
-- [Security](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/workflows/SECURITY.md)
-- [Next action](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/workflows/NEXT_ACTION.md)
+- [Simplicity Contract](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/governance/SIMPLICITY_CONTRACT.md) — read first
+- [Constitution](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/AGENTS.md)
+- Roles: [Architect](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/protocols/ARCHITECT.md) · [Mentor](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/protocols/MENTOR.md) · [Engineer](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/protocols/ENGINEER.md)
+- Workflows: [Start](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/workflows/START.md) · [Tasks](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/workflows/TASKS.md) · [Research](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/workflows/RESEARCH.md) · [Compute](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/workflows/COMPUTE.md) · [Performance](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/workflows/PERFORMANCE.md)
+- [Standing Authorization](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/governance/STANDING_AUTHORIZATION.md)
+- [Compute tools](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/tools/compute/README.md)
 
-User instructions and project AGENTS.md govern scope. **Active Engineer dispatch (2026-10-30):** M5-A2 Issue #20 only, limited to its Issue text and Architect comments. M2-B #18 is merged via PR #21; its multi-GPU rerun needs an Architect START comment. Issue #11 is completed through merged PR #12; Issue #13's CPU/GPU probe was stopped by the Scientist. Other open historical Issues or branches do not grant permission to resume experiments, search, or development. Preserve existing evidence. Any further engineering work requires a new explicit dispatch Issue or START comment. The Engineer never self-merges.
+Project AGENTS.md and the user's instructions govern scope; live dispatch is in Issue #83. Engineers start only an ACTIVE Issue or one with an Architect START comment, and never self-merge.

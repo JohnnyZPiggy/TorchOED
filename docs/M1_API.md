@@ -44,3 +44,12 @@ call: `tests/fixtures/e0_p1.json` records its source commit/path/hash. Actual
 Independent scalar feature formulas and Fraction elimination supplement CPU
 SVD rank. Float64 tolerance is 1e-9; float32 checks use 1e-6; gradcheck uses
 eps=1e-6, atol=1e-5, rtol=1e-3. Integer IDs/strata are exact.
+
+## Constraints and categorical factors
+`effects_coding(codes, levels)` accepts int64 codes 0..levels−1 and returns
+float64 columns: the first levels−1 levels are unit rows, the last is all −1.
+`feasible_candidates(C, *, A=None, b=None, disallowed=())` returns a bool mask:
+keep rows satisfying `C @ A.T <= b` and excluding every matching dictionary
+`{column: value}` in disallowed. Comparisons are exact; add tolerance to b.
+Filter with `C[mask]`; map filtered design IDs to originals using
+`mask.nonzero().flatten()[ids]`. Search efficiency bounds refer to that feasible set.

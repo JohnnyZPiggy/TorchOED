@@ -12,3 +12,4 @@ Cleanup confirmed: stop PASS, authenticated assignments0 before/0 after; no acti
 Preflight first returned LOCAL_PREFLIGHT_FAILED before allocation; a read-only diagnostic then passed; no source/controller change. Only one paired experiment ran.
 External download SHA256/byte size in results.json; JSON compacted whitespace only. No tracked file hashes. Prior code CI5/5 PASS at10fdb69; required local tests3 PASS.
 Next: Architect ruling on the failing time gate; no rerun permitted by current dispatch.
+grid3 n=10 ratio 1.18 is noise: timed path byte-identical (Architect ruling)

@@ -6,19 +6,34 @@ from .information import exact_information
 from .k2_exchange import k2_exchange
 
 
+def _fixed_pool(fixed_ids, m, n):
+    fixed = torch.as_tensor(fixed_ids)
+    if (fixed.ndim != 1 or len(fixed) >= n or
+            (len(fixed) and (fixed.dtype not in (torch.int32, torch.int64) or
+             fixed.min() < 0 or fixed.max() >= m or len(fixed.unique()) != len(fixed)))):
+        raise ValueError('fixed_ids must be distinct candidate IDs with length < n')
+    fixed = fixed.to(dtype=torch.int64)
+    return fixed, torch.tensor(sorted(set(range(m))-set(fixed.tolist())),dtype=torch.int64)
+
+
 @torch.no_grad()
-def d_optimal_design(F, n, *, restarts=10, generator=None, max_iter=100,
+def d_optimal_design(F, n, *, fixed_ids=None, restarts=10, generator=None, max_iter=100,
                      tile_size=64, max_elements=1_000_000):
     """Return the best restarted k2_exchange run; see docs/M3C_API.md."""
     m, p = F.shape
     if type(n) is not int or not m >= n >= p:
         raise ValueError("n must be an int with m>=n>=p")
+    if fixed_ids is not None:
+        fixed, pool = _fixed_pool(fixed_ids,m,n)
     starts, objectives = [], []
     failures = 0
     best = None
     for restart in range(restarts):
         while True:
-            ids = torch.randperm(m, generator=generator)[:n].sort().values
+            if fixed_ids is None:
+                ids = torch.randperm(m, generator=generator)[:n].sort().values
+            else:
+                ids = torch.cat((fixed,pool[torch.randperm(len(pool),generator=generator)[:n-len(fixed)]])).sort().values
             M = exact_information(F, ids, max_elements=max_elements)
             try:
                 d_optimality(M, max_elements=max_elements)
@@ -31,7 +46,8 @@ def d_optimal_design(F, n, *, restarts=10, generator=None, max_iter=100,
             break
         starts.append(ids.tolist())
         result = k2_exchange(F, ids, max_iter=max_iter, tile_size=tile_size,
-                             max_elements=max_elements)
+                             max_elements=max_elements,
+                             _free_positions=None if fixed_ids is None else ~torch.isin(ids,fixed))
         objectives.append(result['final_objective'])
         if best is None or result['final_objective'] > best['final_objective']:
             best, best_restart = result, restart
@@ -63,7 +79,7 @@ def _linear_scores(F, ids, B, criterion):
     return M, phi, diagonal, incoming, ratio, delta
 
 
-def _linear_exchange(F, ids, B, criterion, max_iter):
+def _linear_exchange(F, ids, B, criterion, max_iter, *, _free_positions=None):
     from .exchange import _tolerance
     p = F.shape[1]
     for iteration in range(max_iter+1):
@@ -73,7 +89,10 @@ def _linear_exchange(F, ids, B, criterion, max_iter):
             reason = "MAX_ITER"
             break
         tolerance = _tolerance(phi,phi,condition,condition,p)
-        moves = ((ratio>0)&(delta < -tolerance)).flatten().nonzero().flatten()
+        legal = (ratio>0)&(delta < -tolerance)
+        if _free_positions is not None:
+            legal &= _free_positions[:,None]
+        moves = legal.flatten().nonzero().flatten()
         if not len(moves):
             reason = "LOCAL_1_SWAP_NUMERICAL"
             break
@@ -98,18 +117,20 @@ def _linear_exchange(F, ids, B, criterion, max_iter):
 
 
 @torch.no_grad()
-def optimal_design(F, n, *, criterion="D", restarts=10, generator=None,
+def optimal_design(F, n, *, criterion="D", fixed_ids=None, restarts=10, generator=None,
                    max_iter=100, max_elements=1_000_000):
     """D VND or A/I one-swap restarts with criterion-specific efficiency floor."""
     if criterion not in ("D","A","I"):
         raise ValueError('criterion must be D, A or I')
     if criterion == "D":
-        result = d_optimal_design(F,n,restarts=restarts,generator=generator,
+        result = d_optimal_design(F,n,fixed_ids=fixed_ids,restarts=restarts,generator=generator,
                                   max_iter=max_iter,max_elements=max_elements)
         return dict(result,criterion="D",efficiency_lower_bound=result['d_efficiency_lower_bound'])
     m, p = F.shape
     if type(n) is not int or not m >= n >= p:
         raise ValueError("n must be an int with m>=n>=p")
+    if fixed_ids is not None:
+        fixed, pool = _fixed_pool(fixed_ids,m,n)
     # Conservative simultaneous solve, gather and n-by-m score workspace; no m-by-m matrices.
     if 8*m*p+16*n*m+8*p*p > max_elements:
         raise ValueError('insufficient max_elements for linear-criterion workspace')
@@ -117,7 +138,10 @@ def optimal_design(F, n, *, criterion="D", restarts=10, generator=None,
     starts, objectives, failures, best = [], [], 0, None
     for restart in range(restarts):
         while True:
-            ids = torch.randperm(m,generator=generator)[:n].sort().values
+            if fixed_ids is None:
+                ids = torch.randperm(m,generator=generator)[:n].sort().values
+            else:
+                ids = torch.cat((fixed,pool[torch.randperm(len(pool),generator=generator)[:n-len(fixed)]])).sort().values
             M = exact_information(F,ids,max_elements=max_elements)
             try:
                 d_optimality(M,max_elements=max_elements)
@@ -128,7 +152,8 @@ def optimal_design(F, n, *, criterion="D", restarts=10, generator=None,
                 continue
             break
         starts.append(ids.tolist())
-        result = _linear_exchange(F,ids,B,criterion,max_iter)
+        result = _linear_exchange(F,ids,B,criterion,max_iter,
+                                  _free_positions=None if fixed_ids is None else ~torch.isin(ids,fixed))
         objectives.append(result['objective'])
         if best is None or result['objective']>best['objective']:
             best, best_restart = result, restart

@@ -33,7 +33,7 @@ def _ordered_top(scorer, *args):
     return top, 1
 
 
-def _one_candidates(Gss, Gsn, diagonal, incoming, width, tolerance, anchor=None):
+def _one_candidates(Gss, Gsn, diagonal, incoming, width, free_positions, tolerance, anchor=None):
     top = []
     n = Gss.shape[0]
     for start in range(0, incoming.numel(), width):
@@ -42,6 +42,9 @@ def _one_candidates(Gss, Gsn, diagonal, incoming, width, tolerance, anchor=None)
                   + Gsn[:, start:end].square())
         positions = torch.arange(n, device=incoming.device).repeat_interleave(end-start)
         rows = torch.stack((positions, incoming[start:end].repeat(n)), dim=1)
+        if free_positions is not None:
+            keep = free_positions[positions]
+            ratios, rows = ratios.flatten()[keep], rows[keep]
         _keep_top(top, ratios.flatten(), rows, tolerance, anchor)
     return top
 
@@ -92,10 +95,12 @@ def _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing, rho,
             _keep_top(top, ratios, rows, tolerance, anchor)
 
 
-def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, anchor=None):
+def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, free_positions, tolerance, anchor=None):
     top = []
     n, q = current.numel(), incoming.numel()
     outgoing = torch.triu_indices(n, n, 1, device=Z.device).mT
+    if free_positions is not None:
+        outgoing = outgoing[free_positions[outgoing].all(dim=1)]
     a, b = outgoing.mT
     rho = (1-Gss[a,a])*(1-Gss[b,b])-Gss[a,b].square()
     if n == Z.shape[0]:
@@ -140,7 +145,8 @@ def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, 
 
 
 @torch.no_grad()
-def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000):
+def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000,
+                _free_positions=None):
     """Stream G-based ratios, verify at most eight per phase; see M3B2_API.md."""
     integer(max_iter, 'max_iter', 0)
     integer(tile_size, 'tile_size')
@@ -150,6 +156,7 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000):
     if not m >= n >= p >= 1:
         raise ValueError('require m>=n>=p>=1')
     current = ids.clone()
+    free_count = n if _free_positions is None else int(_free_positions.sum())
     score = d_optimality(M, max_elements=max_elements).item()
     # Fixed state + conservative block/4x4 determinant workspace; no N2 output.
     fixed = 2*m*p + 2*n*m + 8*p*p + 8*m + 8*n + 128
@@ -172,7 +179,7 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000):
         if n == m:
             reason = 'NO_LEGAL_SWAP'
             break
-        empty_two = n < 2 or q < 2
+        empty_two = free_count < 2 or q < 2
         if len(history) >= max_iter:
             reason = 'NO_K2_NEIGHBORHOOD' if empty_two else 'MAX_ITER'
             break
@@ -183,8 +190,8 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000):
         Gss = Z[:, current].mT @ Z[:, current]
         Gsn = Z[:, current].mT @ Z[:, incoming]
         ratio_tolerance = _tolerance(1., 1., condition, condition, p)
-        top, passes = _ordered_top(_one_candidates, Gss, Gsn, diagonal, incoming, width, ratio_tolerance)
-        scanned['k1'] += passes*n*q
+        top, passes = _ordered_top(_one_candidates, Gss, Gsn, diagonal, incoming, width, _free_positions, ratio_tolerance)
+        scanned['k1'] += passes*free_count*q
         k = 1
         if not top:
             if empty_two:
@@ -192,8 +199,8 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000):
                 break
             k = 2
             top, passes = _ordered_top(_two_candidates, Z, current, incoming, Gss, Gsn, width,
-                                       capacity, ratio_tolerance)
-            scanned['k2'] += passes * (n*(n-1)//2) * (q*(q-1)//2)
+                                       capacity, _free_positions, ratio_tolerance)
+            scanned['k2'] += passes * (free_count*(free_count-1)//2) * (q*(q-1)//2)
             if not top:
                 reason = 'LOCAL_2_NUMERICAL'
                 break

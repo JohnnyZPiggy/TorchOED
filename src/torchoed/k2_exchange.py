@@ -1,6 +1,5 @@
 """G-based, score-first / verify-top deterministic k=2 VND."""
 import torch
-from functools import partial
 
 from ._validation import integer
 from .criteria import d_optimality
@@ -158,8 +157,8 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000,
         raise ValueError('require m>=n>=p>=1')
     current = ids.clone()
     free_count = n if _free_positions is None else int(_free_positions.sum())
-    one = partial(_one_candidates, free_positions=_free_positions)
-    two = partial(_two_candidates, free_positions=_free_positions)
+    one = lambda *args, **kw: _one_candidates(*args, free_positions=_free_positions, **kw)
+    two = lambda *args, **kw: _two_candidates(*args, free_positions=_free_positions, **kw)
     score = d_optimality(M, max_elements=max_elements).item()
     # Fixed state + conservative block/4x4 determinant workspace; no N2 output.
     fixed = 2*m*p + 2*n*m + 8*p*p + 8*m + 8*n + 128

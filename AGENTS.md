@@ -1,11 +1,11 @@
 # TorchOED — SAE V3.4 project entrypoint
 
-SAE pin: `5fb26304e4c85183aa215e6ad4db9ced928cab12` (V3.4 + simplified Colab controller with G4 → RTX PRO 6000 family match, SAE-Framework PRs #71 and #73; adopted 2026-10-30). Configuration: [sae.yaml](sae.yaml).
-Read the actual [pinned constitution](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/AGENTS.md), assigned role and task-relevant workflows via [.sae/README.md](.sae/README.md); do not silently upgrade or assume links were read.
+SAE pin: `4129001fffcb336f5203e4b0d6765d7a0ea3150c` (V3.4 + one-page-per-concept cleanup and Performance Patch workflow, SAE-Framework PRs #74–#76; adopted 2026-11-03; Colab controller and Simplicity Contract unchanged since `5fb26304`). Configuration: [sae.yaml](sae.yaml).
+Read the actual [pinned constitution](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/AGENTS.md), assigned role and task-relevant workflows via [.sae/README.md](.sae/README.md); do not silently upgrade or assume links were read.
 
 ## Simplicity first (Engineer: read before writing code)
 
-The [Simplicity Contract](https://github.com/JohnnyZPiggy/SAE-Framework/blob/5fb26304e4c85183aa215e6ad4db9ced928cab12/governance/SIMPLICITY_CONTRACT.md) overrides any older rule or habit that asks for more. The smallest change that meets the Issue's Definition of Done is the correct change.
+The [Simplicity Contract](https://github.com/JohnnyZPiggy/SAE-Framework/blob/4129001fffcb336f5203e4b0d6765d7a0ea3150c/governance/SIMPLICITY_CONTRACT.md) overrides any older rule or habit that asks for more. The smallest change that meets the Issue's Definition of Done is the correct change.
 
 1. **Validate only at trust boundaries** (CLI args, files, provider output), only the fields you use. Trust internal code: no re-checking shapes/dtypes/types your own code produced. Let torch and Python raise.
 2. **Catch an exception only if you then do something different.** No catch-and-rename, no custom error-code taxonomies.

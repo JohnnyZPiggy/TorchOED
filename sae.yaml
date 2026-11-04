@@ -6,7 +6,7 @@ project:
   scientific_goal: "PyTorch-native DOE/OED with explicit numerical contracts"
 framework:
   repository: "JohnnyZPiggy/SAE-Framework"
-  commit_sha: "5fb26304e4c85183aa215e6ad4db9ced928cab12"
+  commit_sha: "4129001fffcb336f5203e4b0d6765d7a0ea3150c"
   adoption: "minimal_reference"
   entrypoint: ".sae/README.md"
 roles:

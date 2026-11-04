@@ -1,0 +1,31 @@
+name: TestPyPI dry run
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: testpypi
+    env: {OMP_NUM_THREADS: "1", MKL_NUM_THREADS: "1"}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.13"}
+      - run: python -m pip install build twine
+      - run: python -m build
+      - run: python -m twine check --strict dist/*
+      - run: python -c "import glob,zipfile; assert 'torchoed/py.typed' in zipfile.ZipFile(glob.glob('dist/*.whl')[0]).namelist()"
+      - run: |
+          for package in dist/*.whl dist/*.tar.gz; do
+            check_env="$RUNNER_TEMP/$(basename "$package")-venv"
+            python -m venv "$check_env"
+            "$check_env/bin/python" -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+            "$check_env/bin/python" -m pip install "$package"
+            (cd "$RUNNER_TEMP" && "$check_env/bin/python" "$GITHUB_WORKSPACE/examples/cpu_quickstart.py")
+          done
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/

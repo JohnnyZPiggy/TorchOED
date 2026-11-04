@@ -70,8 +70,9 @@ jobs:
         with:
           python-version: "3.13"
       - run: |
-          python -m pip install build
-          python -m build --wheel
+          python -m pip install build twine
+          python -m build
+          python -m twine check --strict dist/*
           python -c "import glob,zipfile; assert 'torchoed/py.typed' in zipfile.ZipFile(glob.glob('dist/*.whl')[0]).namelist()"
           python -m venv "$RUNNER_TEMP/wheel-venv"
           "$RUNNER_TEMP/wheel-venv/bin/python" -m pip install torch --index-url https://download.pytorch.org/whl/cpu
@@ -80,3 +81,7 @@ jobs:
           cp -r examples "$RUNNER_TEMP/"
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/wheel-venv/bin/python" examples/cpu_quickstart.py
+          python -m venv "$RUNNER_TEMP/sdist-venv"
+          "$RUNNER_TEMP/sdist-venv/bin/python" -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          "$RUNNER_TEMP/sdist-venv/bin/python" -m pip install "$GITHUB_WORKSPACE"/dist/*.tar.gz
+          "$RUNNER_TEMP/sdist-venv/bin/python" examples/cpu_quickstart.py

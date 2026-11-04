@@ -1,5 +1,6 @@
 """G-based, score-first / verify-top deterministic k=2 VND."""
 import torch
+from functools import partial
 
 from ._validation import integer
 from .criteria import d_optimality
@@ -33,7 +34,7 @@ def _ordered_top(scorer, *args):
     return top, 1
 
 
-def _one_candidates(Gss, Gsn, diagonal, incoming, width, free_positions, tolerance, anchor=None):
+def _one_candidates(Gss, Gsn, diagonal, incoming, width, tolerance, anchor=None, *, free_positions=None):
     top = []
     n = Gss.shape[0]
     for start in range(0, incoming.numel(), width):
@@ -95,7 +96,7 @@ def _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing, rho,
             _keep_top(top, ratios, rows, tolerance, anchor)
 
 
-def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, free_positions, tolerance, anchor=None):
+def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, anchor=None, *, free_positions=None):
     top = []
     n, q = current.numel(), incoming.numel()
     outgoing = torch.triu_indices(n, n, 1, device=Z.device).mT
@@ -157,6 +158,8 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000,
         raise ValueError('require m>=n>=p>=1')
     current = ids.clone()
     free_count = n if _free_positions is None else int(_free_positions.sum())
+    one = partial(_one_candidates, free_positions=_free_positions)
+    two = partial(_two_candidates, free_positions=_free_positions)
     score = d_optimality(M, max_elements=max_elements).item()
     # Fixed state + conservative block/4x4 determinant workspace; no N2 output.
     fixed = 2*m*p + 2*n*m + 8*p*p + 8*m + 8*n + 128
@@ -190,7 +193,7 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000,
         Gss = Z[:, current].mT @ Z[:, current]
         Gsn = Z[:, current].mT @ Z[:, incoming]
         ratio_tolerance = _tolerance(1., 1., condition, condition, p)
-        top, passes = _ordered_top(_one_candidates, Gss, Gsn, diagonal, incoming, width, _free_positions, ratio_tolerance)
+        top, passes = _ordered_top(one, Gss, Gsn, diagonal, incoming, width, ratio_tolerance)
         scanned['k1'] += passes*free_count*q
         k = 1
         if not top:
@@ -198,8 +201,8 @@ def k2_exchange(F, ids, *, max_iter=100, tile_size=64, max_elements=1_000_000,
                 reason = 'NO_K2_NEIGHBORHOOD'
                 break
             k = 2
-            top, passes = _ordered_top(_two_candidates, Z, current, incoming, Gss, Gsn, width,
-                                       capacity, _free_positions, ratio_tolerance)
+            top, passes = _ordered_top(two, Z, current, incoming, Gss, Gsn, width,
+                                       capacity, ratio_tolerance)
             scanned['k2'] += passes * (free_count*(free_count-1)//2) * (q*(q-1)//2)
             if not top:
                 reason = 'LOCAL_2_NUMERICAL'

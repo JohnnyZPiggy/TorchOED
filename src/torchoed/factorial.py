@@ -3,7 +3,7 @@ import torch
 from ._validation import budget, floating, integer
 
 
-def full_factorial(levels, *, device=None, max_elements=1_000_000):
+def full_factorial(levels: list[int] | tuple[int, ...], *, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
     """Integer index grid; last factor varies fastest. See docs/M1_API.md."""
     if not isinstance(levels, (tuple, list)) or not levels:
         raise ValueError("levels must be a nonempty tuple/list of positive Python ints")
@@ -15,7 +15,7 @@ def full_factorial(levels, *, device=None, max_elements=1_000_000):
     return torch.cartesian_prod(*axes).reshape(rows, len(levels))
 
 
-def ff2n(k, *, device=None, dtype=torch.float64, max_elements=1_000_000):
+def ff2n(k: int, *, device: torch.device | str | None = None, dtype: torch.dtype = torch.float64, max_elements: int = 1_000_000) -> torch.Tensor:
     """Signed corners, in full_factorial order, with explicit floating dtype."""
     integer(k, "k")
     floating(dtype)

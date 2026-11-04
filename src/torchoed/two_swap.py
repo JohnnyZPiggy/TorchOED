@@ -31,7 +31,7 @@ def _rank_four_ratios(L, F, ids, pairs):
 
 
 @torch.no_grad()
-def score_two_swaps(F, ids, *, tile_size=64, max_elements=1_000_000):
+def score_two_swaps(F: torch.Tensor, ids: torch.Tensor, *, tile_size: int = 64, max_elements: int = 1_000_000) -> dict[str, object]:
     """Score every unordered k=2 exchange. Schema/policies: docs/M3B1_API.md."""
     if not isinstance(F, torch.Tensor) or F.dtype != torch.float64:
         raise TypeError("F must be a float64 torch.Tensor")

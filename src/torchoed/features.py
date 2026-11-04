@@ -3,7 +3,7 @@ import torch
 from ._validation import budget, floating, integer
 
 
-def polynomial_features(C, degree=2, include_bias=True, *, max_elements=1_000_000):
+def polynomial_features(C: torch.Tensor, degree: int = 2, include_bias: bool = True, *, max_elements: int = 1_000_000) -> torch.Tensor:
     """[bias, linear, squares, pair products i<j]; preserves autograd."""
     if not isinstance(C, torch.Tensor):
         raise TypeError("C must be a floating torch.Tensor")
@@ -27,14 +27,14 @@ def polynomial_features(C, degree=2, include_bias=True, *, max_elements=1_000_00
     return torch.cat(parts, dim=-1)
 
 
-def effects_coding(codes, levels):
+def effects_coding(codes: torch.Tensor, levels: int) -> torch.Tensor:
     integer(levels, 'levels', 2)
     if codes.dtype != torch.int64 or bool(((codes<0)|(codes>=levels)).any()):
         raise ValueError('codes must be int64 in 0..levels-1')
     return (codes[:,None]==torch.arange(levels-1,device=codes.device)).double()-(codes==levels-1)[:,None].double()
 
 
-def feasible_candidates(C, *, A=None, b=None, disallowed=()):
+def feasible_candidates(C: torch.Tensor, *, A: torch.Tensor | None = None, b: torch.Tensor | None = None, disallowed: list[dict[int, float]] | tuple[dict[int, float], ...] = ()) -> torch.Tensor:
     mask = torch.ones(len(C),dtype=torch.bool,device=C.device)
     if A is not None:
         mask &= (C@A.mT <= b).all(dim=-1)

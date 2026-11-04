@@ -32,6 +32,10 @@ jobs:
       - run: python -m pip install -e ".[test]"
       - run: python -c "import torch; print(torch.__version__)"
       - run: pytest -q
+      - if: matrix.os == 'ubuntu-latest' && matrix.python == '3.13'
+        run: |
+          python -m pip install pyright==1.1.407
+          pyright --verifytypes torchoed --ignoreexternal
   min-torch:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -55,6 +59,7 @@ jobs:
       - run: |
           python -m pip install build
           python -m build --wheel
+          python -c "import glob,zipfile; assert 'torchoed/py.typed' in zipfile.ZipFile(glob.glob('dist/*.whl')[0]).namelist()"
           python -m venv "$RUNNER_TEMP/wheel-venv"
           "$RUNNER_TEMP/wheel-venv/bin/python" -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           "$RUNNER_TEMP/wheel-venv/bin/python" -m pip install dist/*.whl

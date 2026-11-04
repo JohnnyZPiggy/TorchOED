@@ -27,8 +27,8 @@ def _finite_output(M):
     return M
 
 
-def exact_information(F, ids, *, normalized=False, allow_repeats=False,
-                      max_elements=1_000_000):
+def exact_information(F: torch.Tensor, ids: torch.Tensor, *, normalized: bool = False, allow_repeats: bool = False,
+                      max_elements: int = 1_000_000) -> torch.Tensor:
     """Raw X.T@X, optionally divided by event count; never implicit repeats."""
     _features(F, max_elements)
     if type(normalized) is not bool or type(allow_repeats) is not bool:
@@ -55,7 +55,7 @@ def exact_information(F, ids, *, normalized=False, allow_repeats=False,
     return _finite_output(M / n if normalized else M)
 
 
-def weighted_information(F, w, *, max_elements=1_000_000):
+def weighted_information(F: torch.Tensor, w: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
     """Probability-weighted information, not sample counts; no dense diagonal."""
     _features(F, max_elements)
     if not isinstance(w, torch.Tensor):

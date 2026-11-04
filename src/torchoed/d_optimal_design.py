@@ -17,8 +17,8 @@ def _fixed_pool(fixed_ids, m, n):
 
 
 @torch.no_grad()
-def d_optimal_design(F, n, *, fixed_ids=None, restarts=10, generator=None, max_iter=100,
-                     tile_size=64, max_elements=1_000_000):
+def d_optimal_design(F: torch.Tensor, n: int, *, fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None, max_iter: int = 100,
+                     tile_size: int = 64, max_elements: int = 1_000_000) -> dict[str, object]:
     """Return the best restarted k2_exchange run; see docs/M3C_API.md."""
     m, p = F.shape
     if type(n) is not int or not m >= n >= p:
@@ -117,8 +117,8 @@ def _linear_exchange(F, ids, B, criterion, max_iter, *, _free_positions=None):
 
 
 @torch.no_grad()
-def optimal_design(F, n, *, criterion="D", fixed_ids=None, restarts=10, generator=None,
-                   max_iter=100, max_elements=1_000_000):
+def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None,
+                   max_iter: int = 100, max_elements: int = 1_000_000) -> dict[str, object]:
     """D VND or A/I one-swap restarts with criterion-specific efficiency floor."""
     if criterion not in ("D","A","I"):
         raise ValueError('criterion must be D, A or I')

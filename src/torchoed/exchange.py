@@ -22,8 +22,8 @@ def _tolerance(old_score, new_score, old_condition, new_condition, p):
 
 
 @torch.no_grad()
-def fedorov_exchange(F, ids, *, max_iter=100, tile_size=64,
-                     allow_repeats=False, max_elements=1_000_000):
+def fedorov_exchange(F: torch.Tensor, ids: torch.Tensor, *, max_iter: int = 100, tile_size: int = 64,
+                     allow_repeats: bool = False, max_elements: int = 1_000_000) -> dict[str, object]:
     """Search from provided IDs. See docs/M3_API.md for stop/error policies."""
     if not isinstance(F, torch.Tensor) or F.dtype != torch.float64:
         raise TypeError("F must be a float64 torch.Tensor")

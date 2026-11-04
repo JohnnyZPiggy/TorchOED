@@ -3,8 +3,8 @@ import torch
 from ._validation import budget, floating, integer
 
 
-def lhs(n_samples, n_factors, *, generator=None, device=None,
-        dtype=torch.float64, mode="random", max_elements=1_000_000):
+def lhs(n_samples: int, n_factors: int, *, generator: torch.Generator | None = None, device: torch.device | str | None = None,
+        dtype: torch.dtype = torch.float64, mode: str = "random", max_elements: int = 1_000_000) -> torch.Tensor:
     """Basic random Latin hypercube; consumes the supplied generator normally."""
     n = integer(n_samples, "n_samples")
     k = integer(n_factors, "n_factors")
@@ -32,8 +32,8 @@ def lhs(n_samples, n_factors, *, generator=None, device=None,
     return torch.stack(columns, dim=1)
 
 
-def sobol(n, d, *, scramble=False, seed=None, skip=0, balance="exact",
-          dtype=torch.float64, device=None, max_elements=1_000_000):
+def sobol(n: int, d: int, *, scramble: bool = False, seed: int | None = None, skip: int = 0, balance: str = "exact",
+          dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
     """Native CPU Sobol generation followed by an explicit device transfer."""
     integer(n, "n", 0)
     integer(d, "d")

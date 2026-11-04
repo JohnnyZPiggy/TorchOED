@@ -37,13 +37,13 @@ def _score(value):
     return value
 
 
-def d_optimality(M, *, max_elements=1_000_000):
+def d_optimality(M: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
     """Maximize logdet(M); singular/indefinite input raises ValueError."""
     L = _cholesky(M, max_elements)
     return _score(2 * L.diagonal(dim1=-2, dim2=-1).log().sum(dim=-1))
 
 
-def a_optimality(M, *, max_elements=1_000_000):
+def a_optimality(M: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
     """Maximize -trace(M^-1), evaluated through Cholesky solves, not inverse."""
     L = _cholesky(M, max_elements)
     identity = torch.eye(M.shape[-1], dtype=M.dtype, device=M.device).expand(L.shape)
@@ -51,7 +51,7 @@ def a_optimality(M, *, max_elements=1_000_000):
     return _score(-solution.diagonal(dim1=-2, dim2=-1).sum(dim=-1))
 
 
-def e_optimality(M, *, max_elements=1_000_000):
+def e_optimality(M: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
     """Maximize minimum eigenvalue; numerical PSD zeros allowed, no ridge."""
     symmetric, tolerance = _symmetric(M, max_elements)
     value = torch.linalg.eigvalsh(symmetric)[..., 0]
@@ -59,7 +59,7 @@ def e_optimality(M, *, max_elements=1_000_000):
     return _score(value.clamp_min(0))
 
 
-def c_optimality(M, c, *, max_elements=1_000_000):
+def c_optimality(M: torch.Tensor, c: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
     """Maximize -c.T M^-1 c on numerical SPD matrices; no broadcasting."""
     if not isinstance(M, torch.Tensor) or not isinstance(c, torch.Tensor):
         raise TypeError("M and c must be torch.Tensor objects")

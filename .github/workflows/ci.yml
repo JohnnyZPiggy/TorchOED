@@ -9,6 +9,19 @@ env:
   OMP_NUM_THREADS: "1"
   MKL_NUM_THREADS: "1"
 jobs:
+  docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install -e . mkdocs==1.6.1
+      - run: mkdocs build --strict
+      - run: python tools/run_doc_snippets.py
+      - run: python -c 'from pathlib import Path; import torchoed; text=Path("website/api.md").read_text(encoding="utf-8"); assert all("`"+name+"(" in text for name in torchoed.__all__); print("API coverage 18/18 PASS")'
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15

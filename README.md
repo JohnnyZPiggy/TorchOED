@@ -2,11 +2,12 @@
 
 [![CPU CI](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml/badge.svg)](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml)
 
-Alpha 0.1.0, experimental API. PyTorch-native design of experiments with
+Beta 0.5.0, experimental API. PyTorch-native design of experiments with
 `d_optimal_design` as the one-call entry point from model features to a design.
 CPU acceptance only, not a stable API or general PyDOE replacement.
 Python >=3.11; runtime dependency: torch>=2.2 only.
 Tested on Linux, Windows and macOS; minimum tested PyTorch: 2.2.0.
+[Documentation](https://johnnyzpiggy.github.io/TorchOED/).
 
 ```powershell
 python -m pip install -e .

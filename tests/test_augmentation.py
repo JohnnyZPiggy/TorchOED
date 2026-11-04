@@ -40,6 +40,7 @@ def test_fixed_positions_and_invalid_ids(monkeypatch):
     finals = []
     def capture(*args,**kwargs):
         result = exchange(*args,**kwargs)
+        assert all(not ({0,5,10}&set(move['outgoing_ids'])) for move in result['swap_history'] if move['k']==2)
         finals.append(result['ids'].tolist())
         return result
     monkeypatch.setattr(module,'_linear_exchange',capture)

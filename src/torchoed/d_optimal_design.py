@@ -4,6 +4,7 @@ import torch
 from .criteria import d_optimality
 from .information import exact_information
 from .k2_exchange import k2_exchange
+from .two_swap import _pair_tiles
 
 
 def _fixed_pool(fixed_ids, m, n):
@@ -79,9 +80,51 @@ def _linear_scores(F, ids, B, criterion):
     return M, phi, diagonal, incoming, ratio, delta
 
 
-def _linear_exchange(F, ids, B, criterion, max_iter, *, _free_positions=None):
+def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None):
+    m, p = F.shape
+    free = torch.arange(len(ids)) if free_positions is None else free_positions.nonzero().flatten()
+    incoming = sorted(set(range(m))-set(ids.tolist()))
+    if len(free)<2 or len(incoming)<2:
+        return
+    capacity = (max_elements-(8*m*p+16*len(ids)*m+8*p*p))//(32*p+256)
+    if capacity<1:
+        raise ValueError('insufficient max_elements for one linear pair tile')
+    L = torch.linalg.cholesky(F[ids].mT@F[ids])
+    Z = torch.linalg.solve_triangular(L,F.mT,upper=False)
+    T = torch.linalg.solve_triangular(L.mT,Z,upper=True) if criterion=='A' else (Z@Z.mT/m)@Z
+    J = torch.diag(F.new_tensor([-1.,-1.,1.,1.]))
+    for pairs in _pair_tiles(len(free),incoming,capacity):
+        pairs[:,:2] = free[pairs[:,:2]]
+        idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
+        U, V = Z[:,idx].permute(1,2,0), T[:,idx].permute(1,2,0)
+        K = U@U.mT+J
+        Q = V@V.mT if criterion=='A' else U@V.mT
+        legal = torch.linalg.det(K)>0
+        gain = torch.linalg.solve(K[legal],Q[legal]).diagonal(dim1=-2,dim2=-1).sum(-1)
+        yield pairs[legal],gain
+
+
+def _linear_pair_moves(F, ids, criterion, max_elements, free_positions, tolerance):
+    cutoff = None
+    while True:
+        best = None
+        for pairs,gains in _linear_pair_scores(F,ids,criterion,max_elements,free_positions):
+            keep = gains>tolerance
+            for row,gain in zip(pairs[keep].tolist(),gains[keep].tolist()):
+                key = (-gain,tuple(row))
+                if (cutoff is None or key>cutoff) and (best is None or key<best):
+                    best = key
+        if best is None:
+            return
+        # A failed direct verification resumes the exact ordering with bounded memory.
+        cutoff = best
+        yield list(best[1][:2]),list(best[1][2:])
+
+
+def _linear_exchange(F, ids, B, criterion, max_iter, *, _free_positions=None, max_elements=1_000_000):
     from .exchange import _tolerance
     p = F.shape[1]
+    history = []
     for iteration in range(max_iter+1):
         M, phi, diagonal, incoming, ratio, delta = _linear_scores(F,ids,B,criterion)
         condition = torch.linalg.cond(M).item()
@@ -93,14 +136,17 @@ def _linear_exchange(F, ids, B, criterion, max_iter, *, _free_positions=None):
         if _free_positions is not None:
             legal &= _free_positions[:,None]
         moves = legal.flatten().nonzero().flatten()
-        if not len(moves):
-            reason = "LOCAL_1_SWAP_NUMERICAL"
-            break
-        reason = "NUMERICAL_INCONCLUSIVE"
-        for flat in moves[delta.flatten()[moves].argsort(stable=True)].tolist():
-            position, index = divmod(flat,len(incoming))
+        if len(moves):
+            candidates = (([flat//len(incoming)],[incoming[flat%len(incoming)].item()])
+                          for flat in moves[delta.flatten()[moves].argsort(stable=True)].tolist())
+            reason = "NUMERICAL_INCONCLUSIVE"
+        else:
+            candidates = _linear_pair_moves(F,ids,criterion,max_elements,_free_positions,tolerance)
+            reason = "LOCAL_2_NUMERICAL"
+        for positions,incoming_ids in candidates:
+            reason = "NUMERICAL_INCONCLUSIVE"
             trial = ids.clone()
-            trial[position] = incoming[index]
+            trial[positions] = trial.new_tensor(incoming_ids)
             X = F[trial]
             candidate = X.mT@X
             L, info = torch.linalg.cholesky_ex(candidate)
@@ -108,18 +154,19 @@ def _linear_exchange(F, ids, B, criterion, max_iter, *, _free_positions=None):
                 continue
             value = torch.trace(torch.cholesky_solve(B,L)).item()
             if phi-value > _tolerance(phi,value,condition,torch.linalg.cond(candidate).item(),p):
+                history.append(dict(k=len(positions),outgoing_ids=ids[positions].tolist(),incoming_ids=incoming_ids))
                 ids = trial
                 break
         else:
             break
     return dict(ids=ids,objective=-phi,efficiency_lower_bound=phi/(len(ids)*diagonal.max().item()),
-                stop_reason=reason,certificate="LOCAL_1_NUMERICAL" if reason=="LOCAL_1_SWAP_NUMERICAL" else "NOT_CERTIFIED")
+                stop_reason=reason,certificate="LOCAL_2_NUMERICAL" if reason=="LOCAL_2_NUMERICAL" else "NOT_CERTIFIED",swap_history=history)
 
 
 @torch.no_grad()
 def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None,
                    max_iter: int = 100, max_elements: int = 1_000_000) -> dict[str, object]:
-    """D VND or A/I one-swap restarts with criterion-specific efficiency floor."""
+    """D/A/I VND restarts with criterion-specific efficiency floor."""
     if criterion not in ("D","A","I"):
         raise ValueError('criterion must be D, A or I')
     if criterion == "D":
@@ -153,7 +200,7 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: 
             break
         starts.append(ids.tolist())
         result = _linear_exchange(F,ids,B,criterion,max_iter,
-                                  _free_positions=None if fixed_ids is None else ~torch.isin(ids,fixed))
+                                  _free_positions=None if fixed_ids is None else ~torch.isin(ids,fixed),max_elements=max_elements)
         objectives.append(result['objective'])
         if best is None or result['objective']>best['objective']:
             best, best_restart = result, restart

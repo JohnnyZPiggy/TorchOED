@@ -14,4 +14,4 @@ For D, G = FM⁻¹Fᵀ and the returned bound is p/(n maxⱼ Gⱼⱼ), equivalen
 
 These are conservative lower bounds against the unrestricted approximate optimum, and therefore also against the best exact or fixed-run augmented optimum. They are not achieved efficiencies. The theorems hold in exact arithmetic; float64 evaluations carry numerical error and are not interval certificates.
 
-D uses 1-/2-swap search; A/I currently use 1-swap search. A local numerical certificate describes only the checked neighbourhood, never global optimality. Read the frozen [W1 definitions and proofs](https://github.com/JohnnyZPiggy/TorchOED/blob/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs/W1_GENERIC_CRITERIA_GATE.md).
+D/A/I use 1-/2-swap search. A local numerical certificate describes only the checked neighbourhood, never global optimality. Read the frozen [W1 definitions and proofs](https://github.com/JohnnyZPiggy/TorchOED/blob/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs/W1_GENERIC_CRITERIA_GATE.md).

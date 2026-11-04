@@ -1,0 +1,74 @@
+{
+  "status": "PASS",
+  "error": null,
+  "source_sha": "e1f0f38dc5a1b880a87447aab12e5de0a5764fca",
+  "run_id": "w105-pair-20261104",
+  "created": true,
+  "cleanup_confirmed": true,
+  "commands": [
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "new",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "exec",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "exec",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "download",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "stop",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0
+    }
+  ],
+  "device_requested": "T4",
+  "device_observed": {
+    "nvidia_smi": [
+      {
+        "name": "Tesla T4",
+        "memory_total_mib": 15360,
+        "driver_version": "580.82.07"
+      }
+    ],
+    "torch": {
+      "status": "AVAILABLE",
+      "version": "2.11.0+cu130",
+      "cuda": "13.0",
+      "name": "Tesla T4",
+      "capability": [
+        7,
+        5
+      ]
+    }
+  },
+  "assignments_before": 0,
+  "assignments_after": 0,
+  "balance_before": 58.04,
+  "balance_after": 58.02,
+  "artifact_sha256": {
+    "w105-pair.json": "5e57656b83c7b568484e597467c0ac43cb58f61505517d8f13152426db7d6d25"
+  },
+  "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+  "total_seconds": 168.975622068
+}

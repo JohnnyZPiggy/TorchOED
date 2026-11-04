@@ -40,7 +40,7 @@ def test_L2_fraction_all_single_swaps_and_floor():
                         assert ratio[i,j]>0
                         assert math.isclose(delta[i,j].item(),float(new-old),rel_tol=1e-12,abs_tol=1e-12)
                         checked += 1
-            for pairs,gains in _linear_pair_scores(F,torch.tensor(ids),criterion,1_000_000):
+            for pairs,gains in _linear_pair_scores(F,torch.tensor(ids),criterion,1400):
                 for row,gain in zip(pairs.tolist(),gains.tolist()):
                     trial = list(ids); trial[row[0]],trial[row[1]] = row[2:]
                     new = linear_value(rows,trial,criterion)

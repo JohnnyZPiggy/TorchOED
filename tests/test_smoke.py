@@ -12,7 +12,7 @@ def test_installed_package_without_pydoe():
     assert util.find_spec("pydoe") is None
     assert metadata.version("torchoed") == torchoed.__version__
     mandatory = [r for r in metadata.requires("torchoed") if "extra ==" not in r]
-    assert mandatory == ["torch>=2.0"]
+    assert mandatory == ["torch>=2.2"]
 
 
 def test_deterministic_cpu_gram():

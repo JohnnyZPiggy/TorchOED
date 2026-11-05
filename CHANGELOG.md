@@ -1,6 +1,6 @@
 # Changelog
 
-- D/A/I efficiency floors now also use approximate-design dual bounds (gate �4b).
+- D/A/I efficiency floors now also use approximate-design dual bounds (gate §4b).
 
 ## [0.5.0] — 2026-10-31
 

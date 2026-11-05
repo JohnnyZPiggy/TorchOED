@@ -144,6 +144,48 @@ def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, 
     return top
 
 
+def _dense_two_ratios(Z, current, incoming, Gss, Gsn, free_positions=None):
+    n, q = len(current), len(incoming)
+    outgoing = torch.triu_indices(n,n,1,device=Z.device).mT
+    if free_positions is not None:
+        outgoing = outgoing[free_positions[outgoing].all(1)]
+    pairs = torch.triu_indices(q,q,1,device=Z.device).mT
+    O = outgoing.repeat_interleave(len(pairs),dim=0)
+    N = pairs.repeat(len(outgoing),1)
+    rows = torch.cat((O,incoming[N]),1)
+    Gnn = Z[:,incoming].mT@Z[:,incoming]
+    G = torch.cat((torch.cat((Gss,Gsn),1),torch.cat((Gsn.mT,Gnn),1)),0)
+    idx = torch.cat((O,n+N),1)
+    blocks = G[idx[:,:,None],idx[:,None,:]]
+    blocks *= Z.new_tensor([-1.,-1.,1.,1.])[None,:,None]
+    blocks += torch.eye(4,dtype=Z.dtype,device=Z.device)
+    ratios = torch.linalg.det(blocks)
+    a,b = O.mT
+    rho = (1-Gss[a,a])*(1-Gss[b,b])-Gss[a,b].square()
+    if n==Z.shape[0]:
+        rho = torch.ones_like(rho)
+    keep = rho>=1e-2
+    a,b = a[keep],b[keep]; c,d = N[keep].mT; r = rho[keep]
+    xc,xd,yc,yd = Gsn[a,c],Gsn[a,d],Gsn[b,c],Gsn[b,d]
+    if n==Z.shape[0]:
+        wc,wd,v = xc.square()+yc.square(),xd.square()+yd.square(),xc*xd+yc*yd
+    else:
+        diagonal = Z[:,incoming].square().sum(0)
+        wc = r*(1+diagonal[c])+(1-Gss[b,b])*xc.square()+(1-Gss[a,a])*yc.square()+2*Gss[a,b]*xc*yc
+        wd = r*(1+diagonal[d])+(1-Gss[b,b])*xd.square()+(1-Gss[a,a])*yd.square()+2*Gss[a,b]*xd*yd
+        gcd = (Z[:,incoming[c]]*Z[:,incoming[d]]).sum(0)
+        v = r*gcd+(1-Gss[b,b])*xc*xd+(1-Gss[a,a])*yc*yd+Gss[a,b]*(xc*yd+yc*xd)
+    # Preserve the streamed closed-form scores for guarded pairs (including tie keys).
+    ratios[keep] = (wc*wd-v.square())/r
+    return ratios,rows
+
+
+def _dense_candidates(ratios, rows, tolerance, anchor=None):
+    top = []
+    _keep_top(top,ratios,rows,tolerance,anchor)
+    return top
+
+
 @torch.no_grad()
 def k2_exchange(F: torch.Tensor, ids: torch.Tensor, *, max_iter: int = 100, tile_size: int = 64, max_elements: int = 1_000_000,
                 _free_positions: torch.Tensor | None = None) -> dict[str, object]:
@@ -170,6 +212,9 @@ def k2_exchange(F: torch.Tensor, ids: torch.Tensor, *, max_iter: int = 100, tile
         if width == 1:
             raise ValueError('insufficient max_elements for one score tile/workspace')
         width = max(1, width // 2)
+    dense = fixed+m*m+128*(free_count*(free_count-1)//2)*(q*(q-1)//2)+8*n*q <= max_elements
+    if dense:
+        width = max(1,q)
     history, objectives = [], [score]
     scanned = dict(k1=0, k2=0)
     verification_attempts = 0
@@ -200,8 +245,12 @@ def k2_exchange(F: torch.Tensor, ids: torch.Tensor, *, max_iter: int = 100, tile
                 reason = 'NO_K2_NEIGHBORHOOD'
                 break
             k = 2
-            top, passes = _ordered_top(two, Z, current, incoming, Gss, Gsn, width,
-                                       capacity, ratio_tolerance)
+            if dense:
+                ratios, rows = _dense_two_ratios(Z,current,incoming,Gss,Gsn,_free_positions)
+                top, passes = _ordered_top(_dense_candidates,ratios,rows,ratio_tolerance)
+            else:
+                top, passes = _ordered_top(two, Z, current, incoming, Gss, Gsn, width,
+                                           capacity, ratio_tolerance)
             scanned['k2'] += passes * (free_count*(free_count-1)//2) * (q*(q-1)//2)
             if not top:
                 reason = 'LOCAL_2_NUMERICAL'

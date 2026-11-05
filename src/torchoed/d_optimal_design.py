@@ -17,6 +17,38 @@ def _fixed_pool(fixed_ids, m, n):
     return fixed, torch.tensor(sorted(set(range(m))-set(fixed.tolist())),dtype=torch.int64)
 
 
+def _dual_floor(F, M, n, criterion, current):
+    m, p = F.shape
+    w = F.new_full((m,),1/m)
+    B = torch.eye(p,dtype=F.dtype,device=F.device) if criterion=='A' else F.mT@F/m
+    R = torch.linalg.cholesky(B).mT if criterion=='I' else None
+    own = torch.linalg.slogdet(M/n).logabsdet if criterion=='D' else n*torch.trace(torch.linalg.solve(M,B))
+    best = current
+    for iteration in range(1000):
+        L, info = torch.linalg.cholesky_ex(F.mT@(w[:,None]*F))
+        if info.item():
+            break
+        Z = torch.linalg.solve_triangular(L,F.mT,upper=False)
+        if criterion=='D':
+            scores = Z.square().sum(0)
+            ratio = p/scores.max()
+            floor = ((own-2*L.diagonal().log().sum())/p).exp()*ratio
+            update = scores/p
+        else:
+            Y = torch.linalg.solve_triangular(L.mT,Z,upper=True)
+            scores = (Y if criterion=='A' else R@Y).square().sum(0)
+            phi = torch.trace(torch.cholesky_solve(B,L))
+            ratio = phi/scores.max()
+            floor = phi*ratio/own
+            update = scores.sqrt()
+        best = max(best,floor.item())
+        if ratio.item()>=1-1e-4:
+            break
+        w = w*update
+        w = w/w.sum()
+    return best
+
+
 @torch.no_grad()
 def d_optimal_design(F: torch.Tensor, n: int, *, fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None, max_iter: int = 100,
                      tile_size: int = 64, max_elements: int = 1_000_000) -> dict[str, object]:
@@ -52,10 +84,11 @@ def d_optimal_design(F: torch.Tensor, n: int, *, fixed_ids: list[int] | tuple[in
         objectives.append(result['final_objective'])
         if best is None or result['final_objective'] > best['final_objective']:
             best, best_restart = result, restart
+    current = torch.tensor(-best['efficiency_gap_bound']/p,dtype=torch.float64).exp().item()
+    floor = _dual_floor(F,F[best['ids']].mT@F[best['ids']],n,'D',current)
     return dict(ids=best['ids'], objective=best['final_objective'],
                 efficiency_gap_bound=best['efficiency_gap_bound'],
-                d_efficiency_lower_bound=torch.tensor(-best['efficiency_gap_bound'] / p,
-                                                     dtype=torch.float64).exp().item(),
+                d_efficiency_lower_bound=floor,
                 stop_reason=best['stop_reason'], certificate=best['certificate'],
                 restart_objectives=objectives, best_restart=best_restart, starts=starts)
 
@@ -204,5 +237,6 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: 
         objectives.append(result['objective'])
         if best is None or result['objective']>best['objective']:
             best, best_restart = result, restart
+    best['efficiency_lower_bound'] = _dual_floor(F,F[best['ids']].mT@F[best['ids']],n,criterion,best['efficiency_lower_bound'])
     return dict(best,criterion=criterion,restart_objectives=objectives,
                 best_restart=best_restart,starts=starts)

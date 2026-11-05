@@ -12,6 +12,7 @@ sys.path.insert(0,str(ROOT/'src'))
 from torchoed import full_factorial, polynomial_features, effects_coding, optimal_design, d_optimality
 OUT = ROOT/'reports/w3-heldout'
 CASES = {'H1':(15,'DAI'),'H2':(16,'DI'),'H3':(10,'DAI'),'H4':(24,'D')}
+CASES3 = {'H5':(30,'D'),'H6':(20,'DI'),'H7':(14,'ID'),'H8':(16,'DAI')}
 
 
 def freeze():
@@ -23,7 +24,19 @@ def freeze():
     C = torch.rand(1000,5,dtype=torch.float64,generator=torch.Generator().manual_seed(20261101))*2-1
     H4 = torch.cat((C,torch.stack([C[:,i]*C[:,j] for i,j in combinations(range(5),2)],1)),1)
     matrices = [polynomial_features(full_factorial((5,5,5)).double()/2-1,2)[:,1:],H2,polynomial_features(H3,2)[:,1:],H4]
-    for name,F in zip(CASES,matrices):
+    H5 = polynomial_features(full_factorial((7,7,7,7)).double()/3-1,2)[:,1:]
+    C = full_factorial((3,3,3,3)).double()-1
+    fixed = ((C.abs()==1).all(1)&(C[:,3]==C[:,:3].prod(1))).nonzero().flatten().tolist()
+    (OUT/'H6_fixed.json').write_text(json.dumps(fixed)+'\n',encoding='utf-8')
+    H6 = polynomial_features(C,2)[:,1:]
+    I = full_factorial((5,5,4))
+    I = I[(I[:,:2].sum(1)<=6)&~((I[:,2]==3)&(I[:,0]==4))]
+    C = I[:,:2].double()/2-1
+    H7 = torch.cat((C,effects_coding(I[:,2],4),(C[:,0]*C[:,1])[:,None],C.square()),1)
+    C = torch.rand(1500,3,dtype=torch.float64,generator=torch.Generator().manual_seed(20261105))*2-1
+    H8 = polynomial_features(C,2)[:,1:]
+    matrices += [H5,H6,H7,H8]
+    for name,F in zip((*CASES,*CASES3),matrices):
         with (OUT/(name+'_F.csv')).open('w',newline='',encoding='utf-8') as f:
             writer=csv.writer(f); writer.writerow(['f'+str(i+1) for i in range(F.shape[1])])
             writer.writerows([[format(x,'.17g') for x in row] for row in F.tolist()])

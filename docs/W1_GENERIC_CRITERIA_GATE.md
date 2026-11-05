@@ -46,6 +46,43 @@ For an exact n-run design with SPD `M` and any PSD `B≠0`, let `Q_jj = f_jᵀM�
 
 Returned field name: `efficiency_lower_bound` (criterion-specific value), keeping `d_efficiency_lower_bound` for D backwards compatibility.
 
+## 4b. Dual (approximate-design) efficiency floor — week 3 W2 (PROVED)
+
+**Chief Architect · 2026-11-05 · Week 3 goal W2.** The §4 floor and the D floor `p/(n·max_j G_jj)` evaluate the dual bound at the design's own moment matrix `M̄=M/n`. Both proofs only use that the evaluation point is a PD normalized moment matrix, so any PD weights may be used instead. Notation: `w≥0`, `Σw_j=1`, `M_w=Σ_j w_j f_jf_jᵀ` PD; `ξ*` an optimal approximate design with moment matrix `M*` (§4 infimum convention).
+
+**D (PROVED).** With `d_j(w)=f_jᵀM_w⁻¹f_j`, `d̄_w=max_j d_j(w)`:
+`logdet M* ≤ logdet M_w + p·log(d̄_w/p)`.
+*Proof.* `logdet` is concave on the PD cone with gradient `M⁻¹`. For `t>0`: `logdet M* ≤ logdet(tM_w) + tr((tM_w)⁻¹M*) − p = logdet M_w + p·log t + E_{ξ*}[d(x)]/t − p ≤ logdet M_w + p·log t + d̄_w/t − p`; `t=d̄_w/p` gives the claim. ∎
+Hence the D-efficiency of the exact design against the approximate optimum (and so against the best exact n-run design) satisfies
+**D-eff ≥ exp((logdet(M/n) − logdet M_w)/p) · p/d̄_w**. At `w` = the design's own uniform weights this is the current floor `p/(n·max_j G_jj)`.
+
+**A/I (PROVED).** With `φ=φ_B`, `q_j(w)=f_jᵀM_w⁻¹BM_w⁻¹f_j`, `q̄_w=max_j q_j(w)`: the §4 proof with `M̄` replaced by `M_w` gives `φ(M*) ≥ φ(M_w)²/q̄_w`, so
+**L-eff ≥ φ(M_w)² / (q̄_w · φ(M̄))**, `φ(M̄)=n·tr(BM⁻¹)`. At `w` = the design's own weights this is the §4 floor.
+
+Both bounds are ≤ the true efficiency (≤ 1) for every `w` with `M_w` PD (zero weights allowed); the choice of `w` affects tightness only, never validity.
+
+**Weights (decision).** One multiplicative run per `optimal_design` call (independent of the restarts and of the returned design: `w` depends only on `F` and the criterion), starting from uniform `w=1/m`:
+- D: `w_j ← w_j·d_j(w)/p` (Titterington; keeps `Σw=1`).
+- A/I: `w_j ← w_j·q_j(w)^{1/2} / Σ_k w_k q_k(w)^{1/2}`.
+Evaluate the floor at every iterate (the `d`/`q` needed for the update give it for free) and keep the maximum. Stop when the weights are near-optimal — D: `p/d̄_w ≥ 1−10⁻⁴`; A/I: `φ(M_w)/q̄_w ≥ 1−10⁻⁴` (these are the §4-type floors of `w` itself, so the returned floor is then ≥ (1−10⁻⁴)× the design's true efficiency against `M*`) — or after **1000** iterations. Returned `efficiency_lower_bound` (and `d_efficiency_lower_bound` for D) = `max(current floor, dual floor)`; IDs, objectives, certificates and stop reasons are unchanged.
+
+**Complexity.** Per iteration O(m·p²): form `M_w=Fᵀdiag(w)F`, one `p×p` Cholesky `M_w=LLᵀ`; D: `d_j=‖L⁻¹f_j‖²` (one `m×p` triangular solve); A: `q_j=‖M_w⁻¹f_j‖²` (two solves); I: precompute once `B=RᵀR` (`p×p`, from `FᵀF/m`) and use `q_j=‖R·M_w⁻¹f_j‖²` — **never** the §4 form `(G·G)_jj/m`, which needs `m×m` workspace. Total O(T·m·p²), T ≤ 1000, workspace O(mp + p²) within the existing `max_elements` budget. The weight run is defined for D, A and I only (B PD, so `q_j>0` for every `f_j≠0`); with a singular user `B` it could zero weights and is not used. Rows with `f_j=0` get `w_j→0`, harmless. In float64 non-support weights may underflow to exactly 0 over many iterations; validity is unaffected (any `w` with `M_w` PD gives a valid bound), but if `M_w` becomes numerically singular the run stops and keeps the best floor so far.
+
+**OBSERVED (Architect sandbox, 2026-11-05, NumPy float64).** (a) 30 random integer fixtures `m=7,p=3,n=4`, every nonsingular subset, D/A/I: 3135 designs, `max(current, dual)` with 300 iterations ≤ exact efficiency against the exhaustive exact optimum in every case (0 violations, tolerance 1e−9). (b) `bench_b0` grid2 (3² grid, quadratic, p=6) n=7 design `[0,6,2,3,4,7,8]`: current floor 0.6122, dual floor 0.9448 after 10 iterations and 0.9454 at convergence. (c) Earlier Architect estimate on the 7 feasible `bench_b0` cases, 2000 iterations: D median 0.93 (0.86–0.99) (`WEEK_GOAL.md`).
+
+**Independent review (2026-11-05): PASS** — fresh-context reviewer, exact `Fraction` checks on 60 random integer fixtures (m=6..8, p=2..3, n=p..p+2; D, A, I and rank-one B; uniform, random positive, sparse, multiplicative and design-own weights): 303,012 dual-inequality checks vs exact designs and 1,680 vs approximate optima, 292,192 (design, w) floor ≤ exact-efficiency checks, 25,408/25,408 exact reductions to the §4 / D current floors, W2-2 exact; 0 violations. Wording fixes applied (B PD for the weight run, I-criterion workspace, float underflow).
+
+**HYPOTHESIS (to be measured by the W2 Engineer Issue).** Floor overhead ≤ 10 % of the `optimal_design` median time on every `bench_b0` case. If it is not, the Engineer reports the numbers and the Architect rules (W1 time has priority over W2 tightness; option: lower the iteration cap).
+
+**Required oracles for the W2 Engineer Issue.**
+
+| ID | Fixture | Expected |
+|---|---|---|
+| W2-1 | Exhaustive `Fraction` oracle, a frozen random integer fixture `m=7,p=3,n=4`, D, A and I | returned floor ≤ exact efficiency vs exhaustive optimum for every nonsingular subset; floor ≥ the §4 / D current floor |
+| W2-2 | Closed form: 2-point line, `F=[[1,−1],[1,1]]`, `n=2`, D | `M*=I`, `w=(½,½)` is optimal: `d̄_w=2=p` → dual floor = `exp((logdet(M/2)−0)/2)·1 = 1` for `S={0,1}` |
+| W2-1b | Same fixture | stopping rule: when `p/d̄_w ≥ 1−ε` (D) or `φ(M_w)/q̄_w ≥ 1−ε` (A/I) the floor is ≥ (1−ε)× the efficiency against the **approximate** optimum `M*` (not the best exact design) |
+| W2-3 | `bench_b0` D cases | IDs/objectives/certificates identical to `main`; report median D floor on the 7 feasible cases (target ≥ 0.90) and the timing overhead |
+
 ## 5. Required oracles for the W1 Engineer Issue
 
 | ID | Fixture | Expected |

@@ -212,7 +212,7 @@ def k2_exchange(F: torch.Tensor, ids: torch.Tensor, *, max_iter: int = 100, tile
         if width == 1:
             raise ValueError('insufficient max_elements for one score tile/workspace')
         width = max(1, width // 2)
-    dense = fixed+m*m+128*(free_count*(free_count-1)//2)*(q*(q-1)//2)+8*n*q <= max_elements
+    dense = fixed+m*m+(4*p+128)*(free_count*(free_count-1)//2)*(q*(q-1)//2)+8*n*q <= max_elements
     if dense:
         width = max(1,q)
     history, objectives = [], [score]

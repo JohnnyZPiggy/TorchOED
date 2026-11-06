@@ -26,8 +26,6 @@ def _dual_floor(F, M, n, criterion, current):
     best = current
     for iteration in range(1000):
         L, info = torch.linalg.cholesky_ex(F.mT@(w[:,None]*F))
-        if info.item():
-            break
         Z = torch.linalg.solve_triangular(L,F.mT,upper=False)
         if criterion=='D':
             scores = Z.square().sum(0)
@@ -41,8 +39,11 @@ def _dual_floor(F, M, n, criterion, current):
             ratio = phi/scores.max()
             floor = phi*ratio/own
             update = scores.sqrt()
-        best = max(best,floor.item())
-        if ratio.item()>=1-1e-4:
+        info_v, floor_v, ratio_v = torch.stack((info.to(F.dtype),floor,ratio)).tolist()
+        if info_v:
+            break
+        best = max(best,floor_v)
+        if ratio_v>=1-1e-4:
             break
         w = w*update
         w = w/w.sum()

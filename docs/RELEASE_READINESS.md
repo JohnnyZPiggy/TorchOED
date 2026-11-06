@@ -28,3 +28,12 @@ self-merge is part of M5-A. Full diff and bounded command evidence are attached
 to the single M5-A Draft PR's ENGINEER_HANDOFF.
 
 [M5-A bounded validation handoff](../reports/m5a/ENGINEER_HANDOFF.md).
+
+## Real PyPI checklist (Scientist)
+
+1. Register a pending trusted publisher on pypi.org for project `torchoed`, owner `JohnnyZPiggy`, repository `TorchOED`; choose and record the workflow filename and environment name.
+2. After that setup is confirmed, the Engineer adds a `pypi` publishing job/environment mirroring `.github/workflows/testpypi.yml`, using those exact publisher names and the production endpoint. This Issue adds no publishing job.
+3. The Engineer creates tag `v0.6.0` and the GitHub Release only after an explicit Scientist instruction; neither is authorized by this checklist.
+4. After an authorized upload, create a fresh venv, install CPU torch, run `python -m pip install --no-deps torchoed==0.6.0` from pypi.org, and verify `python -c "import torchoed; print(torchoed.__version__)"` prints `0.6.0` outside the checkout.
+
+TestPyPI publication is a separate rehearsal; it does not grant production publication approval.

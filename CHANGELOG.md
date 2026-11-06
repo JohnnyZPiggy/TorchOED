@@ -1,6 +1,22 @@
 # Changelog
 
-- D/A/I efficiency floors now also use approximate-design dual bounds (gate §4b).
+## [0.6.0] — 2026-11-06
+
+### Added
+- D/A/I one-/two-swap VND with criterion-specific floors (#92, #108; [API](docs/M3C_API.md)).
+- Fixed-run augmentation (#98; [API](docs/M3C_API.md)) and candidate constraints/effects coding (#94; [API](docs/M1_API.md)).
+- Typed public API and shipped `py.typed` (#100).
+- Public documentation site with executed examples (#104; [quick start](https://johnnyzpiggy.github.io/TorchOED/)).
+- macOS and minimum-torch CI (#96), sdist checks and TestPyPI publishing workflow (#106).
+
+### Changed
+- Approximate-design dual floors (#115, gate 4b): D median 0.9316 over eight dev cases; grid3 n=20 A/I 0.9395/0.9579 ([evidence](reports/w113/summary.md)).
+- Trusted internal D verification (#117): outputs bit-identical, head/base time 0.81-0.96; 5/8 dev cases meet <=3x fastest PyDOE exchange ([evidence](reports/w114/summary.md)).
+
+### Known limitations
+- CPU float64 numerical certificates are not global optimality proofs; experimental API, no GPU support claim.
+- P1 time target remains unmet on grid2 n=6/n=7 and grid3 n=10; ten TorchOED restarts are compared with single PyDOE calls.
+- H5-H8 are frozen; week-end held-out evaluation is pending. Real PyPI publication requires the Scientist.
 
 ## [0.5.0] — 2026-10-31
 

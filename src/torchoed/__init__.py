@@ -1,6 +1,6 @@
 """Torch-only M1 constructors and polynomial features; CPU acceptance only."""
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 from .factorial import ff2n, full_factorial
 from .features import polynomial_features, effects_coding, feasible_candidates

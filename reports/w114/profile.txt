@@ -1,0 +1,41 @@
+base
+         5914 function calls in 0.050 seconds
+
+   Ordered by: cumulative time
+   List reduced from 97 to 10 due to restriction <10>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.050    0.050 _contextlib.py:154(no_grad)
+        1    0.000    0.000    0.050    0.050 d_optimal_design.py:52(d_optimal_design)
+       10    0.004    0.000    0.040    0.004 k2_exchange.py:147(k2_exchange)
+       35    0.000    0.000    0.019    0.001 k2_exchange.py:28(_ordered_top)
+       40    0.000    0.000    0.012    0.000 k2_exchange.py:160(<lambda>)
+       40    0.003    0.000    0.012    0.000 k2_exchange.py:36(_one_candidates)
+       35    0.001    0.000    0.009    0.000 criteria.py:40(d_optimality)
+       35    0.003    0.000    0.008    0.000 information.py:30(exact_information)
+       10    0.000    0.000    0.007    0.001 k2_exchange.py:161(<lambda>)
+       10    0.003    0.000    0.007    0.001 k2_exchange.py:98(_two_candidates)
+
+
+
+
+head
+         4368 function calls in 0.053 seconds
+
+   Ordered by: cumulative time
+   List reduced from 98 to 10 due to restriction <10>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.053    0.053 _contextlib.py:154(no_grad)
+        1    0.000    0.000    0.053    0.053 d_optimal_design.py:52(d_optimal_design)
+       10    0.005    0.001    0.044    0.004 k2_exchange.py:158(k2_exchange)
+       35    0.000    0.000    0.023    0.001 k2_exchange.py:39(_ordered_top)
+       40    0.000    0.000    0.014    0.000 k2_exchange.py:171(<lambda>)
+       40    0.003    0.000    0.014    0.000 k2_exchange.py:47(_one_candidates)
+       10    0.000    0.000    0.008    0.001 k2_exchange.py:172(<lambda>)
+       10    0.003    0.000    0.008    0.001 k2_exchange.py:109(_two_candidates)
+       25    0.004    0.000    0.008    0.000 k2_exchange.py:10(_verified_information)
+       50    0.005    0.000    0.008    0.000 k2_exchange.py:21(_keep_top)
+
+
+

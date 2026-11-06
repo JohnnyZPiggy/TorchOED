@@ -7,6 +7,17 @@ from .exchange import _tolerance
 from .information import exact_information
 
 
+def _verified_information(F, ids):
+    X = F[ids]
+    M = X.mT@X
+    L, info = torch.linalg.cholesky_ex(M*0.5+M.mT*0.5)
+    tolerance = 64*M.shape[-1]*torch.finfo(M.dtype).eps*M.abs().amax()
+    value = 2*L.diagonal().log().sum()
+    accepted = (info==0)&(L.diagonal().square()>tolerance).all()&torch.isfinite(value)
+    accepted, score = torch.stack((accepted,value)).tolist()
+    return (M,score) if accepted else None
+
+
 def _keep_top(top, ratios, rows, ratio_tolerance, anchor):
     eligible = ((ratios - 1) > ratio_tolerance * ratios.abs().clamp_min(1)).nonzero().flatten()
     if anchor is None:
@@ -211,11 +222,10 @@ def k2_exchange(F: torch.Tensor, ids: torch.Tensor, *, max_iter: int = 100, tile
             trial = current.clone()
             trial[positions] = trial.new_tensor(incoming_ids)
             verification_attempts += 1
-            trial_M = exact_information(F, trial, max_elements=max_elements)
-            try:
-                value = d_optimality(trial_M, max_elements=max_elements).item()
-            except ValueError:
+            verified = _verified_information(F,trial)
+            if verified is None:
                 continue
+            trial_M, value = verified
             tolerance = _tolerance(score, value, condition,
                                    torch.linalg.cond(trial_M).item(), p)
             if value - score > tolerance:

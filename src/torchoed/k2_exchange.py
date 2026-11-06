@@ -18,7 +18,7 @@ def _verified_information(F, ids):
     return (M,score) if accepted else None
 
 
-def _keep_top(top, ratios, rows, ratio_tolerance, anchor):
+def _keep_top(top, ratios, rows_of, ratio_tolerance, anchor):
     eligible = ((ratios - 1) > ratio_tolerance * ratios.abs().clamp_min(1)).nonzero().flatten()
     if anchor is None:
         chosen = eligible[ratios[eligible].argsort(descending=True, stable=True)[:8]]
@@ -31,7 +31,7 @@ def _keep_top(top, ratios, rows, ratio_tolerance, anchor):
                             lower[ratios[lower].argsort(descending=True, stable=True)[:8]]))
         key = lambda item: (0 if item[0] >= cutoff else 1,
                             0 if item[0] >= cutoff else -item[0], item[1])
-    top.extend(zip(ratios[chosen].tolist(), map(tuple, rows[chosen].tolist())))
+    top.extend(zip(ratios[chosen].tolist(), map(tuple, rows_of(chosen).tolist())))
     top.sort(key=key)
     del top[8:]
 
@@ -51,12 +51,10 @@ def _one_candidates(Gss, Gsn, diagonal, incoming, width, tolerance, anchor=None,
         end = min(start + width, incoming.numel())
         ratios = ((1 - Gss.diagonal()[:, None]) * (1 + diagonal[incoming[start:end]])
                   + Gsn[:, start:end].square())
-        positions = torch.arange(n, device=incoming.device).repeat_interleave(end-start)
-        rows = torch.stack((positions, incoming[start:end].repeat(n)), dim=1)
         if free_positions is not None:
-            keep = free_positions[positions]
-            ratios, rows = ratios.flatten()[keep], rows[keep]
-        _keep_top(top, ratios.flatten(), rows, tolerance, anchor)
+            ratios = ratios.masked_fill(~free_positions[:,None],-torch.inf)
+        rows_of = lambda chosen: torch.stack((chosen//(end-start),incoming[start+chosen%(end-start)]),dim=1)
+        _keep_top(top, ratios.flatten(), rows_of, tolerance, anchor)
     return top
 
 
@@ -103,7 +101,7 @@ def _pruned_candidates(top, Z, current, incoming, Gss, Gsn, outgoing, rho,
                 v = (r[index,0]*gcd + (1-Gss[b,b])*xc*xd + (1-Gss[a,a])*yc*yd
                      + Gss[a,b]*(xc*yd+yc*xd))
             ratios = (w[index,N[:,0]]*w[index,N[:,1]]-v.square())/r[index,0]
-            _keep_top(top, ratios, rows, tolerance, anchor)
+            _keep_top(top, ratios, rows.__getitem__, tolerance, anchor)
 
 
 def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, anchor=None, *, free_positions=None):
@@ -151,7 +149,7 @@ def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, 
                 block += identity
                 ratios = torch.linalg.det(block)
                 rows = torch.cat((O, A[N[:, :1]], B[N[:, 1:]]), dim=1)
-                _keep_top(top, ratios, rows, tolerance, anchor)
+                _keep_top(top, ratios, rows.__getitem__, tolerance, anchor)
     return top
 
 

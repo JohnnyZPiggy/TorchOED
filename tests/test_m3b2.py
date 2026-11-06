@@ -183,7 +183,7 @@ def test_S11_closed_form_top8_against_public_scores(monkeypatch):
         rows4 = torch.cat((oracle['outgoing_positions'],oracle['incoming_ids']),dim=1)
         def reference(tolerance,anchor=None):
             top = []
-            original(top,oracle['ratios'],rows4,tolerance,anchor)
+            original(top,oracle['ratios'],rows4.__getitem__,tolerance,anchor)
             return top
         expected, _ = search._ordered_top(reference,tol)
         seen[0] = 0

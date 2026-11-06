@@ -1,0 +1,41 @@
+base
+         7583 function calls in 0.080 seconds
+
+   Ordered by: cumulative time
+   List reduced from 100 to 10 due to restriction <10>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.081    0.081 _contextlib.py:154(no_grad)
+        1    0.000    0.000    0.080    0.080 d_optimal_design.py:52(d_optimal_design)
+       10    0.010    0.001    0.072    0.007 k2_exchange.py:158(k2_exchange)
+       65    0.000    0.000    0.036    0.001 k2_exchange.py:39(_ordered_top)
+       70    0.000    0.000    0.021    0.000 k2_exchange.py:171(<lambda>)
+       70    0.005    0.000    0.021    0.000 k2_exchange.py:47(_one_candidates)
+       16    0.000    0.000    0.015    0.001 k2_exchange.py:172(<lambda>)
+       16    0.002    0.000    0.015    0.001 k2_exchange.py:109(_two_candidates)
+       52    0.006    0.000    0.012    0.000 k2_exchange.py:10(_verified_information)
+       16    0.006    0.000    0.012    0.001 k2_exchange.py:63(_pruned_candidates)
+
+
+
+
+head
+         7723 function calls in 0.082 seconds
+
+   Ordered by: cumulative time
+   List reduced from 100 to 10 due to restriction <10>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.082    0.082 _contextlib.py:154(no_grad)
+        1    0.000    0.000    0.082    0.082 d_optimal_design.py:53(d_optimal_design)
+       10    0.010    0.001    0.072    0.007 k2_exchange.py:156(k2_exchange)
+       65    0.000    0.000    0.036    0.001 k2_exchange.py:39(_ordered_top)
+       70    0.000    0.000    0.020    0.000 k2_exchange.py:169(<lambda>)
+       70    0.004    0.000    0.019    0.000 k2_exchange.py:47(_one_candidates)
+       16    0.000    0.000    0.016    0.001 k2_exchange.py:170(<lambda>)
+       16    0.002    0.000    0.016    0.001 k2_exchange.py:107(_two_candidates)
+       86    0.006    0.000    0.015    0.000 k2_exchange.py:21(_keep_top)
+       16    0.006    0.000    0.012    0.001 k2_exchange.py:61(_pruned_candidates)
+
+
+

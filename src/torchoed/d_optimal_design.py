@@ -2,8 +2,8 @@
 import torch
 
 from .criteria import d_optimality
-from .information import exact_information
-from .k2_exchange import k2_exchange
+from .information import exact_information, _features
+from .k2_exchange import k2_exchange, _verified_information
 from .two_swap import _pair_tiles
 
 
@@ -56,6 +56,7 @@ def d_optimal_design(F: torch.Tensor, n: int, *, fixed_ids: list[int] | tuple[in
     m, p = F.shape
     if type(n) is not int or not m >= n >= p:
         raise ValueError("n must be an int with m>=n>=p")
+    _features(F,max_elements)
     if fixed_ids is not None:
         fixed, pool = _fixed_pool(fixed_ids,m,n)
     starts, objectives = [], []
@@ -67,10 +68,7 @@ def d_optimal_design(F: torch.Tensor, n: int, *, fixed_ids: list[int] | tuple[in
                 ids = torch.randperm(m, generator=generator)[:n].sort().values
             else:
                 ids = torch.cat((fixed,pool[torch.randperm(len(pool),generator=generator)[:n-len(fixed)]])).sort().values
-            M = exact_information(F, ids, max_elements=max_elements)
-            try:
-                d_optimality(M, max_elements=max_elements)
-            except ValueError:
+            if _verified_information(F,ids) is None:
                 failures += 1
                 if failures >= 100 * restarts:
                     raise ValueError("No feasible start after 100*restarts failed draws; "

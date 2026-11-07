@@ -165,9 +165,10 @@ def test_S11_closed_form_top8_against_public_scores(monkeypatch):
     import importlib
     from torchoed import score_two_swaps
     search = importlib.import_module('torchoed.k2_exchange')
-    original, seen = search._keep_top, [0]
+    original, seen, chunks = search._keep_top, [0], [0]
     def counted(top,ratios,*args):
         seen[0] += len(ratios)
+        chunks[0] += 1
         return original(top,ratios,*args)
     monkeypatch.setattr(search,'_keep_top',counted)
     # p=3 keeps the nonsaturated guarded path and all 148,200 oracle pairs.
@@ -188,10 +189,15 @@ def test_S11_closed_form_top8_against_public_scores(monkeypatch):
             return top
         expected, _ = search._ordered_top(reference,tol)
         seen[0] = 0
+        chunks[0] = 0
         actual, passes = search._ordered_top(search._two_candidates,Z,ids,incoming,
-            Z[:,ids].mT@Z[:,ids],Z[:,ids].mT@Z[:,incoming],64,1024,tol)
+            Z[:,ids].mT@Z[:,ids],Z[:,ids].mT@Z[:,incoming],64,4096,tol)
+        assert chunks[0] >= 2
         assert len(actual) == len(expected)
-        ratios = dict(zip(map(tuple,rows4.tolist()),oracle['ratios'].tolist()))
+        # Only the chosen rows need oracle lookups, not a full Python dictionary.
+        chosen = torch.tensor(sorted({row for _,row in actual+expected}))
+        indices = (rows4[:,None,:] == chosen[None,:,:]).all(dim=2).int().argmax(dim=0)
+        ratios = dict(zip(map(tuple,chosen.tolist()),oracle['ratios'][indices].tolist()))
         torch.testing.assert_close(torch.tensor([g for g,_ in actual],dtype=torch.float64),
             torch.tensor([ratios[row] for _,row in actual],dtype=torch.float64),atol=1e-9,rtol=1e-9)
         # The 8th place can be an exact tie.

@@ -29,5 +29,5 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w118](w118/) | Lazy rows / combined dual-floor transfer pair, 40 identical D outputs; [#121](https://github.com/JohnnyZPiggy/TorchOED/pull/121) | superseded by w4-bench (timing convention) |
 | [w3-heldout](w3-heldout/) | Frozen inputs and untuned H1-H8 final evidence in final/; [#102](https://github.com/JohnnyZPiggy/TorchOED/pull/102), [#112](https://github.com/JohnnyZPiggy/TorchOED/pull/112), [#122](https://github.com/JohnnyZPiggy/TorchOED/pull/122) | current (held-out record; no tuning) |
 | [w3-probe](w3-probe/) | R AlgDesign reproduction probe; [#88](https://github.com/JohnnyZPiggy/TorchOED/pull/88) | superseded by w3-heldout |
-| [w4-bench](w4-bench/) | Measured per-restart D/A/I ratios, retained 10-restart D rows; Issue #124 (producing PR linked on completion) | current (development timing baseline) |
+| [w4-bench](w4-bench/) | Measured per-restart D/A/I ratios, retained 10-restart D rows; [#126](https://github.com/JohnnyZPiggy/TorchOED/pull/126) | current (development timing baseline) |
 | [w95-bench](w95-bench/) | Fixed-run augmentation and unchanged D CPU pair; [#98](https://github.com/JohnnyZPiggy/TorchOED/pull/98) | superseded by w118 |

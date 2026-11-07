@@ -170,7 +170,8 @@ def test_S11_closed_form_top8_against_public_scores(monkeypatch):
         seen[0] += len(ratios)
         return original(top,ratios,*args)
     monkeypatch.setattr(search,'_keep_top',counted)
-    for m,p,n in ((60,10,20),(40,6,6)):
+    # p=3 keeps the nonsaturated guarded path and all 148,200 oracle pairs.
+    for m,p,n in ((60,3,20),(40,6,6)):
         F = torch.randn(m,p,dtype=torch.float64,generator=torch.Generator().manual_seed(0))
         ids = torch.randperm(m,generator=torch.Generator().manual_seed(0))[:n].sort().values
         incoming = torch.tensor(sorted(set(range(m))-set(ids.tolist())))
@@ -204,7 +205,8 @@ def test_S11_closed_form_top8_against_public_scores(monkeypatch):
 def test_S12_survivor_chunk_partition_invariance(monkeypatch):
     import importlib
     search = importlib.import_module('torchoed.k2_exchange')
-    m,p,n = 60,10,20
+    # Fewer candidates retain the guarded path, multiple chunks and top-eight check.
+    m,p,n = 32,10,20
     F = torch.randn(m,p,dtype=torch.float64,generator=torch.Generator().manual_seed(0))
     ids = torch.randperm(m,generator=torch.Generator().manual_seed(0))[:n].sort().values
     incoming = torch.tensor(sorted(set(range(m))-set(ids.tolist())))

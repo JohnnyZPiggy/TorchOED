@@ -10,12 +10,15 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'src'))
 from torchoed import full_factorial, polynomial_features, effects_coding, optimal_design, d_optimality
-OUT = ROOT/'reports/w3-heldout'
+INPUT = ROOT/'reports/w3-heldout'
+OUT = INPUT/'final'
 CASES = {'H1':(15,'DAI'),'H2':(16,'DI'),'H3':(10,'DAI'),'H4':(24,'D')}
 CASES3 = {'H5':(30,'D'),'H6':(20,'DI'),'H7':(14,'ID'),'H8':(16,'DAI')}
 
 
 def freeze():
+    global OUT
+    OUT=INPUT
     OUT.mkdir(parents=True,exist_ok=True)
     I = full_factorial((3,3,3,3)); C = I[:,:3].double()-1
     H2 = torch.cat((C,effects_coding(I[:,3],3),torch.stack([C[:,i]*C[:,j] for i,j in combinations(range(3),2)],1),C.square()),1)
@@ -43,7 +46,7 @@ def freeze():
 
 
 def load(name):
-    with (OUT/(name+'_F.csv')).open(encoding='utf-8') as f:
+    with (INPUT/(name+'_F.csv')).open(encoding='utf-8') as f:
         reader=csv.reader(f); next(reader)
         X=torch.tensor([[float(x) for x in row] for row in reader],dtype=torch.float64)
     return torch.cat((torch.ones(len(X),1,dtype=X.dtype),X),1)
@@ -63,8 +66,9 @@ def summary(data):
     lines=['# W3 held-out: one run, reported as-is','',json.dumps(data['environment']),
            'D = logdet(M); A/I = trace(M^-1 B). Cells: shared value / efficiency vs best found / median seconds (R quality only). D efficiency = exp((value-best)/p); A/I = best/value. PyDOE D-selected designs are also rescored for A/I.',
            'AlgDesign: '+data['algdesign_status']+'; Julia NOT_RUN. R timing is never compared. Frozen-input oracles: '+str(data['input_oracles']),
-           '', '| Case / criterion | TorchOED value / eff / s | certified floor / stop | sequential | fedorov | modified_fedorov | detmax | AlgDesign value / eff |','|---|---|---|---|---|---|---|---|']
-    for name,(_,criteria) in CASES.items():
+           '', '| Case / criterion | TorchOED value / eff / s | certified floor / stop | sequential | fedorov | modified_fedorov | detmax | AlgDesign value / eff | P1 exit |','|---|---|---|---|---|---|---|---|---|']
+    quality_pass=time_pass=time_rows=0
+    for name,(_,criteria) in (CASES | CASES3).items():
         p=load(name).shape[1]
         for c in criteria:
             rows=[r for r in data['rows'] if r['case']==name and (r['criterion']==c or r['method'].startswith('PyDOE/'))]
@@ -79,18 +83,28 @@ def summary(data):
                 eff=(math.exp((value-best)/p) if c=='D' else best/value) if value is not None else None
                 cells.append('INVALID' if value is None else f'{value:.9g} / {eff:.9g}'+(f" / {row['seconds']:.6g}" if method!='AlgDesign' else ''))
             tor=next(r for r in rows if r['method']=='TorchOED')
-            lines.append(f"| {name} / {c} | {cells[0]} | {tor['floor']:.9g} / {tor['stop']} | "+' | '.join(cells[1:])+' |')
-    lines+=['','R D/A conversions (1e-9 relative), I ratio (conjecture only): '+json.dumps(data.get('r_conversion',[])),data.get('cleanup','No remote session allocated; controller status recorded separately.')]
+            refs=[r['metrics'][c] for r in rows if r['method']!='TorchOED' and r['metrics'][c] is not None]
+            reference=(max(refs) if c=='D' else min(refs)) if refs else None
+            efficiency=(math.exp((tor['metrics'][c]-reference)/p) if c=='D' else reference/tor['metrics'][c]) if reference is not None else None
+            quality=efficiency is not None and efficiency>=1-1e-9; quality_pass+=quality
+            comparable=[r['seconds'] for r in rows if r['method'] in ('PyDOE/fedorov','PyDOE/modified_fedorov','PyDOE/detmax') and r['metrics'][c] is not None]
+            ratio=tor['seconds']/min(comparable) if comparable else None
+            time_rows+=ratio is not None; time_pass+=ratio is not None and ratio<=3
+            exit_cell=f"quality {'PASS' if quality else 'FAIL'} ({efficiency}); time "+('N/A' if ratio is None else f"{'PASS' if ratio<=3 else 'FAIL'} ({ratio:.6g}x)")
+            data.setdefault('p1_exit',[]).append(dict(case=name,criterion=c,efficiency=efficiency,quality=quality,time_ratio=ratio))
+            lines.append(f"| {name} / {c} | {cells[0]} | {tor['floor']:.9g} / {tor['stop']} | "+' | '.join(cells[1:])+' | '+exit_cell+' |')
+    data['p1_counts']=dict(quality_pass=quality_pass,quality_rows=len(data['p1_exit']),time_pass=time_pass,time_rows=time_rows)
+    lines+=['',str(data['p1_counts']),'R D/A conversions (1e-9 relative), I ratio (conjecture only): '+json.dumps(data.get('r_conversion',[])),data.get('cleanup','No remote session allocated; controller status recorded separately.')]
     (OUT/'summary.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
 
 
 def rescore_r(data):
     path=OUT/'algdesign_out.json'
-    if not path.exists():
-        return
-    data['algdesign_status']='RUN (quality only)'; data['r_conversion']=[]
-    for row in json.loads(path.read_text()):
+    data['rows']=[r for r in data['rows'] if r['method']!='AlgDesign']
+    data['algdesign_status']='H1-H4 reused; H5-H8 '+('RUN' if path.exists() else 'NOT_RUN')+' (quality only)'; data['r_conversion']=[]
+    for row in json.loads((INPUT/'algdesign_out.json').read_text())+(json.loads(path.read_text()) if path.exists() else []):
         name,c=row['case'],row['criterion']; F=load(name); ids=[i-1 for i in row['rows']]
+        if name=='H6': assert set(json.loads((INPUT/'H6_fixed.json').read_text()))<=set(ids)
         scores=metric(F,ids); n,p=len(ids),F.shape[1]
         data['rows'].append(dict(case=name,criterion=c,method='AlgDesign',ids=ids,metrics=scores))
         expected=dict(D=math.exp((scores['D']-p*math.log(n))/p),A=n*scores['A']/p,I=n*scores['I'])
@@ -98,6 +112,7 @@ def rescore_r(data):
 
 
 def run():
+    OUT.mkdir(parents=True,exist_ok=True)
     import pydoe
     torch.set_num_threads(1)
     H3=torch.tensor([[i/5,j/5] for i in range(-5,6) for j in range(-5,6) if i+j<=5 and i-j>=-7],dtype=torch.float64)
@@ -106,17 +121,18 @@ def run():
     assert torch.equal(H4,load('H4')[:,1:6])
     data=dict(source_sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),environment=dict(cpu=platform.processor(),os=platform.platform(),python=platform.python_version(),torch=torch.__version__,pydoe=version('pydoe'),numpy=version('numpy'),scipy=version('scipy'),threads=1),input_oracles=dict(H3='PASS m=100, identical coordinates',H4='PASS torch.equal float64 round-trip'),algdesign_status='NOT_RUN',rows=[])
     assert version('pydoe')=='1.6.0'
-    for name,(n,criteria) in CASES.items():
-        F=load(name)
+    for name,(n,criteria) in (CASES | CASES3).items():
+        F=load(name); fixed=json.loads((INPUT/'H6_fixed.json').read_text()) if name=='H6' else None
         for c in criteria:
             times=[]
             for repeat in range(3):
-                begin=time.perf_counter(); result=optimal_design(F,n,criterion=c,generator=torch.Generator().manual_seed(0)); times.append(time.perf_counter()-begin)
+                begin=time.perf_counter(); result=optimal_design(F,n,criterion=c,fixed_ids=fixed,generator=torch.Generator().manual_seed(0)); times.append(time.perf_counter()-begin)
             ids=result['ids'].tolist()
+            if fixed is not None: assert set(fixed)<=set(ids)
             data['rows'].append(dict(case=name,criterion=c,method='TorchOED',ids=ids,metrics=metric(F,ids),floor=result['efficiency_lower_bound'],stop=result['stop_reason'],seconds=statistics.median(times)))
             print(name,c,'TorchOED completed',flush=True)
-        if name in ('H1','H3'):
-            C=F[:,1:4 if name=='H1' else 3]; lookup={tuple(x):i for i,x in enumerate(C.tolist())}
+        if name in ('H1','H3','H5','H8'):
+            C=F[:,1:{'H1':4,'H3':3,'H5':5,'H8':4}[name]]; lookup={tuple(x):i for i,x in enumerate(C.tolist())}
             for method in ('sequential','fedorov','modified_fedorov','detmax'):
                 times=[]
                 for repeat in range(3):
@@ -126,7 +142,8 @@ def run():
                 print(name,method,'completed',flush=True)
         (OUT/'results.json').write_text(json.dumps(data,allow_nan=False)+'\n',encoding='utf-8')
     rescore_r(data)
-    (OUT/'results.json').write_text(json.dumps(data,allow_nan=False)+'\n',encoding='utf-8'); summary(data)
+    data['p1_exit']=[]; summary(data)
+    (OUT/'results.json').write_text(json.dumps(data,allow_nan=False)+'\n',encoding='utf-8')
 
 
 if __name__=='__main__':
@@ -134,4 +151,5 @@ if __name__=='__main__':
     elif sys.argv[1]=='run': run()
     else:
         data=json.loads((OUT/'results.json').read_text()); rescore_r(data)
-        (OUT/'results.json').write_text(json.dumps(data,allow_nan=False)+'\n',encoding='utf-8'); summary(data)
+        data['p1_exit']=[]; summary(data)
+        (OUT/'results.json').write_text(json.dumps(data,allow_nan=False)+'\n',encoding='utf-8')

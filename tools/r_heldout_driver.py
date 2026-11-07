@@ -8,6 +8,6 @@ if installed: subprocess.run(['apt-get','install','-y','r-base-core'],check=True
 version = subprocess.check_output(['R','--version'],text=True)
 subprocess.run(['Rscript','-e','install.packages("AlgDesign",repos="https://cloud.r-project.org")'],check=True)
 subprocess.run(['Rscript','tools/r_heldout.R'],cwd=root,env=dict(os.environ,CUDA_VISIBLE_DEVICES=''),check=True)
-out = root/'reports/w3-heldout'
+out = root/'reports/w3-heldout/final'
 data = dict(status='PASS',source_sha=sha,runtime='Rscript in Colab Python runtime',r_install='apt-get r-base-core' if installed else 'preinstalled Rscript',r_version=version,device_observed=json.loads(os.environ['SAE_DEVICE_OBSERVED']),algdesign=json.loads((out/'algdesign_out.json').read_text()),sessionInfo=(out/'sessionInfo.txt').read_text())
 pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data,allow_nan=False)+'\n')

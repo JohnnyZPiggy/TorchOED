@@ -20,7 +20,7 @@ import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT/'src'), str(ROOT/'tests')]
-from torchoed import d_optimal_design, d_optimality, full_factorial, polynomial_features
+from torchoed import d_optimal_design, optimal_design, d_optimality, full_factorial, polynomial_features
 from oracle_exchange import determinant
 
 
@@ -86,7 +86,7 @@ def main():
                             row.update(ids=ids, actual_n=len(ids), repeats=len(ids)-len(set(ids)))
                             score_design(F,row,exact_F)
                             if seed is not None:
-                                row.update(stop_reason=result['stop_reason'], certificate=result['certificate'])
+                                row.update(stop_reason=result['stop_reason'], certificate=result['certificate'], returned_floor=result['d_efficiency_lower_bound'])
                             if 'exact_optimum_det' in case:
                                 row['attains_exact_optimum'] = len(ids)==n and not row['repeats'] and determinant(exact_F,ids)==optimum
                     row['median_seconds'] = stats.median(row['times_seconds'])
@@ -100,6 +100,32 @@ def main():
                     row['D_efficiency'] = math.exp((row['logdet']-max(scores))/p)
                 elif scores and row.get('exact_determinant')=='0': row['D_efficiency'] = 0.
             save()
+            case['per_restart'] = []
+            for criterion in 'DAI':
+                for seed in range(5):
+                    row = dict(criterion=criterion, seed=seed, restarts=1, times_seconds=[])
+                    case['per_restart'].append(row)
+                    try:
+                        for repeat in range(3 if criterion=='D' else 1):
+                            begin = time.perf_counter()
+                            result = optimal_design(F,n,criterion=criterion,restarts=1,generator=torch.Generator().manual_seed(seed))
+                            row['times_seconds'].append(time.perf_counter()-begin)
+                        row['median_seconds'] = stats.median(row['times_seconds'])
+                    except Exception as exc:
+                        row['error'] = type(exc).__name__+': '+str(exc)
+                    print(name,n,'per-restart',criterion,seed,row.get('median_seconds'),row.get('error',''),flush=True)
+                    save()
+    previous = json.loads((ROOT/'reports/w118/pair.json').read_text())['runs']['head']
+    matched = total = 0
+    for case in data['cases']:
+        old = next(c for c in previous['cases'] if (c['pool'],c['n'])==(case['pool'],case['n']))
+        for row in case['rows']:
+            if row['method']=='TorchOED' and 'error' not in row:
+                ref = next(r for r in old['rows'] if r['method']=='TorchOED' and r['seed']==row['seed'])
+                total += 1
+                matched += all(row[k]==ref[k] for k in ('ids','logdet','d_efficiency_lower_bound','returned_floor','stop_reason','certificate'))
+    data['D_reproduction'] = dict(matched=matched,total=total,reference='reports/w118/pair.json runs.head')
+    save()
     summary(data, out)
 
 
@@ -147,6 +173,25 @@ def summary(data, out):
                         previous = stats.median(times)
                         baseline = f'{previous:.6g}'
                 lines.append(f"| {case['n']} | {method} | {values('logdet')} | {values('D_efficiency')} | {values('d_efficiency_lower_bound')} | {format(stats.median(r['median_seconds'] for r in ok),'.6g') if ok else 'n/a'} | {baseline} | {status} | {comparison} |")
+    if any('per_restart' in c for c in data['cases']):
+        lines += ['', '## Measured per-restart timing (Scientist rule)', '',
+                  'Each row uses restarts=1, seeds 0..4: D has 3 calls/seed, A/I 1 call/seed. Values are medians of per-seed medians, not total time divided by 10. A/I timings are reported as-is; no A/I quality comparison.',
+                  '10-restart D reproduction: '+json.dumps(data['D_reproduction']), '',
+                  '| Case | D total (10) s | D (1) s | A (1) s | I (1) s | A:D | I:D | fastest PyDOE exchange s | D (1) / PyDOE |',
+                  '|---|---|---|---|---|---|---|---|---|']
+        for case in data['cases']:
+            def median(rows):
+                times = [r['median_seconds'] for r in rows if 'median_seconds' in r and 'error' not in r]
+                return stats.median(times) if times else None
+            total = median(r for r in case['rows'] if r['method']=='TorchOED')
+            seconds = [median(r for r in case['per_restart'] if r['criterion']==c) for c in 'DAI']
+            feasible = [r['median_seconds'] for r in case['rows'] if r['method'] in ('fedorov','modified_fedorov','detmax') and 'error' not in r and not r.get('repeats') and r.get('actual_n')==case['n']]
+            fastest = min(feasible) if feasible else None
+            d,a,i = seconds
+            cells = [total,d,a,i,a/d if a is not None and d else None,i/d if i is not None and d else None,fastest,d/fastest if d is not None and fastest else None]
+            case['per_restart_summary'] = dict(zip(('D_total_seconds','D_seconds','A_seconds','I_seconds','A_to_D','I_to_D','PyDOE_seconds','D_to_PyDOE'),cells))
+            lines.append('| '+case['pool']+' n='+str(case['n'])+' | '+' | '.join('N/A' if x is None else format(x,'.9g') for x in cells)+' |')
+        (out/'results.json').write_text(json.dumps(data,allow_nan=False)+'\n',encoding='utf-8')
     (out/'summary.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
 
 

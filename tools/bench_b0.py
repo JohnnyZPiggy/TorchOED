@@ -86,7 +86,7 @@ def main():
                             row.update(ids=ids, actual_n=len(ids), repeats=len(ids)-len(set(ids)))
                             score_design(F,row,exact_F)
                             if seed is not None:
-                                row.update(stop_reason=result['stop_reason'], certificate=result['certificate'], returned_floor=result['efficiency_lower_bound'])
+                                row.update(stop_reason=result['stop_reason'], certificate=result['certificate'], returned_floor=result['d_efficiency_lower_bound'])
                             if 'exact_optimum_det' in case:
                                 row['attains_exact_optimum'] = len(ids)==n and not row['repeats'] and determinant(exact_F,ids)==optimum
                     row['median_seconds'] = stats.median(row['times_seconds'])

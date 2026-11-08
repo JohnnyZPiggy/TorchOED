@@ -58,7 +58,7 @@ def score_two_swaps(F: torch.Tensor, ids: torch.Tensor, *, tile_size: int = 64, 
     output_elements = 10*count + n
     budget((output_elements,), max_elements)
     fixed = 2*m*p + 6*n*p + 10*p*p + 4*m + 2*n + 64
-    per_pair = 16*p + 128
+    per_pair = 16*p + 128 + n*p + 2*p*p
     available = max_elements - output_elements - fixed
     if available < 0 or (count and available < per_pair):
         raise ValueError("insufficient max_elements for outputs plus one score tile/workspace")
@@ -99,6 +99,37 @@ def score_two_swaps(F: torch.Tensor, ids: torch.Tensor, *, tile_size: int = 64, 
         incoming_ids[offset:offset+size] = pairs[:, 2:]
         gamma = _rank_four_ratios(L, F, ids, pairs)
         ratios[offset:offset+size] = gamma
+        trial = ids.expand(size, -1).clone()
+        trial.scatter_(1, pairs[:, :2], pairs[:, 2:])
+        X = F[trial]
+        trial_M = X.mT @ X
+        try:
+            value = d_optimality(trial_M, max_elements=max_elements)
+        except ValueError:
+            del X, trial_M, trial
+        else:
+            trial_condition = torch.linalg.cond(trial_M)
+            tolerance = (256*torch.finfo(F.dtype).eps*p
+                         * value.abs().clamp_min(max(1.,abs(initial)))
+                         * trial_condition.clamp_min(max(1.,condition)))
+            error = (gamma.log()-(value-initial)).abs()
+            positive = torch.isfinite(gamma) & (gamma>0)
+            valid = positive & torch.isfinite(tolerance) & (error<=tolerance)
+            scores[offset:offset+size] = value
+            tolerances[offset:offset+size] = tolerance
+            errors[offset:offset+size] = torch.where(positive,error,torch.nan)
+            status[offset:offset+size][valid] = 0
+            gains[offset:offset+size][valid] = value[valid]-initial
+            labels = ('DIRECT_SPD_AND_RATIO_AGREE', 'RATIO_DIRECT_DISAGREEMENT',
+                      'NONPOSITIVE_OR_NONFINITE_RATIO_ON_SPD_TRIAL')
+            reasons[offset:offset+size] = [labels[i] for i in
+                torch.where(positive,(~valid).long(),2).tolist()]
+            accepted = valid.sum().item()
+            counts['VALID'] += accepted
+            counts['NUMERICAL_INCONCLUSIVE'] += size-accepted
+            del X, trial_M, trial
+            offset += size
+            continue
         for local, pair in enumerate(pairs):
             index = offset + local
             trial = ids.clone()

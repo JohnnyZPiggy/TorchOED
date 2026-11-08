@@ -171,3 +171,17 @@ def test_pair_tiles_match_independent_combinations():
         expected = [torch.tensor(rows[i:i+width]) for i in range(0,len(rows),width)]
         assert len(actual) == len(expected)
         assert all(torch.equal(a,b) for a,b in zip(actual,expected))
+
+
+def test_batched_direct_scores_against_independent_slogdet():
+    F = torch.randn(14,3,dtype=torch.float64,generator=torch.Generator().manual_seed(0))
+    ids = torch.arange(6)
+    result = score_two_swaps(F,ids)
+    expected = []
+    for out,inc in itertools.product(itertools.combinations(range(6),2),itertools.combinations(range(6,14),2)):
+        trial = ids.clone()
+        trial[list(out)] = torch.tensor(inc)
+        X = F[trial]
+        expected.append(torch.linalg.slogdet(X.mT@X).logabsdet)
+    torch.testing.assert_close(result['direct_scores'],torch.stack(expected),atol=1e-12,rtol=1e-12)
+    assert result['status'].tolist() == [0]*len(expected)

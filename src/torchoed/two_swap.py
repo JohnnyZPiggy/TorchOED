@@ -7,17 +7,21 @@ from .information import exact_information
 
 
 def _pair_tiles(n, incoming, width):
-    outgoing = torch.triu_indices(n, n, 1).mT
+    out_count = n*(n-1)//2
+    out_ends = torch.arange(n).flip(0)[:-1].cumsum(0)
     incoming = torch.tensor(incoming, dtype=torch.int64)
     q = len(incoming)
     ends = torch.arange(q).flip(0)[:-1].cumsum(0)
     count = q*(q-1)//2
-    for start in range(0, len(outgoing)*count, width):
-        flat = torch.arange(start, min(start+width, len(outgoing)*count))
+    for start in range(0, out_count*count, width):
+        flat = torch.arange(start, min(start+width, out_count*count))
+        out = flat//count
+        i = torch.searchsorted(out_ends, out, right=True)
+        k = i+1+out-(out_ends[i]-(n-i-1))
         local = flat % count
         a = torch.searchsorted(ends, local, right=True)
         b = a+1+local-(ends[a]-(q-a-1))
-        yield torch.cat((outgoing[flat//count], incoming[torch.stack((a,b),dim=1)]),dim=1)
+        yield torch.stack((i,k,incoming[a],incoming[b]),dim=1)
 
 
 def _rank_four_ratios(L, F, ids, pairs):

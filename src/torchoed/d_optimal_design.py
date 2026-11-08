@@ -182,7 +182,7 @@ def _linear_eligible(pairs, gains, tolerance, cutoff):
 def _linear_prefix_limit(negative, outgoing, phi, tolerance, best):
     theta = min(max(tolerance,best)-tolerance,phi/2)
     shift = phi*theta/(phi-theta)
-    return torch.searchsorted(negative,negative.new_tensor(-outgoing-shift+tolerance),right=True).item()
+    return torch.searchsorted(negative,-outgoing-shift+tolerance,right=True)
 
 
 def _linear_prefix_tiles(n, prefix, selected_scores, phi, tolerance, width, get_best):
@@ -196,28 +196,28 @@ def _linear_prefix_tiles(n, prefix, selected_scores, phi, tolerance, width, get_
             offset += len(pairs)
         return
     ends = torch.arange(q).flip(0)[:-1].cumsum(0)
-    pending, flats, used, out = [], [], 0, 0
-    for i in range(n):
-        for k in range(i+1,n):
-            outgoing = (selected_scores[i]+selected_scores[k]).item()
-            start = 0
-            while True:
-                limit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best())
-                if start>=limit:
-                    break
-                end = min(limit,start+width-used)
-                local = order[start:end]
-                a = torch.searchsorted(ends,local,right=True)
-                b = a+1+local-(ends[a]-(q-a-1))
-                pending.append(torch.stack((torch.full_like(a,i),torch.full_like(a,k),pool[a],pool[b]),dim=1))
-                flats.append(out*count+local)
-                used, start = used+end-start, end
-                if used==width:
-                    yield torch.cat(pending),torch.cat(flats)
-                    pending, flats, used = [], [], 0
-            out += 1
-    if used:
-        yield torch.cat(pending),torch.cat(flats)
+    i,k = torch.triu_indices(n,n,offset=1)
+    outgoing = selected_scores[i]+selected_scores[k]
+    start, previous = torch.zeros_like(i), None
+    while True:
+        best = get_best()
+        if best!=previous:
+            limits = _linear_prefix_limit(negative,outgoing,phi,tolerance,best)
+            previous = best
+        remaining = (limits-start).clamp_min(0)
+        boundaries = remaining.cumsum(0)
+        total = boundaries[-1].item()
+        if not total:
+            return
+        flat = torch.arange(min(width,total))
+        out = torch.searchsorted(boundaries,flat,right=True)
+        rank = flat-(boundaries[out]-remaining[out])+start[out]
+        local = order[rank]
+        a = torch.searchsorted(ends,local,right=True)
+        b = a+1+local-(ends[a]-(q-a-1))
+        last = out[-1].item()
+        start[:last],start[last] = limits[:last],rank[-1]+1
+        yield torch.stack((i[out],k[out],pool[a],pool[b]),dim=1),out*count+local
 
 
 def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *, tolerance=None, cutoff=None):
@@ -235,13 +235,13 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
     T = torch.linalg.solve_triangular(L.mT,Z,upper=True) if criterion=='A' else (Z@Z.mT/m)@Z
     J = torch.diag(F.new_tensor([-1.,-1.,1.,1.]))
     count, outgoing_count = len(incoming)*(len(incoming)-1)//2, len(free)*(len(free)-1)//2
-    available_base = max_elements-fixed-2*len(incoming)**2-2*count
+    available_base = max_elements-fixed-2*len(incoming)**2-2*count-8*outgoing_count
     table_elements = 8*count+6*outgoing_count
     hoisted = table_elements<=available_base//2
     available = available_base-table_elements if hoisted else available_base
     tables = None
     screened_capacity = available//96
-    screened = tolerance is not None and screened_capacity>=1 and max_elements-fixed>=6*count
+    screened = tolerance is not None and screened_capacity>=1 and max_elements-fixed>=6*count+8*outgoing_count
     if screened:
         # Closed temporaries die before gather4; retain at most two sets of row IDs.
         rescore_capacity = (available-8*screened_capacity)//(32*p+256)

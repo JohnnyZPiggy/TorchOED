@@ -46,7 +46,7 @@ def test_prefix_prune_preserves_winner_resume(monkeypatch):
         skipped = []
         def count(*args):
             length = limit(*args)
-            skipped.append(len(args[0])-length)
+            skipped.append((len(args[0])-length).sum().item())
             return length
         with monkeypatch.context() as patch:
             patch.setattr(search,'_linear_prefix_limit',count)

@@ -82,12 +82,14 @@ def test_workspace_fallback_preserves_full_scan():
 
 
 def test_hoisted_random_screen_sequence_with_cutoff():
-    F = torch.randn(6,2,dtype=torch.float64,generator=torch.Generator().manual_seed(3))
-    ids = torch.arange(4)
+    F = torch.randn(14,2,dtype=torch.float64,generator=torch.Generator().manual_seed(0))
+    F[:6] *= 1e-3
+    ids = torch.arange(6)
     for criterion in ('A','I'):
-        for cutoff in (None,(-2.,(0,1,4,5))):
-            full = list(search._linear_pair_scores(F,ids,criterion,1_000_000))
-            screened = list(search._linear_pair_scores(F,ids,criterion,1_000_000,tolerance=1e-12,cutoff=cutoff))
-            assert sum(len(p) for p,g in screened)==6
-            assert torch.equal(torch.cat([p for p,g in full]),torch.cat([p for p,g in screened]))
-            assert torch.equal(torch.cat([g for p,g in full]),torch.cat([g for p,g in screened]))
+        for cutoff in (None,(-1e8,(0,1,6,7))):
+            for max_elements in (1_000_000,2200):
+                full = list(search._linear_pair_scores(F,ids,criterion,max_elements))
+                screened = list(search._linear_pair_scores(F,ids,criterion,max_elements,tolerance=1e4,cutoff=cutoff))
+                assert sum(len(p) for p,g in screened)==420
+                assert torch.equal(torch.cat([p for p,g in full]),torch.cat([p for p,g in screened]))
+                assert torch.equal(torch.cat([g for p,g in full]),torch.cat([g for p,g in screened]))

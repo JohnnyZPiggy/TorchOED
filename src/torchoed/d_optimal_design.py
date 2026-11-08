@@ -138,13 +138,18 @@ def _linear_closed_terms(G, Q, incoming=None):
 
 
 def _linear_screen(G, Q, idx, tolerance, cutoff, best, tables, offset):
-    incoming, outgoing = tables
-    flat = torch.arange(offset,offset+len(idx))
-    out, local = flat//incoming.shape[1], flat%incoming.shape[1]
-    gaa,gab,gbb,qaa,qab,qbb = outgoing[:,out].unbind(0)
-    row, col = idx[:,(0,0,1,1)], idx[:,(2,3,2,3)]
-    addition, numerator, tau, pi = _linear_closed_terms(
-        (gaa,gab,gbb,*G[row,col].unbind(1)),(qaa,qab,qbb,*Q[row,col].unbind(1)),incoming[:,local].unbind(0))
+    if tables is None:
+        row = idx[:,(0,0,1,2,2,3,0,0,1,1)]
+        col = idx[:,(0,1,1,2,3,3,2,3,2,3)]
+        addition, numerator, tau, pi = _linear_closed_terms(G[row,col].unbind(1),Q[row,col].unbind(1))
+    else:
+        incoming, outgoing = tables
+        flat = torch.arange(offset,offset+len(idx))
+        out, local = flat//incoming.shape[1], flat%incoming.shape[1]
+        gaa,gab,gbb,qaa,qab,qbb = outgoing[:,out].unbind(0)
+        row, col = idx[:,(0,0,1,1)], idx[:,(2,3,2,3)]
+        addition, numerator, tau, pi = _linear_closed_terms(
+            (gaa,gab,gbb,*G[row,col].unbind(1)),(qaa,qab,qbb,*Q[row,col].unbind(1)),incoming[:,local].unbind(0))
     closed = addition+numerator/tau
     determinant = pi*tau
     band = (determinant.abs()<=1e-8) | ~torch.isfinite(determinant) | ~torch.isfinite(closed)
@@ -190,7 +195,11 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
     T = torch.linalg.solve_triangular(L.mT,Z,upper=True) if criterion=='A' else (Z@Z.mT/m)@Z
     J = torch.diag(F.new_tensor([-1.,-1.,1.,1.]))
     count, outgoing_count = len(incoming)*(len(incoming)-1)//2, len(free)*(len(free)-1)//2
-    available = max_elements-fixed-2*len(incoming)**2-8*count-6*outgoing_count
+    available_base = max_elements-fixed-2*len(incoming)**2
+    table_elements = 8*count+6*outgoing_count
+    hoisted = table_elements<=available_base//2
+    available = available_base-table_elements if hoisted else available_base
+    tables = None
     screened_capacity = available//96
     screened = tolerance is not None and screened_capacity>=1
     if screened:
@@ -201,21 +210,23 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
         capacity = screened_capacity
         G = Z.mT@Z
         Q = T.mT@T if criterion=='A' else Z.mT@T
-        c,d = torch.combinations(torch.tensor(incoming),r=2).mT
-        u,v,w = 1+G[c,c],1+G[d,d],G[c,d]
-        pi = u*v-w*w
-        qcc,qcd,qdd = Q[c,c],Q[c,d],Q[d,d]
-        incoming_table = torch.stack((u,v,w,pi,qcc,qcd,qdd,(v*qcc+u*qdd-2*w*qcd)/pi))
-        a,b = torch.combinations(ids[free],r=2).mT
-        outgoing_table = torch.stack((G[a,a],G[a,b],G[b,b],Q[a,a],Q[a,b],Q[b,b]))
-        del a,b,c,d,u,v,w,pi,qcc,qcd,qdd
+        if hoisted:
+            c,d = torch.combinations(torch.tensor(incoming),r=2).mT
+            u,v,w = 1+G[c,c],1+G[d,d],G[c,d]
+            pi = u*v-w*w
+            qcc,qcd,qdd = Q[c,c],Q[c,d],Q[d,d]
+            incoming_table = torch.stack((u,v,w,pi,qcc,qcd,qdd,(v*qcc+u*qdd-2*w*qcd)/pi))
+            a,b = torch.combinations(ids[free],r=2).mT
+            outgoing_table = torch.stack((G[a,a],G[a,b],G[b,b],Q[a,a],Q[a,b],Q[b,b]))
+            del a,b,c,d,u,v,w,pi,qcc,qcd,qdd
+            tables = incoming_table,outgoing_table
     offset = 0
     best = -float('inf')
     for pairs in _pair_tiles(len(free),incoming,capacity):
         pairs[:,:2] = free[pairs[:,:2]]
         if screened:
             idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
-            pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best,(incoming_table,outgoing_table),offset)]
+            pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best,tables,offset)]
             offset += len(idx)
             del idx
         for chunk in pairs.split(rescore_capacity) if screened else (pairs,):

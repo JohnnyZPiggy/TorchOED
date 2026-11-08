@@ -66,11 +66,11 @@ def test_removal_preserves_resume_and_skips_beyond_d(monkeypatch):
             result = data(*args);context.update(chosen=args[2],pool=args[3],diagonal=args[4],t=result[2]);return result
         def count(*args):
             negative,pr,delta,theta,tol = args
-            a,b = torch.triu_indices(len(negative),len(negative),offset=1)
+            a,b = torch.triu_indices(negative.shape[1],negative.shape[1],offset=1)
             diag,pool,t = context['diagonal'],context['pool'],context['t']
-            eta = min(theta+delta,pr/2)
-            e = t[a]+t[b] < pr*eta/(pr-eta)-tol
-            d = diag[pool[a]]+diag[pool[b]] >= diag[context['chosen']].sum()+phi*theta/(phi-theta)-tol
+            eta = torch.minimum(theta+delta,pr/2)
+            e = t[:,a]+t[:,b] < (pr*eta/(pr-eta)-tol)[:,None]
+            d = diag[pool[a]]+diag[pool[b]] >= (diag[context['chosen']].sum(0)+phi*theta/(phi-theta)-tol)[:,None]
             extra.append((e&d).any().item())
             return limit(*args)
         with monkeypatch.context() as patch:

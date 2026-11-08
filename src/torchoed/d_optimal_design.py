@@ -233,69 +233,55 @@ def _linear_removal_data(G, Q, chosen, pool, diagonal):
     a,b = chosen
     g,q = (G[a,a],G[a,b],G[b,b]),(Q[a,a],Q[a,b],Q[b,b])
     rho = (1-g[0])*(1-g[2])-g[1]*g[1]
-    if not rho>=1e-6:
-        return rho,None,None
-    return _linear_removal_terms(g,q,(G[a,pool],G[b,pool]),(Q[a,pool],Q[b,pool]),diagonal[pool])
+    # Invalid removals use only (d); avoid dividing by their singular determinant.
+    safe = tuple(torch.where(rho>=1e-6,v,0)[:,None] for v in g)
+    _,delta,t = _linear_removal_terms(safe,tuple(v[:,None] for v in q),
+                                    (G[a[:,None],pool],G[b[:,None],pool]),
+                                    (Q[a[:,None],pool],Q[b[:,None],pool]),diagonal[pool])
+    return rho,delta[:,0],t
 
 
 def _linear_removal_limit(negative, phi_r, delta, theta, tolerance):
-    eta = min(theta+delta,phi_r/2)
+    eta = torch.minimum(theta+delta,phi_r/2)
     threshold = phi_r*eta/(phi_r-eta)-tolerance
-    return torch.searchsorted(negative,-negative-threshold,right=True)
+    return torch.searchsorted(negative,-negative-threshold[:,None],right=True)
 
 
-def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, width, get_best):
+def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, width, get_best, block_size):
     pool,negative,order = prefix
     q,count = len(pool),len(order)
-    pending,flats,used = [],[],0
-    ends = torch.arange(q).flip(0)[:-1].cumsum(0)
-    for out,(i,k) in enumerate(torch.triu_indices(len(selected),len(selected),offset=1).mT.tolist()):
-        chosen = selected[[i,k]]
-        outgoing = diagonal[chosen].sum()
+    i,k = torch.triu_indices(len(selected),len(selected),offset=1)
+    positions = torch.arange(q)
+    for offset in range(0,len(i),block_size):
+        oi,ok = i[offset:offset+block_size],k[offset:offset+block_size]
+        chosen = torch.stack((selected[oi],selected[ok]))
+        outgoing = diagonal[chosen].sum(0)
         theta = min(max(tolerance,get_best())-tolerance,phi/2)
-        dlimit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best()).item()
-        if not dlimit:
-            continue
+        dlimit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best())
         rho,delta,t = _linear_removal_data(G,Q,chosen,pool,diagonal)
-        if delta is not None:
-            values,permutation = t.sort(descending=True,stable=True)
-            upper = _linear_removal_limit(-values,phi+delta.item(),delta.item(),theta,tolerance)
-            lengths = (upper-torch.arange(q)-1).clamp_min(0)
-            boundaries = lengths.cumsum(0)
-            total = boundaries[-1].item()
-            if total==count:
-                delta = None
-        if delta is None:
-            total = dlimit
-        unpruned = total==count and dlimit==count
+        values,permutation = t.sort(dim=1,descending=True,stable=True)
+        upper = _linear_removal_limit(-values,phi+delta,delta,theta,tolerance)
+        upper = torch.where((rho>=1e-6)[:,None],upper,q)
+        lengths = (upper-positions-1).clamp_min(0)
+        unpruned = lengths.sum(1)==count
+        permutation = torch.where(unpruned[:,None],positions,permutation)
+        lengths = torch.where(unpruned[:,None],q-positions-1,lengths)
+        lengths = torch.where((dlimit>0)[:,None],lengths,0).flatten()
+        boundaries = lengths.cumsum(0)
+        total = boundaries[-1].item()
+        del chosen,rho,delta,t,values,upper,unpruned
         for start in range(0,total,width):
             rank = torch.arange(start,min(start+width,total))
-            if delta is not None:
-                left = torch.searchsorted(boundaries,rank,right=True)
-                right = left+1+rank-(boundaries[left]-lengths[left])
-                a,b = permutation[left],permutation[right]
-                a,b = torch.minimum(a,b),torch.maximum(a,b)
-                keep = diagonal[pool[a]]+diagonal[pool[b]]>=outgoing+phi*theta/(phi-theta)-tolerance
-                a,b = a[keep],b[keep]
-                local = a*(2*q-a-1)//2+b-a-1
-            else:
-                local = rank if unpruned else order[rank].long()
-                a = torch.searchsorted(ends,local,right=True)
-                b = a+1+local-(ends[a]-(q-a-1))
-            pairs = torch.stack((torch.full_like(a,i),torch.full_like(a,k),pool[a],pool[b]),dim=1)
-            if delta is not None:
-                del left,right,keep
-            del rank,a,b
-            cursor = 0
-            while cursor<len(pairs):
-                take = min(width-used,len(pairs)-cursor)
-                pending.append(pairs[cursor:cursor+take]);flats.append(out*count+local[cursor:cursor+take].long())
-                used,cursor = used+take,cursor+take
-                if used==width:
-                    yield torch.cat(pending),torch.cat(flats)
-                    pending,flats,used = [],[],0
-    if used:
-        yield torch.cat(pending),torch.cat(flats)
+            run = torch.searchsorted(boundaries,rank,right=True)
+            out,left = run//q,run%q
+            right = left+1+rank-(boundaries[run]-lengths[run])
+            a,b = permutation[out,left],permutation[out,right]
+            a,b = torch.minimum(a,b),torch.maximum(a,b)
+            theta = min(max(tolerance,get_best())-tolerance,phi/2)
+            keep = diagonal[pool[a]]+diagonal[pool[b]]>=outgoing[out]+phi*theta/(phi-theta)-tolerance
+            out,a,b = out[keep],a[keep],b[keep]
+            local = a*(2*q-a-1)//2+b-a-1
+            yield torch.stack((oi[out],ok[out],pool[a],pool[b]),dim=1),(offset+out)*count+local
 
 
 def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *, tolerance=None, cutoff=None):
@@ -345,7 +331,8 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
             chosen = ids[free]
             rho = (1-G[chosen[i],chosen[i]])*(1-G[chosen[k],chosen[k]])-G[chosen[i],chosen[k]]**2
             if ((rho>=1e-6)&(diagonal[chosen[i]]+diagonal[chosen[k]]<=-prefix[1][0]+tolerance)).any():
-                ebase = available_base-16*len(pool)-64
+                block_size = min(outgoing_count,max(1,available_base//(2*(16*len(pool)+64))))
+                ebase = available_base-block_size*(16*len(pool)+64)
                 ehoisted = table_elements<=ebase//2
                 eavailable = ebase-table_elements if ehoisted else ebase
                 ecapacity = eavailable//96
@@ -367,7 +354,7 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
     tiles = (_linear_prefix_tiles(len(free),prefix,diagonal[ids[free]],phi,tolerance,capacity,lambda:best)
              if screened else ((pairs,None) for pairs in _pair_tiles(len(free),incoming,capacity)))
     if screened and removal:
-        tiles = _linear_removal_tiles(prefix,ids[free],diagonal,G,Q,phi,tolerance,capacity,lambda:best)
+        tiles = _linear_removal_tiles(prefix,ids[free],diagonal,G,Q,phi,tolerance,capacity,lambda:best,block_size)
     for pairs,flat in tiles:
         pairs[:,:2] = free[pairs[:,:2]]
         if screened:

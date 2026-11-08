@@ -113,28 +113,29 @@ def _linear_scores(F, ids, B, criterion):
 
 
 def _linear_closed_terms(G, Q):
-    u, v, w = 1+G[...,2,2], 1+G[...,3,3], G[...,2,3]
+    gaa,gab,gbb,gcc,w,gdd,gac,gad,gbc,gbd = G
+    qaa,qab,qbb,qcc,qcd,qdd,qac,qad,qbc,qbd = Q
+    u, v = 1+gcc, 1+gdd
     pi = u*v-w*w
-    e00 = (G[...,0,2]*v-G[...,0,3]*w)/pi
-    e01 = (G[...,0,3]*u-G[...,0,2]*w)/pi
-    e10 = (G[...,1,2]*v-G[...,1,3]*w)/pi
-    e11 = (G[...,1,3]*u-G[...,1,2]*w)/pi
-    t00 = G[...,0,0]-1-e00*G[...,0,2]-e01*G[...,0,3]
-    t01 = G[...,0,1]-e00*G[...,1,2]-e01*G[...,1,3]
-    t11 = G[...,1,1]-1-e10*G[...,1,2]-e11*G[...,1,3]
-    r00 = (Q[...,0,0]-2*(e00*Q[...,0,2]+e01*Q[...,0,3])
-           +e00**2*Q[...,2,2]+2*e00*e01*Q[...,2,3]+e01**2*Q[...,3,3])
-    r01 = (Q[...,0,1]-e00*Q[...,1,2]-e01*Q[...,1,3]-e10*Q[...,0,2]-e11*Q[...,0,3]
-           +e00*e10*Q[...,2,2]+(e00*e11+e01*e10)*Q[...,2,3]+e01*e11*Q[...,3,3])
-    r11 = (Q[...,1,1]-2*(e10*Q[...,1,2]+e11*Q[...,1,3])
-           +e10**2*Q[...,2,2]+2*e10*e11*Q[...,2,3]+e11**2*Q[...,3,3])
-    addition = (v*Q[...,2,2]+u*Q[...,3,3]-2*w*Q[...,2,3])/pi
+    e00 = (gac*v-gad*w)/pi
+    e01 = (gad*u-gac*w)/pi
+    e10 = (gbc*v-gbd*w)/pi
+    e11 = (gbd*u-gbc*w)/pi
+    t00 = gaa-1-e00*gac-e01*gad
+    t01 = gab-e00*gbc-e01*gbd
+    t11 = gbb-1-e10*gbc-e11*gbd
+    r00 = qaa-2*(e00*qac+e01*qad)+e00**2*qcc+2*e00*e01*qcd+e01**2*qdd
+    r01 = (qab-e00*qbc-e01*qbd-e10*qac-e11*qad
+           +e00*e10*qcc+(e00*e11+e01*e10)*qcd+e01*e11*qdd)
+    r11 = qbb-2*(e10*qbc+e11*qbd)+e10**2*qcc+2*e10*e11*qcd+e11**2*qdd
+    addition = (v*qcc+u*qdd-2*w*qcd)/pi
     return addition, t11*r00+t00*r11-2*t01*r01, t00*t11-t01*t01, pi
 
 
 def _linear_screen(G, Q, idx, tolerance, cutoff, best):
-    addition, numerator, tau, pi = _linear_closed_terms(
-        G[idx[:,:,None],idx[:,None,:]], Q[idx[:,:,None],idx[:,None,:]])
+    row = idx[:,(0,0,1,2,2,3,0,0,1,1)]
+    col = idx[:,(0,1,1,2,3,3,2,3,2,3)]
+    addition, numerator, tau, pi = _linear_closed_terms(G[row,col].unbind(1),Q[row,col].unbind(1))
     closed = addition+numerator/tau
     determinant = pi*tau
     band = (determinant.abs()<=1e-8) | ~torch.isfinite(determinant) | ~torch.isfinite(closed)
@@ -179,10 +180,15 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
     Z = torch.linalg.solve_triangular(L,F.mT,upper=False)
     T = torch.linalg.solve_triangular(L.mT,Z,upper=True) if criterion=='A' else (Z@Z.mT/m)@Z
     J = torch.diag(F.new_tensor([-1.,-1.,1.,1.]))
-    screened_capacity = (max_elements-fixed-2*len(incoming)**2)//(32*p+256+96)
+    available = max_elements-fixed-2*len(incoming)**2
+    screened_capacity = available//96
     screened = tolerance is not None and screened_capacity>=1
     if screened:
-        capacity = min(capacity,screened_capacity)
+        # Closed temporaries die before gather4; retain at most two sets of row IDs.
+        rescore_capacity = (available-8*screened_capacity)//(32*p+256)
+        screened = rescore_capacity>=1
+    if screened:
+        capacity = screened_capacity
         G = Z.mT@Z
         Q = T.mT@T if criterion=='A' else Z.mT@T
     best = -float('inf')
@@ -191,12 +197,14 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
         if screened:
             idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
             pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best)]
-        legal, gain = _linear_gather4(Z,T,ids,pairs,criterion,J)
-        if screened:
-            eligible = _linear_eligible(pairs[legal],gain,tolerance,cutoff) & torch.isfinite(gain)
-            if eligible.any():
-                best = max(best,gain[eligible].max().item())
-        yield pairs[legal],gain
+            del idx
+        for chunk in pairs.split(rescore_capacity) if screened else (pairs,):
+            legal, gain = _linear_gather4(Z,T,ids,chunk,criterion,J)
+            if screened:
+                eligible = _linear_eligible(chunk[legal],gain,tolerance,cutoff) & torch.isfinite(gain)
+                if eligible.any():
+                    best = max(best,gain[eligible].max().item())
+            yield chunk[legal],gain
 
 
 def _linear_pair_moves(F, ids, criterion, max_elements, free_positions, tolerance):

@@ -20,10 +20,11 @@ def test_closed_add_first_fraction_saturated():
         old = linear_value(ROWS,[0,1,2],criterion)
         for out,inc in product(combinations(range(3),2),combinations(range(3,7),2)):
             idx = (*out,*inc)
-            G = {(Ellipsis,i,j):g[idx[i]][idx[j]] for i in range(4) for j in range(4)}
-            Q = {(Ellipsis,i,j):q[idx[i]][idx[j]] for i in range(4) for j in range(4)}
+            positions = ((0,0),(0,1),(1,1),(2,2),(2,3),(3,3),(0,2),(0,3),(1,2),(1,3))
+            G = tuple(g[idx[i]][idx[j]] for i,j in positions)
+            Q = tuple(q[idx[i]][idx[j]] for i,j in positions)
             add,num,tau,pi = search._linear_closed_terms(G,Q)
-            assert (1-G[...,0,0])*(1-G[...,1,1])-G[...,0,1]**2 == 0
+            assert (1-G[0])*(1-G[2])-G[1]**2 == 0
             trial = [0,1,2]
             trial[out[0]],trial[out[1]] = inc
             new = linear_value(ROWS,trial,criterion)
@@ -51,6 +52,8 @@ def test_gather4_subset_is_bitwise_full_batch():
         sublegal,subset = search._linear_gather4(Z,T,ids,pairs[chosen],criterion,J)
         assert legal.all() and sublegal.all()
         assert torch.equal(subset,full[chosen])
+        split = [search._linear_gather4(Z,T,ids,chunk,criterion,J)[1] for chunk in pairs[chosen].split(17)]
+        assert torch.equal(torch.cat(split),full[chosen])
 
 
 def test_screen_preserves_ties_and_whole_cutoff_sequence(monkeypatch):

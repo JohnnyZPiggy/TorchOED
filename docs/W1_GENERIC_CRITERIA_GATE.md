@@ -128,6 +128,57 @@ During an improving scan `θ > 0` grows with `g_best`, so more pairs are skipped
 
 **Required checks for the Engineer Issue.** (a) An exhaustive `Fraction` test of `γ ≤ u(Δ)` on one frozen fixture, A and I, including `n = p`. (b) On one random CPU float64 fixture, A and I, with at least one cutoff state: the pruned path yields the same winner sequence as `tolerance=None` (full scan), `torch.equal`. (c) H3 (over the whole skipped tail, against a recomputation of `Q_jj` and `φ` in higher precision or `Fraction`) and H4 measured offline on full scans of the `bench_b0` random500 n=20 states and reported as margins. (d) `tools/bench_b0.py`: A/I/D IDs and objectives identical to base on every case and seed, D time not regressed, per-restart A:D, I:D and the kept fraction reported as-is.
 
+## 2e. Removal-tangent prune per outgoing pair — week 4 C1, second partial answer to [Mentor] #125 Q1 (PROVED bound; HYPOTHESIS float guards)
+
+**Chief Architect · 2026-11-08.** §2d expands the tangent at `M`. This section expands it at `M_r = M − F_OᵀF_O`, separately for each outgoing pair `O`. The bound is still separable in `c, d` for fixed `O`, so it admits the same sorted-prefix enumeration, and it is much tighter on `n = 2p` states. The bound needs only `B ⪰ 0`, `B ≠ 0`. It is undefined when `M_r` is singular (always at `n = p`); there §2d alone applies. It does not close C1.
+
+**Notation.** As in §2d. For `O = {a,b} ⊂ S`: `G_OO`, `Q_OO` are the 2×2 blocks of `G`, `Q`; `ρ(O) = det(I − G_OO)`; for `j ∈ Sᶜ`, `g_j = G[O, j]`, `q_j = Q[O, j]` (2-vectors).
+
+**Lemma 1 (PROVED).** `M_r ≻ 0 ⇔ ρ(O) > 0`. *Proof.* `M_r = M^{1/2}(I − P)M^{1/2}` with `P = M^{−1/2}F_OᵀF_OM^{−1/2}`, whose nonzero eigenvalues are those of `G_OO = F_OM⁻¹F_Oᵀ`. `G_OO` is a principal block of the projection `F_SM⁻¹F_Sᵀ`, so its eigenvalues lie in `[0,1]`; hence `I − G_OO ⪰ 0`, and `I − P ≻ 0 ⇔ I − G_OO ≻ 0 ⇔ ρ(O) > 0`. ∎
+
+**Lemma 2 (PROVED, Woodbury).** If `ρ(O) > 0`, let `W = (I − G_OO)⁻¹`. Then `M_r⁻¹ = M⁻¹ + M⁻¹F_OᵀWF_OM⁻¹`, so
+- `δ_O := φ_B(M_r) − φ = tr(W Q_OO) ≥ 0`, and `φ_r := φ_B(M_r) = φ + δ_O`;
+- `t_O(j) := f_jᵀM_r⁻¹BM_r⁻¹f_j = Q_jj + 2 g_jᵀW q_j + g_jᵀ W Q_OO W g_j ≥ 0`.
+
+*Proof.* `M_r⁻¹f_j = M⁻¹(f_j + F_OᵀWg_j)`; expand the quadratic form with `F_OM⁻¹BM⁻¹F_Oᵀ = Q_OO`, `F_OM⁻¹BM⁻¹f_j = q_j`. `δ_O` is the trace of the second Woodbury term against `B`. `t_O(j) ≥ 0` since `M_r⁻¹BM_r⁻¹ ⪰ 0`. ∎
+
+**Bound (PROVED).** If `ρ(O) > 0`, for every incoming pair `N = {c,d}` with `M' = M_r + F_NᵀF_N ≻ 0` (always true here, since `M_r ≻ 0`), with `T = t_O(c) + t_O(d)`:
+**`γ(O,N) = φ − φ_B(M') ≤ v_O(T) − δ_O`, `v_O(T) := φ_rT/(φ_r + T)`.**
+
+*Proof.* `tr(M_r⁻¹BM_r⁻¹M') = φ_r + T > 0`. Convexity and degree −1 homogeneity of `φ_B` at `tM_r` (the §2d argument with `M_r` in place of `M`) give `φ_B(M') ≥ 2φ_r/t − (φ_r+T)/t²` for `t > 0`; `t = (φ_r+T)/φ_r` gives `φ_B(M') ≥ φ_r²/(φ_r+T)`. Hence `γ = (φ_r − φ_B(M')) − δ_O ≤ φ_r − φ_r²/(φ_r+T) − δ_O = v_O(T) − δ_O`. ∎
+
+**Threshold.** `v_O` is increasing on `T ≥ 0` with `v_O < φ_r`. For a threshold `θ` let `η = min(θ + δ_O, φ_r/2)` and `T*_O = φ_rη/(φ_r − η)` (well defined, `≤ φ_r`). Then `T < T*_O ⇒ v_O(T) < η ⇒ γ < η − δ_O ≤ θ`. The cap `φ_r/2` only lowers the effective threshold (sound; bounds `dT*/dη ≤ 4`).
+
+**Prefix structure.** For fixed `O`, sort the incoming candidates by `t̂_O` in descending order, `u_1 ≥ u_2 ≥ …`. The kept pairs `{i < k}` with `u_i + u_k ≥ thr` are, for each `i`, a contiguous run `k ∈ (i, L_i]` found by one `searchsorted`. Cost per `O`: `O(q)` for `t_O`, `O(q log q)` for the sort, `O(q log q)` for the run ends.
+
+**Use (decision; keeps A/I results identical to `main`).** This adds rule **(e)** next to §2d rule (d), with the same `θ`, `δ`, `tolerance`, `g_best` and cutoff handling. `θ` may be recomputed at the start of each `O` or each tile; any order of `O` is allowed.
+- (e) For each `O` with `ρ̂(O) ≥ 10⁻⁶` and `θ ≥ 0`: skip every incoming pair with `T̂ < T̂*_O − δ`, where `T̂*_O` uses `η̂ = min(θ + δ̂_O, φ̂_r/2)`. For `O` with `ρ̂(O) < 10⁻⁶`, (e) is not applied (only (d)).
+- A pair is enumerated only if neither (d) nor (e) skips it. (e) may drive the enumeration and (d) be applied as a per-pair mask on the enumerated pairs, or the reverse. Skipped pairs are never band-rescored or screened; rules (a)–(c), the band, gather4, eligibility, cutoff/resume and tie-breaks are unchanged for kept pairs.
+
+*Why this is exact (under the HYPOTHESIS).* For a pair skipped by (e), (H5) gives `T < T*_O`, so `γ < θ` (threshold paragraph), and then (H4) gives `γ̂_gather4 < θ + δ/2 ≤ max(tolerance, g_best) − δ/2`: the pair can neither be eligible-and-winning nor tie, exactly as in §2d. The winner and the whole resume sequence are bit-identical to the full scan.
+
+**HYPOTHESIS (checked by the Engineer evidence, never assumed).**
+- (H5) The exact `ρ(O) > 0` for every `O` where (e) is applied, and for every pair that (e) actually skips (the skip set the code uses, e.g. after `searchsorted`), the exact `x := T − T*_O` is `< 0`, where `T`, `δ_O`, `φ_r` (hence `η`, `T*_O`) are recomputed exactly (`Fraction`) or in float128 from the float `F` and the float `θ` actually used. A sufficient check: `|x̂ − x| ≤ δ/2` over the whole skipped tail. The guard `ρ̂ ≥ 10⁻⁶` is a float guard, not an accuracy proof (the error of `t̂_O` grows with `‖W‖`); the evidence must report `min ρ̂` and the exact (or float128) `min ρ` over the `O` where (e) was applied, and the H5 margin per state.
+- (H4) as in §2d.
+
+**OBSERVED (Architect sandbox, NumPy float64, 2026-11-08; not torch).** Fraction of all pairs kept at the certifying threshold `θ = 0`, two 1-swap-local states each (best-improvement 1-swap descent from random starts), quadratic features:
+
+| pool | n | A: (d) / (e) / both | I: (d) / (e) / both |
+|---|---|---|---|
+| random500 | 20 | 0.073 / 0.036 / **0.0060** | 0.16–0.31 / 0.054–0.058 / **0.016–0.025** |
+| grid4 | 30 | 0.66–0.73 / 0.13 / **0.12** | 0.71–0.75 / 0.095–0.099 / **0.089–0.094** |
+| grid3 | 20 | 0.94 / 0.42 / 0.41 | 0.96 / 0.38 / 0.38 |
+| any | `n = p` | (e) not applicable (`ρ = 0` for every `O`) | same |
+
+The cap `φ_r/2` and the guard `ρ̂ ≥ 10⁻⁶` changed none of these fractions; `min ρ̂` over the `n = 2p` states was 0.023–0.071. Expected effect versus §2d alone: about 10–12× fewer enumerated pairs on random500 n=20 (A), 6–13× on random500 n=20 (I), about 6–8× on grid4 n=30. C1 stays **not met** until measured.
+
+**Exact evidence (Architect sandbox, `Fraction`, 2026-11-08).** 16 random integer fixtures (p=3, m∈{7,8}, n∈{p+1,p+2}, entries in [−3,3]), A and I, every nonsingular `S`: Lemma 1 on every `O`; Lemma 2 (`δ_O`, `t_O(j)`) in 23,480/23,480 identity checks; the bound in **15,060/15,060** two-swaps with `M' ≻ 0` (no equality on these fixtures, min slack 0.0081·φ; equality is possible in general, e.g. when `F_NᵀF_N ∝ M_r`, which does not affect the strict implication below); and the capped threshold implication `T < T*_O ⇒ γ < θ` for `θ = kφ/10`, k = 0..4. 3,908 outgoing pairs had `ρ = 0` (rule not applied).
+
+**Cost.** Per state `O(n² q)` for all `t_O(j)` (two 2-vectors and one 2×2 per `(O, j)`), `O(n² q log q)` for the per-`O` sorts and run ends, then O(kept pairs). Workspace `O(q)` per `O` plus the enumerated tile.
+
+**Required checks for the Engineer Issue.** (a) An exhaustive `Fraction` test of Lemma 2 and the bound on one frozen fixture with `n = p+1` (some `O` with `ρ = 0`), A and I, computing `γ` directly from `tr(BM'⁻¹)`. (b) On one random CPU float64 fixture, A and I, with at least one cutoff state and at least one pair skipped by (e): same winner/resume sequence as `tolerance=None`, `torch.equal`. (c) H5 and H4 margins on full scans of the `bench_b0` random500 n=20 and grid4 n=30 1-local A and I states, plus `min ρ̂`. (d) `tools/bench_b0.py`: IDs and objectives identical to base, D unchanged and not slower, per-restart A:D, I:D and the kept fraction reported as-is.
+**Independent review (2026-11-08): PASS.** A fresh-context reviewer checked §2e exactly with `Fraction` on 40 integer fixtures (p∈{2,3}, m=6..8, n∈{p+1,p+2}), A and I: Lemma 1 on 3,030 outgoing pairs (1,196 with `ρ = 0`); Lemma 2 in 4,124/4,124 `t_O(j)` cases and every `δ_O`; the bound in 3,204/3,204 two-swaps; the capped implication in 10,171/10,171 triggered cases over 23 thresholds (cap active in 9,587); float `t̂_O`, `φ̂_r` relative error ≤ 1.2e−13 on 600 Gaussian outgoing pairs. One unproved step found and fixed: H5 now also requires the exact `ρ(O) > 0` wherever (e) is applied (the float guard alone does not imply it). Wording fixes: equality is possible in general; H5 is measured on the skip set the code actually uses; `B ⪰ 0, B ≠ 0` suffices.
+
 ## 3. Search semantics
 
 Same best-improvement 1-swap then 2-swap (VND) order, deterministic tie-breaks (smallest outgoing position, then smallest incoming ID), seeded restarts and feasibility rules as `d_optimal_design`. Acceptance: a move is accepted only if the **directly recomputed** `φ_B(M')` (Cholesky solve on the new `M'`) decreases by more than a scale-aware threshold `τ = 128·p·ε·max(1,|φ|)·max(1,cond)` (HYPOTHESIS, mirrors the D `_tolerance`). Certificate labels unchanged: `LOCAL_2_NUMERICAL` only after full N₁ and N₂ scans without verified improvement — never global optimality.

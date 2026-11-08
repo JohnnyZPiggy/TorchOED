@@ -347,7 +347,8 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
         B = torch.eye(p,dtype=F.dtype) if criterion=='A' else F.mT@F/m
         phi = torch.trace(torch.cholesky_solve(B,L)).item()
         pool = torch.tensor(incoming)
-        block_size = min(outgoing_count,(prefix_slots+4*outgoing_count)//(8*len(pool)+16))
+        tile_slack = 96*(capacity-min(capacity,count*outgoing_count))
+        block_size = min(outgoing_count,(prefix_slots+4*outgoing_count+tile_slack)//(8*len(pool)+16))
         if len(ids)==p and block_size>=1:
             # Release the d-prefix reserve; half the outgoing reserve holds block metadata.
             prefix,removal = (pool,None,None),True

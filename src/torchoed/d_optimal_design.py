@@ -112,27 +112,90 @@ def _linear_scores(F, ids, B, criterion):
     return M, phi, diagonal, incoming, ratio, delta
 
 
-def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None):
+def _linear_closed_terms(G, Q):
+    u, v, w = 1+G[...,2,2], 1+G[...,3,3], G[...,2,3]
+    pi = u*v-w*w
+    e00 = (G[...,0,2]*v-G[...,0,3]*w)/pi
+    e01 = (G[...,0,3]*u-G[...,0,2]*w)/pi
+    e10 = (G[...,1,2]*v-G[...,1,3]*w)/pi
+    e11 = (G[...,1,3]*u-G[...,1,2]*w)/pi
+    t00 = G[...,0,0]-1-e00*G[...,0,2]-e01*G[...,0,3]
+    t01 = G[...,0,1]-e00*G[...,1,2]-e01*G[...,1,3]
+    t11 = G[...,1,1]-1-e10*G[...,1,2]-e11*G[...,1,3]
+    r00 = (Q[...,0,0]-2*(e00*Q[...,0,2]+e01*Q[...,0,3])
+           +e00**2*Q[...,2,2]+2*e00*e01*Q[...,2,3]+e01**2*Q[...,3,3])
+    r01 = (Q[...,0,1]-e00*Q[...,1,2]-e01*Q[...,1,3]-e10*Q[...,0,2]-e11*Q[...,0,3]
+           +e00*e10*Q[...,2,2]+(e00*e11+e01*e10)*Q[...,2,3]+e01*e11*Q[...,3,3])
+    r11 = (Q[...,1,1]-2*(e10*Q[...,1,2]+e11*Q[...,1,3])
+           +e10**2*Q[...,2,2]+2*e10*e11*Q[...,2,3]+e11**2*Q[...,3,3])
+    addition = (v*Q[...,2,2]+u*Q[...,3,3]-2*w*Q[...,2,3])/pi
+    return addition, t11*r00+t00*r11-2*t01*r01, t00*t11-t01*t01, pi
+
+
+def _linear_screen(G, Q, idx, tolerance, cutoff, best):
+    addition, numerator, tau, pi = _linear_closed_terms(
+        G[idx[:,:,None],idx[:,None,:]], Q[idx[:,:,None],idx[:,None,:]])
+    closed = addition+numerator/tau
+    determinant = pi*tau
+    band = (determinant.abs()<=1e-8) | ~torch.isfinite(determinant) | ~torch.isfinite(closed)
+    # The state tolerance is exactly the gate's delta (exchange._tolerance).
+    keep = (closed>tolerance-tolerance/2) & (closed>=best-tolerance)
+    if cutoff is not None:
+        keep &= closed<=-cutoff[0]+tolerance/2
+    return keep | band
+
+
+def _linear_gather4(Z, T, ids, pairs, criterion, J):
+    idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
+    U, V = Z[:,idx].permute(1,2,0), T[:,idx].permute(1,2,0)
+    K = U@U.mT+J
+    Q = V@V.mT if criterion=='A' else U@V.mT
+    legal = torch.linalg.det(K)>0
+    gain = torch.linalg.solve(K[legal],Q[legal]).diagonal(dim1=-2,dim2=-1).sum(-1)
+    return legal, gain
+
+
+def _linear_eligible(pairs, gains, tolerance, cutoff):
+    keep = gains>tolerance
+    if cutoff is not None:
+        row = pairs.new_tensor(cutoff[1])
+        first = (pairs != row).int().argmax(dim=1)
+        later = pairs.gather(1,first[:,None]).flatten() > row[first]
+        keep &= (gains < -cutoff[0]) | ((gains == -cutoff[0]) & later)
+    return keep
+
+
+def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *, tolerance=None, cutoff=None):
     m, p = F.shape
     free = torch.arange(len(ids)) if free_positions is None else free_positions.nonzero().flatten()
     incoming = sorted(set(range(m))-set(ids.tolist()))
     if len(free)<2 or len(incoming)<2:
         return
-    capacity = (max_elements-(8*m*p+16*len(ids)*m+8*p*p))//(32*p+256)
+    fixed = 8*m*p+16*len(ids)*m+8*p*p
+    capacity = (max_elements-fixed)//(32*p+256)
     if capacity<1:
         raise ValueError('insufficient max_elements for one linear pair tile')
     L = torch.linalg.cholesky(F[ids].mT@F[ids])
     Z = torch.linalg.solve_triangular(L,F.mT,upper=False)
     T = torch.linalg.solve_triangular(L.mT,Z,upper=True) if criterion=='A' else (Z@Z.mT/m)@Z
     J = torch.diag(F.new_tensor([-1.,-1.,1.,1.]))
+    screened_capacity = (max_elements-fixed-2*len(incoming)**2)//(32*p+256+96)
+    screened = tolerance is not None and screened_capacity>=1
+    if screened:
+        capacity = min(capacity,screened_capacity)
+        G = Z.mT@Z
+        Q = T.mT@T if criterion=='A' else Z.mT@T
+    best = -float('inf')
     for pairs in _pair_tiles(len(free),incoming,capacity):
         pairs[:,:2] = free[pairs[:,:2]]
-        idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
-        U, V = Z[:,idx].permute(1,2,0), T[:,idx].permute(1,2,0)
-        K = U@U.mT+J
-        Q = V@V.mT if criterion=='A' else U@V.mT
-        legal = torch.linalg.det(K)>0
-        gain = torch.linalg.solve(K[legal],Q[legal]).diagonal(dim1=-2,dim2=-1).sum(-1)
+        if screened:
+            idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
+            pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best)]
+        legal, gain = _linear_gather4(Z,T,ids,pairs,criterion,J)
+        if screened:
+            eligible = _linear_eligible(pairs[legal],gain,tolerance,cutoff) & torch.isfinite(gain)
+            if eligible.any():
+                best = max(best,gain[eligible].max().item())
         yield pairs[legal],gain
 
 
@@ -140,13 +203,9 @@ def _linear_pair_moves(F, ids, criterion, max_elements, free_positions, toleranc
     cutoff = None
     while True:
         best = None
-        for pairs,gains in _linear_pair_scores(F,ids,criterion,max_elements,free_positions):
-            keep = gains>tolerance
-            if cutoff is not None:
-                row = pairs.new_tensor(cutoff[1])
-                first = (pairs != row).int().argmax(dim=1)
-                later = pairs.gather(1,first[:,None]).flatten() > row[first]
-                keep &= (gains < -cutoff[0]) | ((gains == -cutoff[0]) & later)
+        for pairs,gains in _linear_pair_scores(F,ids,criterion,max_elements,free_positions,
+                                             tolerance=tolerance,cutoff=cutoff):
+            keep = _linear_eligible(pairs,gains,tolerance,cutoff)
             eligible = keep.nonzero().flatten()
             if len(eligible):
                 index = eligible[gains[eligible].argmax()]

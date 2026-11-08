@@ -212,7 +212,7 @@ def _linear_prefix_tiles(n, prefix, selected_scores, phi, tolerance, width, get_
         flat = torch.arange(min(width,total))
         out = torch.searchsorted(boundaries,flat,right=True)
         rank = flat-(boundaries[out]-remaining[out])+start[out]
-        local = order[rank]
+        local = order[rank].long()
         a = torch.searchsorted(ends,local,right=True)
         b = a+1+local-(ends[a]-(q-a-1))
         last = out[-1].item()
@@ -279,7 +279,7 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
                 a,b = a[keep],b[keep]
                 local = a*(2*q-a-1)//2+b-a-1
             else:
-                local = rank if unpruned else order[rank]
+                local = rank if unpruned else order[rank].long()
                 a = torch.searchsorted(ends,local,right=True)
                 b = a+1+local-(ends[a]-(q-a-1))
             pairs = torch.stack((torch.full_like(a,i),torch.full_like(a,k),pool[a],pool[b]),dim=1)

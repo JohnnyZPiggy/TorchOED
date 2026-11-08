@@ -65,7 +65,7 @@ can be negative, zero or positive: scoring does not accept/reject improvements.
 
 Compute C with Python integers before neighborhood/output allocation. The
 budget counts retained tensor output elements 10C+n, fixed major workspace
-2mp+6np+10p²+4m+2n+64, and per tile pair16p+128. Reduce width to fit the remaining
+2mp+6np+10p²+4m+2n+64, and per tile pair16p+128+np+2p². Reduce width to fit the remaining
 budget; reject if even one pair cannot fit. F/selected/Gram shapes also use
 M2's preallocation guards. Neighbor index tuples are generated in bounded tiles;
 no full Cartesian pair list is created. Retained output remains O(C), explicitly

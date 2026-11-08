@@ -247,9 +247,28 @@ def _linear_removal_limit(negative, phi_r, delta, theta, tolerance):
     return torch.searchsorted(negative,-negative-threshold[:,None],right=True)
 
 
-def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, width, get_best, block_size):
+def _linear_square_terms(q, p):
+    det = q[0]*q[2]-q[1]*q[1]
+    return (q[2]*p[0]+q[0]*p[2]-2*q[1]*p[1])/det,det,q[0]+q[2]
+
+
+def _linear_square_data(G, Q, chosen, pool, P):
+    a,b = chosen
+    alpha,det,trace = _linear_square_terms((Q[a,a],Q[a,b],Q[b,b]),P)
+    scores = G[a[:,None],pool].square()+G[b[:,None],pool].square()
+    return scores,alpha,trace+2*det.clamp_min(0).sqrt()
+
+
+def _linear_square_limit(negative, alpha, kappa, theta, tolerance):
+    den = alpha-theta+tolerance
+    threshold = torch.where(den>0,kappa/den,float('inf'))
+    return torch.searchsorted(negative,-negative-threshold[:,None],right=True)
+
+
+def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, width, get_best, block_size, square=None):
     pool,negative,order = prefix
-    q,count = len(pool),len(order)
+    q = len(pool)
+    count = q*(q-1)//2
     i,k = torch.triu_indices(len(selected),len(selected),offset=1)
     positions = torch.arange(q)
     for offset in range(0,len(i),block_size):
@@ -257,11 +276,19 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
         chosen = torch.stack((selected[oi],selected[ok]))
         outgoing = diagonal[chosen].sum(0)
         theta = min(max(tolerance,get_best())-tolerance,phi/2)
-        dlimit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best())
-        rho,delta,t = _linear_removal_data(G,Q,chosen,pool,diagonal)
-        values,permutation = t.sort(dim=1,descending=True,stable=True)
-        upper = _linear_removal_limit(-values,phi+delta,delta,theta,tolerance)
-        upper = torch.where((rho>=1e-6)[:,None],upper,q)
+        if square is None:
+            dlimit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best())
+            rho,delta,t = _linear_removal_data(G,Q,chosen,pool,diagonal)
+            values,permutation = t.sort(dim=1,descending=True,stable=True)
+            upper = _linear_removal_limit(-values,phi+delta,delta,theta,tolerance)
+            upper = torch.where((rho>=1e-6)[:,None],upper,q)
+            del rho,delta
+        else:
+            dlimit = outgoing+phi*theta/(phi-theta)<=diagonal[pool].topk(2).values.sum()+tolerance
+            t,alpha,kappa = _linear_square_data(G,Q,chosen,pool,(square[oi,oi],square[oi,ok],square[ok,ok]))
+            values,permutation = t.sort(dim=1,descending=True,stable=True)
+            upper = _linear_square_limit(-values,alpha,kappa,theta,tolerance)
+            del alpha,kappa
         lengths = (upper-positions-1).clamp_min(0)
         unpruned = lengths.sum(1)==count
         permutation = torch.where(unpruned[:,None],positions,permutation)
@@ -269,7 +296,7 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
         lengths = torch.where((dlimit>0)[:,None],lengths,0).flatten()
         boundaries = lengths.cumsum(0)
         total = boundaries[-1].item()
-        del chosen,rho,delta,t,values,upper,unpruned
+        del chosen,t,values,upper,unpruned
         for start in range(0,total,width):
             rank = torch.arange(start,min(start+width,total))
             run = torch.searchsorted(boundaries,rank,right=True)
@@ -302,7 +329,7 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
     compact = count<=torch.iinfo(torch.int32).max
     prefix_slots = count+(count+1)//2 if compact else 2*count
     available_base = max_elements-fixed-2*len(incoming)**2-prefix_slots-8*outgoing_count
-    removal = False
+    removal, square = False, None
     table_elements = 8*count+6*outgoing_count
     # Packing indices must not activate extra tables and reduce an existing tile.
     hoisted = table_elements<=(available_base-(2*count-prefix_slots))//2
@@ -320,12 +347,21 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
         B = torch.eye(p,dtype=F.dtype) if criterion=='A' else F.mT@F/m
         phi = torch.trace(torch.cholesky_solve(B,L)).item()
         pool = torch.tensor(incoming)
-        a,b = torch.triu_indices(len(pool),len(pool),offset=1)
-        values, order = (diagonal[pool[a]]+diagonal[pool[b]]).sort(descending=True,stable=True)
-        prefix = pool,-values,order.to(torch.int32) if compact else order
-        del a,b,values,order
+        block_size = min(outgoing_count,(prefix_slots+4*outgoing_count)//(8*len(pool)+16))
+        if len(ids)==p and block_size>=1:
+            # Release the d-prefix reserve; half the outgoing reserve holds block metadata.
+            prefix,removal = (pool,None,None),True
+        else:
+            a,b = torch.triu_indices(len(pool),len(pool),offset=1)
+            values, order = (diagonal[pool[a]]+diagonal[pool[b]]).sort(descending=True,stable=True)
+            prefix = pool,-values,order.to(torch.int32) if compact else order
+            del a,b,values,order
         G = Z.mT@Z
         Q = T.mT@T if criterion=='A' else Z.mT@T
+        if removal:
+            QS = Q[ids[free]][:,ids]
+            square = QS@QS.mT
+            del QS
         if len(ids)>p+1:
             i,k = torch.triu_indices(len(free),len(free),offset=1)
             chosen = ids[free]
@@ -354,7 +390,7 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
     tiles = (_linear_prefix_tiles(len(free),prefix,diagonal[ids[free]],phi,tolerance,capacity,lambda:best)
              if screened else ((pairs,None) for pairs in _pair_tiles(len(free),incoming,capacity)))
     if screened and removal:
-        tiles = _linear_removal_tiles(prefix,ids[free],diagonal,G,Q,phi,tolerance,capacity,lambda:best,block_size)
+        tiles = _linear_removal_tiles(prefix,ids[free],diagonal,G,Q,phi,tolerance,capacity,lambda:best,block_size,square)
     for pairs,flat in tiles:
         pairs[:,:2] = free[pairs[:,:2]]
         if screened:

@@ -179,6 +179,53 @@ The cap `φ_r/2` and the guard `ρ̂ ≥ 10⁻⁶` changed none of these fractio
 **Required checks for the Engineer Issue.** (a) An exhaustive `Fraction` test of Lemma 2 and the bound on one frozen fixture with `n = p+1` (some `O` with `ρ = 0`), A and I, computing `γ` directly from `tr(BM'⁻¹)`. (b) On one random CPU float64 fixture, A and I, with at least one cutoff state and at least one pair skipped by (e): same winner/resume sequence as `tolerance=None`, `torch.equal`. (c) H5 and H4 margins on full scans of the `bench_b0` random500 n=20 and grid4 n=30 1-local A and I states, plus `min ρ̂`. (d) `tools/bench_b0.py`: IDs and objectives identical to base, D unchanged and not slower, per-restart A:D, I:D and the kept fraction reported as-is.
 **Independent review (2026-11-08): PASS.** A fresh-context reviewer checked §2e exactly with `Fraction` on 40 integer fixtures (p∈{2,3}, m=6..8, n∈{p+1,p+2}), A and I: Lemma 1 on 3,030 outgoing pairs (1,196 with `ρ = 0`); Lemma 2 in 4,124/4,124 `t_O(j)` cases and every `δ_O`; the bound in 3,204/3,204 two-swaps; the capped implication in 10,171/10,171 triggered cases over 23 thresholds (cap active in 9,587); float `t̂_O`, `φ̂_r` relative error ≤ 1.2e−13 on 600 Gaussian outgoing pairs. One unproved step found and fixed: H5 now also requires the exact `ρ(O) > 0` wherever (e) is applied (the float guard alone does not imply it). Wording fixes: equality is possible in general; H5 is measured on the skip set the code actually uses; `B ⪰ 0, B ≠ 0` suffices.
 
+## 2f. Square-design coordinate prune at `n = p` — week 4 C1, third partial answer to [Mentor] #125 Q1 (PROVED bound; HYPOTHESIS float guards)
+
+**Chief Architect · 2026-11-08.** §2e is undefined at `n = p` (`ρ(O) = 0` for every `O`), and §2d keeps about 80–97% of the pairs there. This section uses the fact that at `n = p` the design matrix `F_S` is square: a two-swap is a change of the 2 rows of a `p×p` coordinate matrix, and `φ_B(M')` splits into an outgoing-only term plus a term that depends on `N` only through one separable number. It applies **only when `n = p`** and `B ≻ 0` (A: `B = I`; I: `B = FᵀF/m`, PD because `F` has full column rank). It does not close C1 by itself.
+
+**Notation.** As in §2d/§2e, with `n = |S| = p` and `F_S` invertible, so `M = F_SᵀF_S`, `G_SS = I` and `Q_SS = F_S^{−T}BF_S^{−1} ≻ 0`; in particular `φ = tr(Q_SS)`. For `O = {a,b} ⊂ S` let `R = S∖O`, `Q_OO` the 2×2 block, and for `j ∈ Sᶜ` let `s_O(j) = G_aj² + G_bj²`. Define, per `O`,
+- `τ_O := tr(Q_RR − Q_RO Q_OO⁻¹ Q_OR)` (the trace of a Schur complement; `≥ 0`), equivalently `φ − τ_O = tr(Q_OO⁻¹ (Q_SS²)_OO)`;
+- `κ_O := (tr Q_OO^{1/2})² = tr Q_OO + 2√(det Q_OO) > 0`.
+
+**Bound (PROVED).** For `n = p`, every outgoing `O`, and every incoming `N = {c,d}` with `M' ≻ 0`, with `σ = s_O(c) + s_O(d)`:
+**`φ_B(M') ≥ τ_O + κ_O/σ`, hence `γ(O,N) ≤ β_O(σ) := φ − τ_O − κ_O/σ`.**
+
+*Proof.* For `j ∈ Sᶜ`, `g_j := G[S,j] = F_S^{−T}f_j`, i.e. `f_j = F_Sᵀg_j`. Replacing rows `a,b` of `F_S` by `f_c, f_d` gives `F' = KF_S`, where `K` is the identity with rows `a, b` replaced by `g_cᵀ, g_dᵀ`. With `W := G_ON` (2×2), the `O` rows of `K` are `[Wᵀ | G_RNᵀ]` (columns `O | R`), so `det K = ± det W`, `M' ≻ 0 ⇔ det W ≠ 0`, and `K⁻¹ = [[W^{−T}, −W^{−T}G_RNᵀ], [0, I]]`. Then `φ_B(M') = tr(BF_S⁻¹K⁻¹K^{−T}F_S^{−T}) = tr(K^{−T}Q_SSK⁻¹) = Σ_columns k of K⁻¹ kᵀQ_SSk`. The two `O` columns contribute `tr(W⁻¹Q_OOW^{−T}) = tr(Q_OO(WWᵀ)⁻¹)`. Each `R` column is `e_r + E_Ou_r` for some `u_r ∈ ℝ²` and contributes `Q_rr + 2u_rᵀQ_Or + u_rᵀQ_OOu_r ≥ Q_rr − Q_rOQ_OO⁻¹Q_Or` (minimum over `u`, `Q_OO ≻ 0`); summing over `r` gives `≥ τ_O`. For the `O` term, Cauchy–Schwarz on `tr(Q_OO^{1/2}) = tr(X^{1/2} · X^{−1/2}Q_OO^{1/2})` with `X = WWᵀ ≻ 0` gives `(tr Q_OO^{1/2})² ≤ tr X · tr(Q_OO X⁻¹)`, and `tr X = ‖W‖_F² = σ`. So `φ_B(M') ≥ τ_O + κ_O/σ`. The identity `φ − τ_O = tr Q_OO + tr(Q_OO⁻¹Q_ORQ_RO) = tr(Q_OO⁻¹(Q_SS²)_OO)` is direct. ∎
+
+**Threshold.** `β_O` is strictly increasing in `σ > 0` and `β_O < φ − τ_O`. For `θ`: if `φ − τ_O ≤ θ`, then `γ < θ` for **every** `N` (no enumeration for this `O`); otherwise `σ < σ*_O := κ_O/(φ − τ_O − θ) ⇒ γ < θ`.
+
+**Prefix structure.** As §2e with `s_O` in place of `t_O`: for fixed `O`, sort the incoming `ŝ_O(j)` descending; kept pairs `{i < k}` with `u_i + u_k ≥ σ̂*` form, for each `i`, one contiguous run found by `searchsorted`.
+
+**Use (decision; keeps A/I results identical to `main`).** Rule **(f)**, with the same `θ`, `δ`, `tolerance`, `g_best` and cutoff handling as (d) (§2d). It applies only when `n = p`; there (e) never applies. For each `O` with `θ ≥ 0`:
+- if `φ̂ − τ̂_O − θ + δ ≤ 0`: skip every incoming pair for this `O`;
+- otherwise skip every pair with `σ̂ < κ̂_O/(φ̂ − τ̂_O − θ + δ)` (i.e. `β̂_O(σ̂) < θ − δ`), with `κ̂_O` from `√max(det Q̂_OO, 0)`.
+
+A pair is enumerated only if neither (d) nor (f) skips it (either may drive the enumeration, the other be a mask). Skipped pairs are never band-rescored or screened; rules (a)–(c), the band, gather4, eligibility, cutoff/resume and tie-breaks are unchanged for kept pairs.
+
+*Why this is exact (under the HYPOTHESIS).* For a pair skipped by (f), (H6) gives `β_O(σ) < θ` (or `φ − τ_O ≤ θ`), so `γ < θ` by the bound, and (H4) gives `γ̂_gather4 < θ + δ/2 ≤ max(tolerance, g_best) − δ/2`: it can neither be eligible-and-winning nor tie, exactly as in §2d. Pairs with singular `M'` are illegal and change nothing, as in §2d: H4, read with `γ = −∞` for singular `M'`, already forbids gather4 from accepting an exactly singular pair with `γ̂ > tolerance − δ`.
+
+**HYPOTHESIS (checked by the Engineer evidence, never assumed).**
+- (H6) For every pair that (f) actually skips (the skip set the code uses), the exact `β_O(σ) < θ` — or exact `φ − τ_O ≤ θ` for whole-`O` skips — with `φ`, `τ_O`, `κ_O`, `σ` recomputed in `Fraction` or float128 from the float `F` and the float `θ`. A sufficient check: `|β̂ − β| ≤ δ/2` over the whole skipped set. The evidence reports the minimum of `(θ − β)/δ` over the skipped set per state, and `min det Q̂_OO / (tr Q̂_OO)²` over the `O` used.
+- (H4) as in §2d. Skipped pairs are never scored in the pruned run, so the H4 evidence comes from the unpruned scan or from rescoring the pairs (f) skips.
+
+**OBSERVED (Architect sandbox, NumPy float64, 2026-11-08; not torch).** Fraction of all pairs kept at `θ = 0`, 1-swap-local states (best-improvement 1-swap descent from random starts), quadratic features, `n = p`:
+
+| pool | n = p | A: (d) / (f) / both | I: (d) / (f) / both |
+|---|---|---|---|
+| random500 | 10 | 0.80 / 0.010–0.034 / **0.009–0.013** (reviewer: (f) 0.010–0.034) | 0.80–0.83 / 0.0019–0.0064 / **0.0015–0.0032** |
+| grid3 | 10 | 0.88–0.90 / 0.050–0.15 / **0.050–0.15** | 0.81–0.91 / 0.026–0.11 / **0.026–0.10** |
+| grid4 | 15 | 0.93–0.97 / 0.061–0.081 / **0.061–0.081** | 0.93–0.97 / 0.0032–0.023 / **0.0032–0.023** |
+
+Expected effect at `n = p`: about 60×–500× fewer enumerated pairs than (d) alone on random500 n=10 (A:D 88×, I:D 134× on `reports/w141`), 6×–300× on the grids. C1 stays **not met** until measured.
+
+**Exact evidence (Architect sandbox, `Fraction`, 2026-11-08).** 48 random integer fixtures (p∈{2,3}, m∈{6,7,8}, entries in [−3,3]), A and I, every nonsingular `S` with `n = p`: `φ − τ_O = tr(Q_OO⁻¹(Q_SS²)_OO)` in 2,437/2,437 outgoing pairs; the bound, checked exactly as `y := (φ_B(M') − τ_O)σ − tr Q_OO ≥ 0` and `y² ≥ 4 det Q_OO`, in **16,906/16,906** two-swaps with `M' ≻ 0` (1,814 singular `M'` skipped); the whole-`O` implication `φ − τ_O ≤ θ ⇒ γ < θ` in 39/39 triggered cases (`θ = kφ/10`, k = 0..4). NumPy float64: 12,828 further two-swaps, 0 violations.
+
+**Cost.** Per state: `Q_SS²` in `O(p³)`; per `O` the 2×2 `Q_OO`, `τ_O`, `κ_O` in `O(1)` from `Q_SS²`; `s_O(j)` for all `j` in `O(q)`; per-`O` sort and run ends `O(q log q)`. Total `O(p² q log q)` plus O(kept pairs), same order as §2e. Workspace `O(q)` per `O`.
+
+**Independent review (2026-11-08): PASS.** A fresh-context reviewer checked §2f exactly with `Fraction` on 218 integer fixtures (p∈{2,3,4}, m=p+3..p+5, entries in [−3,3], n = p), A and I: the `K⁻¹` trace equal to `φ_B(M')` exactly, `τ_O ≥ 0`, the identity, and the bound (squared form) in 4,938/4,938 nonsingular two-swaps; all 234 singular `M'` had `det W = 0` and conversely. Float64 on random500 n=10 (3 seeds × A, I, all 5.4M pairs per state): no `γ > β`, every positive-gain two-swap kept. The reviewer confirmed the δ direction, `θ ≥ 0`, the strict exactness chain, monotone `g_best`, contiguous runs and free-position restriction. Two wording fixes applied: singular pairs are covered by H4 with `γ = −∞`; H4 evidence comes from the unpruned scan or a rescore of the skipped pairs.
+
+**Required checks for the Engineer Issue.** (a) An exhaustive `Fraction` test of the bound on one frozen integer fixture with `n = p`, A and I, computing `φ_B(M')` directly from `tr(BM'⁻¹)` (independent oracle, not the code's `τ`, `κ`). (b) On one random CPU float64 fixture with `n = p`, A and I, with at least one cutoff state and at least one pair skipped by (f) that (d) keeps: same winner/resume sequence as `tolerance=None`, `torch.equal`. (c) H6 and H4 margins on full scans of the `bench_b0` random500 n=10 and grid4 n=15 1-local A and I states. (d) `tools/bench_b0.py`: IDs and objectives identical to base, D unchanged and not slower, per-restart A:D, I:D and the kept fraction reported as-is.
+
 ## 3. Search semantics
 
 Same best-improvement 1-swap then 2-swap (VND) order, deterministic tie-breaks (smallest outgoing position, then smallest incoming ID), seeded restarts and feasibility rules as `d_optimal_design`. Acceptance: a move is accepted only if the **directly recomputed** `φ_B(M')` (Cholesky solve on the new `M'`) decreases by more than a scale-aware threshold `τ = 128·p·ε·max(1,|φ|)·max(1,cond)` (HYPOTHESIS, mirrors the D `_tolerance`). Certificate labels unchanged: `LOCAL_2_NUMERICAL` only after full N₁ and N₂ scans without verified improvement — never global optimality.

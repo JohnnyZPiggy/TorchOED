@@ -18,6 +18,5 @@ result = profile.runcall(optimal_design,F,20,criterion='A',restarts=1,generator=
 stream = io.StringIO()
 stats = pstats.Stats(profile,stream=stream).sort_stats('cumulative')
 stats.print_stats()
-pathlib.Path('/content/w131-profile.txt').write_text(stream.getvalue())
 entries = [{'file':key[0], 'line':key[1], 'name':key[2], 'primitive_calls':v[0], 'calls':v[1], 'self_seconds':v[2], 'cumulative_seconds':v[3]} for key,v in stats.stats.items()]
-pathlib.Path('/content/w131-profile.json').write_text(json.dumps(dict(status='PASS',source_sha=sha,production_base='4a5c60439b74b06ae05c77053c07d6decbc8805a',python=sys.version,torch=torch.__version__,device=str(F.device),threads=torch.get_num_threads(),ids=result['ids'].tolist(),entries=entries),allow_nan=False))
+pathlib.Path('/content/w131-profile.json').write_text(json.dumps(dict(profile_text=stream.getvalue(),status='PASS',source_sha=sha,production_base='4a5c60439b74b06ae05c77053c07d6decbc8805a',python=sys.version,torch=torch.__version__,device=str(F.device),threads=torch.get_num_threads(),ids=result['ids'].tolist(),entries=entries),allow_nan=False))

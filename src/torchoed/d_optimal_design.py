@@ -137,14 +137,13 @@ def _linear_closed_terms(G, Q, incoming=None):
     return addition, t11*r00+t00*r11-2*t01*r01, t00*t11-t01*t01, pi
 
 
-def _linear_screen(G, Q, idx, tolerance, cutoff, best, tables, offset):
+def _linear_screen(G, Q, idx, tolerance, cutoff, best, tables, flat):
     if tables is None:
         row = idx[:,(0,0,1,2,2,3,0,0,1,1)]
         col = idx[:,(0,1,1,2,3,3,2,3,2,3)]
         addition, numerator, tau, pi = _linear_closed_terms(G[row,col].unbind(1),Q[row,col].unbind(1))
     else:
         incoming, outgoing = tables
-        flat = torch.arange(offset,offset+len(idx))
         out, local = flat//incoming.shape[1], flat%incoming.shape[1]
         gaa,gab,gbb,qaa,qab,qbb = outgoing[:,out].unbind(0)
         row, col = idx[:,(0,0,1,1)], idx[:,(2,3,2,3)]
@@ -180,6 +179,47 @@ def _linear_eligible(pairs, gains, tolerance, cutoff):
     return keep
 
 
+def _linear_prefix_limit(negative, outgoing, phi, tolerance, best):
+    theta = min(max(tolerance,best)-tolerance,phi/2)
+    shift = phi*theta/(phi-theta)
+    return torch.searchsorted(negative,negative.new_tensor(-outgoing-shift+tolerance),right=True).item()
+
+
+def _linear_prefix_tiles(n, prefix, selected_scores, phi, tolerance, width, get_best):
+    pool, negative, order = prefix
+    q, count = len(pool), len(order)
+    # At the capped threshold no pair can be pruned: preserve the original raw sequence.
+    if -negative[-1]>=selected_scores.topk(2).values.sum()+phi-tolerance:
+        offset = 0
+        for pairs in _pair_tiles(n,pool.tolist(),width):
+            yield pairs,torch.arange(offset,offset+len(pairs))
+            offset += len(pairs)
+        return
+    ends = torch.arange(q).flip(0)[:-1].cumsum(0)
+    pending, flats, used, out = [], [], 0, 0
+    for i in range(n):
+        for k in range(i+1,n):
+            outgoing = (selected_scores[i]+selected_scores[k]).item()
+            start = 0
+            while True:
+                limit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best())
+                if start>=limit:
+                    break
+                end = min(limit,start+width-used)
+                local = order[start:end]
+                a = torch.searchsorted(ends,local,right=True)
+                b = a+1+local-(ends[a]-(q-a-1))
+                pending.append(torch.stack((torch.full_like(a,i),torch.full_like(a,k),pool[a],pool[b]),dim=1))
+                flats.append(out*count+local)
+                used, start = used+end-start, end
+                if used==width:
+                    yield torch.cat(pending),torch.cat(flats)
+                    pending, flats, used = [], [], 0
+            out += 1
+    if used:
+        yield torch.cat(pending),torch.cat(flats)
+
+
 def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *, tolerance=None, cutoff=None):
     m, p = F.shape
     free = torch.arange(len(ids)) if free_positions is None else free_positions.nonzero().flatten()
@@ -195,19 +235,27 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
     T = torch.linalg.solve_triangular(L.mT,Z,upper=True) if criterion=='A' else (Z@Z.mT/m)@Z
     J = torch.diag(F.new_tensor([-1.,-1.,1.,1.]))
     count, outgoing_count = len(incoming)*(len(incoming)-1)//2, len(free)*(len(free)-1)//2
-    available_base = max_elements-fixed-2*len(incoming)**2
+    available_base = max_elements-fixed-2*len(incoming)**2-2*count
     table_elements = 8*count+6*outgoing_count
     hoisted = table_elements<=available_base//2
     available = available_base-table_elements if hoisted else available_base
     tables = None
     screened_capacity = available//96
-    screened = tolerance is not None and screened_capacity>=1
+    screened = tolerance is not None and screened_capacity>=1 and max_elements-fixed>=6*count
     if screened:
         # Closed temporaries die before gather4; retain at most two sets of row IDs.
         rescore_capacity = (available-8*screened_capacity)//(32*p+256)
         screened = rescore_capacity>=1
     if screened:
         capacity = screened_capacity
+        diagonal = T.square().sum(0) if criterion=='A' else (Z*T).sum(0)
+        B = torch.eye(p,dtype=F.dtype) if criterion=='A' else F.mT@F/m
+        phi = torch.trace(torch.cholesky_solve(B,L)).item()
+        pool = torch.tensor(incoming)
+        a,b = torch.triu_indices(len(pool),len(pool),offset=1)
+        values, order = (diagonal[pool[a]]+diagonal[pool[b]]).sort(descending=True,stable=True)
+        prefix = pool,-values,order
+        del a,b,values
         G = Z.mT@Z
         Q = T.mT@T if criterion=='A' else Z.mT@T
         if hoisted:
@@ -220,14 +268,14 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
             outgoing_table = torch.stack((G[a,a],G[a,b],G[b,b],Q[a,a],Q[a,b],Q[b,b]))
             del a,b,c,d,u,v,w,pi,qcc,qcd,qdd
             tables = incoming_table,outgoing_table
-    offset = 0
     best = -float('inf')
-    for pairs in _pair_tiles(len(free),incoming,capacity):
+    tiles = (_linear_prefix_tiles(len(free),prefix,diagonal[ids[free]],phi,tolerance,capacity,lambda:best)
+             if screened else ((pairs,None) for pairs in _pair_tiles(len(free),incoming,capacity)))
+    for pairs,flat in tiles:
         pairs[:,:2] = free[pairs[:,:2]]
         if screened:
             idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
-            pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best,tables,offset)]
-            offset += len(idx)
+            pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best,tables,flat)]
             del idx
         for chunk in pairs.split(rescore_capacity) if screened else (pairs,):
             legal, gain = _linear_gather4(Z,T,ids,chunk,criterion,J)
@@ -248,6 +296,11 @@ def _linear_pair_moves(F, ids, criterion, max_elements, free_positions, toleranc
             eligible = keep.nonzero().flatten()
             if len(eligible):
                 index = eligible[gains[eligible].argmax()]
+                tied = eligible[gains[eligible]==gains[index]]
+                if len(tied)>1:
+                    for column in (3,2,1,0):
+                        tied = tied[pairs[tied,column].argsort(stable=True)]
+                    index = tied[0]
                 key = (-gains[index].item(),tuple(pairs[index].tolist()))
                 if best is None or key<best:
                     best = key

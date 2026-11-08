@@ -69,3 +69,13 @@ def test_screen_preserves_ties_and_whole_cutoff_sequence(monkeypatch):
             patch.setattr(search,'_linear_pair_scores',full)
             expected = list(search._linear_pair_moves(F,ids,criterion,1_000_000,None,1e-12))
         assert actual == expected and len(actual)>1
+
+
+def test_workspace_fallback_preserves_full_scan():
+    F = torch.randn(14,3,dtype=torch.float64,generator=torch.Generator().manual_seed(137))
+    ids = torch.arange(6)
+    expected = list(search._linear_pair_scores(F,ids,'A',2200))
+    actual = list(search._linear_pair_scores(F,ids,'A',2200,tolerance=1e-12))
+    assert torch.equal(torch.cat([p for p,g in actual]),torch.cat([p for p,g in expected]))
+    assert torch.equal(torch.cat([g for p,g in actual]),torch.cat([g for p,g in expected]))
+    assert sum(len(p) for p,g in actual)==420

@@ -31,6 +31,7 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w136](w136/) | Closed-form screen timing, exact outputs and scoped H1/H2 witnesses; [#138](https://github.com/JohnnyZPiggy/TorchOED/pull/138) | current (development screen; C1 target unmet) |
 | [w139](w139/) | Per-state screen tables, exact outputs, workspace fallback and N2 profile; [#142](https://github.com/JohnnyZPiggy/TorchOED/pull/142) | candidate (base screen retained; C1 unmet) |
 | [w141](w141/) | Tangent-prefix kept/rescore fractions, exact outputs and full-tail H3/H4 margins; [#143](https://github.com/JohnnyZPiggy/TorchOED/pull/143) | candidate (C1 unmet; n=p timing tradeoff) |
+| [w145](w145/) | Removal-tangent kept fractions, capacities and exact full-set H5/H4 margins; [#149](https://github.com/JohnnyZPiggy/TorchOED/pull/149) | candidate (n=p timing qualification failed) |
 | [w3-heldout](w3-heldout/) | Frozen inputs and untuned H1-H8 final evidence in final/; [#102](https://github.com/JohnnyZPiggy/TorchOED/pull/102), [#112](https://github.com/JohnnyZPiggy/TorchOED/pull/112), [#122](https://github.com/JohnnyZPiggy/TorchOED/pull/122) | current (held-out record; no tuning) |
 | [w3-probe](w3-probe/) | R AlgDesign reproduction probe; [#88](https://github.com/JohnnyZPiggy/TorchOED/pull/88) | superseded by w3-heldout |
 | [w4-bench](w4-bench/) | Measured per-restart D/A/I ratios, retained 10-restart D rows; [#126](https://github.com/JohnnyZPiggy/TorchOED/pull/126) | current (development timing baseline) |

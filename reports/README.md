@@ -27,7 +27,8 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w113](w113/) | D/A/I dual-floor validation and timing; [#115](https://github.com/JohnnyZPiggy/TorchOED/pull/115) | current (bound evidence; later timings in w4-bench) |
 | [w114](w114/) | Trusted D verification base/head timing pair; [#117](https://github.com/JohnnyZPiggy/TorchOED/pull/117) | superseded by w118 |
 | [w118](w118/) | Lazy rows / combined dual-floor transfer pair, 40 identical D outputs; [#121](https://github.com/JohnnyZPiggy/TorchOED/pull/121) | superseded by w4-bench (timing convention) |
-| [w131](w131/) | Exact pair bookkeeping base/head, profile and D/A/I equality; [#135](https://github.com/JohnnyZPiggy/TorchOED/pull/135) | current (development timing; D no-regression not met) |
+| [w131](w131/) | Exact pair bookkeeping base/head, profile and D/A/I equality; [#135](https://github.com/JohnnyZPiggy/TorchOED/pull/135) | baseline for w136 (original D timings retained) |
+| [w136](w136/) | Closed-form screen timing, exact outputs and scoped H1/H2 witnesses; [#138](https://github.com/JohnnyZPiggy/TorchOED/pull/138) | current (development screen; C1 target unmet) |
 | [w3-heldout](w3-heldout/) | Frozen inputs and untuned H1-H8 final evidence in final/; [#102](https://github.com/JohnnyZPiggy/TorchOED/pull/102), [#112](https://github.com/JohnnyZPiggy/TorchOED/pull/112), [#122](https://github.com/JohnnyZPiggy/TorchOED/pull/122) | current (held-out record; no tuning) |
 | [w3-probe](w3-probe/) | R AlgDesign reproduction probe; [#88](https://github.com/JohnnyZPiggy/TorchOED/pull/88) | superseded by w3-heldout |
 | [w4-bench](w4-bench/) | Measured per-restart D/A/I ratios, retained 10-restart D rows; [#126](https://github.com/JohnnyZPiggy/TorchOED/pull/126) | current (development timing baseline) |

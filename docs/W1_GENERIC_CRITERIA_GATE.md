@@ -85,6 +85,49 @@ Then (i) `Γ₂ = det K = π·τ`, so the move is legal iff `τ > 0` (§2 item 2
 
 **What this does not do.** It is a constant-factor gain (≈7× in NumPy) on the N₂ scoring arithmetic only. It cannot by itself close the 39×–518× per-restart A:D gap of #126; that needs pruning (#125 Q1/Q2/Q4).
 
+## 2d. Tangent prefix prune for the A/I two-swap scan — week 4 C1, partial answer to [Mentor] #125 Q1 (PROVED bound; HYPOTHESIS float guards)
+
+**Chief Architect · 2026-11-08.** §2c scores every pair at O(1). This section skips pairs **without enumerating them**, using a separable upper bound on γ. It is a sound but weak bound: it removes most pairs only when the pool is large relative to `n` (random500, `n = 2p`). It does not close C1; #125 Q1/Q2/Q4 stay open.
+
+**Notation.** As in §2 and §4: `φ = φ_B(M) = tr(BM⁻¹)`, `Q_jj = f_jᵀM⁻¹BM⁻¹f_j` (the diagonal of `Q` in §2 item 5, already formed for N₁), `s_O = Q_aa + Q_bb` for an outgoing pair `O={a,b}⊂S`, `s_N = Q_cc + Q_dd` for an incoming pair `N={c,d}⊂Sᶜ`, `Δ = s_N − s_O`, and `M' = M − F_OᵀF_O + F_NᵀF_N`.
+
+**Bound (PROVED).** For every two-swap with `M' ≻ 0`: `φ + Δ > 0` and
+**`γ(O,N) = φ − φ_B(M') ≤ u(Δ) := φΔ/(φ+Δ) ≤ Δ`.**
+
+*Proof.* `tr(M⁻¹BM⁻¹M') = φ − s_O + s_N = φ + Δ`, which is `> 0` because `M⁻¹BM⁻¹ ≻ 0` (B PD for A and I) and `M' ≻ 0, M' ≠ 0`. `φ_B` is convex and homogeneous of degree −1 on the PD cone, with gradient `−X⁻¹BX⁻¹`. As in §4, for `t > 0`: `φ_B(M') ≥ φ_B(tM) + tr(∇φ_B(tM)(M' − tM)) = 2φ/t − (φ+Δ)/t²`. Taking `t = (φ+Δ)/φ` gives `φ_B(M') ≥ φ²/(φ+Δ)`, so `γ ≤ φ − φ²/(φ+Δ) = u(Δ)`. Finally `Δ − u(Δ) = Δ²/(φ+Δ) ≥ 0`. ∎
+`u` is strictly increasing on `Δ > −φ` (`u' = φ²/(φ+Δ)² > 0`), and for `0 ≤ θ < φ`, `u(Δ) < θ ⇔ Δ < Δ*(θ) := φθ/(φ−θ)`.
+
+**Prefix structure.** For a fixed outgoing pair `O`, only incoming pairs with `s_N ≥ s_O + Δ*(θ)` can reach a threshold `θ` (necessary, not sufficient). They form a prefix of the incoming pairs sorted by `s_N` in descending order. Its length is one `searchsorted`. The skipped incoming pairs are never enumerated, as in the D Hadamard prefix of `docs/M3B2_K2_SEARCH_GATE.md` §1.3.
+
+**Use (decision; keeps A/I results identical to `main`).** This adds rule **(d)** to the §2c skip rule, with the same `δ`, `tolerance` (= δ in the code, `exchange._tolerance`), `g_best` (best gather4 value over pairs eligible under the current rule, band pairs included) and cutoff handling. Let `θ = min(max(tolerance, g_best) − δ, φ̂/2)`, recomputed whenever `g_best` changes (any order of `O` is allowed). The cap `φ̂/2` keeps `Δ*` well conditioned (about `dΔ*/dθ = φ²/(φ−θ)² ≤ 4` and `Δ* ≤ φ`, approximately since `φ̂ ≈ φ`; motivation only, not used in the proof); a lower `θ` only skips fewer pairs, so it is always sound.
+- (d) If `θ ≥ 0`: skip every pair with `ŝ_N < ŝ_O + Δ̂*(θ) − δ`.
+- (d) is applied **before** the §2c band test: a skipped pair is not enumerated, so it is neither band-rescored nor screened. Rules (a)–(c) and the band apply unchanged to the pairs (d) keeps.
+
+*Why this is exact (under the HYPOTHESIS).* For a skipped pair, (H3) gives `Δ < Δ*(θ)`, hence (bound) `γ ≤ u(Δ) < θ`, hence (H4) `γ̂_gather4 < θ + δ/2 ≤ max(tolerance, g_best) − δ/2`. So in the base full scan the pair is either not eligible (`≤ tolerance`) or strictly below `g_best`, so it can neither win nor tie. This holds for every cutoff of the resume sequence, since `g_best` is always over currently eligible pairs. The winner and the whole resume sequence are bit-identical to the current scan. Pairs with singular `M'` have no exact bound but are illegal (`det K̂ ≤ 0` in gather4 is roundoff-only, §2c item 4); skipping them changes nothing unless gather4 would call them legal and eligible, which H4 excludes.
+
+**HYPOTHESIS (two premises; checked by the Engineer evidence, never assumed).**
+- (H3) For **every** pair that (d) skips, i.e. every pair with `x̂ := ŝ_N − ŝ_O − Δ̂*(θ) < −δ`, the exact `x := s_N − s_O − φθ/(φ−θ)` is `< 0`, with the **exact** `φ`, `s` and `θ` taken as the float number actually used (θ is only a threshold). If `θ ≥ φ` exactly, H3 is vacuous: then `γ ≤ u(Δ) < φ ≤ θ` directly, and the evidence reports this case separately instead of as an H3 failure. A sufficient check: `|x̂ − x| ≤ δ/2` over the whole skipped tail, not only near the threshold. Because `x` is a difference of sums of diagonal entries of the PSD `Q` plus a `θ ≤ φ̂/2` term, the expected error is a few `ε·(s_N + s_O + φ)`.
+- (H4) `|γ̂_gather4 − γ| ≤ δ/2` for every legal pair with `γ̂_gather4 > tolerance − δ`. This premise is already implicit in the current scan, which trusts gather4 values against `tolerance`; it is stated here because (d) uses the exact bound.
+
+**OBSERVED (Architect sandbox, NumPy float64, 2026-11-08; not torch).** Fraction of all pairs **kept** by (d) at the certifying threshold `θ = 0` (`Δ*(0) = 0`, i.e. keep iff `s_N > s_O`), two 1-swap-local states each, quadratic features (p=10 for 3 factors, p=15 for grid4):
+
+| pool | n | A kept | I kept |
+|---|---|---|---|
+| random500 | 10 | 0.78–0.80 | 0.79–0.82 |
+| random500 | 20 | **0.073–0.094** | **0.15–0.20** |
+| grid3 | 10 / 20 | 0.88–0.94 | 0.81–0.85 |
+| grid4 | 15 / 30 | 0.64–0.93 | 0.70–0.97 |
+
+During an improving scan `θ > 0` grows with `g_best`, so more pairs are skipped; these numbers are the certifying-scan case. Expected effect: about 5×–14× less screen work on random500 n=20 (the worst A:D case, 194.5× after #138), negligible elsewhere. C1 stays **not met**.
+
+**Exact evidence (Architect sandbox, `Fraction`, 2026-11-08).** 16 random integer fixtures (p=3, m∈{7,8}, n∈{p, p+1, p+2}), A (`B=I`) and I (`B=FᵀF/m`): 674 legal two-swaps; `φ+Δ > 0` and `γ ≤ u(Δ) ≤ Δ` held in **674/674** (no case of equality).
+
+**Cost.** Per state: `s_N` for the `C(q,2)` incoming pairs and one descending sort, `O(q² log q)`; per outgoing pair one `searchsorted`. The scan then costs O(kept pairs) instead of O(all pairs).
+
+**Independent review (2026-11-08): PASS after two rounds.** A fresh-context reviewer checked the bound exactly with `Fraction`: 60 integer fixtures (p=2..3, m=6..8, n=p..p+2), A and I, 2166 two-swaps with `M' ≻ 0` and 66 singular: `tr(M⁻¹BM⁻¹M') = φ+Δ`, `φ+Δ > 0`, `γ ≤ u(Δ) ≤ Δ` and `u(Δ) < θ ⇔ Δ < Δ*(θ)` (θ = kφ/10) all held. Round 1 found that H3 covered only pairs near the threshold, not the whole skipped tail, and that `Δ̂*` is ill-conditioned as `θ → φ`; fixed by H3 over the whole tail and the cap `θ ≤ φ̂/2`. Round 2 found that `x` must use the exact `φ` (not `φ̂`) and that `θ ≥ φ` must be handled; both fixed as stated. The reviewer confirmed every other step (ties, cutoff/resume, the cap never loosens the chain).
+
+**Required checks for the Engineer Issue.** (a) An exhaustive `Fraction` test of `γ ≤ u(Δ)` on one frozen fixture, A and I, including `n = p`. (b) On one random CPU float64 fixture, A and I, with at least one cutoff state: the pruned path yields the same winner sequence as `tolerance=None` (full scan), `torch.equal`. (c) H3 (over the whole skipped tail, against a recomputation of `Q_jj` and `φ` in higher precision or `Fraction`) and H4 measured offline on full scans of the `bench_b0` random500 n=20 states and reported as margins. (d) `tools/bench_b0.py`: A/I/D IDs and objectives identical to base on every case and seed, D time not regressed, per-restart A:D, I:D and the kept fraction reported as-is.
+
 ## 3. Search semantics
 
 Same best-improvement 1-swap then 2-swap (VND) order, deterministic tie-breaks (smallest outgoing position, then smallest incoming ID), seeded restarts and feasibility rules as `d_optimal_design`. Acceptance: a move is accepted only if the **directly recomputed** `φ_B(M')` (Cholesky solve on the new `M'`) decreases by more than a scale-aware threshold `τ = 128·p·ε·max(1,|φ|)·max(1,cond)` (HYPOTHESIS, mirrors the D `_tolerance`). Certificate labels unchanged: `LOCAL_2_NUMERICAL` only after full N₁ and N₂ scans without verified improvement — never global optimality.

@@ -30,6 +30,61 @@ Preconditions throughout: current `M≻0`; the pure-deletion reduction needs `u<
 
 **Complexity (target).** Per accepted move, the D path computes `Z` (`O(mp²)`) and gathers from `G`. L-criteria add `Q` at the same order: A one more triangular solve `O(mp²)`, I forms `H=ZZᵀ/m` (`O(mp²)`) then `Q=ZᵀHZ` restricted to the needed rows/columns (`diag(Q)`, `Q[S,:]`) — same order as A; do not form `G·G` (`O(m²p)`). Pair scoring stays O(1) per k=1 move and O(k³)=O(1) per k=2 pair. Target: A/I wall time ≤ 2× D on the same `bench_b0` case (HYPOTHESIS; measure, do not assume).
 
+## 2c. Closed-form two-swap L-gain — week 4 C1, answers [Mentor] #125 Q3 (PROVED identity; HYPOTHESIS float guards)
+
+**Chief Architect · 2026-11-08.** This section gives an exact, O(1)-per-pair replacement for the batched 4×4 `det`/`solve` of identity 3 (k=2). It uses the **add-first** pivot, so it is valid for every `n ≥ p`, including `n = p` and `n = p+1` where `ρ(O) = det(I−G_OO) = 0`. The delete-first pivot is prohibited there (M3-B2 gate §1 item 5). It is not a pruning bound: every pair is still scored, at a lower constant cost. #125 Q1, Q2 and Q4 stay open.
+
+**Notation.** As in §2: `O={a,b}⊂S`, `N={c,d}⊂Sᶜ`, `K = J + G[idx,idx] = [[A, X],[Xᵀ, P]]` with `A = −I₂ + G_OO`, `X = G_ON` (2×2, rows a,b, columns c,d), `P = I₂ + G_NN`. `Y = Q_ON`, `Q_OO`, `Q_NN` are the matching 2×2 blocks of `Q`.
+
+**Identity (PROVED).** `P` is SPD for every design, because `G ⪰ 0`. Let
+- `π = det P = (1+G_cc)(1+G_dd) − G_cd²` (> 0), `P⁻¹ = adj(P)/π`;
+- `g_N = tr(P⁻¹Q_NN) = [(1+G_dd)Q_cc + (1+G_cc)Q_dd − 2G_cd Q_cd]/π` (the pure-addition gain of N; Sherman–Morrison/Woodbury);
+- `E = X P⁻¹`, `T = A − E Xᵀ` (the Schur complement of `P` in `K`), `τ = det T`;
+- `R = Q_OO − E Yᵀ − Y Eᵀ + E Q_NN Eᵀ`.
+
+Then (i) `Γ₂ = det K = π·τ`, so the move is legal iff `τ > 0` (§2 item 2); (ii) if `τ ≠ 0`,
+**`γ(O,N) = tr(K⁻¹Q[idx,idx]) = g_N + (T_bb R_aa + T_aa R_bb − 2 T_ab R_ab)/τ`**, and `φ_B(M') = φ_B(M) − γ`.
+
+*Proof.* Block elimination of the invertible `P`: `det K = det P · det T`. When `T` is invertible, `K⁻¹ = diag(0, P⁻¹) + Wᵀ T⁻¹ W` with `W = [I₂, −X P⁻¹]` (2×4), which is the standard Schur-complement inverse. Then `tr(K⁻¹Q_idx) = tr(P⁻¹Q_NN) + tr(T⁻¹ W Q_idx Wᵀ)`. Expanding `W Q_idx Wᵀ` with `X P⁻¹ = E` gives `R`. `T` and `R` are symmetric, and `tr(T⁻¹R)` for 2×2 symmetric matrices is `(T_bb R_aa + T_aa R_bb − 2T_ab R_ab)/det T`. ∎ For `k=1` the same elimination reduces to §2 item 4.
+
+**Cost.** Per state: `G` and `Q` on `S×S`, `S×Sᶜ` and `Sᶜ×Sᶜ`, which is `O((n+q)²p)` and tileable. `S×Sᶜ` is already formed for N₁. Per incoming pair: `π`, `P⁻¹`, `g_N` (O(1)). Per (O,N): 8 gathers and about 60 flops. There is no `p`-dependence and no batched LU. The `C(n,2)×C(q,2)` scan becomes elementwise tensor arithmetic over `(O, N)` tiles.
+
+**Exact evidence (Architect sandbox, `Fraction`, 2026-11-08).** 24 random integer fixtures (p=3, m∈{7,8}, n∈{p, p+1, p+2}), A (`B=I`) and I (`B=FᵀF/m`): 1196 two-swaps, of which 188 outgoing pairs had `ρ(O)=0` exactly. `π·τ = det M'/det M` held in **1196/1196**. There were 1164 legal pairs, and on all of them the closed-form `γ` equals both the direct `φ_B(M) − tr(B M'⁻¹)` and the gather4 `tr(K⁻¹Q_idx)` (**0 mismatches**). The 32 pairs with `τ ≤ 0` all had `det M' = 0` exactly.
+
+**Floating point (OBSERVED, NumPy float64; HYPOTHESIS for torch).** Pools: random500 (3 factors, quadratic, p=10), grid3 and grid4. n ∈ {10, 11, 20}, A and I, two 1-swap-local states each; all pairs, or a uniform sample of about 4·10⁶.
+- For pairs with `max(γ̂_closed, γ̂_gather4) > −φ`, the largest absolute difference from gather4 was **5.6e−14**, at most 7.8e−4 of `τ_tol = 128·p·ε·max(1,|φ|)·max(1,cond M)` (§3). Against the direct recomputation on the top 50 pairs it was ≤ 1.2e−14.
+- The differences grow with `|γ|` (up to 9e−3 at `|γ| ≈ 10⁷`). Those are nearly singular moves, far from eligible.
+- **Legality.** `|π̂τ̂ − det K̂| ≤ 2.2e−15`. The legality verdicts `τ̂>0` and `det K̂>0` disagreed on up to 286 pairs per state. This happened only on grids with n ∈ {p, p+1}, at exactly-singular moves with `|Γ̂₂| ≤ 4.1e−16`.
+- **Speed.** About 7× faster than batched `np.linalg.det` + `solve` on 4·10⁶ pairs (0.6 s vs 4.5 s, one process). This is not a torch measurement.
+
+**Use (decision; keeps A/I results identical to `main`).** The closed form is a **screen** that only decides which pairs are skipped. Every pair that is not skipped is scored by gather4, which is the current `_linear_pair_scores` arithmetic. Its legality (`det K̂ > 0`) and gain come from gather4, and the existing rule (`gain > tolerance`, `key > cutoff`, maximum gain, ties → lexicographically smallest row) is applied to those gather4 values.
+1. **Near-singular band (always rescored).** Every pair with `|π̂τ̂| ≤ η = 10⁻⁸`, or with a non-finite closed-form value, goes into the rescored set unconditionally. It is not part of the sort below. Its gather4 value enters `g_best` only if the pair is **eligible under the current rule**: legal, finite, `> tolerance` **and** `key > cutoff`.
+2. **Skip rule.** Let `δ = τ_tol` of the current state and let `(g₀, r₀)` be the cutoff, if there is one. A non-band pair is skipped only if one of these holds:
+   - (a) `γ̂_closed ≤ tolerance − δ/2`;
+   - (b) `γ̂_closed > g₀ + δ/2` (strict; then its gather4 gain is `> g₀` and the pair lies before the cutoff);
+   - (c) in descending `γ̂_closed` order, `γ̂_closed < g_best − δ`, where `g_best` is the best gather4 value found so far over pairs eligible under the current rule (`> tolerance` and `key > cutoff`), band-1 pairs included.
+   The skip rule is re-applied for each new cutoff of the resume sequence.
+3. **Why this is exact (under the HYPOTHESIS).**
+   - (a) A pair with gather4 gain `> tolerance` has `γ̂_closed > tolerance − δ/2`, so (a) never skips it.
+   - (b) A skipped pair has gather4 gain `> g₀`, so it lies before the cutoff.
+   - (c) A skipped pair has gather4 gain `< g_best − δ/2`, so it can neither win nor tie. Every pair tied with the winner is rescored, so the tie-break is preserved.
+   The winner and the whole resume sequence are therefore bit-identical to the current full gather4 scan.
+4. **HYPOTHESIS (two premises, both checked by the Engineer evidence).**
+   - (H1) For every non-band pair with `γ̂_gather4 > tolerance − δ` or `γ̂_closed > tolerance − δ/2`: `|γ̂_closed − γ̂_gather4| ≤ δ/2`. This is scoped on purpose. Outside it the gap can exceed δ by orders of magnitude: the reviewer found 9e−4 at `γ ≈ −2·10⁷` with `det K̂ ≈ 10⁻⁶`, because the error scales with `cond M'`, not `cond M`. Such pairs have `γ ≤ φ` far below eligibility.
+   - (H2) Gather4 run on a subset batch gives bitwise the same per-pair values as on the full tiled batch (CPU float64). The Engineer's test must check this. GPU is out of scope.
+   - Observed margins on H1: ≥ 90× on the `bench_b0`-type pools above; **6.5×** on the reviewer's random Gaussian fixtures, one third with near-duplicate rows.
+   - In exact arithmetic `det K ≥ 0` always, since `M' ⪰ 0`, so the only illegal case is `τ = 0`. A negative `τ̂` is roundoff.
+5. D, tolerances, certificates, tile capacity semantics (`max_elements`) and the public `score_two_swaps` are unchanged.
+
+**Independent review (2026-11-08): PASS after two rounds.** A fresh-context reviewer checked the identity exactly with `Fraction`: 117 integer fixtures (p=2..3, m=6..8, n=p..p+2), 4,300 pairs × {A, I}, of which 3,188 had `ρ=0` and 114 had a singular `M'`. Every check passed: `det K = π·τ`, γ against both gather4 and the direct `tr(B M'⁻¹)`, and `P` SPD.
+- Round 1 found that the premise as first stated was false outside the eligible range. It also found that legality was taken from the closed form, that the cutoff test was not strict, and that band-1 handling and the subset-batch bitwise assumption were not stated. All five were fixed, giving the scoped H1, gather4 legality, (b) strict, item 1 and H2.
+- Round 2 found that a band-1 pair already before the cutoff could set `g_best`. That is fixed: `g_best` is taken over currently eligible pairs only. The reviewer stated that every other step is correct under H1+H2 with that fix.
+- H1 re-run on the full scope, NumPy: 300 Gaussian fixtures, 105,138 in-scope pairs, maximum gap = 0.153·δ/2. H1 can only be validated offline, with full scans.
+
+**Required checks for the Engineer Issue.** (a) The exhaustive `Fraction` identity test above on one frozen fixture with `n=p` (so `ρ=0` occurs). (b) The existing A/I `Fraction`/oracle tests pass unchanged. (c) H2: gather4 values of a rescored subset equal the full-scan values bitwise. (d) `tools/bench_b0.py`: A/I/D IDs and objectives identical to base on every case and seed, D time not regressed, new per-restart A:D and I:D reported as-is.
+
+**What this does not do.** It is a constant-factor gain (≈7× in NumPy) on the N₂ scoring arithmetic only. It cannot by itself close the 39×–518× per-restart A:D gap of #126; that needs pruning (#125 Q1/Q2/Q4).
+
 ## 3. Search semantics
 
 Same best-improvement 1-swap then 2-swap (VND) order, deterministic tie-breaks (smallest outgoing position, then smallest incoming ID), seeded restarts and feasibility rules as `d_optimal_design`. Acceptance: a move is accepted only if the **directly recomputed** `φ_B(M')` (Cholesky solve on the new `M'`) decreases by more than a scale-aware threshold `τ = 128·p·ε·max(1,|φ|)·max(1,cond)` (HYPOTHESIS, mirrors the D `_tolerance`). Certificate labels unchanged: `LOCAL_2_NUMERICAL` only after full N₁ and N₂ scans without verified improvement — never global optimality.

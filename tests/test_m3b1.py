@@ -161,3 +161,13 @@ def test_empty_pairs_ownership_and_limited_tile():
     result=score_two_swaps(F,ids,tile_size=64,max_elements=400)
     assert result['status'].tolist()==[0] and result['workspace_element_estimate']<=400
     assert torch.equal(F,saved[0]) and torch.equal(ids,saved[1])
+def test_pair_tiles_match_independent_combinations():
+    from itertools import combinations, product
+    from torchoed.two_swap import _pair_tiles
+    for width in (7,1):
+        incoming = [2,5,8,11]
+        rows = [(*out,*inc) for out,inc in product(combinations(range(4),2),combinations(incoming,2))]
+        actual = list(_pair_tiles(4,incoming,width))
+        expected = [torch.tensor(rows[i:i+width]) for i in range(0,len(rows),width)]
+        assert len(actual) == len(expected)
+        assert all(torch.equal(a,b) for a,b in zip(actual,expected))

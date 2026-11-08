@@ -142,9 +142,16 @@ def _linear_pair_moves(F, ids, criterion, max_elements, free_positions, toleranc
         best = None
         for pairs,gains in _linear_pair_scores(F,ids,criterion,max_elements,free_positions):
             keep = gains>tolerance
-            for row,gain in zip(pairs[keep].tolist(),gains[keep].tolist()):
-                key = (-gain,tuple(row))
-                if (cutoff is None or key>cutoff) and (best is None or key<best):
+            if cutoff is not None:
+                row = pairs.new_tensor(cutoff[1])
+                first = (pairs != row).int().argmax(dim=1)
+                later = pairs.gather(1,first[:,None]).flatten() > row[first]
+                keep &= (gains < -cutoff[0]) | ((gains == -cutoff[0]) & later)
+            eligible = keep.nonzero().flatten()
+            if len(eligible):
+                index = eligible[gains[eligible].argmax()]
+                key = (-gains[index].item(),tuple(pairs[index].tolist()))
+                if best is None or key<best:
                     best = key
         if best is None:
             return

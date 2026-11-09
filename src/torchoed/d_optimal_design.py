@@ -137,8 +137,30 @@ def _linear_closed_terms(G, Q, incoming=None):
     return addition, t11*r00+t00*r11-2*t01*r01, t00*t11-t01*t01, pi
 
 
-def _linear_screen(G, Q, idx, tolerance, cutoff, best, tables, flat):
-    if tables is None:
+def _linear_pair_entries(Z, T, c, d, criterion):
+    g = (Z[:,c]*Z[:,d]).sum(0)
+    q = ((T if criterion=='A' else Z)[:,c]*T[:,d]).sum(0)
+    return g,q
+
+
+def _linear_products(Z, T, ids, criterion, sliced):
+    if sliced:
+        G = Z[:,ids].mT@Z
+        Q = T[:,ids].mT@T if criterion=='A' else Z[:,ids].mT@T
+        return G,Q,Z.square().sum(0)
+    return Z.mT@Z,T.mT@T if criterion=='A' else Z.mT@T,None
+
+
+def _linear_screen(G, Q, idx, tolerance, cutoff, best, tables, flat, slices=None):
+    if slices is not None:
+        Z,T,gd,qd,criterion,positions = slices
+        a,b,c,d = idx.unbind(1)
+        ra,rb = positions.unbind(1)
+        gcd,qcd = _linear_pair_entries(Z,T,c,d,criterion)
+        addition,numerator,tau,pi = _linear_closed_terms(
+            (G[ra,a],G[ra,b],G[rb,b],gd[c],gcd,gd[d],G[ra,c],G[ra,d],G[rb,c],G[rb,d]),
+            (Q[ra,a],Q[ra,b],Q[rb,b],qd[c],qcd,qd[d],Q[ra,c],Q[ra,d],Q[rb,c],Q[rb,d]))
+    elif tables is None:
         row = idx[:,(0,0,1,2,2,3,0,0,1,1)]
         col = idx[:,(0,1,1,2,3,3,2,3,2,3)]
         addition, numerator, tau, pi = _linear_closed_terms(G[row,col].unbind(1),Q[row,col].unbind(1))
@@ -231,15 +253,16 @@ def _linear_removal_terms(g, q, cg, cq, diagonal):
     return rho,delta,t
 
 
-def _linear_removal_data(G, Q, chosen, pool, diagonal):
+def _linear_removal_data(G, Q, chosen, pool, diagonal, rows=None):
     a,b = chosen
-    g,q = (G[a,a],G[a,b],G[b,b]),(Q[a,a],Q[a,b],Q[b,b])
+    r,t = (a,b) if rows is None else rows
+    g,q = (G[r,a],G[r,b],G[t,b]),(Q[r,a],Q[r,b],Q[t,b])
     rho = (1-g[0])*(1-g[2])-g[1]*g[1]
     # Invalid removals use only (d); avoid dividing by their singular determinant.
     safe = tuple(torch.where(rho>=1e-6,v,0)[:,None] for v in g)
     _,delta,t = _linear_removal_terms(safe,tuple(v[:,None] for v in q),
-                                    (G[a[:,None],pool],G[b[:,None],pool]),
-                                    (Q[a[:,None],pool],Q[b[:,None],pool]),diagonal[pool])
+                                    (G[r[:,None],pool],G[t[:,None],pool]),
+                                    (Q[r[:,None],pool],Q[t[:,None],pool]),diagonal[pool])
     return rho,delta[:,0],t
 
 
@@ -254,10 +277,11 @@ def _linear_square_terms(q, p):
     return (q[2]*p[0]+q[0]*p[2]-2*q[1]*p[1])/det,det,q[0]+q[2]
 
 
-def _linear_square_data(G, Q, chosen, pool, P):
+def _linear_square_data(G, Q, chosen, pool, P, rows=None):
     a,b = chosen
-    alpha,det,trace = _linear_square_terms((Q[a,a],Q[a,b],Q[b,b]),P)
-    scores = G[a[:,None],pool].square()+G[b[:,None],pool].square()
+    r,t = (a,b) if rows is None else rows
+    alpha,det,trace = _linear_square_terms((Q[r,a],Q[r,b],Q[t,b]),P)
+    scores = G[r[:,None],pool].square()+G[t[:,None],pool].square()
     return scores,alpha,trace+2*det.clamp_min(0).sqrt()
 
 
@@ -267,7 +291,7 @@ def _linear_square_limit(negative, alpha, kappa, theta, tolerance):
     return torch.searchsorted(negative,-negative-threshold[:,None],right=True)
 
 
-def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, width, get_best, block_size, square=None):
+def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, width, get_best, block_size, square=None, selected_rows=None):
     pool,negative,order = prefix
     q = len(pool)
     count = q*(q-1)//2
@@ -276,18 +300,19 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
     for offset in range(0,len(i),block_size):
         oi,ok = i[offset:offset+block_size],k[offset:offset+block_size]
         chosen = torch.stack((selected[oi],selected[ok]))
+        rows = None if selected_rows is None else selected_rows[torch.stack((oi,ok))]
         outgoing = diagonal[chosen].sum(0)
         theta = min(max(tolerance,get_best())-tolerance,phi/2)
         if square is None:
             dlimit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best())
-            rho,delta,t = _linear_removal_data(G,Q,chosen,pool,diagonal)
+            rho,delta,t = _linear_removal_data(G,Q,chosen,pool,diagonal,rows)
             values,permutation = t.sort(dim=1,descending=True,stable=True)
             upper = _linear_removal_limit(-values,phi+delta,delta,theta,tolerance)
             upper = torch.where((rho>=1e-6)[:,None],upper,q)
             del rho,delta
         else:
             dlimit = outgoing+phi*theta/(phi-theta)<=diagonal[pool].topk(2).values.sum()+tolerance
-            t,alpha,kappa = _linear_square_data(G,Q,chosen,pool,(square[oi,oi],square[oi,ok],square[ok,ok]))
+            t,alpha,kappa = _linear_square_data(G,Q,chosen,pool,(square[oi,oi],square[oi,ok],square[ok,ok]),rows)
             values,permutation = t.sort(dim=1,descending=True,stable=True)
             upper = _linear_square_limit(-values,alpha,kappa,theta,tolerance)
             del alpha,kappa
@@ -337,9 +362,18 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
     table_elements = 8*count+6*outgoing_count
     # Packing indices must not activate extra tables and reduce an existing tile.
     hoisted = table_elements<=(available_base-(2*count-prefix_slots))//2
+    sliced = not hoisted
+    if hoisted and len(ids)>p+1:
+        ebase = available_base+prefix_slots
+        block = min(outgoing_count,max(1,ebase//(2*(16*len(incoming)+64))))
+        sliced = table_elements>(ebase-block*(16*len(incoming)+64))//2
+    row_savings = 2*len(incoming)**2-2*len(ids)*m-2*m
+    if not hoisted:
+        available_base += row_savings
+    pair_slots = 96+4*p if not hoisted else 96
     available = available_base-table_elements if hoisted else available_base
     tables = None
-    screened_capacity = available//96
+    screened_capacity = available//pair_slots
     screened = tolerance is not None and screened_capacity>=1 and max_elements-fixed>=6*count+8*outgoing_count
     if screened:
         # Closed temporaries die before gather4; retain at most two sets of row IDs.
@@ -363,37 +397,40 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
             del a,b,values,order
         else:
             prefix = None
-        G = Z.mT@Z
-        Q = T.mT@T if criterion=='A' else Z.mT@T
+        G,Q,gd = _linear_products(Z,T,ids,criterion,sliced)
         if removal:
-            QS = Q[ids[free]][:,ids]
+            QS = Q[free if sliced else ids[free]][:,ids]
             square = QS@QS.mT
             del QS
         if len(ids)>p+1:
             i,k = torch.triu_indices(len(free),len(free),offset=1)
             chosen = ids[free]
-            rho = (1-G[chosen[i],chosen[i]])*(1-G[chosen[k],chosen[k]])-G[chosen[i],chosen[k]]**2
+            r = free if sliced else chosen
+            rho = (1-G[r[i],chosen[i]])*(1-G[r[k],chosen[k]])-G[r[i],chosen[k]]**2
             top = diagonal[pool].topk(2).values.sum().reshape(1)
             if ((rho>=1e-6)&(diagonal[chosen[i]]+diagonal[chosen[k]]<=top[0]+tolerance)).any():
+                if sliced and hoisted:
+                    available_base += row_savings
+                pair_slots = 96+4*p if sliced else 96
                 ebase = available_base+prefix_slots
                 block_size = min(outgoing_count,max(1,ebase//(2*(16*len(pool)+64))))
                 ebase -= block_size*(16*len(pool)+64)
-                ehoisted = table_elements<=ebase//2
+                ehoisted = not sliced and table_elements<=ebase//2
                 eavailable = ebase-table_elements if ehoisted else ebase
-                ecapacity = eavailable//96
+                ecapacity = eavailable//pair_slots
                 erescore = (eavailable-8*ecapacity)//(32*p+256)
                 if ecapacity>=1 and erescore>=1:
                     removal,hoisted,capacity,rescore_capacity = True,ehoisted,ecapacity,erescore
                     prefix = pool,-top,None
-            del i,k,chosen,rho,top
+            del i,k,chosen,rho,top,r
         if prefix is None:
-            del G,Q
+            del G,Q,gd
             a,b = torch.triu_indices(len(pool),len(pool),offset=1)
             values, order = (diagonal[pool[a]]+diagonal[pool[b]]).sort(descending=True,stable=True)
             prefix = pool,-values,order.to(torch.int32) if compact else order
             del a,b,values,order
-            G = Z.mT@Z
-            Q = T.mT@T if criterion=='A' else Z.mT@T
+            sliced = not hoisted
+            G,Q,gd = _linear_products(Z,T,ids,criterion,sliced)
         if hoisted:
             c,d = torch.combinations(torch.tensor(incoming),r=2).mT
             u,v,w = 1+G[c,c],1+G[d,d],G[c,d]
@@ -408,13 +445,14 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
     tiles = (_linear_prefix_tiles(len(free),prefix,diagonal[ids[free]],phi,tolerance,capacity,lambda:best)
              if screened else ((pairs,None) for pairs in _pair_tiles(len(free),incoming,capacity)))
     if screened and removal:
-        tiles = _linear_removal_tiles(prefix,ids[free],diagonal,G,Q,phi,tolerance,capacity,lambda:best,block_size,square)
+        tiles = _linear_removal_tiles(prefix,ids[free],diagonal,G,Q,phi,tolerance,capacity,lambda:best,block_size,square,free if sliced else None)
     for pairs,flat in tiles:
         pairs[:,:2] = free[pairs[:,:2]]
         if screened:
             idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
-            pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best,tables,flat)]
-            del idx
+            slices = (Z,T,gd,diagonal,criterion,pairs[:,:2]) if sliced else None
+            pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best,tables,flat,slices)]
+            del idx,slices
         for chunk in pairs.split(rescore_capacity) if screened else (pairs,):
             legal, gain = _linear_gather4(Z,T,ids,chunk,criterion,J)
             if screened:

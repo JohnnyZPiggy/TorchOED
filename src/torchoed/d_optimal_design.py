@@ -38,12 +38,12 @@ def _dual_floor(F, M, n, criterion, current):
             phi = torch.trace(torch.cholesky_solve(B,L))
             ratio = phi/scores.max()
             floor = phi*ratio/own
-            update = scores.sqrt()
+            update = scores
         info_v, floor_v, ratio_v = torch.stack((info.to(F.dtype),floor,ratio)).tolist()
         if info_v:
             break
         best = max(best,floor_v)
-        if ratio_v>=1-1e-4:
+        if ratio_v>=1-(1e-4 if criterion=='D' else 1e-3):
             break
         w = w*update
         w = w/w.sum()

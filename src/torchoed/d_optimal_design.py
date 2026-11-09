@@ -178,7 +178,7 @@ def _linear_screen(G, Q, idx, tolerance, cutoff, best, tables, flat, slices=None
     keep = (closed>tolerance-tolerance/2) & (closed>=best-tolerance)
     if cutoff is not None:
         keep &= closed<=-cutoff[0]+tolerance/2
-    return keep | band,closed,band
+    return keep | band
 
 
 def _linear_gather4(Z, T, ids, pairs, criterion, J):
@@ -451,20 +451,8 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
         if screened:
             idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
             slices = (Z,T,gd,diagonal,criterion,pairs[:,:2]) if sliced else None
-            keep,closed,band = _linear_screen(G,Q,idx,tolerance,cutoff,best,tables,flat,slices)
+            pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best,tables,flat,slices)]
             del idx,slices
-            ranked = torch.where(torch.isfinite(closed),closed,-float('inf'))
-            probe = ranked.topk(min(8,len(pairs))).indices
-            del ranked
-            for chunk in pairs[probe].split(rescore_capacity):
-                legal,gain = _linear_gather4(Z,T,ids,chunk,criterion,J)
-                eligible = _linear_eligible(chunk[legal],gain,tolerance,cutoff) & torch.isfinite(gain)
-                if eligible.any():
-                    best = max(best,gain[eligible].max().item())
-            keep &= (closed>=best-tolerance) | band
-            keep[probe] = True
-            pairs = pairs[keep]
-            del probe,keep,closed,band
         for chunk in pairs.split(rescore_capacity) if screened else (pairs,):
             legal, gain = _linear_gather4(Z,T,ids,chunk,criterion,J)
             if screened:

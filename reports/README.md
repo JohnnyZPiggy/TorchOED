@@ -44,3 +44,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w159](w159/) | Base A/I screened/kept/gathered counts and per-kernel cProfile, seed0 on four slow cases; Refs #159 | candidate (evidence only; source `0213928`) |
 | [w162](w162/) | Empty screened-tile skip, exact outputs and gather calls; [#164](https://github.com/JohnnyZPiggy/TorchOED/pull/164) | candidate (paired D timing8/8 pass; measured head `33de5a9`) |
 | [w163](w163/) | A/I:D at1M/4M/16M workspace, exact outputs, gather counts and peak RSS; Refs #163 | candidate (evidence only; default unchanged) |
+| [w165](w165/) | Six random500 D/A/I non-N₂ profiles, disjoint accounting, calls and floor iterations; Refs #165 | candidate (evidence only; source `6b4854f`) |

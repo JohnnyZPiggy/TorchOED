@@ -274,7 +274,7 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
     passes = (False,) if square is None and -negative[-1]>=diagonal[selected].topk(2).values.sum()+phi-tolerance else (True,False)
     for seeding in passes:
         if seeding:
-            seeds,valid = torch.empty((len(i),4),dtype=torch.long),torch.ones(len(i),dtype=torch.bool)
+            seeds = torch.empty((len(i),2),dtype=torch.long)
         for offset in range(0,len(i),block_size):
             oi,ok = i[offset:offset+block_size],k[offset:offset+block_size]
             chosen = torch.stack((selected[oi],selected[ok]))
@@ -287,9 +287,9 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
             if seeding:
                 permutation = t.topk(2,dim=1).indices
                 a,b = pool[permutation[:,:2]].sort(dim=1).values.mT
-                seeds[offset:offset+len(oi)] = torch.stack((oi,ok,a,b),dim=1)
+                seeds[offset:offset+len(oi)] = torch.stack((a,b),dim=1)
                 if square is None:
-                    valid[offset:offset+len(oi)] = rho>=1e-6
+                    seeds[offset:offset+len(oi)][~(rho>=1e-6)] = -1
                     del rho,delta
                 else:
                     del alpha,kappa
@@ -327,8 +327,10 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
                 yield torch.stack((oi[out],ok[out],pool[a],pool[b]),dim=1),(offset+out)*count+local
 
         if seeding:
-            yield seeds[valid],None
-            del seeds,valid
+            for start in range(0,len(i),width):
+                pairs = torch.stack((i[start:start+width],k[start:start+width],seeds[start:start+width,0],seeds[start:start+width,1]),dim=1)
+                yield pairs[pairs[:,2]>=0],None
+            del seeds
 
 
 def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *, tolerance=None, cutoff=None):

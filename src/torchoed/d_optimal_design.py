@@ -284,8 +284,8 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
                 rho,delta,t = _linear_removal_data(G,Q,chosen,pool,diagonal)
             else:
                 t,alpha,kappa = _linear_square_data(G,Q,chosen,pool,(square[oi,oi],square[oi,ok],square[ok,ok]))
-            values,permutation = t.sort(dim=1,descending=True,stable=True)
             if seeding:
+                permutation = t.topk(2,dim=1).indices
                 a,b = pool[permutation[:,:2]].sort(dim=1).values.mT
                 seeds[offset:offset+len(oi)] = torch.stack((oi,ok,a,b),dim=1)
                 if square is None:
@@ -293,8 +293,9 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
                     del rho,delta
                 else:
                     del alpha,kappa
-                del chosen,t,values,permutation
+                del chosen,t,permutation
                 continue
+            values,permutation = t.sort(dim=1,descending=True,stable=True)
             if square is None:
                 dlimit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best())
                 upper = _linear_removal_limit(-values,phi+delta,delta,theta,tolerance)

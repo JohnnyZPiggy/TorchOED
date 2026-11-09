@@ -1,7 +1,6 @@
 import importlib
 import torch
 s = importlib.import_module('torchoed.d_optimal_design')
-
 def test_seed_preserves_winner_resume_and_lifts_first_theta(monkeypatch):
     F = torch.randn(16,3,dtype=torch.float64,generator=torch.Generator().manual_seed(0))
     F[:3] = torch.linalg.qr(F[:3]).Q

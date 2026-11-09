@@ -179,9 +179,11 @@ def _linear_eligible(pairs, gains, tolerance, cutoff):
     return keep
 
 
-def _linear_prefix_limit(negative, outgoing, phi, tolerance, best):
+def _linear_prefix_limit(negative, outgoing, phi, tolerance, best, incoming=None):
     theta = min(max(tolerance,best)-tolerance,phi/2)
     shift = phi*theta/(phi-theta)
+    if incoming is not None:
+        return (incoming>=outgoing+shift-tolerance).long()
     return torch.searchsorted(negative,-outgoing-shift+tolerance,right=True)
 
 
@@ -305,7 +307,9 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
             a,b = permutation[out,left],permutation[out,right]
             a,b = torch.minimum(a,b),torch.maximum(a,b)
             theta = min(max(tolerance,get_best())-tolerance,phi/2)
-            keep = diagonal[pool[a]]+diagonal[pool[b]]>=outgoing[out]+phi*theta/(phi-theta)-tolerance
+            incoming = diagonal[pool[a]]+diagonal[pool[b]]
+            keep = (_linear_prefix_limit(negative,outgoing[out],phi,tolerance,get_best(),incoming).bool()
+                    if square is None else incoming>=outgoing[out]+phi*theta/(phi-theta)-tolerance)
             out,a,b = out[keep],a[keep],b[keep]
             local = a*(2*q-a-1)//2+b-a-1
             yield torch.stack((oi[out],ok[out],pool[a],pool[b]),dim=1),(offset+out)*count+local
@@ -352,11 +356,13 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
         if len(ids)==p and block_size>=1:
             # Release the d-prefix reserve; half the outgoing reserve holds block metadata.
             prefix,removal = (pool,None,None),True
-        else:
+        elif len(ids)<=p+1:
             a,b = torch.triu_indices(len(pool),len(pool),offset=1)
             values, order = (diagonal[pool[a]]+diagonal[pool[b]]).sort(descending=True,stable=True)
             prefix = pool,-values,order.to(torch.int32) if compact else order
             del a,b,values,order
+        else:
+            prefix = None
         G = Z.mT@Z
         Q = T.mT@T if criterion=='A' else Z.mT@T
         if removal:
@@ -367,16 +373,27 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
             i,k = torch.triu_indices(len(free),len(free),offset=1)
             chosen = ids[free]
             rho = (1-G[chosen[i],chosen[i]])*(1-G[chosen[k],chosen[k]])-G[chosen[i],chosen[k]]**2
-            if ((rho>=1e-6)&(diagonal[chosen[i]]+diagonal[chosen[k]]<=-prefix[1][0]+tolerance)).any():
-                block_size = min(outgoing_count,max(1,available_base//(2*(16*len(pool)+64))))
-                ebase = available_base-block_size*(16*len(pool)+64)
+            top = diagonal[pool].topk(2).values.sum().reshape(1)
+            if ((rho>=1e-6)&(diagonal[chosen[i]]+diagonal[chosen[k]]<=top[0]+tolerance)).any():
+                ebase = available_base+prefix_slots
+                block_size = min(outgoing_count,max(1,ebase//(2*(16*len(pool)+64))))
+                ebase -= block_size*(16*len(pool)+64)
                 ehoisted = table_elements<=ebase//2
                 eavailable = ebase-table_elements if ehoisted else ebase
                 ecapacity = eavailable//96
                 erescore = (eavailable-8*ecapacity)//(32*p+256)
                 if ecapacity>=1 and erescore>=1:
                     removal,hoisted,capacity,rescore_capacity = True,ehoisted,ecapacity,erescore
-            del i,k,chosen,rho
+                    prefix = pool,-top,None
+            del i,k,chosen,rho,top
+        if prefix is None:
+            del G,Q
+            a,b = torch.triu_indices(len(pool),len(pool),offset=1)
+            values, order = (diagonal[pool[a]]+diagonal[pool[b]]).sort(descending=True,stable=True)
+            prefix = pool,-values,order.to(torch.int32) if compact else order
+            del a,b,values,order
+            G = Z.mT@Z
+            Q = T.mT@T if criterion=='A' else Z.mT@T
         if hoisted:
             c,d = torch.combinations(torch.tensor(incoming),r=2).mT
             u,v,w = 1+G[c,c],1+G[d,d],G[c,d]

@@ -6,9 +6,11 @@ s = importlib.import_module('torchoed.d_optimal_design')
 def test_row_screen_dense_entries_and_resume(monkeypatch):
     F = torch.randn(16,3,dtype=torch.float64,generator=torch.Generator().manual_seed(0))
     F[:3] = 1.5*torch.linalg.qr(F[:3]).Q
+    order = torch.tensor([7,2,12,4,15,0,9,1,14,3,11,5,13,6,10,8])
+    F,selected = F[order],order.argsort()
     original,screen = s._linear_pair_scores,s._linear_screen
     for n,budget in ((3,3000),(5,3160)):
-        ids = torch.arange(n);L = torch.linalg.cholesky(F[ids].mT@F[ids])
+        ids = selected[:n];L = torch.linalg.cholesky(F[ids].mT@F[ids])
         Z = torch.linalg.solve_triangular(L,F.mT,upper=False)
         c,d = torch.triu_indices(len(F),len(F),offset=1)
         for criterion in ('A','I'):

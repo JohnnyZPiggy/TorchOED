@@ -93,3 +93,23 @@ def test_hoisted_random_screen_sequence_with_cutoff():
                 assert sum(len(p) for p,g in screened)==420
                 assert torch.equal(torch.cat([p for p,g in full]),torch.cat([p for p,g in screened]))
                 assert torch.equal(torch.cat([g for p,g in full]),torch.cat([g for p,g in screened]))
+
+
+def test_rejected_tiles_skip_gather_and_preserve_winner(monkeypatch):
+    F = torch.randn(14,3,dtype=torch.float64,generator=torch.Generator().manual_seed(145));ids = torch.arange(6)
+    scores,screen,gather = search._linear_pair_scores,search._linear_screen,search._linear_gather4
+    counts,rejected = [],[]
+    def count_screen(*args):
+        keep = screen(*args);rejected.append(not keep.any());return keep
+    def count_gather(*args):
+        counts.append(len(args[3]));return gather(*args)
+    with monkeypatch.context() as patch:
+        patch.setattr(search,'_linear_screen',count_screen)
+        patch.setattr(search,'_linear_gather4',count_gather)
+        actual = next(search._linear_pair_moves(F,ids,'A',4000,None,1e-12))
+    def full(*args,**kwargs): return scores(*args,**dict(kwargs,tolerance=None))
+    with monkeypatch.context() as patch:
+        patch.setattr(search,'_linear_pair_scores',full)
+        expected = next(search._linear_pair_moves(F,ids,'A',4000,None,1e-12))
+    assert len(rejected)>1 and any(rejected) and counts and min(counts)>0
+    assert torch.equal(torch.tensor(actual),torch.tensor(expected))

@@ -42,3 +42,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w155](w155/) | Non-hoisted row storage, capacities and timing comparison; [#158](https://github.com/JohnnyZPiggy/TorchOED/pull/158) | candidate; exact outputs and timing pass |
 | [w157](w157/) | Top-8 probe-first screened tiles, final-mask/probe counts and timing comparison; [#160](https://github.com/JohnnyZPiggy/TorchOED/pull/160) | negative (not merged; measured source `aeae4e8` on branch `perf/w4-probe-first-157`) |
 | [w159](w159/) | Base A/I screened/kept/gathered counts and per-kernel cProfile, seed0 on four slow cases; Refs #159 | candidate (evidence only; source `0213928`) |
+| [w162](w162/) | Empty screened-tile skip, exact outputs and gather calls; [#164](https://github.com/JohnnyZPiggy/TorchOED/pull/164) | blocked (D timing comparison fails; measured source `a7f0b8f`) |

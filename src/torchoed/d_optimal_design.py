@@ -453,6 +453,8 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
             slices = (Z,T,gd,diagonal,criterion,pairs[:,:2]) if sliced else None
             pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best,tables,flat,slices)]
             del idx,slices
+            if not len(pairs):
+                continue
         for chunk in pairs.split(rescore_capacity) if screened else (pairs,):
             legal, gain = _linear_gather4(Z,T,ids,chunk,criterion,J)
             if screened:

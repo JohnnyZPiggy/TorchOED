@@ -271,44 +271,63 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
     count = q*(q-1)//2
     i,k = torch.triu_indices(len(selected),len(selected),offset=1)
     positions = torch.arange(q)
-    for offset in range(0,len(i),block_size):
-        oi,ok = i[offset:offset+block_size],k[offset:offset+block_size]
-        chosen = torch.stack((selected[oi],selected[ok]))
-        outgoing = diagonal[chosen].sum(0)
-        theta = min(max(tolerance,get_best())-tolerance,phi/2)
-        if square is None:
-            dlimit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best())
-            rho,delta,t = _linear_removal_data(G,Q,chosen,pool,diagonal)
-            values,permutation = t.sort(dim=1,descending=True,stable=True)
-            upper = _linear_removal_limit(-values,phi+delta,delta,theta,tolerance)
-            upper = torch.where((rho>=1e-6)[:,None],upper,q)
-            del rho,delta
-        else:
-            dlimit = outgoing+phi*theta/(phi-theta)<=diagonal[pool].topk(2).values.sum()+tolerance
-            t,alpha,kappa = _linear_square_data(G,Q,chosen,pool,(square[oi,oi],square[oi,ok],square[ok,ok]))
-            values,permutation = t.sort(dim=1,descending=True,stable=True)
-            upper = _linear_square_limit(-values,alpha,kappa,theta,tolerance)
-            del alpha,kappa
-        lengths = (upper-positions-1).clamp_min(0)
-        unpruned = lengths.sum(1)==count
-        permutation = torch.where(unpruned[:,None],positions,permutation)
-        lengths = torch.where(unpruned[:,None],q-positions-1,lengths)
-        lengths = torch.where((dlimit>0)[:,None],lengths,0).flatten()
-        boundaries = lengths.cumsum(0)
-        total = boundaries[-1].item()
-        del chosen,t,values,upper,unpruned
-        for start in range(0,total,width):
-            rank = torch.arange(start,min(start+width,total))
-            run = torch.searchsorted(boundaries,rank,right=True)
-            out,left = run//q,run%q
-            right = left+1+rank-(boundaries[run]-lengths[run])
-            a,b = permutation[out,left],permutation[out,right]
-            a,b = torch.minimum(a,b),torch.maximum(a,b)
+    passes = (False,) if square is None and -negative[-1]>=diagonal[selected].topk(2).values.sum()+phi-tolerance else (True,False)
+    for seeding in passes:
+        if seeding:
+            seeds,valid = torch.empty((len(i),4),dtype=torch.long),torch.ones(len(i),dtype=torch.bool)
+        for offset in range(0,len(i),block_size):
+            oi,ok = i[offset:offset+block_size],k[offset:offset+block_size]
+            chosen = torch.stack((selected[oi],selected[ok]))
+            outgoing = diagonal[chosen].sum(0)
             theta = min(max(tolerance,get_best())-tolerance,phi/2)
-            keep = diagonal[pool[a]]+diagonal[pool[b]]>=outgoing[out]+phi*theta/(phi-theta)-tolerance
-            out,a,b = out[keep],a[keep],b[keep]
-            local = a*(2*q-a-1)//2+b-a-1
-            yield torch.stack((oi[out],ok[out],pool[a],pool[b]),dim=1),(offset+out)*count+local
+            if square is None:
+                rho,delta,t = _linear_removal_data(G,Q,chosen,pool,diagonal)
+            else:
+                t,alpha,kappa = _linear_square_data(G,Q,chosen,pool,(square[oi,oi],square[oi,ok],square[ok,ok]))
+            values,permutation = t.sort(dim=1,descending=True,stable=True)
+            if seeding:
+                a,b = pool[permutation[:,:2]].sort(dim=1).values.mT
+                seeds[offset:offset+len(oi)] = torch.stack((oi,ok,a,b),dim=1)
+                if square is None:
+                    valid[offset:offset+len(oi)] = rho>=1e-6
+                    del rho,delta
+                else:
+                    del alpha,kappa
+                del chosen,t,values,permutation
+                continue
+            if square is None:
+                dlimit = _linear_prefix_limit(negative,outgoing,phi,tolerance,get_best())
+                upper = _linear_removal_limit(-values,phi+delta,delta,theta,tolerance)
+                upper = torch.where((rho>=1e-6)[:,None],upper,q)
+                del rho,delta
+            else:
+                dlimit = outgoing+phi*theta/(phi-theta)<=diagonal[pool].topk(2).values.sum()+tolerance
+                upper = _linear_square_limit(-values,alpha,kappa,theta,tolerance)
+                del alpha,kappa
+            lengths = (upper-positions-1).clamp_min(0)
+            unpruned = lengths.sum(1)==count
+            permutation = torch.where(unpruned[:,None],positions,permutation)
+            lengths = torch.where(unpruned[:,None],q-positions-1,lengths)
+            lengths = torch.where((dlimit>0)[:,None],lengths,0).flatten()
+            boundaries = lengths.cumsum(0)
+            total = boundaries[-1].item()
+            del chosen,t,values,upper,unpruned
+            for start in range(0,total,width):
+                rank = torch.arange(start,min(start+width,total))
+                run = torch.searchsorted(boundaries,rank,right=True)
+                out,left = run//q,run%q
+                right = left+1+rank-(boundaries[run]-lengths[run])
+                a,b = permutation[out,left],permutation[out,right]
+                a,b = torch.minimum(a,b),torch.maximum(a,b)
+                theta = min(max(tolerance,get_best())-tolerance,phi/2)
+                keep = diagonal[pool[a]]+diagonal[pool[b]]>=outgoing[out]+phi*theta/(phi-theta)-tolerance
+                out,a,b = out[keep],a[keep],b[keep]
+                local = a*(2*q-a-1)//2+b-a-1
+                yield torch.stack((oi[out],ok[out],pool[a],pool[b]),dim=1),(offset+out)*count+local
+
+        if seeding:
+            yield seeds[valid],None
+            del seeds,valid
 
 
 def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *, tolerance=None, cutoff=None):
@@ -394,7 +413,7 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
         tiles = _linear_removal_tiles(prefix,ids[free],diagonal,G,Q,phi,tolerance,capacity,lambda:best,block_size,square)
     for pairs,flat in tiles:
         pairs[:,:2] = free[pairs[:,:2]]
-        if screened:
+        if screened and flat is not None:
             idx = torch.cat((ids[pairs[:,:2]],pairs[:,2:]),dim=1)
             pairs = pairs[_linear_screen(G,Q,idx,tolerance,cutoff,best,tables,flat)]
             del idx

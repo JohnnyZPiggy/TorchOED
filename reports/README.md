@@ -40,3 +40,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w151](w151/) | Seeded block thresholds, first-block theta and kept fractions; [#154](https://github.com/JohnnyZPiggy/TorchOED/pull/154) | negative (not merged; measured source `009950e` on branch `perf/w4-seed-theta-151`) |
 | [w153](w153/) | Rule-e prefix release, capacities and timing comparison; [#156](https://github.com/JohnnyZPiggy/TorchOED/pull/156) | candidate; exact outputs and timing pass |
 | [w155](w155/) | Non-hoisted row storage, capacities and timing comparison; [#158](https://github.com/JohnnyZPiggy/TorchOED/pull/158) | candidate; exact outputs and timing pass |
+| [w159](w159/) | Base A/I screened/kept/gathered counts and per-kernel cProfile, seed0 on four slow cases; Refs #159 | candidate (evidence only; source `0213928`) |

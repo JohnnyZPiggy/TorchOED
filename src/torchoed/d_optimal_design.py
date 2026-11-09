@@ -330,7 +330,7 @@ def _linear_removal_tiles(prefix, selected, diagonal, G, Q, phi, tolerance, widt
             for start in range(0,len(i),width):
                 pairs = torch.stack((i[start:start+width],k[start:start+width],seeds[start:start+width,0],seeds[start:start+width,1]),dim=1)
                 yield pairs[pairs[:,2]>=0],None
-            del seeds
+            del pairs,seeds
 
 
 def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *, tolerance=None, cutoff=None):

@@ -12,13 +12,14 @@ def test_row_screen_dense_entries_and_resume(monkeypatch):
     for n,budget in ((3,3000),(5,3160)):
         ids = selected[:n];L = torch.linalg.cholesky(F[ids].mT@F[ids])
         Z = torch.linalg.solve_triangular(L,F.mT,upper=False)
-        c,d = torch.triu_indices(len(F),len(F),offset=1)
+        pool = torch.tensor(sorted(set(range(len(F)))-set(ids.tolist())))
+        c,d = pool[torch.triu_indices(len(pool),len(pool),offset=1)]
         for criterion in ('A','I'):
             T = torch.linalg.solve_triangular(L.mT,Z,upper=True) if criterion=='A' else (Z@Z.mT/len(F))@Z
             G,Q = Z.mT@Z,T.mT@T if criterion=='A' else Z.mT@T
             g,q = s._linear_pair_entries(Z,T,c,d,criterion)
-            assert (g-G[c,d]).abs().max()<=1e-12*G[c,d].abs().max()
-            assert (q-Q[c,d]).abs().max()<=1e-12*Q[c,d].abs().max()
+            torch.testing.assert_close(g,G[c,d],rtol=1e-12,atol=0)
+            torch.testing.assert_close(q,Q[c,d],rtol=1e-12,atol=0)
             seen = []
             def record(*args):
                 assert args[0].shape==(n,len(F)) and args[6] is None and args[8] is not None

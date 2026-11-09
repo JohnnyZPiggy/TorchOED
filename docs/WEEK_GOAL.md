@@ -13,6 +13,8 @@ Every Engineer dispatch must name the goal (C1–C4) it serves. Dev numbers come
 | **C3 Code and test consolidation** | No public API change. Delete dead private code (each deletion justified by `git grep` showing no caller outside tests of that code); full CPU test suite wall time on CI ubuntu py3.13 reduced ≥ 25% without removing any required oracle test; `docs/` stays ≤ 40 files and AGENTS.md ≤ 80 lines | measure CI time on `39b8c56` |
 | **C4 Local housekeeping** | The Engineer deletes its own task-owned local residue listed in Issue #83 (`.sae-*` venvs and control directories, untracked `reports/w95-head/`, `reports/w114-pair/`) and from now on deletes task-owned local directories when its PR merges | ≈ 14 leftover paths on the Engineer workspace |
 
+**C1 time-box (Scientist decision 2026-11-09):** C1 work stops at the end of this week (2026-11-14). Whatever C1 reaches by then is the final P1 A/I result and is reported as-is (met or not met). C1 does **not** carry over as a week-5 goal: the week-5 draft starts VISION.md P1.5 (model-driven closed loop + scale crossover experiment). Further A/I speed work may continue only as background, at most one S task per week, never ahead of the week's goals.
+
 **Timing rule (durable, Scientist decision 2026-11-07):** all time comparisons against PyDOE or R are per restart unless a goal says otherwise; total time for TorchOED's default restarts may be reported but is not a pass/fail criterion.
 
 **Safeguards this week:** any gate change passes an independent fresh-context review before merge; C1 changes must keep D results byte-identical and re-run `tools/bench_b0.py` with no D time regression; held-out cases are not run this week.

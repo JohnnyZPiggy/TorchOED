@@ -36,3 +36,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w3-probe](w3-probe/) | R AlgDesign reproduction probe; [#88](https://github.com/JohnnyZPiggy/TorchOED/pull/88) | superseded by w3-heldout |
 | [w4-bench](w4-bench/) | Measured per-restart D/A/I ratios, retained 10-restart D rows; [#126](https://github.com/JohnnyZPiggy/TorchOED/pull/126) | current (development timing baseline) |
 | [w95-bench](w95-bench/) | Fixed-run augmentation and unchanged D CPU pair; [#98](https://github.com/JohnnyZPiggy/TorchOED/pull/98) | superseded by w118 |
+| [w147](w147/) | Square-design kept fractions, capacities and exact full-set H6/H4 margins; [#152](https://github.com/JohnnyZPiggy/TorchOED/pull/152) | candidate; timing and margins pass |

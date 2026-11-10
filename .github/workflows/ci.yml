@@ -81,6 +81,7 @@ jobs:
           cp -r examples "$RUNNER_TEMP/"
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/wheel-venv/bin/python" examples/cpu_quickstart.py
+          time "$RUNNER_TEMP/wheel-venv/bin/python" examples/closed_loop_sim.py
           python -m venv "$RUNNER_TEMP/sdist-venv"
           "$RUNNER_TEMP/sdist-venv/bin/python" -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           "$RUNNER_TEMP/sdist-venv/bin/python" -m pip install "$GITHUB_WORKSPACE"/dist/*.tar.gz

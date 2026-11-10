@@ -40,7 +40,7 @@ def test_exponential_decay_oracle():
     x = torch.linspace(0, 2, 201, dtype=torch.float64)
     F = jacobian_features(Decay().eval(), x)
     result = optimal_design(F, 2, criterion="D", generator=torch.Generator().manual_seed(0))
-    assert result["ids"].tolist() == [0, 50]
+    assert result["ids"].sort().values.tolist() == [0, 50]
 
 
 def test_michaelis_menten_oracle():
@@ -56,4 +56,4 @@ def test_michaelis_menten_oracle():
     x = torch.linspace(0.01, 2, 200, dtype=torch.float64)
     F = jacobian_features(MichaelisMenten().eval(), x)
     result = optimal_design(F, 2, criterion="D", generator=torch.Generator().manual_seed(0))
-    assert result["ids"].tolist() == [49, 199]
+    assert result["ids"].sort().values.tolist() == [49, 199]

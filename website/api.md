@@ -1,6 +1,6 @@
 # API reference
 
-All 18 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
+All 19 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
 
 ## Candidate construction
 
@@ -33,6 +33,38 @@ Encode int64 categorical codes with unit vectors and an all-minus-one final leve
 `feasible_candidates(C: torch.Tensor, *, A: torch.Tensor | None = None, b: torch.Tensor | None = None, disallowed: list[dict[int, float]] | tuple[dict[int, float], ...] = ()) -> torch.Tensor`
 
 Return a boolean mask for linear inequalities and excluded matching level combinations.
+
+`jacobian_features(model: torch.nn.Module, X: torch.Tensor, *, params: list[str] | tuple[str, ...] | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
+
+Build detached scalar-response Jacobian rows at the module's current parameters.
+Call `model.eval()` first. `params=None` selects all trainable parameters in
+`named_parameters()` order; explicit names select and order flattened columns.
+The module is unchanged; output has the model dtype and shape `(m,q)`, checked
+against `max_elements` before differentiation. Certificates apply only to the
+linearized problem at these parameters over the supplied candidates.
+
+For Michaelis–Menten with nominal `(V,K)=(1,1)`, the local two-point D design
+on this grid is `{0.5,2}`:
+
+```python
+import torch
+from torchoed import jacobian_features, optimal_design
+
+class MichaelisMenten(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.theta = torch.nn.Parameter(torch.ones(2, dtype=torch.float64))
+
+    def forward(self, x):
+        V, K = self.theta
+        return V * x / (K + x)
+
+model = MichaelisMenten().eval()
+x = torch.linspace(0.01, 2, 200, dtype=torch.float64)
+F = jacobian_features(model, x)
+result = optimal_design(F, 2, criterion="D", generator=torch.Generator().manual_seed(0))
+assert result["ids"].tolist() == [49, 199]
+```
 
 ## Information
 

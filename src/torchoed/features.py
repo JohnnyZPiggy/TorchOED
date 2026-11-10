@@ -3,6 +3,40 @@ import torch
 from ._validation import budget, floating, integer
 
 
+def jacobian_features(model: torch.nn.Module, X: torch.Tensor, *, params: list[str] | tuple[str, ...] | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
+    """Detached scalar-response Jacobian rows at the module's current parameters.
+
+    Call model.eval() first: row-coupling layers otherwise differentiate the
+    coupled model(X). Certificates apply only to this linearized problem over
+    the supplied candidates, not the nonlinear model at its true parameters.
+    By default use all requires_grad parameters in named_parameters() order;
+    explicit names select and order flattened parameter columns. The module
+    is unchanged. Output uses the model's parameter dtype; m*q elements are
+    budgeted before differentiation. jacrev takes one reverse pass per row
+    (vectorized), O(m*cost(f)) time and O(m*q) output memory.
+    """
+    named = dict(model.named_parameters())
+    names = [name for name, p in named.items() if p.requires_grad] if params is None else list(params)
+    selected = {name: named[name] for name in names}
+    if not selected:
+        raise ValueError("select at least one parameter")
+    m = X.shape[0]
+    budget((m, sum(p.numel() for p in selected.values())), max_elements)
+    # functional_call reflects in-place buffer updates; isolate module state.
+    state = {name: p.detach().clone() for name, p in named.items()}
+    buffers = {name: b.detach().clone() for name, b in model.named_buffers()}
+    selected = {name: state[name] for name in selected}
+
+    def response(values: dict[str, torch.Tensor]) -> torch.Tensor:
+        y = torch.func.functional_call(model, (state | values, buffers), (X,))
+        if y.shape not in ((m,), (m, 1)):
+            raise ValueError("model(X) must have shape (m,) or (m,1)")
+        return y.reshape(m)
+
+    derivatives = torch.func.jacrev(response)(selected)
+    return torch.cat([d.reshape(m, -1) for d in derivatives.values()], dim=1).detach()
+
+
 def polynomial_features(C: torch.Tensor, degree: int = 2, include_bias: bool = True, *, max_elements: int = 1_000_000) -> torch.Tensor:
     """[bias, linear, squares, pair products i<j]; preserves autograd."""
     if not isinstance(C, torch.Tensor):

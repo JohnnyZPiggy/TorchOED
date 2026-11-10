@@ -575,3 +575,16 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: 
     best['efficiency_lower_bound'] = _dual_floor(F,F[best['ids']].mT@F[best['ids']],n,criterion,best['efficiency_lower_bound'])
     return dict(best,criterion=criterion,restart_objectives=objectives,
                 best_restart=best_restart,starts=starts)
+
+
+def next_batch(F: torch.Tensor, run_ids: list[int] | tuple[int, ...] | torch.Tensor, k: int, *,
+               criterion: str = "D", restarts: int = 10, generator: torch.Generator | None = None,
+               **kwargs: int) -> torch.Tensor:
+    """Return sorted new int64 IDs by augmenting run_ids.
+
+    Certificates refer to the full augmented design conditional on run_ids,
+    for the current linearization only, rather than the new points alone.
+    """
+    ids = optimal_design(F, len(run_ids)+k, criterion=criterion, fixed_ids=run_ids if len(run_ids) else None,
+                         restarts=restarts, generator=generator, **kwargs)["ids"]
+    return ids[~torch.isin(ids, torch.as_tensor(run_ids, dtype=torch.int64))].sort().values

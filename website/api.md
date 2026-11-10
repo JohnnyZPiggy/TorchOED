@@ -1,6 +1,6 @@
 # API reference
 
-All 19 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
+All 20 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
 
 ## Candidate construction
 
@@ -48,7 +48,7 @@ on this grid is `{0.5,2}`:
 
 ```python
 import torch
-from torchoed import jacobian_features, optimal_design
+from torchoed import jacobian_features, optimal_design, next_batch
 
 class MichaelisMenten(torch.nn.Module):
     def __init__(self):
@@ -64,7 +64,11 @@ x = torch.linspace(0.01, 2, 200, dtype=torch.float64)
 F = jacobian_features(model, x)
 result = optimal_design(F, 2, criterion="D", generator=torch.Generator().manual_seed(0))
 assert result["ids"].tolist() == [49, 199]
+new_ids = next_batch(F, result["ids"], 1, generator=torch.Generator().manual_seed(0))
 ```
+
+`next_batch(F: torch.Tensor, run_ids: list[int] | tuple[int, ...] | torch.Tensor, k: int, *, criterion: str = "D", restarts: int = 10, generator: torch.Generator | None = None, **kwargs: int) -> torch.Tensor` returns sorted new int64 IDs, forwarding kwargs to `optimal_design`.
+Certificates describe the full augmented design conditional on `run_ids`, for the current linearization only.
 
 ## Information
 

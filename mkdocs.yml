@@ -7,5 +7,6 @@ nav:
   - Quick start: index.md
   - Criteria: criteria.md
   - Augmentation and constraints: augmentation.md
+  - PyTorch model → experiments: closed_loop.md
   - PyDOE comparison: pydoe.md
   - API reference: api.md

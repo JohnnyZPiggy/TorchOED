@@ -34,7 +34,7 @@ Encode int64 categorical codes with unit vectors and an all-minus-one final leve
 
 Return a boolean mask for linear inequalities and excluded matching level combinations.
 
-`jacobian_features(model: torch.nn.Module, X: torch.Tensor, *, params: Sequence[str] | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
+`jacobian_features(model: torch.nn.Module, X: torch.Tensor, *, params: list[str] | tuple[str, ...] | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 
 Build detached scalar-response Jacobian rows at the module's current parameters.
 Call `model.eval()` first. `params=None` selects all trainable parameters in

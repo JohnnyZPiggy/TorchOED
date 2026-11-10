@@ -1,11 +1,9 @@
-from collections.abc import Sequence
-
 import torch
 
 from ._validation import budget, floating, integer
 
 
-def jacobian_features(model: torch.nn.Module, X: torch.Tensor, *, params: Sequence[str] | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
+def jacobian_features(model: torch.nn.Module, X: torch.Tensor, *, params: list[str] | tuple[str, ...] | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
     """Detached scalar-response Jacobian rows at the module's current parameters.
 
     Call model.eval() first: row-coupling layers otherwise differentiate the

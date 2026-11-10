@@ -47,3 +47,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w165](w165/) | Six random500 D/A/I non-N₂ profiles, disjoint accounting, calls and floor iterations; Refs #165 | candidate (evidence only; source `6b4854f`) |
 | [w171](w171/) | A/I exponent-1 dual floor and 1e-3 stop; [#172](https://github.com/JohnnyZPiggy/TorchOED/pull/172) | candidate; D timing8/8, exact outputs, C1 5/8 |
 | [w168](w168/) | Final W4 C1 paired benchmark against `39b8c56`; Refs #168 | current (final W4 C1 result); 5/8, exact outputs pass |
+| [w174](w174/) | Nine remaining-gap D/A/I profiles, exact outputs, disjoint accounting and dominant N₂; Refs #174 | candidate (evidence only) |

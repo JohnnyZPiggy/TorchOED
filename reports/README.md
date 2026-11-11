@@ -49,5 +49,5 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w168](w168/) | Final W4 C1 paired benchmark against `39b8c56`; Refs #168 | current (final W4 C1 result); 5/8, exact outputs pass |
 | [w174](w174/) | Nine remaining-gap D/A/I profiles, exact outputs, disjoint accounting and dominant N₂; Refs #174 | candidate (evidence only) |
 | [w4-heldout](w4-heldout/) | Final W4 H1-H8 TorchOED-only rerun, frozen references reused; Refs #176 | current (W4 held-out record; no tuning) |
-| [w5-crossover](w5-crossover/) | W5 fixed CPU/GPU/PyDOE scale crossover, Refs #185 | measurement only; comparison inconclusive (errors) |
+| [w5-crossover](w5-crossover/) | W5 fixed CPU/GPU/PyDOE scale crossover, Refs #185 / #189 | run 1 inconclusive; [run 2](w5-crossover/run2-summary.md) recorded as-is |
 | [w5-heldout](w5-heldout/) | Frozen H9 D/I and H10 D/A CPU record; Refs #187 | current (W5 held-out H9/H10; no tuning) |

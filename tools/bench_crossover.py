@@ -15,12 +15,13 @@ import bench_b0 as b
 
 torch = b.torch
 torch.set_num_threads(1)
+MAX_ELEMENTS = 2**27
 METHODS = ('fedorov', 'modified_fedorov', 'detmax', 'cpu', 'cuda')
 
 
 def call(k, m, method):
     C = 2*torch.rand(m, k, dtype=torch.float64, generator=torch.Generator().manual_seed(0))-1
-    F = b.polynomial_features(C, 2)
+    F = b.polynomial_features(C, 2, max_elements=MAX_ELEMENTS)
     n = 2*F.shape[1]
     if method == 'cuda':
         design = importlib.import_module('torchoed.d_optimal_design')
@@ -33,7 +34,7 @@ def call(k, m, method):
         torch.cuda.synchronize()
     begin = time.perf_counter()
     if method in ('cpu', 'cuda'):
-        result = b.optimal_design(F, n, criterion='D', restarts=1, generator=torch.Generator().manual_seed(0))
+        result = b.optimal_design(F, n, criterion='D', restarts=1, generator=torch.Generator().manual_seed(0), max_elements=MAX_ELEMENTS)
         ids = result['ids'].tolist()
     else:
         result = b.pydoe.optimal_design(C.numpy(), n, degree=2, criterion='D', method=method)
@@ -63,14 +64,14 @@ def call(k, m, method):
 def run(smoke):
     environment = dict(python=platform.python_version(), torch=torch.__version__,
                        **{name: version(name) for name in ('pydoe', 'numpy', 'scipy')}, threads=1)
-    assert environment['pydoe'] == '1.6.0'
+    assert environment['pydoe'] == '1.6.0' and environment['scipy'] == '1.18.1'
     if not smoke:
         environment.update(cuda=torch.version.cuda, gpu=torch.cuda.get_device_name(),
             driver=subprocess.check_output(['nvidia-smi', '--query-gpu=driver_version', '--format=csv,noheader'], text=True).strip(),
             cpu=next(line for line in Path('/proc/cpuinfo').read_text().splitlines() if line.startswith('model name')))
     data = dict(source_sha=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=b.ROOT, text=True).strip(),
                 environment=environment, rows=[])
-    out = b.ROOT/('scratch/smoke.json' if smoke else 'reports/w5-crossover/results.json')
+    out = b.ROOT/('scratch/smoke.json' if smoke else 'reports/w5-crossover/run2-results.json')
     out.parent.mkdir(parents=True, exist_ok=True)
     def child(k, m, method):
         try:
@@ -82,6 +83,9 @@ def run(smoke):
             return dict(k=k, m=m, method=method, status='ERROR', error=result.stderr.strip().splitlines()[-1])
         return json.loads(result.stdout)
     if not smoke:
+        data['pydoe_gate'] = child(3, 200, 'fedorov')
+        out.write_text(json.dumps(data, allow_nan=False)+'\n', encoding='utf-8')
+        assert data['pydoe_gate']['status'] == 'PASS', data['pydoe_gate']
         data['untimed_warmup'] = child(3, 1000, 'cuda')
     timeouts = {}
     for m in ((200,) if smoke else (1000, 10000, 100000)):
@@ -101,7 +105,7 @@ def run(smoke):
 
 
 def summary(data):
-    lines = ['# W5 scale crossover', '', 'Measured code SHA: '+data['source_sha'],
+    lines = ['# W5 scale crossover run 2', '', 'Measured code SHA: '+data['source_sha'],
         'One Colab host; float64, candidate/initialization seed 0, n=2p, one restart; 1800s subprocess wall cap.',
         'One untimed CUDA warmup; transfers included; CUDA synchronized before timer stop. Search timing excludes shared rescoring.',
         'floor is shared KW; torchoed_floor is the refined returned bound. No retries or tuning.',
@@ -114,21 +118,25 @@ def summary(data):
         lines.append('| '+' | '.join(map(str, fields))+' |')
     for k in (3, 5):
         for variant in ('cpu', 'cuda'):
-            winner = None
+            winner, unavailable, inconclusive = None, None, []
             for m in (1000, 10000, 100000):
                 cell = [r for r in data['rows'] if r['k']==k and r['m']==m]
                 t = next(r for r in cell if r['method']==variant)
-                refs = [r for r in cell if r['method'] not in ('cpu', 'cuda') and r['status']=='PASS']
+                pydoe = [r for r in cell if r['method'] not in ('cpu', 'cuda')]
+                refs = [r for r in pydoe if r['status']=='PASS']
+                if all(r['status']=='ERROR' for r in pydoe): inconclusive.append(m)
                 if t['status']!='PASS': continue
-                if not refs and all(r['status']=='TIMEOUT' or r['status'].startswith('SKIPPED') for r in cell if r['method'] not in ('cpu','cuda')):
-                    lines.append(f'k={k}, m={m}, {variant}: faster; PyDOE quality unavailable (no quality win).')
+                if not refs and any(r['status']=='TIMEOUT' or r['status'].startswith('SKIPPED') for r in pydoe):
+                    if unavailable is None: unavailable = m
                 elif refs and t['seconds'] < min(r['seconds'] for r in refs) and all(
                         t['logdet'] >= r['logdet']-1e-9*max(1,abs(r['logdet'])) for r in refs):
-                    winner = m
-                    break
-            lines.append(f'k={k}, {variant}: smallest crossover m={winner}' if winner else f'no crossover found (k={k}, {variant})')
+                    if winner is None: winner = m
+            lines.append(f'k={k}, {variant}: smallest crossover m={winner}' if winner else
+                f'k={k}, {variant}: faster at m={unavailable}; PyDOE quality unavailable (no quality win)' if unavailable else
+                f'no crossover found (k={k}, {variant})')
+            lines.append(f'k={k}, {variant}: inconclusive m={inconclusive}')
     lines.append('measurement only; no claim beyond these 6 cells')
-    (b.ROOT/'reports/w5-crossover/summary.md').write_text('\n'.join(lines)+'\n', encoding='utf-8')
+    (b.ROOT/'reports/w5-crossover/run2-summary.md').write_text('\n'.join(lines)+'\n', encoding='utf-8')
 
 
 if __name__ == '__main__':

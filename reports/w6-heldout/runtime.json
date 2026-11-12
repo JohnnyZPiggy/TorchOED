@@ -1,0 +1,19 @@
+{
+  "source_sha": "bfc78a9c62df36e55ecfd5577e908138cc498a08",
+  "controller_sha": "4129001fffcb336f5203e4b0d6765d7a0ea3150c",
+  "colab_cli": "0.7.4",
+  "runtime": "CPU Rscript in Colab Python runtime",
+  "r_install": "preinstalled Rscript",
+  "r_version": "R version 4.6.1 (2026-06-24) -- \"Happy Hop\"",
+  "algdesign_version": "1.2.1.2",
+  "device": {
+    "name": "Tesla T4",
+    "memory_total_mib": 15360,
+    "driver_version": "580.82.07"
+  },
+  "raw_artifact": {
+    "name": "r-heldout.json",
+    "sha256": "872b0b76557d5709258a7fc8f0ea9ad4148707354b87965cdf9d50882a32e62c",
+    "bytes": 1894
+  }
+}

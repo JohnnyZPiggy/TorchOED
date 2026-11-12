@@ -1,0 +1,138 @@
+{
+  "source_sha": "bfc78a9c62df36e55ecfd5577e908138cc498a08",
+  "seed": 20261112,
+  "environment": {
+    "python": "3.14.6",
+    "torch": "2.15.0+cpu",
+    "os": "Windows-11-10.0.26300-SP0",
+    "cpu": "AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD",
+    "threads": 1
+  },
+  "rows": {
+    "H11": {
+      "objective": 18.033974267386018,
+      "stop_reason": "LOCAL_BLOCK_EXCHANGE",
+      "certificate": "LOCAL_BLOCK_EXCHANGE",
+      "wall_seconds": 0.6123910999885993,
+      "restarts": 10,
+      "per_restart_seconds": 0.06123910999885993,
+      "logdet": 18.033974267386018,
+      "dense_logdet": 18.03397426738602,
+      "metric_oracle": true,
+      "ids_by_block": [
+        [
+          2,
+          6,
+          17,
+          19,
+          21,
+          26
+        ],
+        [
+          0,
+          8,
+          13,
+          15,
+          20,
+          24
+        ],
+        [
+          3,
+          7,
+          11,
+          18,
+          23,
+          25
+        ]
+      ],
+      "objective_oracle": true,
+      "status": "PASS",
+      "algdesign": {
+        "status": "PASS",
+        "logdet": 16.781554674540388,
+        "dense_logdet": 16.781554674540388,
+        "metric_oracle": true,
+        "ids_by_block": [
+          [
+            2,
+            6,
+            9,
+            15,
+            20,
+            25
+          ],
+          [
+            3,
+            8,
+            17,
+            18,
+            23,
+            24
+          ],
+          [
+            0,
+            7,
+            13,
+            14,
+            21,
+            26
+          ]
+        ],
+        "repeats_within_block": false,
+        "repeats_across_blocks": false
+      }
+    },
+    "H12": {
+      "runs": 29,
+      "conference_max_abs": 0,
+      "main_main_max_abs": 0,
+      "main_second_order_max_abs": 0,
+      "max_abs_second_order_correlation": 0.5,
+      "status": "PASS"
+    },
+    "H13": {
+      "objective": 33.4698397457053,
+      "stop_reason": "LOCAL_2_NUMERICAL",
+      "certificate": "LOCAL_2_NUMERICAL",
+      "wall_seconds": 0.31663210000260733,
+      "restarts": 10,
+      "per_restart_seconds": 0.03166321000026073,
+      "ids": [
+        35,
+        6,
+        12,
+        18,
+        26,
+        27,
+        5,
+        16,
+        24,
+        38,
+        49,
+        20,
+        56,
+        78,
+        61,
+        57,
+        1,
+        74,
+        72,
+        80
+      ],
+      "max_vif": 1.2336796516079627,
+      "spv_quantiles": [
+        12.35035185590316,
+        14.123903811334074,
+        15.723343802803129,
+        18.535885142917238,
+        24.836853129132876
+      ],
+      "efficiency_lower_bound": 0.9529127235083579,
+      "kw_floor": 0.6039412449721924,
+      "spv_max_abs_error": 2.6645352591003757e-14,
+      "spv_oracle": true,
+      "floor_oracle": true,
+      "status": "PASS"
+    }
+  }
+}

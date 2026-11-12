@@ -1,5 +1,15 @@
 library(AlgDesign)
 set.seed(20261112)
+if (identical(commandArgs(trailingOnly=TRUE), "H11")) {
+  outdir <- "reports/w6-heldout"
+  capture.output(print(sessionInfo()), print(packageVersion("AlgDesign")), file=file.path(outdir,"sessionInfo.txt"))
+  grid <- read.csv(file.path(outdir,"H11.csv"))
+  fit <- optBlock(~quad(A,B,C), withinData=grid, blocksizes=c(6,6,6))
+  key <- function(rows) do.call(paste, rows)
+  ids <- vapply(fit$Blocks, function(block) paste0("[",paste(match(key(block), key(grid))-1L,collapse=","),"]"), "")
+  writeLines(paste0("[",paste(ids,collapse=","),"]"), file.path(outdir,"algdesign_out.json"))
+  quit(save="no")
+}
 cases <- list(H5=c(30,"D"),H6=c(20,"DI"),H7=c(14,"ID"),H8=c(16,"DAI")); out <- list()
 dir.create("reports/w3-heldout/final",showWarnings=FALSE)
 number <- function(x) if (is.null(x)) "null" else sprintf("%.17g",x)

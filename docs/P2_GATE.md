@@ -1,6 +1,6 @@
-# P2 Gate — Blocking (N1) and week-6 held-out freeze
+# P2 Gate — Blocking (N1), definitive screening (N3) and week-6 held-out freeze
 
-**Chief Architect · 2026-11-12 · Week 6 goal N1.** Status: `P2_N1_MATH_FROZEN` once the independent fresh-context review verdict is recorded in its dispatch Issue and this file is committed byte-identically. Baseline `main=c0f289d`.
+**Chief Architect · 2026-11-12 · Week 6 goal N1.** Status: `P2_N1_MATH_FROZEN` once the independent fresh-context review verdict is recorded in its dispatch Issue and this file is committed byte-identically. Baseline `main=c0f289d`. §5 (N3) added 2026-11-12: status `P2_N3_MATH_FROZEN` under the same rule.
 
 Notation as in the [W1 gate](W1_GENERIC_CRITERIA_GATE.md): candidate rows `F[m,p]`, exact IDs, no replacement. Labels: **PROVED** = derived here (the Fraction counts are supporting evidence, not part of the proof); **OBSERVED** = finite evidence only; **CONJECTURE** = not established.
 
@@ -35,4 +35,13 @@ Coding: `X = full_factorial(levels).double() − 1` (levels 3 → codes −1, 0,
 
 ## 4. Not in this gate
 
-A/I blocked criteria, random block effects, split-plot, an intercept check (a user-supplied intercept column simply yields no feasible start), blocks with `fixed_ids`, an efficiency floor for blocked designs, orthogonal blocking via generators, `design_diagnostics` (N2) and `definitive_screening` (N3) mathematics.
+A/I blocked criteria, random block effects, split-plot, an intercept check (a user-supplied intercept column simply yields no feasible start), blocks with `fixed_ids`, an efficiency floor for blocked designs, orthogonal blocking via generators, `design_diagnostics` (N2) mathematics (N3 is §5).
+
+## 5. Definitive screening designs (N3)
+
+Labels as above. All arithmetic is exact (Python ints); the tensor is built only at the end.
+
+1. **Paley conference matrix (PROVED, Paley 1933).** For an odd prime `q` let `χ` be the Legendre symbol mod `q` (`χ(0) = 0`; for `a ≢ 0`, `χ(a) = 1` if `a^((q−1)/2) ≡ 1 (mod q)` else `−1`), `Q[i,j] = χ(j − i)` (`0 ≤ i, j < q`), `ε = χ(−1)` (`+1` if `q ≡ 1 mod 4`, `−1` if `q ≡ 3 mod 4`), and `C = [[0, 1ᵀ], [ε·1, Q]]` of order `c = q + 1`. Then `Qᵀ = εQ`, `Q1 = 0` and `QQᵀ = qI − J` (classical: `Σ_x χ(x)χ(x + d) = −1` for `d ≢ 0`), hence `CᵀC = (c − 1)I`, `diag C = 0` and every off-diagonal entry is `±1`; `C` is symmetric (`q ≡ 1`) or skew (`q ≡ 3 mod 4`). Integer check: all eight `q ∈ {3, 5, 7, 11, 13, 17, 19, 23}`.
+2. **Design (decision; Jones & Nachtsheim 2011).** `definitive_screening(k)` uses `c = k` if `k` is even and `k − 1 ∈ P`, `c = k + 1` if `k` is odd and `k ∈ P`, with `P = {3, 5, 7, 11, 13, 17, 19, 23}` (a fixed tuple, no primality code); `k` must be a Python `int` (validated: trust boundary) and every other `k` raises `ValueError`. Supported `k`: 3–8, 11–14, 17–20, 23, 24. With `C_k` the first `k` columns of `C` (odd `k` drops the last column), the design is `D = [C_k; −C_k; 0ᵀ]` in exactly this row order: `2c + 1` runs, levels `−1, 0, 1`.
+3. **Structure (PROVED).** (i) `C_kᵀC_k = (c − 1)I_k`, the leading `k × k` principal submatrix of `CᵀC = (c − 1)I_c` (§5.1), so `DᵀD = 2(c − 1)I_k`. (ii) Every odd-degree monomial column sums to 0 over `D`, because the rows of `−C_k` negate those of `C_k` and the centre row is 0; in particular every column of `D` has mean 0 and each main-effect column is orthogonal to every square column `x_b²` and every two-factor-interaction column `x_b x_d` (including `b = a`). (iii) `C` has one zero per column, so every factor is at 0 in exactly 3 runs. Squares and two-factor interactions are correlated with each other (not orthogonal); no claim is made about them. Integer check of (i)–(iii): every supported `k`, both column counts.
+4. **API.** `definitive_screening(k, *, dtype=torch.float64, device=None)` in `src/torchoed/factorial.py`, exported at the root; returns the `(2c + 1) × k` tensor of §5.2. Cost `O(c²)` Python-int work; no budget argument (largest output 49 × 24).

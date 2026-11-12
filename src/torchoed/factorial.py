@@ -25,3 +25,17 @@ def ff2n(k: int, *, device: torch.device | str | None = None, dtype: torch.dtype
     budget((2**k, k), max_elements)
     return (2 * full_factorial((2,) * k, device=device,
                               max_elements=max_elements) - 1).to(dtype=dtype)
+
+
+def definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor:
+    """Return a three-level definitive screening design from a Paley conference matrix."""
+    integer(k, "k")
+    q = k if k % 2 else k - 1
+    if q not in (3, 5, 7, 11, 13, 17, 19, 23):
+        raise ValueError("k must be a supported Paley factor count")
+    residues = {i * i % q for i in range(1, q)}
+    chi = [0] + [1 if i in residues else -1 for i in range(1, q)]
+    rows = [[0] + [1] * (k - 1)]
+    rows += [[chi[-1]] + [chi[(j - i) % q] for j in range(k - 1)] for i in range(q)]
+    return torch.tensor(rows + [[-x for x in row] for row in rows] + [[0] * k],
+                        dtype=dtype, device=device)

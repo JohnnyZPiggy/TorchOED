@@ -531,10 +531,128 @@ def _linear_exchange(F, ids, B, criterion, max_iter, *, _free_positions=None, ma
                 stop_reason=reason,certificate="LOCAL_2_NUMERICAL" if reason=="LOCAL_2_NUMERICAL" else "NOT_CERTIFIED",swap_history=history)
 
 
+def _block_information(F, ids, blocks):
+    rows = F[ids].split(blocks)
+    means = torch.stack([block.mean(0) for block in rows])
+    centered = torch.cat([block - mean for block, mean in zip(rows, means)])
+    return centered.mT @ centered, means
+
+
+def _block_scores(F, ids, blocks, means, L):
+    Z = torch.linalg.solve_triangular(L, torch.cat((F, means)).mT, upper=False).mT
+    rows, centers = Z[:len(F)], Z[len(F):]
+    unused = torch.ones(len(F), dtype=torch.bool)
+    unused[ids] = False
+    incoming = unused.nonzero().flatten()
+    groups = torch.arange(len(ids)).split(blocks)
+    # Both rank-two kernels have det(K) = -1, so the ratio is 1 + tr(KG) - det(G).
+    if len(incoming):
+        for group, center in zip(groups, centers):
+            u = rows[incoming] - center
+            uu = u.square().sum(1)
+            size = len(group)
+            for i in group.tolist():
+                v = rows[ids[i]] - center
+                uv, vv = u @ v, v.square().sum()
+                ratio = 1 + (1 - 1/size)*uu + (2/size)*uv - (1 + 1/size)*vv - (uu*vv - uv.square())
+                yield i, incoming, ratio.clamp_min(0).log(), False
+    for r, outgoing in enumerate(groups):
+        for t in range(r + 1, len(groups)):
+            other = groups[t]
+            e = centers[r] - centers[t]
+            ee = e.square().sum()
+            for i in outgoing.tolist():
+                d = rows[ids[other]] - rows[ids[i]]
+                dd, de = d.square().sum(1), d @ e
+                ratio = 1 - (1/len(outgoing) + 1/len(other))*dd - 2*de - (dd*ee - de.square())
+                yield i, other, ratio.clamp_min(0).log(), True
+
+
+def _block_exchange(F, ids, blocks, M, means, L, max_iter):
+    from .exchange import _tolerance
+
+    p = F.shape[1]
+    value = torch.linalg.slogdet(M).logabsdet.item()
+    condition = torch.linalg.cond(M).item()
+    for _ in range(max_iter):
+        for i, choices, gains, interchange in _block_scores(F, ids, blocks, means, L):
+            for j in choices[gains > 0].tolist():
+                trial = ids.clone()
+                trial[i] = ids[j] if interchange else j
+                if interchange:
+                    trial[j] = ids[i]
+                candidate, new_means = _block_information(F, trial, blocks)
+                sign, logdet = torch.linalg.slogdet(candidate)
+                if sign <= 0 or logdet <= value:
+                    continue
+                new_value = logdet.item()
+                new_condition = torch.linalg.cond(candidate).item()
+                if new_value - value > _tolerance(value, new_value, condition, new_condition, p):
+                    new_L, info = torch.linalg.cholesky_ex(candidate)
+                    if info == 0:
+                        ids, means, L = trial, new_means, new_L
+                        value, condition = new_value, new_condition
+                        break
+            else:
+                continue
+            break
+        else:
+            return ids, value, "LOCAL_BLOCK_EXCHANGE"
+    return ids, value, "MAX_ITER"
+
+
+def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
+    from ._validation import integer
+
+    m, p = F.shape
+    if (not isinstance(blocks, (list, tuple)) or not blocks
+            or any(type(size) is not int or size <= 0 for size in blocks)
+            or type(n) is not int or sum(blocks) != n or m < n or n - len(blocks) < p):
+        raise ValueError("blocks must be positive Python ints summing to n, with m >= n and n - len(blocks) >= p")
+    if criterion != "D" or fixed_ids is not None:
+        raise ValueError("blocks supports only criterion D without fixed_ids")
+    if F.dtype != torch.float64 or F.device.type != "cpu":
+        raise ValueError("blocked D search requires CPU float64 features")
+    _features(F, max_elements)
+    integer(restarts, "restarts")
+    integer(max_iter, "max_iter", 0)
+    if 8*m*p + 8*p*p + 16*m > max_elements:
+        raise ValueError("insufficient max_elements for blocked D workspace")
+    starts, objectives, failures = [], [], 0
+    for _ in range(restarts):
+        while True:
+            ids = torch.randperm(m, generator=generator)[:n]
+            M, means = _block_information(F, ids, blocks)
+            L, info = torch.linalg.cholesky_ex(M)
+            pivot_floor = 64*p*torch.finfo(F.dtype).eps*M.abs().amax()
+            if info == 0 and (L.diagonal().square() > pivot_floor).all():
+                break
+            failures += 1
+            if failures >= 100 * restarts:
+                raise ValueError("No feasible start after 100*restarts failed draws; "
+                                 "candidate set may be rank-deficient for this n")
+        starts.append(ids.tolist())
+        ids, value, reason = _block_exchange(F, ids, blocks, M, means, L, max_iter)
+        objectives.append(value)
+        if len(objectives) == 1 or value > best_value:
+            best_ids, best_value, best_reason = ids, value, reason
+            best_restart = len(objectives) - 1
+    certificate = best_reason if best_reason == "LOCAL_BLOCK_EXCHANGE" else "NOT_CERTIFIED"
+    ids = torch.cat([block.sort().values for block in best_ids.split(blocks)])
+    return dict(ids=ids, blocks=list(blocks), objective=best_value, criterion="D",
+                stop_reason=best_reason, certificate=certificate, efficiency_lower_bound=None,
+                restart_objectives=objectives, best_restart=best_restart, starts=starts)
+
+
 @torch.no_grad()
 def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None,
-                   max_iter: int = 100, max_elements: int = 1_000_000) -> dict[str, object]:
-    """D/A/I VND restarts with criterion-specific efficiency floor."""
+                   max_iter: int = 100, max_elements: int = 1_000_000, blocks: list[int] | tuple[int, ...] | None = None) -> dict[str, object]:
+    """D/A/I VND restarts with criterion-specific efficiency floor.
+
+    Set blocks to fixed block sizes for CPU float64 D-optimal search without an intercept.
+    """
+    if blocks is not None:
+        return _blocked_design(F,n,blocks,criterion,fixed_ids,restarts,generator,max_iter,max_elements)
     if criterion not in ("D","A","I"):
         raise ValueError('criterion must be D, A or I')
     if criterion == "D":

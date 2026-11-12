@@ -68,3 +68,19 @@ def weighted_information(F: torch.Tensor, w: torch.Tensor, *, max_elements: int 
     tolerance = 64 * torch.finfo(F.dtype).eps
     _reject((w.sum(dim=-1) - 1).abs() > tolerance, "weights must sum to 1")
     return _finite_output(F.mT @ (w[..., None] * F))
+
+
+def design_diagnostics(F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None) -> dict[str, torch.Tensor | list[int]]:
+    """Return design correlations, VIFs, scaled prediction variances and their sorted values."""
+    L = torch.linalg.cholesky(exact_information(F, ids))
+    S = F[ids]
+    n, _ = S.shape
+    columns = (S != S[0]).any(dim=0).nonzero().flatten().tolist()
+    X = S[:, columns]
+    X = torch.nn.functional.normalize(X - X.mean(dim=0), dim=0, eps=0)
+    correlation = X.mT @ X if len(columns) != 1 else X.new_ones((1, 1))
+    vif = torch.cholesky_inverse(torch.linalg.cholesky(correlation)).diagonal()
+    R = F if region is None else region
+    solved = torch.cholesky_solve(R.mT, L)
+    spv = n * torch.einsum("ij,ji->i", R, solved)
+    return {"columns": columns, "correlation": correlation, "vif": vif, "spv": spv, "fds": spv.sort().values}

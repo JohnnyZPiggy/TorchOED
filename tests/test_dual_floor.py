@@ -1,6 +1,6 @@
 from itertools import combinations
 import torch
-from torchoed import optimal_design, full_factorial, polynomial_features
+from torchoed import design_diagnostics, optimal_design, full_factorial, polynomial_features
 from torchoed.d_optimal_design import _dual_floor
 from oracle_exchange import determinant, linear_value
 
@@ -52,3 +52,35 @@ def test_ai_floor_dense_reference():
         bound = _dual_floor(F, M*len(ids), len(ids), criterion, 0.)
         assert bound >= (1-1e-3)*phi.square()/(q.max()*own)
         assert bound <= phi/own+1e-12
+
+
+def test_design_diagnostics_factorial():
+    F = polynomial_features(full_factorial([2, 2, 2]).double() * 2 - 1, 1)
+    d = design_diagnostics(F, torch.arange(8))
+    assert d["columns"] == [1, 2, 3]
+    torch.testing.assert_close(d["correlation"], torch.eye(3, dtype=F.dtype), atol=1e-12, rtol=0)
+    torch.testing.assert_close(d["vif"], F.new_ones(3), atol=1e-12, rtol=0)
+    torch.testing.assert_close(d["spv"], F.new_full((8,), 4), atol=1e-12, rtol=0)
+    assert torch.equal(d["fds"], d["spv"].sort().values)
+
+
+def test_design_diagnostics_dense_oracle():
+    F = polynomial_features(full_factorial([3, 3]).double() - 1, 2)
+    ids = torch.tensor([0, 1, 2, 3, 5, 6, 7, 8])
+    S = F[ids]
+    d = design_diagnostics(F, ids)
+    for j, column in enumerate(d["columns"]):
+        y = S[:, column]
+        X = S[:, [0] + [k for k in d["columns"] if k != column]]
+        residual = y - X @ torch.linalg.lstsq(X, y).solution
+        torch.testing.assert_close(d["vif"][j], (y - y.mean()).square().sum() / residual.square().sum(), atol=1e-12, rtol=0)
+    torch.testing.assert_close(d["spv"], len(ids) * (F @ torch.linalg.inv(S.mT @ S) @ F.mT).diagonal(), atol=1e-12, rtol=0)
+    torch.testing.assert_close(design_diagnostics(F, ids, region=S)["spv"].mean(), F.new_tensor(F.shape[1]), atol=1e-12, rtol=0)
+
+
+def test_design_diagnostics_d_floor():
+    F = polynomial_features(full_factorial([3, 3]).double() - 1, 2)
+    r = optimal_design(F, 8, generator=torch.Generator().manual_seed(0))
+    maximum = design_diagnostics(F, r["ids"])["spv"].max().item()
+    assert maximum >= F.shape[1] * (1 - 1e-12)
+    assert r["efficiency_lower_bound"] >= F.shape[1] / maximum * (1 - 1e-12)

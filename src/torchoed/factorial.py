@@ -39,3 +39,15 @@ def definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: 
     rows += [[chi[-1]] + [chi[(j - i) % q] for j in range(k - 1)] for i in range(q)]
     return torch.tensor(rows + [[-x for x in row] for row in rows] + [[0] * k],
                         dtype=dtype, device=device)
+
+
+def simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64,
+                    device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
+    """Return the {q, m} simplex lattice in full_factorial order.
+    For a Scheffé quadratic, drop the q square columns of polynomial_features(X, 2, include_bias=False).
+    """
+    integer(q, "q")
+    integer(m, "m")
+    floating(dtype)
+    counts = full_factorial([m + 1] * q, device=device, max_elements=max_elements)
+    return counts[counts.sum(dim=1) == m].to(dtype) / m

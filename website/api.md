@@ -16,6 +16,8 @@ Return the signed corners of a k-factor two-level factorial.
 
 Return the (2c + 1)-run three-level definitive screening design `[C_k; −C_k; 0]` from a Paley conference matrix of order c.
 
+`simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
+
 `lhs(n_samples: int, n_factors: int, *, generator: torch.Generator | None = None, device: torch.device | str | None = None, dtype: torch.dtype = torch.float64, mode: str = "random", max_elements: int = 1_000_000) -> torch.Tensor`
 
 Draw a random Latin hypercube with one sample in each marginal stratum.

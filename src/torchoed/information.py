@@ -70,11 +70,51 @@ def weighted_information(F: torch.Tensor, w: torch.Tensor, *, max_elements: int 
     return _finite_output(F.mT @ (w[..., None] * F))
 
 
-def design_diagnostics(F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None) -> dict[str, torch.Tensor | list[int]]:
-    """Return design correlations, VIFs, scaled prediction variances and their sorted values."""
-    L = torch.linalg.cholesky(exact_information(F, ids))
+def _coefficient_power(noncentrality: torch.Tensor, df: int, alpha: float) -> torch.Tensor:
+    # Central beta quantile via the b-recurrence in P2_GATE §11.
+    b = df / 2
+    steps = torch.arange(0.5 if df % 2 else 1.0, b, device=noncentrality.device,
+                         dtype=noncentrality.dtype)
+    log_u = (steps + 0.5).lgamma() - (steps + 1).lgamma() - noncentrality.new_tensor(0.5).lgamma()
+    lo, hi = noncentrality.new_tensor(0.0), noncentrality.new_tensor(1.0)
+    for _ in range(64):
+        x = (lo + hi) / 2
+        root = x.sqrt()
+        central = (2 / torch.pi) * root.asin() if df % 2 else root
+        central = central + (log_u + 0.5 * x.log() + steps * (-x).log1p()).exp().sum()
+        below = central < 1 - alpha
+        lo = torch.where(below, x, lo)
+        hi = torch.where(below, hi, x)
+
+    # Sum beta survival probabilities against the truncated Poisson weights.
+    mu = noncentrality[:, None] / 2
+    cutoff = (mu + 12 * mu.sqrt() + 30).ceil()
+    k = torch.arange(int(cutoff.max()) + 1, device=mu.device, dtype=mu.dtype)
+    a = k[:-1] + 0.5
+    log_t = ((a + b).lgamma() - (a + 1).lgamma() - mu.new_tensor(b).lgamma()
+             + a * x.log() + b * (-x).log1p())
+    q = (1 - central) + torch.cat((k[:1], log_t.exp().cumsum(dim=0)))
+    weights = (torch.xlogy(k, mu) - mu - (k + 1).lgamma()).exp()
+    return (weights * q).masked_fill(k > cutoff, 0).sum(dim=1)
+
+
+def design_diagnostics(
+    F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None,
+    effect: float | torch.Tensor | None = None, alpha: float = 0.05,
+) -> dict[str, torch.Tensor | list[int]]:
+    """Return design correlations, VIFs, scaled prediction variances and their sorted values.
+
+    With `effect`, return `power` at level `alpha` for two-sided t-tests (σ = 1, ν = n − p).
+    """
+    M = exact_information(F, ids)
+    if effect is not None:
+        if type(alpha) is not float or not 0.001 <= alpha <= 0.5:
+            raise ValueError("alpha must be a Python float in [0.001, 0.5]")
+        if ids.shape[-1] <= F.shape[-1]:
+            raise ValueError("power requires n > p")
+    L = torch.linalg.cholesky(M)
     S = F[ids]
-    n, _ = S.shape
+    n, p = S.shape
     columns = (S != S[0]).any(dim=0).nonzero().flatten().tolist()
     X = S[:, columns]
     X = torch.nn.functional.normalize(X - X.mean(dim=0), dim=0, eps=0)
@@ -83,4 +123,11 @@ def design_diagnostics(F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tens
     R = F if region is None else region
     solved = torch.cholesky_solve(R.mT, L)
     spv = n * torch.einsum("ij,ji->i", R, solved)
-    return {"columns": columns, "correlation": correlation, "vif": vif, "spv": spv, "fds": spv.sort().values}
+    result: dict[str, torch.Tensor | list[int]] = {
+        "columns": columns, "correlation": correlation, "vif": vif, "spv": spv, "fds": spv.sort().values,
+    }
+    if effect is not None:
+        delta = torch.as_tensor(effect, dtype=torch.float64, device=F.device).broadcast_to((p,))
+        noncentrality = delta.square() / torch.cholesky_inverse(L).diagonal()
+        result["power"] = _coefficient_power(noncentrality, n - p, alpha).to(F.dtype)
+    return result

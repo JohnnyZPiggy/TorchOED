@@ -2,7 +2,7 @@
 
 __version__ = "0.6.0"
 
-from .factorial import definitive_screening, ff2n, full_factorial
+from .factorial import definitive_screening, ff2n, full_factorial, simplex_lattice
 from .features import polynomial_features, effects_coding, feasible_candidates, jacobian_features
 from .sampling import lhs, sobol
 from .information import design_diagnostics, exact_information, weighted_information
@@ -12,6 +12,6 @@ from .two_swap import score_two_swaps
 from .k2_exchange import k2_exchange
 from .d_optimal_design import d_optimal_design, optimal_design, next_batch
 
-__all__ = ["full_factorial", "ff2n", "definitive_screening", "lhs", "sobol", "polynomial_features", "effects_coding", "feasible_candidates", "jacobian_features",
+__all__ = ["full_factorial", "ff2n", "definitive_screening", "simplex_lattice", "lhs", "sobol", "polynomial_features", "effects_coding", "feasible_candidates", "jacobian_features",
            "exact_information", "weighted_information", "design_diagnostics", "d_optimality",
            "a_optimality", "e_optimality", "c_optimality", "fedorov_exchange", "score_two_swaps", "k2_exchange", "d_optimal_design", "optimal_design", "next_batch"]

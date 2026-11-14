@@ -1,3 +1,17 @@
+if (identical(commandArgs(trailingOnly=TRUE), "H14")) {
+  library(skpr)
+  outdir <- "reports/w7-heldout"
+  capture.output(print(sessionInfo()), print(packageVersion("skpr")), file=file.path(outdir, "sessionInfo.txt"))
+  set.seed(20261114)
+  whole <- gen_design(data.frame(A=-1:1), ~ A + I(A^2), trials=6)
+  fit <- gen_design(read.csv(file.path(outdir, "H14.csv")),
+                    ~ (A + B + C)^2 + I(A^2) + I(B^2) + I(C^2), trials=24,
+                    splitplotdesign=whole, varianceratio=1)
+  plot <- as.integer(sub("\\..*$", "", rownames(fit)))
+  stopifnot(identical(tabulate(plot), rep(4L, 6)), nrow(fit) == 24)
+  write.csv(data.frame(plot, fit[, c("A", "B", "C")]), file.path(outdir, "skpr.csv"), row.names=FALSE)
+  quit(save="no")
+}
 library(AlgDesign)
 set.seed(20261112)
 if (identical(commandArgs(trailingOnly=TRUE), "H11")) {

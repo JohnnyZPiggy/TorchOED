@@ -1,9 +1,33 @@
 """One CPU R probe inside the allocated Colab Python runtime."""
-import json, os, pathlib, shutil, subprocess, sys
+import csv, json, os, pathlib, shutil, subprocess, sys
 root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDIDATE_SHA']
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
+out = root/'reports/w7-heldout'
+if (out/'H14.csv').exists():
+    data = dict(status='PASS', source_sha=sha, runtime='CPU Rscript in Colab Python runtime',
+                device_observed=json.loads(os.environ['SAE_DEVICE_OBSERVED']), reference_status='NOT_RUN')
+    try:
+        if installed: subprocess.run(['apt-get','install','-y','r-base-core'],check=True)
+        data['r_version'] = subprocess.check_output(['R','--version'],text=True).splitlines()[0]
+        subprocess.run(['Rscript','-e','install.packages("skpr",repos="https://cloud.r-project.org")'],check=True)
+        result = subprocess.run(['Rscript','tools/r_heldout.R','H14'],cwd=root,
+                                env=dict(os.environ,CUDA_VISIBLE_DEVICES=''),capture_output=True,text=True)
+        session = out/'sessionInfo.txt'
+        if result.returncode == 0 and session.exists():
+            with (out/'skpr.csv').open() as file:
+                rows = list(csv.DictReader(file))
+            data.update(reference_status='PASS', sessionInfo=session.read_text(),
+                        rows_by_plot=[[[float(row[k]) for k in 'ABC'] for row in rows if int(row['plot']) == p]
+                                      for p in range(1,7)])
+        else:
+            data['reference_error'] = result.stderr.strip() or 'Missing sessionInfo()'
+            if session.exists(): data['sessionInfo'] = session.read_text()
+    except subprocess.CalledProcessError as exc:
+        data['reference_error'] = str(exc)
+    pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data,allow_nan=False)+'\n')
+    sys.exit()
 if installed: subprocess.run(['apt-get','install','-y','r-base-core'],check=True)
 version = subprocess.check_output(['R','--version'],text=True)
 subprocess.run(['Rscript','-e','install.packages("AlgDesign",repos="https://cloud.r-project.org")'],check=True)

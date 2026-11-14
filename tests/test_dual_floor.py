@@ -1,4 +1,6 @@
 from itertools import combinations
+
+import pytest
 import torch
 from torchoed import design_diagnostics, optimal_design, full_factorial, polynomial_features
 from torchoed.d_optimal_design import _dual_floor
@@ -62,6 +64,35 @@ def test_design_diagnostics_factorial():
     torch.testing.assert_close(d["vif"], F.new_ones(3), atol=1e-12, rtol=0)
     torch.testing.assert_close(d["spv"], F.new_full((8,), 4), atol=1e-12, rtol=0)
     assert torch.equal(d["fds"], d["spv"].sort().values)
+
+
+def test_design_diagnostics_power_factorial():
+    """SciPy 1.18.1 ncf.sf(f.ppf(1−α,1,ν),1,ν,λ), dev-only."""
+    F = polynomial_features(2 * full_factorial([2] * 4).double() - 1, 1)
+    power = design_diagnostics(F, torch.arange(16), effect=0.5, alpha=0.05)["power"]
+    torch.testing.assert_close(power, power[0].expand_as(power), atol=1e-14, rtol=0)
+    torch.testing.assert_close(power, F.new_full((5,), 0.44646615784540034), atol=1e-8, rtol=0)
+
+
+def test_design_diagnostics_power_per_coefficient():
+    """SciPy 1.18.1 ncf.sf(f.ppf(1−α,1,ν),1,ν,λ), dev-only."""
+    F = polynomial_features(2 * full_factorial([2] * 3).double() - 1, 1)
+    effect = F.new_tensor([0., 1., 2., 3.])
+    power = design_diagnostics(F, torch.arange(8), effect=effect, alpha=0.1)["power"]
+    expected = F.new_tensor([0.1, 0.7499667343577331, 0.9978740910366228, 0.9999996431473732])
+    torch.testing.assert_close(power, expected, atol=1e-8, rtol=0)
+
+
+def test_design_diagnostics_power_one_residual_df():
+    """SciPy 1.18.1 ncf.sf(f.ppf(1−α,1,ν),1,ν,λ), dev-only."""
+    F = polynomial_features(2 * full_factorial([2] * 2).double() - 1, 1)
+    ids = torch.arange(4)
+    power = design_diagnostics(F, ids, effect=2.0, alpha=0.05)["power"]
+    torch.testing.assert_close(power, F.new_full((3,), 0.2463555872889929), atol=1e-8, rtol=0)
+    with pytest.raises(ValueError):
+        design_diagnostics(F, ids, effect=2.0, alpha=0.0005)
+    with pytest.raises(ValueError):
+        design_diagnostics(F, torch.arange(3), effect=1.0)
 
 
 def test_design_diagnostics_dense_oracle():

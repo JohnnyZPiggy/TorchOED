@@ -38,6 +38,8 @@ def dense_score(F, hard, ids, plots, eta):
 def main():
     torch.set_num_threads(1)
     runtime = json.loads((HERE / "runtime.json").read_text(encoding="utf-8"))
+    if runtime["reference_status"] != "PASS":
+        sys.exit(f"NOT_RUN: {runtime['reference_error']}")
     sizes, eta = runtime["plot_sizes"], runtime["eta"]
     base = [setting(row) for row in rows("candidates.csv")]
     candidates = base * len(sizes)

@@ -34,8 +34,8 @@ designsplitplot = gen_design(splitplotcandidateset, ~Altitude + Range + Power, t
   write.csv(splitplotcandidateset, file.path(outdir, "candidates.csv"), row.names=FALSE)
   write.csv(data.frame(plot, designsplitplot[, names(splitplotcandidateset)]),
             file.path(outdir, "skpr.csv"), row.names=FALSE)
-  writeLines(c(ncol(model.matrix(~Altitude + Range + Power, designsplitplot)),
-               formals(skpr::gen_design)$varianceratio, tabulate(plot)),
+  writeLines(as.character(c(ncol(model.matrix(~Altitude + Range + Power, designsplitplot)),
+                            formals(skpr::gen_design)$varianceratio, tabulate(plot))),
              file.path(outdir, "model.txt"))
   quit(save="no")
 }

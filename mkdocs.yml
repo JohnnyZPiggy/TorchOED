@@ -8,5 +8,6 @@ nav:
   - Criteria: criteria.md
   - Augmentation and constraints: augmentation.md
   - PyTorch model → experiments: closed_loop.md
+  - Industrial designs: industrial.md
   - PyDOE comparison: pydoe.md
   - API reference: api.md

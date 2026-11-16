@@ -12,7 +12,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 ## P2 — industrial DOE (completion weeks 9–11)
 | Capability | Crit | Aug | Con | Cert | Diag | Dev | Ext | Docs | HO | Week |
 |---|---|---|---|---|---|---|---|---|---|---|
-| blocking `blocks=` | ◐ D only | ❌ | ✅ | ◐ local certificate only, no efficiency floor | ❌ diagnostics ignore blocks | ◐ CPU float64 only | ✅ AlgDesign `optBlock` (H11) | ✅ | ✅ H11 | **W9** |
+| blocking `blocks=` | ✅ D A I (#228) | ❌ | ✅ | ◐ local certificate only, no efficiency floor | ❌ diagnostics ignore blocks | ◐ CPU float64 only | ✅ AlgDesign `optBlock` (H11) | ✅ | ✅ H11 | **W9** |
 | split-plot `whole_plots=` | ◐ D only | ❌ | ✅ | ◐ local certificate only | ❌ no GLS SPV / power | ◐ CPU float64 only | ✅ skpr `gen_design` (`w8-skpr`) | ✅ | ✅ H14 | **W9** |
 | blocks + split-plot together | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | W9 if the gate covers it, else W11 |
 | definitive screening | N/A constructor | N/A | N/A | N/A (exact orthogonality proved) | ✅ | ✅ | ◐ Paley orders only (q prime); other k raise | ✅ | ✅ H12 | W10 (non-Paley conference matrices) |

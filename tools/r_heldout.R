@@ -1,3 +1,44 @@
+if (identical(commandArgs(trailingOnly=TRUE), "K4")) {
+  library(skpr)
+  outdir <- "reports/w8-skpr"
+  dir.create(outdir, showWarnings=FALSE)
+  capture.output(print(sessionInfo()), print(packageVersion("skpr")), file=file.path(outdir, "sessionInfo.txt"))
+  stopifnot(getRversion() == "4.6.1", packageVersion("skpr") == "1.9.2")
+  extracted <- tempfile()
+  tools::Rd2ex(tools::Rd_db("skpr")[["gen_design.Rd"]], out=extracted)
+  examples <- readLines(extracted)
+  first <- match("splitplotcandidateset = expand.grid(Altitude = c(-1, 1),", examples)
+  last <- grep("^ *splitplotdesign *= *", examples)[1L]
+  writeLines(sprintf("%d %d", first, last), file.path(outdir, "example-lines.txt"))
+  published <- readLines("tools/r_heldout.R")
+  start <- match("  set.seed(20261118)", published) + 1L
+  stopifnot(identical(examples[first:last], published[start:(start + last - first)]))
+  # skpr 1.9.2 (GPL-3), gen_design.Rd, Examples lines 217–230.
+  # https://github.com/cran/skpr/blob/1.9.2/man/gen_design.Rd#L217-L230
+  set.seed(20261118)
+splitplotcandidateset = expand.grid(Altitude = c(-1, 1),
+                                    Range = as.factor(c("Close", "Medium", "Far")),
+                                    Power = c(1, -1))
+hardtochangedesign = gen_design(splitplotcandidateset, model = ~Altitude,
+                               trials = 11, repeats = 10)
+
+#Now we can use the D-optimal blocked design as an input to our full design.
+
+#Here, we add the easy to change factors from the candidate set to the model,
+#and input the hard-to-change design along with the new number of trials. `gen_design` will
+#automatically allocate the runs in the blocks in the most balanced way possible.
+
+designsplitplot = gen_design(splitplotcandidateset, ~Altitude + Range + Power, trials = 33,
+                             splitplotdesign = hardtochangedesign, repeats = 10)
+  plot <- as.integer(sub("\\..*$", "", rownames(designsplitplot)))
+  write.csv(splitplotcandidateset, file.path(outdir, "candidates.csv"), row.names=FALSE)
+  write.csv(data.frame(plot, designsplitplot[, names(splitplotcandidateset)]),
+            file.path(outdir, "skpr.csv"), row.names=FALSE)
+  writeLines(c(ncol(model.matrix(~Altitude + Range + Power, designsplitplot)),
+               formals(skpr::gen_design)$varianceratio, tabulate(plot)),
+             file.path(outdir, "model.txt"))
+  quit(save="no")
+}
 if (identical(commandArgs(trailingOnly=TRUE), "H14")) {
   library(skpr)
   outdir <- "reports/w7-heldout"

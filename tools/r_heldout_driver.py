@@ -4,6 +4,30 @@ root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDID
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
+out = root/'reports/w8-skpr'
+if (out/'run.py').exists():
+    host = json.loads(os.environ['SAE_DEVICE_OBSERVED'])['nvidia_smi'][0]['name']
+    data = dict(status='PASS', source_sha=sha, observed_host=host,
+                device_used='CPU (CUDA hidden from R)', reference_status='NOT_RUN')
+    cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    try:
+        if installed: subprocess.run(['apt-get','install','-y','r-base-core'],check=True)
+        data['r_version'] = subprocess.check_output(['R','--version'],text=True).splitlines()[0]
+        subprocess.run(['Rscript','-e','install.packages("skpr",repos="https://cloud.r-project.org")'],
+                       env=cpu_env,check=True)
+        result = subprocess.run(['Rscript','tools/r_heldout.R','K4'],cwd=root,
+                                env=cpu_env,capture_output=True,text=True)
+        for name in ('sessionInfo.txt', 'example-lines.txt', 'candidates.csv', 'skpr.csv', 'model.txt'):
+            path = out/name
+            if path.exists(): data[name] = path.read_text()
+        if result.returncode == 0:
+            data['reference_status'] = 'PASS'
+        else:
+            data['reference_error'] = result.stderr.strip()
+    except subprocess.CalledProcessError as exc:
+        data['reference_error'] = str(exc)
+    pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data,allow_nan=False)+'\n')
+    sys.exit()
 out = root/'reports/w7-heldout'
 if (out/'H14.csv').exists():
     data = dict(status='PASS', source_sha=sha, runtime='CPU Rscript in Colab Python runtime',

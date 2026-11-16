@@ -532,7 +532,7 @@ def _block_scores(F, ids, blocks, means, L, B=None):
     Z = torch.linalg.solve_triangular(L, torch.cat((F, means)).mT, upper=False).mT
     rows, centers = Z[:len(F)], Z[len(F):]
     if B is not None:
-        # In whitened coordinates H uses L⁻¹ B L⁻ᵀ.
+        # In whitened coordinates H uses inv(L) @ B @ inv(L.T).
         Q = torch.linalg.solve_triangular(L, B, upper=False)
         Q = torch.linalg.solve_triangular(L, Q.mT, upper=False).mT
         T = Z @ Q

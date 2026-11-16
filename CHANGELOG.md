@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.7.0] — 2026-11-16
+
+### Added
+
+- `jacobian_features` builds model Jacobians for design (#182, [API](website/api.md)).
+- `next_batch` and a simulated closed-loop example (#184, #186, [guide](website/closed_loop.md)).
+- `optimal_design(..., blocks=…)` supports fixed block sizes (#195, [guide](website/industrial.md)).
+- `definitive_screening` constructs definitive screening designs (#198, [API](website/api.md)).
+- `design_diagnostics` reports design correlations, VIFs and prediction variance (#200, [guide](website/industrial.md)).
+- Split-plot D design with `whole_plots=`, `hard=` and `eta=` (#205, [guide](website/industrial.md)).
+- `simplex_lattice` constructs mixture candidate sets (#208, [API](website/api.md)).
+- Per-coefficient power in `design_diagnostics(..., effect=, alpha=)` (#210, [guide](website/industrial.md)).
+- Industrial DOE guide with runnable examples (#216, [guide](website/industrial.md)).
+- [Published skpr split-plot comparison report](reports/w8-skpr/summary.md) (#220).
+
+### Changed
+
+- A/I two-swap screening and pruning (#134–#172).
+- Engine consolidation preserved outputs and reduced `src/` from 1914 to 1898 lines, missing the ≤ 1874 target (#218).
+
+### Known limitations
+
+- CPU float64 only for numerical acceptance. The API is experimental.
+- Split-plot and blocks support D only.
+- Split-plot vs skpr: one published skpr 1.9.2 example compared (`gen_design` split-plot, 33 runs in 11 plots of 3, η = 1): equal dense GLS log-determinant 13.5136, Δ = 0 (#220, [report](reports/w8-skpr/summary.md)); no wider skpr or JMP parity is claimed.
+- Real PyPI publication requires the Scientist.
+
 ## [0.6.0] — 2026-11-06
 
 ### Added

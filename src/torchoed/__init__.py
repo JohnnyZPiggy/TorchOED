@@ -1,6 +1,6 @@
 """Torch-only M1 constructors and polynomial features; CPU acceptance only."""
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 from .factorial import definitive_screening, ff2n, full_factorial, simplex_lattice
 from .features import polynomial_features, effects_coding, feasible_candidates, jacobian_features

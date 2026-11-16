@@ -5,7 +5,8 @@ from itertools import combinations
 import pytest
 import torch
 
-from torchoed import ff2n, optimal_design
+from oracle_exchange import linear_value
+from torchoed import ff2n, full_factorial, optimal_design
 from torchoed.d_optimal_design import _block_information, _block_scores, _split_information, _split_ratios
 
 
@@ -58,6 +59,71 @@ def test_factorial_blocking_confounds_only_abc():
     for block in result["ids"].split(4):
         assert (X[block].prod(1) == X[block[0]].prod()).all()
         assert torch.equal(block, block.sort().values)
+
+
+@pytest.mark.parametrize("criterion", ["A", "I"])
+def test_blocked_linear_scores_match_dense_projection(criterion):
+    F = torch.randn(12, 3, dtype=torch.float64, generator=torch.Generator().manual_seed(14))
+    ids, blocks = torch.arange(7), [3, 4]
+    Z = torch.eye(2, dtype=F.dtype)[torch.tensor([0]*3 + [1]*4)]
+    projection = torch.eye(7, dtype=F.dtype) - Z @ torch.linalg.solve(Z.mT @ Z, Z.mT)
+    B = torch.eye(3, dtype=F.dtype) if criterion == "A" else torch.cov(F.mT, correction=0)
+
+    def dense(selection):
+        rows = F[selection]
+        return rows.mT @ projection @ rows
+
+    M, means = _block_information(F, ids, blocks)
+    baseline = dense(ids)
+    phi = torch.trace(torch.linalg.solve(baseline, B))
+    det = torch.linalg.det(baseline)
+    counts = [0, 0]
+    for i, choices, gains, interchange, ratios in _block_scores(F, ids, blocks, means, torch.linalg.cholesky(M), B):
+        for j, gain, ratio in zip(choices.tolist(), gains, ratios):
+            trial = ids.clone()
+            trial[i] = ids[j] if interchange else j
+            if interchange:
+                trial[j] = ids[i]
+            candidate = dense(trial)
+            expected = phi - torch.trace(torch.linalg.solve(candidate, B))
+            torch.testing.assert_close(gain, expected, rtol=1e-10, atol=0)
+            torch.testing.assert_close(ratio, torch.linalg.det(candidate)/det, rtol=1e-10, atol=0)
+            counts[interchange] += 1
+    assert counts == [35, 12]
+
+    result = optimal_design(F, 7, blocks=blocks, criterion=criterion, generator=torch.Generator().manual_seed(0))
+    assert result["objective"] == pytest.approx(-torch.trace(torch.linalg.solve(dense(result["ids"]), B)).item(),
+                                                 rel=1e-10, abs=0)
+    assert result["blocks"] == blocks and result["criterion"] == criterion
+    assert result["stop_reason"] == result["certificate"] == "LOCAL_BLOCK_EXCHANGE"
+    assert result["efficiency_lower_bound"] is None
+
+
+def test_blocked_linear_objectives_match_fraction_optima():
+    x, y = (full_factorial([3, 3]).long() - 1).unbind(1)
+    F = torch.stack((x, y, x.square(), y.square(), x*y), dim=1)
+    rows = F.tolist()
+    a, b, c = ff2n(3).unbind(1)
+    factorial = torch.stack((a, b, c, a*b, a*c, b*c), dim=1)
+    for criterion, expected in (("A", Fraction(70, 27)), ("I", Fraction(208, 243))):
+        values = []
+        for subset in combinations(range(len(rows)), 7):
+            for first in combinations(subset, 3):
+                second = [i for i in subset if i not in first]
+                value = linear_value(rows, subset, criterion, blocks=[first, second])
+                if value is not None:
+                    values.append(value)
+        assert len(values) == 1024
+        assert min(values) == expected
+        for features, sizes, optimum in ((F, [3, 4], expected), (factorial, [4, 4], Fraction(3, 4))):
+            result = optimal_design(features.double(), sum(sizes), blocks=sizes, criterion=criterion,
+                                    restarts=20, generator=torch.Generator().manual_seed(0))
+            assert result["objective"] == pytest.approx(-float(optimum), rel=0, abs=1e-10)
+
+
+def test_blocks_still_reject_fixed_ids():
+    with pytest.raises(ValueError, match="fixed_ids"):
+        optimal_design(ff2n(3), 6, criterion="I", blocks=[3, 3], fixed_ids=[0])
 
 
 def test_split_plot_scores_match_dense_gls():

@@ -521,39 +521,69 @@ def _block_information(F, ids, blocks):
     return centered.mT @ centered, means
 
 
-def _block_scores(F, ids, blocks, means, L):
+def _block_ai_gain(u, v, uq, vq, n11, n12, n22):
+    ratio = n12.square() - n11*n22
+    h11, h12, h22 = (u*uq).sum(1), u @ vq, (v*vq).sum()
+    gain = (2*n12*h12 - n22*h11 - n11*h22) / ratio.masked_fill(ratio <= 0, torch.inf)
+    return gain, ratio
+
+
+def _block_scores(F, ids, blocks, means, L, B=None):
     Z = torch.linalg.solve_triangular(L, torch.cat((F, means)).mT, upper=False).mT
     rows, centers = Z[:len(F)], Z[len(F):]
+    if B is not None:
+        # In whitened coordinates H uses inv(L) @ B @ inv(L.T).
+        Q = torch.linalg.solve_triangular(L, B, upper=False)
+        Q = torch.linalg.solve_triangular(L, Q.mT, upper=False).mT
+        T = Z @ Q
+        weighted_rows, weighted_centers = T[:len(F)], T[len(F):]
     unused = torch.ones(len(F), dtype=torch.bool)
     unused[ids] = False
     incoming = unused.nonzero().flatten()
     groups = torch.arange(len(ids)).split(blocks)
     # Both rank-two kernels have det(K) = -1, so the ratio is 1 + tr(KG) - det(G).
     if len(incoming):
-        for group, center in zip(groups, centers):
+        for b, (group, center) in enumerate(zip(groups, centers)):
             u = rows[incoming] - center
             uu = u.square().sum(1)
             size = len(group)
+            if B is not None:
+                uq = weighted_rows[incoming] - weighted_centers[b]
             for i in group.tolist():
                 v = rows[ids[i]] - center
                 uv, vv = u @ v, v.square().sum()
-                ratio = 1 + (1 - 1/size)*uu + (2/size)*uv - (1 + 1/size)*vv - (uu*vv - uv.square())
-                yield i, incoming, ratio.clamp_min(0).log(), False
+                if B is None:
+                    ratio = 1 + (1 - 1/size)*uu + (2/size)*uv - (1 + 1/size)*vv - (uu*vv - uv.square())
+                    yield i, incoming, ratio.clamp_min(0).log(), False
+                else:
+                    vq = weighted_rows[ids[i]] - weighted_centers[b]
+                    gain, ratio = _block_ai_gain(u, v, uq, vq, uu+1+1/size, uv+1/size, vv-1+1/size)
+                    yield i, incoming, gain, False, ratio
     for r, outgoing in enumerate(groups):
         for t in range(r + 1, len(groups)):
             other = groups[t]
             e = centers[r] - centers[t]
             ee = e.square().sum()
+            if B is not None:
+                eq = weighted_centers[r] - weighted_centers[t]
             for i in outgoing.tolist():
                 d = rows[ids[other]] - rows[ids[i]]
                 dd, de = d.square().sum(1), d @ e
-                ratio = 1 - (1/len(outgoing) + 1/len(other))*dd - 2*de - (dd*ee - de.square())
-                yield i, other, ratio.clamp_min(0).log(), True
+                if B is None:
+                    ratio = 1 - (1/len(outgoing) + 1/len(other))*dd - 2*de - (dd*ee - de.square())
+                    yield i, other, ratio.clamp_min(0).log(), True
+                else:
+                    dq = weighted_rows[ids[other]] - weighted_rows[ids[i]]
+                    gain, ratio = _block_ai_gain(d, e, dq, eq, dd, de-1, ee+1/len(outgoing)+1/len(other))
+                    yield i, other, gain, True, ratio
 
 
-def _block_moves(F, ids, blocks, means, L):
-    for i, choices, gains, interchange in _block_scores(F, ids, blocks, means, L):
-        for j in choices[gains > 0].tolist():
+def _block_moves(F, ids, blocks, means, L, B=None):
+    for i, choices, gains, interchange, *ratio in _block_scores(F, ids, blocks, means, L, B):
+        improving = gains > 0
+        if ratio:
+            improving &= ratio[0] > 0
+        for j in choices[improving].tolist():
             trial = ids.clone()
             trial[i] = ids[j] if interchange else j
             if interchange:
@@ -561,7 +591,8 @@ def _block_moves(F, ids, blocks, means, L):
             yield trial
 
 
-def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, local_reason):
+def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, local_reason,
+                   *, criterion="D", B=None):
     def attempt():
         start = ids = draw()
         if ids is None:
@@ -571,21 +602,34 @@ def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, 
         pivot_floor = 64*len(M)*torch.finfo(M.dtype).eps*M.abs().amax()
         if not (info == 0 and (L.diagonal().square() > pivot_floor).all()):
             return None
-        value = torch.linalg.slogdet(M).logabsdet.item()
+        value = (torch.linalg.slogdet(M).logabsdet.item() if B is None
+                 else -torch.trace(torch.cholesky_solve(B, L)).item())
         condition = torch.linalg.cond(M).item()
         for _ in range(max_iter):
             for trial in moves(ids, summaries, L):
                 candidate, new_summaries = information(trial)
-                sign, logdet = torch.linalg.slogdet(candidate)
-                if sign <= 0 or logdet <= value:
-                    continue
-                new_value, new_condition = logdet.item(), torch.linalg.cond(candidate).item()
-                if new_value - value > _tolerance(value, new_value, condition, new_condition, len(M)):
+                if B is None:
+                    sign, logdet = torch.linalg.slogdet(candidate)
+                    if sign <= 0 or logdet <= value:
+                        continue
+                    new_value = logdet.item()
+                else:
                     new_L, info = torch.linalg.cholesky_ex(candidate)
-                    if info == 0:
-                        ids, summaries, L = trial, new_summaries, new_L
-                        value, condition = new_value, new_condition
-                        break
+                    if info != 0:
+                        continue
+                    new_value = -torch.trace(torch.cholesky_solve(B, new_L)).item()
+                    if new_value <= value:
+                        continue
+                new_condition = torch.linalg.cond(candidate).item()
+                if not new_value - value > _tolerance(value, new_value, condition, new_condition, len(M)):
+                    continue
+                if B is None:
+                    new_L, info = torch.linalg.cholesky_ex(candidate)
+                    if info != 0:
+                        continue
+                ids, summaries, L = trial, new_summaries, new_L
+                value, condition = new_value, new_condition
+                break
             else:
                 return start, (ids, value, local_reason), value
         return start, (ids, value, "MAX_ITER"), value
@@ -593,7 +637,7 @@ def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, 
     (best_ids, best_value, best_reason), best_restart, starts, objectives = _restarts(restarts, attempt)
     certificate = best_reason if best_reason == local_reason else "NOT_CERTIFIED"
     ids = torch.cat([plot.sort().values for plot in best_ids.split(sizes)])
-    return dict(ids=ids, **layout, objective=best_value, criterion="D",
+    return dict(ids=ids, **layout, objective=best_value, criterion=criterion,
                 stop_reason=best_reason, certificate=certificate, efficiency_lower_bound=None,
                 restart_objectives=objectives, best_restart=best_restart, starts=starts)
 
@@ -610,23 +654,29 @@ def _plot_workspace(F, restarts, max_iter, max_elements, per_row, kind):
     integer(max_iter, "max_iter", 0)
     m, p = F.shape
     if 8*m*p + 8*p*p + per_row*m > max_elements:
-        raise ValueError(f"insufficient max_elements for {kind} D workspace")
+        raise ValueError(f"insufficient max_elements for {kind} workspace")
 
 
 def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
     m, p = F.shape
     if not _valid_plot_sizes(blocks, n) or m < n or n - len(blocks) < p:
         raise ValueError("blocks must be positive Python ints summing to n, with m >= n and n - len(blocks) >= p")
-    if criterion != "D" or fixed_ids is not None:
-        raise ValueError("blocks supports only criterion D without fixed_ids")
+    if criterion not in ("D", "A", "I") or fixed_ids is not None:
+        raise ValueError("blocks supports criteria D, A and I without fixed_ids")
     if F.dtype != torch.float64 or F.device.type != "cpu":
-        raise ValueError("blocked D search requires CPU float64 features")
-    _plot_workspace(F, restarts, max_iter, max_elements, 16, "blocked")
+        raise ValueError("blocked search requires CPU float64 features")
+    _plot_workspace(F, restarts, max_iter, max_elements, 16, f"blocked {criterion}")
+    B = None
+    if criterion == "A":
+        B = torch.eye(p, dtype=F.dtype)
+    elif criterion == "I":
+        centered = F - F.mean(0)
+        B = centered.mT @ centered / m
     return _plot_restarts(
         blocks, restarts, lambda: torch.randperm(m, generator=generator)[:n],
         lambda ids: _block_information(F, ids, blocks),
-        lambda ids, means, L: _block_moves(F, ids, blocks, means, L), max_iter,
-        {"blocks": list(blocks)}, "LOCAL_BLOCK_EXCHANGE")
+        lambda ids, means, L: _block_moves(F, ids, blocks, means, L, B), max_iter,
+        {"blocks": list(blocks)}, "LOCAL_BLOCK_EXCHANGE", criterion=criterion, B=B)
 
 
 def _split_information(F, ids, sizes, weights):
@@ -717,7 +767,7 @@ def _split_design(F, n, sizes, hard, eta, restarts, generator, max_iter, max_ele
         raise ValueError("hard must be a length-m integer tensor on F's device")
     if type(eta) not in (int, float) or not 0 < eta < float("inf"):
         raise ValueError("eta must be a finite positive Python int or float")
-    _plot_workspace(F, restarts, max_iter, max_elements, 64, "split-plot")
+    _plot_workspace(F, restarts, max_iter, max_elements, 64, "split-plot D")
 
     # Flip the high bit for uint64 to preserve unsigned label order in int64.
     hard = (hard.to(torch.int64) ^ -(1 << 63)
@@ -749,7 +799,7 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: 
                    hard: torch.Tensor | None = None, eta: int | float = 1.0) -> dict[str, object]:
     """D/A/I VND restarts with criterion-specific efficiency floor.
 
-    Set blocks to fixed block sizes for CPU float64 D-optimal search without an intercept.
+    Set blocks to fixed block sizes for CPU float64 D/A/I search without an intercept.
     Set whole_plots, hard labels and eta for CPU float64 split-plot D search.
     """
     if (whole_plots is None) != (hard is None):

@@ -1,7 +1,9 @@
 """Seeded feasible random starts followed by CPU D-optimal VND restarts."""
 import torch
 
+from ._validation import integer
 from .criteria import d_optimality
+from .exchange import _tolerance
 from .information import exact_information, _features
 from .k2_exchange import k2_exchange, _verified_information
 from .two_swap import _pair_tiles
@@ -15,6 +17,23 @@ def _fixed_pool(fixed_ids, m, n):
         raise ValueError('fixed_ids must be distinct candidate IDs with length < n')
     fixed = fixed.to(dtype=torch.int64)
     return fixed, torch.tensor(sorted(set(range(m))-set(fixed.tolist())),dtype=torch.int64)
+
+
+def _restarts(restarts, attempt):
+    starts, objectives, failures, best = [], [], 0, None
+    best_restart = None
+    for restart in range(restarts):
+        while (trial := attempt()) is None:
+            failures += 1
+            if failures >= 100 * restarts:
+                raise ValueError("No feasible start after 100*restarts failed draws; "
+                                 "candidate set may be rank-deficient for this n") from None
+        ids, result, value = trial
+        starts.append(ids.tolist())
+        if best is None or value > objectives[best_restart]:
+            best, best_restart = result, restart
+        objectives.append(value)
+    return best, best_restart, starts, objectives
 
 
 def _dual_floor(F, M, n, criterion, current):
@@ -54,42 +73,7 @@ def _dual_floor(F, M, n, criterion, current):
 def d_optimal_design(F: torch.Tensor, n: int, *, fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None, max_iter: int = 100,
                      tile_size: int = 64, max_elements: int = 1_000_000) -> dict[str, object]:
     """Return the best restarted k2_exchange run; see docs/M3C_API.md."""
-    m, p = F.shape
-    if type(n) is not int or not m >= n >= p:
-        raise ValueError("n must be an int with m>=n>=p")
-    _features(F,max_elements)
-    if fixed_ids is not None:
-        fixed, pool = _fixed_pool(fixed_ids,m,n)
-    starts, objectives = [], []
-    failures = 0
-    best = None
-    for restart in range(restarts):
-        while True:
-            if fixed_ids is None:
-                ids = torch.randperm(m, generator=generator)[:n].sort().values
-            else:
-                ids = torch.cat((fixed,pool[torch.randperm(len(pool),generator=generator)[:n-len(fixed)]])).sort().values
-            if _verified_information(F,ids) is None:
-                failures += 1
-                if failures >= 100 * restarts:
-                    raise ValueError("No feasible start after 100*restarts failed draws; "
-                                     "candidate set may be rank-deficient for this n") from None
-                continue
-            break
-        starts.append(ids.tolist())
-        result = k2_exchange(F, ids, max_iter=max_iter, tile_size=tile_size,
-                             max_elements=max_elements,
-                             _free_positions=None if fixed_ids is None else ~torch.isin(ids,fixed))
-        objectives.append(result['final_objective'])
-        if best is None or result['final_objective'] > best['final_objective']:
-            best, best_restart = result, restart
-    current = torch.tensor(-best['efficiency_gap_bound']/p,dtype=torch.float64).exp().item()
-    floor = _dual_floor(F,F[best['ids']].mT@F[best['ids']],n,'D',current)
-    return dict(ids=best['ids'], objective=best['final_objective'],
-                efficiency_gap_bound=best['efficiency_gap_bound'],
-                d_efficiency_lower_bound=floor,
-                stop_reason=best['stop_reason'], certificate=best['certificate'],
-                restart_objectives=objectives, best_restart=best_restart, starts=starts)
+    return _exact_design(F, n, "D", fixed_ids, restarts, generator, max_iter, max_elements, tile_size)
 
 
 def _linear_scores(F, ids, B, criterion):
@@ -385,16 +369,19 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
         B = torch.eye(p,dtype=F.dtype) if criterion=='A' else F.mT@F/m
         phi = torch.trace(torch.cholesky_solve(B,L)).item()
         pool = torch.tensor(incoming)
+
+        def pair_prefix():
+            a,b = torch.triu_indices(len(pool),len(pool),offset=1)
+            values, order = (diagonal[pool[a]]+diagonal[pool[b]]).sort(descending=True,stable=True)
+            return pool,-values,order.to(torch.int32) if compact else order
+
         tile_slack = 96*(capacity-min(capacity,count*outgoing_count))
         block_size = min(outgoing_count,(prefix_slots+4*outgoing_count+tile_slack)//(8*len(pool)+16))
         if len(ids)==p and block_size>=1:
             # Release the d-prefix reserve; half the outgoing reserve holds block metadata.
             prefix,removal = (pool,None,None),True
         elif len(ids)<=p+1:
-            a,b = torch.triu_indices(len(pool),len(pool),offset=1)
-            values, order = (diagonal[pool[a]]+diagonal[pool[b]]).sort(descending=True,stable=True)
-            prefix = pool,-values,order.to(torch.int32) if compact else order
-            del a,b,values,order
+            prefix = pair_prefix()
         else:
             prefix = None
         G,Q,gd = _linear_products(Z,T,ids,criterion,sliced)
@@ -425,10 +412,7 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
             del i,k,chosen,rho,top,r
         if prefix is None:
             del G,Q,gd
-            a,b = torch.triu_indices(len(pool),len(pool),offset=1)
-            values, order = (diagonal[pool[a]]+diagonal[pool[b]]).sort(descending=True,stable=True)
-            prefix = pool,-values,order.to(torch.int32) if compact else order
-            del a,b,values,order
+            prefix = pair_prefix()
             sliced = not hoisted
             G,Q,gd = _linear_products(Z,T,ids,criterion,sliced)
         if hoisted:
@@ -490,7 +474,6 @@ def _linear_pair_moves(F, ids, criterion, max_elements, free_positions, toleranc
 
 
 def _linear_exchange(F, ids, B, criterion, max_iter, *, _free_positions=None, max_elements=1_000_000):
-    from .exchange import _tolerance
     p = F.shape[1]
     history = []
     for iteration in range(max_iter+1):
@@ -578,50 +561,36 @@ def _block_moves(F, ids, blocks, means, L):
             yield trial
 
 
-def _plot_exchange(ids, M, summaries, L, moves, information, max_iter, local_reason):
-    from .exchange import _tolerance
-
-    value = torch.linalg.slogdet(M).logabsdet.item()
-    condition = torch.linalg.cond(M).item()
-    for _ in range(max_iter):
-        for trial in moves(ids, summaries, L):
-            candidate, new_summaries = information(trial)
-            sign, logdet = torch.linalg.slogdet(candidate)
-            if sign <= 0 or logdet <= value:
-                continue
-            new_value, new_condition = logdet.item(), torch.linalg.cond(candidate).item()
-            if new_value - value > _tolerance(value, new_value, condition, new_condition, len(M)):
-                new_L, info = torch.linalg.cholesky_ex(candidate)
-                if info == 0:
-                    ids, summaries, L = trial, new_summaries, new_L
-                    value, condition = new_value, new_condition
-                    break
-        else:
-            return ids, value, local_reason
-    return ids, value, "MAX_ITER"
-
-
 def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, local_reason):
-    starts, objectives, failures = [], [], 0
-    for _ in range(restarts):
-        while True:
-            ids = draw()
-            if ids is not None:
-                M, summaries = information(ids)
-                L, info = torch.linalg.cholesky_ex(M)
-                pivot_floor = 64*len(M)*torch.finfo(M.dtype).eps*M.abs().amax()
-                if info == 0 and (L.diagonal().square() > pivot_floor).all():
-                    break
-            failures += 1
-            if failures >= 100 * restarts:
-                raise ValueError("No feasible start after 100*restarts failed draws; "
-                                 "candidate set may be rank-deficient for this n")
-        starts.append(ids.tolist())
-        ids, value, reason = _plot_exchange(ids, M, summaries, L, moves, information, max_iter, local_reason)
-        objectives.append(value)
-        if len(objectives) == 1 or value > best_value:
-            best_ids, best_value, best_reason = ids, value, reason
-            best_restart = len(objectives) - 1
+    def attempt():
+        start = ids = draw()
+        if ids is None:
+            return None
+        M, summaries = information(ids)
+        L, info = torch.linalg.cholesky_ex(M)
+        pivot_floor = 64*len(M)*torch.finfo(M.dtype).eps*M.abs().amax()
+        if not (info == 0 and (L.diagonal().square() > pivot_floor).all()):
+            return None
+        value = torch.linalg.slogdet(M).logabsdet.item()
+        condition = torch.linalg.cond(M).item()
+        for _ in range(max_iter):
+            for trial in moves(ids, summaries, L):
+                candidate, new_summaries = information(trial)
+                sign, logdet = torch.linalg.slogdet(candidate)
+                if sign <= 0 or logdet <= value:
+                    continue
+                new_value, new_condition = logdet.item(), torch.linalg.cond(candidate).item()
+                if new_value - value > _tolerance(value, new_value, condition, new_condition, len(M)):
+                    new_L, info = torch.linalg.cholesky_ex(candidate)
+                    if info == 0:
+                        ids, summaries, L = trial, new_summaries, new_L
+                        value, condition = new_value, new_condition
+                        break
+            else:
+                return start, (ids, value, local_reason), value
+        return start, (ids, value, "MAX_ITER"), value
+
+    (best_ids, best_value, best_reason), best_restart, starts, objectives = _restarts(restarts, attempt)
     certificate = best_reason if best_reason == local_reason else "NOT_CERTIFIED"
     ids = torch.cat([plot.sort().values for plot in best_ids.split(sizes)])
     return dict(ids=ids, **layout, objective=best_value, criterion="D",
@@ -629,23 +598,30 @@ def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, 
                 restart_objectives=objectives, best_restart=best_restart, starts=starts)
 
 
-def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
-    from ._validation import integer
+def _valid_plot_sizes(sizes, n):
+    return (isinstance(sizes, (list, tuple)) and sizes
+            and all(type(size) is int and size > 0 for size in sizes)
+            and type(n) is int and sum(sizes) == n)
 
+
+def _plot_workspace(F, restarts, max_iter, max_elements, per_row, kind):
+    _features(F, max_elements)
+    integer(restarts, "restarts")
+    integer(max_iter, "max_iter", 0)
     m, p = F.shape
-    if (not isinstance(blocks, (list, tuple)) or not blocks
-            or any(type(size) is not int or size <= 0 for size in blocks)
-            or type(n) is not int or sum(blocks) != n or m < n or n - len(blocks) < p):
+    if 8*m*p + 8*p*p + per_row*m > max_elements:
+        raise ValueError(f"insufficient max_elements for {kind} D workspace")
+
+
+def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
+    m, p = F.shape
+    if not _valid_plot_sizes(blocks, n) or m < n or n - len(blocks) < p:
         raise ValueError("blocks must be positive Python ints summing to n, with m >= n and n - len(blocks) >= p")
     if criterion != "D" or fixed_ids is not None:
         raise ValueError("blocks supports only criterion D without fixed_ids")
     if F.dtype != torch.float64 or F.device.type != "cpu":
         raise ValueError("blocked D search requires CPU float64 features")
-    _features(F, max_elements)
-    integer(restarts, "restarts")
-    integer(max_iter, "max_iter", 0)
-    if 8*m*p + 8*p*p + 16*m > max_elements:
-        raise ValueError("insufficient max_elements for blocked D workspace")
+    _plot_workspace(F, restarts, max_iter, max_elements, 16, "blocked")
     return _plot_restarts(
         blocks, restarts, lambda: torch.randperm(m, generator=generator)[:n],
         lambda ids: _block_information(F, ids, blocks),
@@ -729,14 +705,10 @@ def _split_moves(F, ids, hard, labels, sizes, weights, coefficients, sums, L):
 
 
 def _split_design(F, n, sizes, hard, eta, restarts, generator, max_iter, max_elements):
-    from ._validation import integer
-
     if not isinstance(F, torch.Tensor) or F.ndim != 2 or F.dtype != torch.float64 or F.device.type != "cpu":
         raise ValueError("split-plot D search requires CPU float64 features")
     m, p = F.shape
-    if (not isinstance(sizes, (list, tuple)) or not sizes
-            or any(type(size) is not int or size <= 0 for size in sizes)
-            or type(n) is not int or sum(sizes) != n or not m >= n >= p):
+    if not _valid_plot_sizes(sizes, n) or not m >= n >= p:
         raise ValueError("whole_plots must be positive Python ints summing to n, with m >= n >= p")
     integer_dtypes = (torch.int8, torch.int16, torch.int32, torch.int64, torch.uint8,
                       *(getattr(torch, name, None) for name in ("uint16", "uint32", "uint64")))
@@ -745,11 +717,7 @@ def _split_design(F, n, sizes, hard, eta, restarts, generator, max_iter, max_ele
         raise ValueError("hard must be a length-m integer tensor on F's device")
     if type(eta) not in (int, float) or not 0 < eta < float("inf"):
         raise ValueError("eta must be a finite positive Python int or float")
-    _features(F, max_elements)
-    integer(restarts, "restarts")
-    integer(max_iter, "max_iter", 0)
-    if 8*m*p + 8*p*p + 64*m > max_elements:
-        raise ValueError("insufficient max_elements for split-plot D workspace")
+    _plot_workspace(F, restarts, max_iter, max_elements, 64, "split-plot")
 
     # Flip the high bit for uint64 to preserve unsigned label order in int64.
     hard = (hard.to(torch.int64) ^ -(1 << 63)
@@ -798,40 +766,56 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: 
         result = d_optimal_design(F,n,fixed_ids=fixed_ids,restarts=restarts,generator=generator,
                                   max_iter=max_iter,max_elements=max_elements)
         return dict(result,criterion="D",efficiency_lower_bound=result['d_efficiency_lower_bound'])
+    return _exact_design(F, n, criterion, fixed_ids, restarts, generator, max_iter, max_elements)
+
+
+def _exact_design(F, n, criterion, fixed_ids, restarts, generator, max_iter, max_elements, tile_size=None):
     m, p = F.shape
     if type(n) is not int or not m >= n >= p:
         raise ValueError("n must be an int with m>=n>=p")
-    if fixed_ids is not None:
-        fixed, pool = _fixed_pool(fixed_ids,m,n)
-    # Conservative simultaneous solve, gather and n-by-m score workspace; no m-by-m matrices.
-    if 8*m*p+16*n*m+8*p*p > max_elements:
-        raise ValueError('insufficient max_elements for linear-criterion workspace')
-    B = torch.eye(p,dtype=F.dtype) if criterion=="A" else F.mT@F/m
-    starts, objectives, failures, best = [], [], 0, None
-    for restart in range(restarts):
-        while True:
-            if fixed_ids is None:
-                ids = torch.randperm(m,generator=generator)[:n].sort().values
-            else:
-                ids = torch.cat((fixed,pool[torch.randperm(len(pool),generator=generator)[:n-len(fixed)]])).sort().values
+    if criterion == "D":
+        _features(F,max_elements)
+    fixed, pool = (None, None) if fixed_ids is None else _fixed_pool(fixed_ids,m,n)
+    if criterion != "D":
+        # Conservative simultaneous solve, gather and n-by-m score workspace; no m-by-m matrices.
+        if 8*m*p+16*n*m+8*p*p > max_elements:
+            raise ValueError('insufficient max_elements for linear-criterion workspace')
+        B = torch.eye(p,dtype=F.dtype) if criterion=="A" else F.mT@F/m
+
+    def attempt():
+        if fixed is None:
+            ids = torch.randperm(m, generator=generator)[:n].sort().values
+        else:
+            ids = torch.cat((fixed, pool[torch.randperm(len(pool), generator=generator)[:n-len(fixed)]])).sort().values
+        if criterion == "D":
+            if _verified_information(F,ids) is None:
+                return None
+        else:
             M = exact_information(F,ids,max_elements=max_elements)
             try:
                 d_optimality(M,max_elements=max_elements)
             except ValueError:
-                failures += 1
-                if failures >= 100*restarts:
-                    raise ValueError('No feasible start after 100*restarts failed draws; candidate set may be rank-deficient for this n') from None
-                continue
-            break
-        starts.append(ids.tolist())
-        result = _linear_exchange(F,ids,B,criterion,max_iter,
-                                  _free_positions=None if fixed_ids is None else ~torch.isin(ids,fixed),max_elements=max_elements)
-        objectives.append(result['objective'])
-        if best is None or result['objective']>best['objective']:
-            best, best_restart = result, restart
-    best['efficiency_lower_bound'] = _dual_floor(F,F[best['ids']].mT@F[best['ids']],n,criterion,best['efficiency_lower_bound'])
-    return dict(best,criterion=criterion,restart_objectives=objectives,
-                best_restart=best_restart,starts=starts)
+                return None
+        free = None if fixed is None else ~torch.isin(ids,fixed)
+        if criterion == "D":
+            result = k2_exchange(F, ids, max_iter=max_iter, tile_size=tile_size,
+                                 max_elements=max_elements, _free_positions=free)
+            return ids, result, result['final_objective']
+        result = _linear_exchange(F, ids, B, criterion, max_iter, _free_positions=free, max_elements=max_elements)
+        return ids, result, result['objective']
+
+    best, best_restart, starts, objectives = _restarts(restarts, attempt)
+    rows = F[best['ids']]
+    current = (torch.tensor(-best['efficiency_gap_bound']/p,dtype=torch.float64).exp().item()
+               if criterion == "D" else best['efficiency_lower_bound'])
+    floor = _dual_floor(F,rows.mT@rows,n,criterion,current)
+    if criterion == "D":
+        best = dict(ids=best['ids'], objective=best['final_objective'], efficiency_gap_bound=best['efficiency_gap_bound'],
+                    d_efficiency_lower_bound=floor, stop_reason=best['stop_reason'], certificate=best['certificate'])
+    else:
+        best['efficiency_lower_bound'] = floor
+        best['criterion'] = criterion
+    return dict(best,restart_objectives=objectives,best_restart=best_restart,starts=starts)
 
 
 def next_batch(F: torch.Tensor, run_ids: list[int] | tuple[int, ...] | torch.Tensor, k: int, *,

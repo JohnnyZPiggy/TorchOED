@@ -17,7 +17,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | blocks + split-plot together | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | W9 if the gate covers it, else W11 |
 | definitive screening | N/A constructor | N/A | N/A | N/A (exact orthogonality proved) | ✅ | ✅ | ◐ k 3–20, 23–30 (#248); k = 21, 22 impossible (no order-22 conference matrix); published DSD match NR → evidence lane | ✅ | ✅ H12 | W10 |
 | fractional factorial by generators / resolution, fold-over, alias matrix | N/A constructor | N/A constructor | N/A fixed two-level design | N/A constructor | ✅ unstructured alias matrix ([#244](https://github.com/JohnnyZPiggy/TorchOED/issues/244)) | ✅ CPU float64 with exact WLP oracle ([P2 gate §28](P2_GATE.md#28-regular-fractional-factorials-fold-over-word-length-pattern-and-alias-matrix-w10-c1-part-1)) | ❌ `(k, runs)` table path and FrF2 → W10 C1 part 2 | ✅ [API](../website/api.md#candidate-construction), [guide](../website/industrial.md#fractional-factorials-and-fold-over) | ❌ H21 at week end | **W10** |
-| Plackett–Burman, central composite (incl. blocked), Box–Behnken | ❌ | N/A | N/A | N/A | ❌ | ❌ | ❌ rsm / published tables | ❌ | ❌ | **W10** |
+| Plackett–Burman, central composite (incl. blocked), Box–Behnken | ◐ N/A PB constructor (#255); CCD/BBD ❌ → W10 C2 part 2 | N/A | N/A | N/A | ❌ | ◐ PB CPU float64 with exact orthogonality | ❌ FrF2 `pb`, rsm / published tables | ◐ PB API + guide (#255) | ❌ | **W10** |
 | mixtures: simplex lattice | N/A constructor | N/A | N/A | N/A | ✅ | ✅ | ❌ | ✅ | ✅ H15 | done |
 | mixtures: simplex centroid, constrained (bounds, extreme vertices), optimal mixture D/A/I with Scheffé models | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ JMP/mixexp examples | ◐ manual Scheffé column selection documented | ❌ | **W11** |
 | mixture-process variables | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **W11** |
@@ -72,7 +72,7 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | "If Possible" terms, Bayesian D/I (DuMouchel–Jones) | Custom Design | — | ❌ | certificate | W14 |
 | Definitive screening | Definitive Screening | `daewr` DSD | ◐ k 3–20, 23–30 (#248); published DSD match open | exact orthogonality proof | W10 |
 | Fractional factorial by generators / resolution, minimum aberration, blocked FF, fold-over | Screening | FrF2, DoE.base | ◐ generators, fold-over and WLP ([#244](https://github.com/JohnnyZPiggy/TorchOED/issues/244)); `(k, runs)` table path and FrF2 → W10 C1 part 2 | — | W10 (MA, blocked FF → W15) |
-| Plackett–Burman | Screening | FrF2 `pb` | ❌ | — | W10 |
+| Plackett–Burman | Screening | FrF2 `pb` | ◐ N ≡ 0 mod 4, 4–48 (#255); FrF2 `pb` match open | — | W10 |
 | Group-orthogonal supersaturated designs | Screening | — | ❌ | — | backlog |
 | Central composite (incl. blocked), Box–Behnken | Response Surface | `rsm` | ❌ | — | W10 |
 | Mixture: simplex lattice / centroid, extreme vertices, ABCD, constrained, mixture-process | Mixture Design | `mixexp` | ◐ simplex lattice only | optimal mixture with certificate | W11 |

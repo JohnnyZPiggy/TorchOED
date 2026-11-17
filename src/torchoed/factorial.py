@@ -133,6 +133,35 @@ def _double_skew(rows: list[list[int]]) -> list[list[int]]:
     return upper + lower
 
 
+def _paley_type_two() -> list[list[int]]:
+    conference = _paley_conference(17)
+    plus = [[x + (i == j) for j, x in enumerate(row)] for i, row in enumerate(conference)]
+    minus = [[x - (i == j) for j, x in enumerate(row)] for i, row in enumerate(conference)]
+    return [p + m for p, m in zip(plus, minus)] + [
+        m + [-x for x in p] for p, m in zip(plus, minus)
+    ]
+
+
+def plackett_burman(
+    runs: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None,
+) -> torch.Tensor:
+    """Return a balanced two-level design for multiples of four from 4 to 48."""
+    integer(runs, "runs")
+    if runs in (4, 8, 12, 20, 24, 28, 32, 44, 48):
+        hadamard = _paley_conference(runs - 1)
+    elif runs in (16, 40):
+        hadamard = _double_skew(_paley_conference(runs // 2 - 1))
+    elif runs == 36:
+        hadamard = _paley_type_two()
+    else:
+        raise ValueError("runs must be a multiple of 4 from 4 to 48")
+    if runs != 36:
+        for i, row in enumerate(hadamard):
+            row[i] += 1
+    rows = [[-row[0] * x for x in row[1:]] for row in hadamard[1:] + hadamard[:1]]
+    return torch.tensor(rows, dtype=dtype, device=device)
+
+
 def definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor:
     """Return a three-level design from a Paley or doubled-Paley conference matrix.
 

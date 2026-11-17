@@ -69,6 +69,17 @@ torch.testing.assert_close(L.sum(dim=1), L.new_ones(len(L)))
 assert L[ids].unique(dim=0).shape[0] == 8
 ```
 
+## Plackett–Burman
+
+Choose a multiple of four from 4 to 48. For fewer factors, take the leading columns. This example screens six factors in 12 runs.
+
+```python
+from torchoed import plackett_burman
+
+X = plackett_burman(12)[:, :6]
+assert X.shape == (12, 6)
+```
+
 ## Definitive screening
 
 Pass a supported factor count to `definitive_screening(k)`: 3–20 or 23–30; `k = 21` and `22` raise because no conference matrix of order 22 exists. The returned design uses three levels (−1, 0, +1) and needs no search. Here six factors take 13 runs.

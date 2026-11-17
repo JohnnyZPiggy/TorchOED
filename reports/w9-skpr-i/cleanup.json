@@ -1,0 +1,41 @@
+{
+  "controller_pin": "4129001fffcb336f5203e4b0d6765d7a0ea3150c",
+  "source_sha": "1f404518654264c9340cf9e191a77cf5724c5f99",
+  "assignments_readback": 0,
+  "attempts": [
+    {
+      "run_id": "w237-skpr-i-20261117",
+      "status": "FAIL",
+      "error": "WORK_EXEC_FAILED",
+      "created": true,
+      "cleanup_confirmed": true,
+      "started_utc_approx": "2026-11-17T04:48:19+00:00",
+      "report_written_utc": "2026-11-17T04:49:36+00:00",
+      "failed_exec": "second exec (R driver): TIMEOUT",
+      "stop": "PASS",
+      "device_observed": "Tesla T4 (kernel probe)",
+      "assignments_before": 0,
+      "assignments_after": 0,
+      "balance_before": 51.84,
+      "balance_after": 51.84,
+      "usage_source": "controller authenticated usage"
+    },
+    {
+      "run_id": "w237-skpr-i-retry-20261117",
+      "status": "FAIL",
+      "error": "CLI_UNAVAILABLE",
+      "created": false,
+      "cleanup_confirmed": false,
+      "started_utc_approx": "2026-11-17T05:51:04+00:00",
+      "report_written_utc": "2026-11-17T05:51:04+00:00",
+      "failed_exec": null,
+      "stop": null,
+      "device_observed": null,
+      "assignments_before": 0,
+      "assignments_after": 0,
+      "balance_before": 51.84,
+      "balance_after": 51.84,
+      "usage_source": "authenticated colab usage in WSL login shell immediately before and after"
+    }
+  ]
+}

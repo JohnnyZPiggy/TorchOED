@@ -1,0 +1,8 @@
+{
+  "source_sha": "1f404518654264c9340cf9e191a77cf5724c5f99",
+  "reference_status": "NOT_RUN",
+  "reference_error": "CLI_UNAVAILABLE: the authorized controller retry could not find colab on the non-login WSL PATH and exited before allocating a session.",
+  "requested_r_version": "4.6.1",
+  "requested_skpr_version": "1.9.2",
+  "seed": 20261119
+}

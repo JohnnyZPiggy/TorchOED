@@ -13,7 +13,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | Capability | Crit | Aug | Con | Cert | Diag | Dev | Ext | Docs | HO | Week |
 |---|---|---|---|---|---|---|---|---|---|---|
 | blocking `blocks=` | ✅ D A I (#228) | ✅ fixed_ids fill leading positions (#238) | ✅ | ✅ dual efficiency floor vs unblocked approximate optimum (#236) | ✅ M_B SPV/VIF/power (#234) | ◐ CPU float64 only | ✅ AlgDesign `optBlock` (H11) | ✅ | ✅ H11 | **W9** |
-| split-plot `whole_plots=` | ✅ D A I (#232) | ✅ fixed_ids fill leading positions, plot label inherited (#238) | ✅ | ✅ dual efficiency floor vs OLS approximate optimum, conservative (#236) | ✅ GLS SPV/VIF; power exact (balanced orthogonal) else containment-df approx. (#234) | ◐ CPU float64 only | ✅ skpr `gen_design` (`w8-skpr`) | ✅ | ✅ H14 | **W9** |
+| split-plot `whole_plots=` | ✅ D A I (#232) | ✅ fixed_ids fill leading positions, plot label inherited (#238) | ✅ | ✅ dual efficiency floor vs OLS approximate optimum, conservative (#236) | ✅ GLS SPV/VIF; power exact (balanced orthogonal) else containment-df approx. (#234) | ◐ CPU float64 only | ✅ skpr `gen_design` (`w8-skpr`); I NR | ✅ | ✅ H14 | **W9** |
 | blocks + split-plot together | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | W9 if the gate covers it, else W11 |
 | definitive screening | N/A constructor | N/A | N/A | N/A (exact orthogonality proved) | ✅ | ✅ | ◐ Paley orders only (q prime); other k raise | ✅ | ✅ H12 | W10 (non-Paley conference matrices) |
 | fractional factorial by generators / resolution, fold-over, alias matrix | ❌ | ❌ | ❌ | N/A | ❌ alias diagnostics | ❌ | ❌ FrF2 | ❌ | ❌ | **W10** |

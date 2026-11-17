@@ -4,7 +4,8 @@ root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDID
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
-out = root/'reports/w8-skpr'
+k5 = root/'reports/w9-skpr-i'
+case, out = ('K5', k5) if (k5/'run.py').exists() else ('K4', root/'reports/w8-skpr')
 if (out/'run.py').exists():
     host = json.loads(os.environ['SAE_DEVICE_OBSERVED'])['nvidia_smi'][0]['name']
     data = dict(status='PASS', source_sha=sha, observed_host=host,
@@ -15,7 +16,7 @@ if (out/'run.py').exists():
         data['r_version'] = subprocess.check_output(['R','--version'],text=True).splitlines()[0]
         subprocess.run(['Rscript','-e','install.packages("skpr",repos="https://cloud.r-project.org")'],
                        env=cpu_env,check=True)
-        result = subprocess.run(['Rscript','tools/r_heldout.R','K4'],cwd=root,
+        result = subprocess.run(['Rscript','tools/r_heldout.R',case],cwd=root,
                                 env=cpu_env,capture_output=True,text=True)
         for name in ('sessionInfo.txt', 'example-lines.txt', 'candidates.csv', 'skpr.csv', 'model.txt'):
             path = out/name

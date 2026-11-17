@@ -39,6 +39,27 @@ designsplitplot = gen_design(splitplotcandidateset, ~Altitude + Range + Power, t
              file.path(outdir, "model.txt"))
   quit(save="no")
 }
+if (identical(commandArgs(trailingOnly=TRUE), "K5")) {
+  library(skpr)
+  outdir <- "reports/w9-skpr-i"
+  capture.output(print(sessionInfo()), print(packageVersion("skpr")), file=file.path(outdir, "sessionInfo.txt"))
+  stopifnot(getRversion() == "4.6.1", packageVersion("skpr") == "1.9.2")
+  set.seed(20261119)
+  splitplotcandidateset = expand.grid(Altitude = c(-1, 1),
+                                      Range = as.factor(c("Close", "Medium", "Far")),
+                                      Power = c(1, -1))
+  hardtochangedesign = gen_design(splitplotcandidateset, model = ~Altitude,
+                                 trials = 11, repeats = 10)
+  designsplitplot = gen_design(splitplotcandidateset, ~Altitude + Range + Power, trials = 33,
+                               splitplotdesign = hardtochangedesign, repeats = 10, optimality = "I")
+  plot <- as.integer(sub("\\..*$", "", rownames(designsplitplot)))
+  write.csv(data.frame(plot, designsplitplot[, names(splitplotcandidateset)]),
+            file.path(outdir, "skpr.csv"), row.names=FALSE)
+  writeLines(as.character(c(ncol(model.matrix(~Altitude + Range + Power, designsplitplot)),
+                            formals(skpr::gen_design)$varianceratio, tabulate(plot))),
+             file.path(outdir, "model.txt"))
+  quit(save="no")
+}
 if (identical(commandArgs(trailingOnly=TRUE), "H14")) {
   library(skpr)
   outdir <- "reports/w7-heldout"

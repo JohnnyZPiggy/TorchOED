@@ -23,10 +23,12 @@ for region, lower, upper in [('R1',[Q(1,5),Q(1,10),Q(1,10)],[Q(3,5),Q(1,2),Q(3,5
             v[free] = 1-sum(values)
             if lower[free] <= v[free] <= upper[free]: vertices.add(tuple(v))
     rows = [r for r in read('xvert.csv') if r['region'] == region]
+    dropped = sum(float(r['dimen']) != 0 for r in rows)
+    rows = [r for r in rows if float(r['dimen']) == 0]
     x = tensor([[float(r[f'x{j+1}']) for j in range(q)] for r in rows])
     distances = torch.cdist(x,tensor([[float(a) for a in v] for v in sorted(vertices)]))
     gap = float(torch.maximum(distances.min(0).values.max(),distances.min(1).values.max()))
-    results[region] = dict(count=len(x), expected=len(vertices), hausdorff=gap, verdict='MATCH' if len(x)==len(vertices) and gap<=1e-12 else 'NO MATCH')
+    results[region] = dict(centroids_dropped=dropped, count=len(x), expected=len(vertices), hausdorff=gap, verdict='MATCH' if len(x)==len(vertices) and gap<=1e-12 else 'NO MATCH')
 r = features(tensor([[float(row[k]) for k in ('x1','x2','x3')] for row in read('optfederov.csv')]))
 f = features(candidates); design = optimal_design(f,10,criterion='D',restarts=10,generator=torch.Generator().manual_seed(11))
 dr, dt = d_value(r), d_value(f[design['ids']]); delta = dt-dr

@@ -192,3 +192,48 @@ def simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64,
     floating(dtype)
     counts = full_factorial([m + 1] * q, device=device, max_elements=max_elements)
     return counts[counts.sum(dim=1) == m].to(dtype) / m
+
+
+def central_composite(
+    k: int, *, alpha: str | int | float = "orthogonal", center: tuple[int, int] = (4, 4),
+    dtype: torch.dtype = torch.float64, device: torch.device | str | None = None,
+    max_elements: int = 1_000_000,
+) -> torch.Tensor:
+    """Coded response-surface rows in cube-then-axial block order."""
+    if integer(k, "k", 2) >= 63:
+        raise ValueError("signed grid exceeds int64 output limit")
+    if not isinstance(center, tuple) or len(center) != 2:
+        raise ValueError("center must be a tuple of two nonnegative Python ints")
+    n_c, n_s = (integer(n, "center count", 0) for n in center)
+    n_cube = 2**k
+    budget((n_cube + n_c + 2 * k + n_s, k), max_elements)
+
+    if type(alpha) is str and alpha == "rotatable":
+        alpha = n_cube**0.25
+    elif type(alpha) is str and alpha == "orthogonal":
+        alpha = (n_cube * (2 * k + n_s) / (2 * (n_cube + n_c)))**0.5
+    elif type(alpha) is str and alpha == "faces":
+        alpha = 1
+    elif type(alpha) not in (int, float) or not 0 < alpha < float("inf"):
+        raise ValueError("alpha must be rotatable, orthogonal, faces or a positive finite number")
+
+    cube = ff2n(k, dtype=dtype, device=device, max_elements=max_elements).flip((1,))
+    axis = torch.eye(k, dtype=dtype, device=device) * alpha
+    axial = torch.stack((-axis, axis), dim=1).reshape(2 * k, k)
+    return torch.cat((cube, cube.new_zeros((n_c, k)), axial, cube.new_zeros((n_s, k))))
+
+
+def box_behnken(
+    k: int, *, center: int = 3, dtype: torch.dtype = torch.float64,
+    device: torch.device | str | None = None,
+) -> torch.Tensor:
+    """Coded response-surface rows from two-factor pairs, then center rows."""
+    if type(k) is not int or k not in (3, 4, 5):
+        raise ValueError("k must be 3, 4 or 5")
+    integer(center, "center", 0)
+    pairs = [(i, j) for i in range(k) for j in range(i + 1, k)]
+    signs = ff2n(2, dtype=dtype, device=device).flip((1,))
+    basis = torch.eye(k, dtype=dtype, device=device)
+    first, second = basis[torch.tensor(pairs, device=device)].unbind(dim=1)
+    rows = first[:, None, :] * signs[:, :1] + second[:, None, :] * signs[:, 1:]
+    return torch.cat((rows.reshape(-1, k), basis.new_zeros((center, k))))

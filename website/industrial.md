@@ -80,6 +80,19 @@ X = plackett_burman(12)[:, :6]
 assert X.shape == (12, 6)
 ```
 
+## Central composite and Box–Behnken
+
+Use a central composite design to fit a quadratic response surface. For blocked analysis, pass the cube and axial block sizes in row order. Box–Behnken designs use 3 to 5 factors.
+
+```python
+from torchoed import box_behnken, central_composite
+
+X = central_composite(2, alpha="orthogonal", center=(3, 3))
+blocks = [2**2 + 3, 2 * 2 + 3]
+Y = box_behnken(3)
+assert X.shape == (sum(blocks), 2) and Y.shape == (15, 3)
+```
+
 ## Definitive screening
 
 Pass a supported factor count to `definitive_screening(k)`: 3–20 or 23–30; `k = 21` and `22` raise because no conference matrix of order 22 exists. The returned design uses three levels (−1, 0, +1) and needs no search. Here six factors take 13 runs.

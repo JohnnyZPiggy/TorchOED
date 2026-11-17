@@ -1,6 +1,6 @@
 # API reference
 
-All 27 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
+All 29 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
 
 ## Candidate construction
 
@@ -31,6 +31,14 @@ Return the (2c + 1)-run three-level definitive screening design `[C_k; −C_k; 0
 `plackett_burman(runs: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor`
 
 Return a balanced, orthogonal two-level design of shape (runs, runs − 1) with entries ±1. Supports multiples of four from 4 to 48.
+
+`central_composite(k: int, *, alpha: str | int | float = "orthogonal", center: tuple[int, int] = (4, 4), dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
+
+Return the coded cube followed by axial rows, with the specified center counts in each block. Choose `alpha="orthogonal"`, `"rotatable"`, `"faces"` or a positive finite number.
+
+`box_behnken(k: int, *, center: int = 3, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor`
+
+Return the coded two-factor pair rows and then center rows for 3, 4 or 5 factors.
 
 `simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 

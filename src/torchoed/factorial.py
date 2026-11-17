@@ -1,3 +1,6 @@
+from fractions import Fraction
+from itertools import combinations, product
+
 import torch
 
 from ._validation import budget, floating, integer
@@ -286,3 +289,76 @@ def box_behnken(
         first, second = basis[torch.tensor(pairs, device=device)].unbind(dim=1)
         rows = first[:, None, :] * signs[:, :1] + second[:, None, :] * signs[:, 1:]
     return torch.cat((rows.reshape(-1, k), basis.new_zeros((center, k))))
+
+
+
+def simplex_centroid(q: int, *, dtype: torch.dtype = torch.float64,
+                     device: torch.device | str | None = None) -> torch.Tensor:
+    """One equal-proportion point per nonempty component subset, by size then support."""
+    integer(q, "q", 2)
+    rows = [[Fraction(int(i in subset), n) for i in range(q)]
+            for n in range(1, q + 1) for subset in combinations(range(q), n)]
+    return torch.tensor([[float(x) for x in row] for row in rows], dtype=dtype, device=device)
+
+
+def _fraction_rank(rows):
+    basis = {}
+    for row in rows:
+        row = list(row)
+        for pivot, vector in sorted(basis.items()):
+            scale = row[pivot]
+            row = [x - scale * y for x, y in zip(row, vector)]
+        pivot = next((j for j, x in enumerate(row) if x), None)
+        if pivot is not None:
+            basis[pivot] = [x / row[pivot] for x in row]
+    return len(basis)
+
+
+def mixture_vertices(lower, upper, *, face_dims=(), dtype: torch.dtype = torch.float64,
+                     device: torch.device | str | None = None) -> torch.Tensor:
+    """Exact box-constrained simplex vertices, followed by requested face centroids.
+
+    Float bounds mean their shortest decimal; use strings for exact ratios like '1/3'.
+    Face centroids average extreme vertices, rather than volume.
+    """
+    if len(lower) != len(upper) or len(lower) < 2:
+        raise ValueError("bounds must have equal lengths >= 2")
+    bounds = []
+    for values in (lower, upper):
+        converted = []
+        for value in values:
+            if isinstance(value, bool) or not isinstance(value, (int, float, Fraction, str)):
+                raise ValueError("bounds must be int, float, Fraction or str")
+            try:
+                converted.append(Fraction(repr(value)) if isinstance(value, float) else Fraction(value))
+            except (ValueError, ZeroDivisionError, OverflowError) as exc:
+                raise ValueError("bound does not convert to Fraction") from exc
+        bounds.append(converted)
+    lower, upper = bounds
+    q = len(lower)
+    if any(not 0 <= l <= u <= 1 for l, u in zip(lower, upper)) or not sum(lower) <= 1 <= sum(upper):
+        raise ValueError("invalid bounds or empty mixture region")
+    face_dims = tuple(face_dims)
+    if any(type(d) is not int or not 1 <= d < q for d in face_dims):
+        raise ValueError("face dimensions must be ints from 1 to q - 1")
+    vertices = set()
+    for free in range(q):
+        fixed = [j for j in range(q) if j != free]
+        for values in product(*[(lower[j], upper[j]) for j in fixed]):
+            row = list(lower)
+            for j, value in zip(fixed, values):
+                row[j] = value
+            row[free] = 1 - sum(values)
+            if lower[free] <= row[free] <= upper[free]:
+                vertices.add(tuple(row))
+    vertices = sorted(vertices)
+    rows = list(vertices)
+    for d in face_dims:
+        faces = set()
+        for fixed in combinations(range(q), q - 1 - d):
+            for values in product(*[(lower[j], upper[j]) for j in fixed]):
+                face = tuple(v for v in vertices if all(v[j] == b for j, b in zip(fixed, values)))
+                if face and _fraction_rank([[x - y for x, y in zip(v, face[0])] for v in face[1:]]) == d:
+                    faces.add(face)
+        rows.extend(sorted(tuple(sum(v[j] for v in face) / len(face) for j in range(q)) for face in faces))
+    return torch.tensor([[float(x) for x in row] for row in rows], dtype=dtype, device=device)

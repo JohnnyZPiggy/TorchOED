@@ -53,3 +53,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w5-heldout](w5-heldout/) | Frozen H9 D/I and H10 D/A CPU record; Refs #187 | current (W5 held-out H9/H10; no tuning) |
 | [w6-heldout](w6-heldout/) | Frozen H11 blocking, H12 screening and H13 diagnostics; Refs #199 | current (W6 held-out H11–H13; no tuning) |
 | [w7-heldout](w7-heldout/) | Frozen H14 split-plot D, H15 mixture and H16 power; Refs #209 | current (W7 held-out H14–H16; no tuning) |
+| [w9-heldout](w9-heldout/) | Frozen H19–H20 scored by shared dense metrics; Refs #239 | current (W9 held-out H19–H20; no tuning) |

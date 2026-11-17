@@ -248,3 +248,45 @@ Kenward–Roger or Satterthwaite degrees of freedom, unknown `η`, random block 
 ## 24. Not in this section
 
 `fixed_ids` with `blocks` or `whole_plots` (W9 B3 part 2), a structure-aware approximate optimum or any tighter split-plot floor, between-plot interchange, blocks together with whole plots, GPU or float32.
+
+## 25. Augmentation with fixed runs for blocked and split-plot designs (W9 B3, part 2)
+
+**Chief Architect · 2026-11-17 · Week 9 goal B3.** Status: `P2_B3B_MATH_FROZEN` once the independent fresh-context review verdict is recorded in its dispatch Issue and this section is committed byte-identically. Labels as above. Blocks as in §1, §2, §12 and §13. Whole plots as in §7, §8, §16 and §17. Floor as in §22 and §23. `fixed_ids` is validated as in the unblocked path: a 1-D integer sequence of distinct candidate IDs in `[0, m)` with `n_f = len(fixed_ids) < n`. This section supersedes the "`fixed_ids` raises" lines of §2, §8, §13 and §17 and the `fixed_ids` item of §24.
+
+1. **Fixed positions (decision).** Design positions are laid out block by block (plot by plot), as in the returned `ids` of §2 and §8: positions `n₁ + … + n_{b−1}` to `n₁ + … + n_b − 1` form block (plot) `b`. The fixed runs occupy positions `0 … n_f − 1` in the given order, so fixed run `i` lies in the block (plot) that contains position `i`. A position is **fixed** iff it is `< n_f`, else **free**. Hence the blocks (plots) before position `n_f` are fully fixed, at most one block (plot) is partly fixed (it holds position `n_f − 1` and position `n_f`), and the rest are fully free. Typical use: augment an existing blocked design by new blocks. Pass its returned `ids` as `fixed_ids` and its `blocks` followed by the new block sizes as `blocks`.
+2. **Feasibility (decision; trust boundary).**
+   - Whole plots: all fixed runs in one plot must have the same hard label, else `ValueError`. That label is the plot's label. Its free positions take only candidates with that label, and the plot is never relabelled.
+   - Blocks: no condition beyond §2.
+3. **Moves (decision; PROVED invariant).** Only free positions change:
+   - an exchange (§1.3; §7.4 / §16.2) is scored and tried only at a free position;
+   - a block interchange (§1.4) only between two free positions;
+   - a relabel (§7.5(ii), §16.4) only for a plot with no fixed position.
+
+   The scoring identities and the acceptance rules are unchanged, because they hold for any rows. The search replaces positions in place and never reorders them; per-block sorting happens only in the returned `ids` (§26). Every move leaves positions `0 … n_f − 1` unchanged. By induction from the start rule (item 4), every visited design, and hence the returned design, contains each fixed run in its specified block (plot), and every visited split-plot design is feasible (§7).
+4. **Start (decision).** Without `fixed_ids`, nothing changes: the same draws, byte-identical results.
+   - **Blocks.** Per draw: `ids = cat(fixed, pool[torch.randperm(len(pool), generator=generator)[:n − n_f]])`, where `pool` is the non-fixed IDs in ascending order (the unblocked augmentation draw); the drawn IDs fill the free positions in draw order, which gives the random partition of §2. The positive-definiteness and redraw rule is §2, unchanged.
+   - **Whole plots.** Per draw, initialise `unused` as every ID except the fixed ones. Then go through plots `k = 1 … w` in order:
+     - **Fully fixed:** no draw.
+     - **Partly fixed** (`f_k ≥ 1` fixed positions): no label draw; `ℓ` is the fixed runs' label. The `n_k − f_k` free positions get `pool[torch.randperm(len(pool), generator=generator)[:n_k − f_k]]`, `pool` = the unused label-`ℓ` candidates in ascending ID.
+     - **Fully free:** the §8 rule (`torch.randint` label, then `torch.randperm` of its pool).
+
+     Drawn IDs are marked used. If a pool is too small, or the §8 start rule fails, the whole design is redrawn. The failure count and its error are as in §8.
+5. **Floor (PROVED).** §22.3 bounds the structured optimum over **all** feasible designs with the given sizes. The designs that contain the fixed runs at their positions are a subset, so their optimum is no better. Hence the efficiency of the returned design relative to the best design containing the fixed runs is at least its efficiency relative to all feasible designs, which is at least the §23 floor. `efficiency_lower_bound` is computed exactly as in §23 on the returned design (the fixed runs included). The certificate strings are unchanged; local optimality now refers to the item-3 moves.
+6. **Exhaustive oracles (PROVED by enumeration; Architect, exact `Fraction`, 2026-11-17).** Optima are over all designs that satisfy items 1–2 and have distinct IDs. Block (plot) contents are unordered, and equal-size fully free plots are unordered. `φ_B` and `W_c` / `W` are as in §12.1 and §16.1.
+   - **3² blocks** (the §12.6 candidates, IDs 0–8, `F = [x₁, x₂, x₁², x₂², x₁x₂]`), blocks `[4, 4]`:
+     - (B-a) `fixed_ids = [0, 8]` (block 1 partly fixed): 105 designs, 5 singular. `max det M_B = 204`, `min φ_A = 845/408`, `min φ_I = 109/153`, each attained by 4 designs. The unconstrained optimum is `240` (§12.6), so the fixed runs bind.
+     - (B-b) `fixed_ids = [0, 2, 6, 8]` (block 1 fully fixed; augmentation by one new block): 5 designs, 1 singular. `max det M_B = 48`, `min φ_A = 53/12`, `min φ_I = 11/9`, each attained by 4 designs.
+   - **Split-plot** (the §7.6 candidates, IDs 0–11, `F = [1, h, x, x², h·x]`, labels `h`):
+     - (S-a) whole plots `[3, 3]`, `η = 1`, `fixed_ids = [0, 6, 1]` (plot 1 fully fixed at `h = −1`, `x = −1, −1, 0`): 21 designs, 13 singular. `max det M = 8`, `min φ_A = 21/4`, `min φ_I = 7/2`, each attained by 8 designs. The unconstrained optimum is `48`.
+     - (S-b) whole plots `[2, 2, 2]`, `η = 1/2`, `fixed_ids = [3]` (plot 1 partly fixed at `h = 1`, `x = −1`): 690 designs, 258 singular. `max det M = 96` (112 designs), `min φ_A = 71/24` (32 designs), `min φ_I = 103/72` (32 designs). These values equal the §16.6 unconstrained optima (the counts differ because plot 1 is distinguished: 112 of 192 and 32 of 64): this case checks the partly-fixed label rule, not binding.
+7. **Complexity (target).** Per pass as in §2 and §8, with the fixed positions masked out; no new workspace.
+
+## 26. API decision: `optimal_design(F, n, *, fixed_ids=…, blocks=… | whole_plots=…, hard=…, eta=…)`
+
+- `fixed_ids` is now accepted with `blocks` and with `whole_plots`, for criteria D, A and I. `blocks` with `whole_plots` still raises `ValueError`. Requirements, validation and CPU float64 are as in §2, §8, §13 and §17. In addition, `fixed_ids` is validated as in the unblocked path, and the whole-plot label rule of §25.2 applies.
+- Result: the keys and layout of §2 / §8, unchanged. `ids` is block by block (plot by plot), with each block (plot) sorted ascending, so each fixed run appears inside its block (plot), not necessarily first. `efficiency_lower_bound` is computed as in §23. No new key.
+- Without `fixed_ids`, blocked and split-plot results are byte-identical to `main`. The unblocked `fixed_ids` path is unchanged.
+
+## 27. Not in this section
+
+Other ways to assign fixed runs to blocks (e.g. a per-run block index), fixed runs with blocks together with whole plots, between-plot interchange, `next_batch` with structure, GPU or float32.

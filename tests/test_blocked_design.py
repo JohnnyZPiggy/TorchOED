@@ -123,11 +123,6 @@ def test_blocked_linear_objectives_match_fraction_optima():
             assert result["objective"] == pytest.approx(-float(optimum), rel=0, abs=1e-10)
 
 
-def test_blocks_still_reject_fixed_ids():
-    with pytest.raises(ValueError, match="fixed_ids"):
-        optimal_design(ff2n(3), 6, criterion="I", blocks=[3, 3], fixed_ids=[0])
-
-
 def test_split_plot_scores_match_dense_gls():
     F = torch.randn(12, 3, dtype=torch.float64, generator=torch.Generator().manual_seed(14))
     ids, sizes, eta = torch.arange(7), [3, 4], 0.75
@@ -246,7 +241,7 @@ def test_split_plot_linear_objectives_match_fraction_optima(size, eta, total, si
         assert result["objective"] == pytest.approx(-float(optimum), rel=0, abs=1e-10)
 
 
-@pytest.mark.parametrize("kwargs", [{"blocks": [3, 3]}, {"fixed_ids": [0]}])
+@pytest.mark.parametrize("kwargs", [{"blocks": [3, 3]}])
 def test_split_plot_still_rejects_blocks_and_fixed_ids(kwargs):
     F = ff2n(3)
     with pytest.raises(ValueError, match="without blocks or fixed_ids"):

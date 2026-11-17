@@ -7,7 +7,9 @@ import torch
 
 from oracle_exchange import linear_value
 from torchoed import ff2n, full_factorial, optimal_design
-from torchoed.d_optimal_design import _block_information, _block_scores, _split_information, _split_ratios
+from torchoed.d_optimal_design import (
+    _block_information, _block_scores, _split_information, _split_ratios, _split_scores,
+)
 
 
 def test_blocked_scores_match_dense_projection():
@@ -174,3 +176,78 @@ def test_split_plot_feasibility_and_small_eta_limit():
     rows = F[ids]
     assert result["objective"] == pytest.approx(torch.linalg.slogdet(rows.mT @ rows).logabsdet.item(),
                                                 rel=0, abs=1e-9)
+
+
+@pytest.mark.parametrize("criterion", ["A", "I"])
+def test_split_plot_linear_scores_match_dense_gls(criterion):
+    F = torch.randn(12, 3, dtype=torch.float64, generator=torch.Generator().manual_seed(14))
+    hard, ids, sizes, eta = torch.arange(12)//6, torch.tensor([0, 1, 2, 6, 7, 8]), [3, 3], 0.7
+    Z = torch.eye(2, dtype=F.dtype).repeat_interleave(3, dim=0)
+    V = torch.eye(6, dtype=F.dtype) + eta * (Z @ Z.mT)
+    B = torch.eye(3, dtype=F.dtype) if criterion == "A" else F.mT @ F / len(F)
+
+    def dense(selection):
+        rows = F[selection]
+        return rows.mT @ torch.linalg.solve(V, rows)
+
+    counts = F.new_tensor(sizes)
+    M, sums = _split_information(F, ids, sizes, 1 / (counts * (1 + eta*counts)))
+    unused = torch.ones(len(F), dtype=torch.bool)
+    unused[ids] = False
+    groups = torch.arange(len(ids)).split(sizes)
+    coefficients = (eta / (1 + eta*counts)).tolist()
+    baseline = dense(ids)
+    phi, det = torch.trace(torch.linalg.solve(baseline, B)), torch.linalg.det(baseline)
+    checked = 0
+    for pos, pool, gains, ratios in _split_scores(F, ids, hard, groups, coefficients, sums,
+                                                 torch.linalg.cholesky(M), unused, B):
+        for j, gain, ratio in zip(pool, gains, ratios):
+            trial = ids.clone()
+            trial[pos] = j
+            candidate = dense(trial)
+            torch.testing.assert_close(gain, phi - torch.trace(torch.linalg.solve(candidate, B)),
+                                       rtol=1e-10, atol=0)
+            torch.testing.assert_close(ratio, torch.linalg.det(candidate)/det, rtol=1e-10, atol=0)
+            checked += 1
+    assert checked == 18
+
+    result = optimal_design(F, 6, whole_plots=sizes, hard=hard, eta=eta, criterion=criterion,
+                            generator=torch.Generator().manual_seed(0))
+    plots = hard[result["ids"]].reshape(2, 3)
+    assert (plots == plots[:, :1]).all()
+    expected = -torch.trace(torch.linalg.solve(dense(result["ids"]), B)).item()
+    assert result["objective"] == pytest.approx(expected, rel=1e-10, abs=0)
+    assert result["criterion"] == criterion
+    assert result["stop_reason"] == result["certificate"] == "LOCAL_SPLIT_PLOT_EXCHANGE"
+    assert result["efficiency_lower_bound"] is None
+
+
+@pytest.mark.parametrize("size,eta,total,singular,a,i", [
+    (3, Fraction(1), 420, 164, Fraction(35, 12), Fraction(11, 6)),
+    (2, Fraction(1, 2), 1380, 516, Fraction(71, 24), Fraction(103, 72)),
+])
+def test_split_plot_linear_objectives_match_fraction_optima(size, eta, total, singular, a, i):
+    h, x = torch.cartesian_prod(torch.tensor([-1, 1]), torch.arange(-1, 2)).repeat(2, 1).T
+    F = torch.stack((torch.ones_like(h), h, x, x.square(), h*x), dim=1)
+    rows = F.tolist()
+    plots = [plot for plot in combinations(range(len(F)), size)
+             if len({rows[j][1] for j in plot}) == 1]
+    sizes = [size]*(6//size)
+    layouts = [groups for groups in combinations(plots, len(sizes))
+               if len({j for plot in groups for j in plot}) == 6]
+    assert len(layouts) == total
+    for criterion, expected in (("A", a), ("I", i)):
+        values = [linear_value(rows, (), criterion, blocks=groups, eta=eta) for groups in layouts]
+        assert values.count(None) == singular
+        optimum = min(value for value in values if value is not None)
+        assert optimum == expected
+        result = optimal_design(F.double(), 6, whole_plots=sizes, hard=h, eta=float(eta),
+                                criterion=criterion, restarts=20, generator=torch.Generator().manual_seed(0))
+        assert result["objective"] == pytest.approx(-float(optimum), rel=0, abs=1e-10)
+
+
+@pytest.mark.parametrize("kwargs", [{"blocks": [3, 3]}, {"fixed_ids": [0]}])
+def test_split_plot_still_rejects_blocks_and_fixed_ids(kwargs):
+    F = ff2n(3)
+    with pytest.raises(ValueError, match="without blocks or fixed_ids"):
+        optimal_design(F, 6, whole_plots=[3, 3], hard=F[:, 0].long(), criterion="A", **kwargs)

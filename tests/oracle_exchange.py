@@ -40,17 +40,19 @@ def exhaustive(F, n):
     return [(subset,determinant(F,subset)) for subset in combinations(range(len(F)),n)]
 
 
-def linear_value(F, ids, criterion, blocks=None):
+def linear_value(F, ids, criterion, blocks=None, *, eta=None):
     """Direct Fraction inverse and trace, independent of exchange identities."""
     p = len(F[0])
     gram = lambda rows: [[sum(Fraction(F[r][i])*F[r][j] for r in rows) for j in range(p)] for i in range(p)]
-    def centered_gram(groups):
+    def adjusted_gram(groups):
         sums = [[sum(F[r][j] for r in group) for j in range(p)] for group in groups]
         raw = gram([r for group in groups for r in group])
-        return [[raw[i][j] - sum(Fraction(s[i]*s[j], len(group)) for s, group in zip(sums, groups))
+        weights = [(Fraction(1, len(group)) if eta is None else eta/(1 + eta*len(group)))
+                   for group in groups]
+        return [[raw[i][j] - sum(c*s[i]*s[j] for s, c in zip(sums, weights))
                  for j in range(p)] for i in range(p)]
 
-    info = gram(ids) if blocks is None else centered_gram(blocks)
+    info = gram(ids) if blocks is None else adjusted_gram(blocks)
     M = [row+[Fraction(i==j) for j in range(p)] for i,row in enumerate(info)]
     for k in range(p):
         pivot = next((i for i in range(k,p) if M[i][k]),None)
@@ -67,6 +69,6 @@ def linear_value(F, ids, criterion, blocks=None):
         B = [[Fraction(i==j) for j in range(p)] for i in range(p)]
     else:
         region = range(len(F))
-        moment = gram(region) if blocks is None else centered_gram([region])
+        moment = adjusted_gram([region]) if blocks is not None and eta is None else gram(region)
         B = [[x/len(F) for x in row] for row in moment]
     return sum(B[i][j]*M[j][p+i] for i in range(p) for j in range(p))

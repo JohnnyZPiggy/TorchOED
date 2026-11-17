@@ -13,7 +13,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | Capability | Crit | Aug | Con | Cert | Diag | Dev | Ext | Docs | HO | Week |
 |---|---|---|---|---|---|---|---|---|---|---|
 | blocking `blocks=` | ✅ D A I (#228) | ❌ | ✅ | ◐ local certificate only, no efficiency floor | ❌ diagnostics ignore blocks | ◐ CPU float64 only | ✅ AlgDesign `optBlock` (H11) | ✅ | ✅ H11 | **W9** |
-| split-plot `whole_plots=` | ◐ D only | ❌ | ✅ | ◐ local certificate only | ❌ no GLS SPV / power | ◐ CPU float64 only | ✅ skpr `gen_design` (`w8-skpr`) | ✅ | ✅ H14 | **W9** |
+| split-plot `whole_plots=` | ✅ D A I (#232) | ❌ | ✅ | ◐ local certificate only | ❌ no GLS SPV / power | ◐ CPU float64 only | ✅ skpr `gen_design` (`w8-skpr`) | ✅ | ✅ H14 | **W9** |
 | blocks + split-plot together | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | W9 if the gate covers it, else W11 |
 | definitive screening | N/A constructor | N/A | N/A | N/A (exact orthogonality proved) | ✅ | ✅ | ◐ Paley orders only (q prime); other k raise | ✅ | ✅ H12 | W10 (non-Paley conference matrices) |
 | fractional factorial by generators / resolution, fold-over, alias matrix | ❌ | ❌ | ❌ | N/A | ❌ alias diagnostics | ❌ | ❌ FrF2 | ❌ | ❌ | **W10** |
@@ -52,7 +52,7 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | Custom design, D/A/I, constraints, disallowed combinations, categorical | Custom Design | AlgDesign `optFederov` | ✅ `optimal_design` | certificate; GPU at 10⁵ | done |
 | Augment design (add runs to existing) | Augment Design | AlgDesign `augment`-style via fixed rows | ✅ plain; ◐ structured (W9-B3) | certificate on the augmented design | W9 |
 | Blocking, fixed and random blocks | Custom Design | AlgDesign `optBlock`, skpr | ✅ D A I (#228); Aug/Cert pending (W9-B3) | certificate | W9 |
-| Split-plot, hard-to-change factors | Custom Design | skpr `gen_design` | ◐ D only (W9-B2) | certificate; GPU | W9 |
+| Split-plot, hard-to-change factors | Custom Design | skpr `gen_design` | ✅ D A I (#232); Aug/Cert pending (W9-B3) | certificate; GPU | W9 |
 | Split-split-plot, strip-plot (very-hard-to-change) | Custom Design | skpr | ❌ | — | W15 |
 | Evaluate Design: power, prediction variance, FDS, correlation map, efficiencies | Evaluate Design | skpr `eval_design`, `Vdgraph` | ◐ unstructured only (W9-B4) | — | W9 |
 | Alias matrix, alias-optimal and compound criteria | Custom Design | FrF2 alias tools | ❌ | — | W10–W11 |

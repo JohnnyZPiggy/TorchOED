@@ -6,6 +6,7 @@
 - Add `plackett_burman` for balanced two-level screening designs with 4 to 48 runs in multiples of four (#255).
 - Extend `definitive_screening` to 3–20 and 23–30 factors using Paley and doubled-Paley conference matrices (#248).
 - `fractional_factorial` constructs regular two-level designs from unsigned generators.
+- `fractional_factorial_generators` looks up generators by factor and run count from the frozen FrF2 catalogue.
 - `fold_over` reverses all factors or a single factor in the added runs.
 - `word_length_pattern` computes the generalized word-length pattern for two-level designs, and `design_diagnostics(..., alias=…)` reports omitted-term aliasing for unstructured designs.
 

@@ -117,9 +117,9 @@ Use zero-based base columns to specify generators. This eight-run design moves f
 
 ```python
 import torch
-from torchoed import design_diagnostics, fold_over, fractional_factorial, word_length_pattern
+from torchoed import design_diagnostics, fold_over, fractional_factorial, fractional_factorial_generators, word_length_pattern
 
-X = fractional_factorial(3, [[0, 1], [0, 2]])
+X = fractional_factorial(3, fractional_factorial_generators(5, 8))
 assert word_length_pattern(X).tolist() == [0, 0, 2, 1, 0]
 assert word_length_pattern(fold_over(X)).tolist() == [0, 0, 0, 1, 0]
 F = torch.cat((X.new_ones((len(X), 1)), X), dim=1)

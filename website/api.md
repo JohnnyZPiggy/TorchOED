@@ -44,6 +44,14 @@ Return the coded cube followed by axial rows, with the specified center counts i
 
 Return coded Box–Behnken rows followed by center rows for 3 to 7 factors. Uses two-factor pairs for 3 to 5 factors and three-factor blocks for 6 or 7.
 
+`simplex_centroid(q: int, *, dtype=torch.float64, device=None) -> Tensor`
+
+One point per nonempty component subset, by subset size then lexicographic support; `q >= 2`.
+
+`mixture_vertices(lower, upper, *, face_dims=(), dtype=torch.float64, device=None) -> Tensor`
+
+Box-constrained simplex vertices in exact lexicographic order, then vertex-mean centroids for each requested face dimension (1 through q−1). Bounds are int, float, Fraction or str; floats use their shortest decimal. Invalid or infeasible bounds raise `ValueError`. See [mixture guide](industrial.md#mixture-designs).
+
 `simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 
 `lhs(n_samples: int, n_factors: int, *, generator: torch.Generator | None = None, device: torch.device | str | None = None, dtype: torch.dtype = torch.float64, mode: str = "random", max_elements: int = 1_000_000) -> torch.Tensor`

@@ -19,5 +19,5 @@ def test_package_imports_only_torch():
                    if isinstance(node, ast.ImportFrom) and not node.level}
         imports |= {name.name.split(".")[0] for node in ast.walk(tree)
                     if isinstance(node, ast.Import) for name in node.names}
-        assert imports <= {"torch"}
+        assert imports <= {"torch", "fractions", "itertools"}
         assert ".numpy(" not in source.read_text() and ".cpu(" not in source.read_text()

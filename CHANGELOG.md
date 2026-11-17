@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `simplex_centroid` and exact box-constrained `mixture_vertices` with face centroids (#281).
+
 - Add `central_composite` and `box_behnken` for coded quadratic response-surface designs (#258).
 - Extend `box_behnken` to 6 and 7 factors using frozen rsm designs (#262).
 - Add `plackett_burman` for balanced two-level screening designs with 4 to 48 runs in multiples of four (#255).

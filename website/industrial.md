@@ -69,6 +69,17 @@ torch.testing.assert_close(L.sum(dim=1), L.new_ones(len(L)))
 assert L[ids].unique(dim=0).shape[0] == 8
 ```
 
+Use `simplex_centroid` for one equal-proportion point per nonempty subset, or `mixture_vertices` for box-constrained vertices and face centroids. Centroids average the face's extreme vertices. Decimal float bounds are interpreted exactly as typed; pass `"1/3"` or `Fraction(1, 3)` for an exact third, because the float `1/3` repeated three times is below one in this decimal convention.
+
+```python
+from torchoed import simplex_centroid, mixture_vertices
+
+C = simplex_centroid(3)
+V = mixture_vertices([0.2, 0.1, 0.1], [0.6, 0.5, 0.6], face_dims=(1, 2))
+assert C.shape == (7, 3)
+assert V.shape == (13, 3)  # six vertices, six edge means, one overall mean
+```
+
 ## Plackett–Burman
 
 Choose a multiple of four from 4 to 48. For fewer factors, take the leading columns. This example screens six factors in 12 runs.

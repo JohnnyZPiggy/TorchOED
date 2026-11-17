@@ -1,4 +1,6 @@
 """Seeded feasible random starts followed by CPU D-optimal VND restarts."""
+from itertools import accumulate
+
 import torch
 
 from ._validation import integer
@@ -534,7 +536,7 @@ def _whitened_moment(L, B):
     return torch.linalg.solve_triangular(L, Q.mT, upper=False).mT
 
 
-def _block_scores(F, ids, blocks, means, L, B=None):
+def _block_scores(F, ids, blocks, means, L, B=None, n_fixed=0):
     Z = torch.linalg.solve_triangular(L, torch.cat((F, means)).mT, upper=False).mT
     rows, centers = Z[:len(F)], Z[len(F):]
     if B is not None:
@@ -544,12 +546,14 @@ def _block_scores(F, ids, blocks, means, L, B=None):
     unused[ids] = False
     incoming = unused.nonzero().flatten()
     groups = torch.arange(len(ids)).split(blocks)
+    free_groups = [group[group >= n_fixed] for group in groups] if n_fixed else groups
     # Both rank-two kernels have det(K) = -1, so the ratio is 1 + tr(KG) - det(G).
     if len(incoming):
-        for b, (group, center) in enumerate(zip(groups, centers)):
+        for b, (group, center, size) in enumerate(zip(free_groups, centers, blocks)):
+            if not len(group):
+                continue
             u = rows[incoming] - center
             uu = u.square().sum(1)
-            size = len(group)
             if B is not None:
                 uq = weighted_rows[incoming] - weighted_centers[b]
             for i in group.tolist():
@@ -562,9 +566,14 @@ def _block_scores(F, ids, blocks, means, L, B=None):
                     vq = weighted_rows[ids[i]] - weighted_centers[b]
                     gain, ratio = _block_ai_gain(u, v, uq, vq, uu+1+1/size, uv+1/size, vv-1+1/size)
                     yield i, incoming, gain, False, ratio
-    for r, outgoing in enumerate(groups):
+    for r, outgoing in enumerate(free_groups):
+        if not len(outgoing):
+            continue
         for t in range(r + 1, len(groups)):
-            other = groups[t]
+            other = free_groups[t]
+            if not len(other):
+                continue
+            inverse_sizes = 1/blocks[r] + 1/blocks[t]
             e = centers[r] - centers[t]
             ee = e.square().sum()
             if B is not None:
@@ -573,16 +582,16 @@ def _block_scores(F, ids, blocks, means, L, B=None):
                 d = rows[ids[other]] - rows[ids[i]]
                 dd, de = d.square().sum(1), d @ e
                 if B is None:
-                    ratio = 1 - (1/len(outgoing) + 1/len(other))*dd - 2*de - (dd*ee - de.square())
+                    ratio = 1 - inverse_sizes*dd - 2*de - (dd*ee - de.square())
                     yield i, other, ratio.clamp_min(0).log(), True
                 else:
                     dq = weighted_rows[ids[other]] - weighted_rows[ids[i]]
-                    gain, ratio = _block_ai_gain(d, e, dq, eq, dd, de-1, ee+1/len(outgoing)+1/len(other))
+                    gain, ratio = _block_ai_gain(d, e, dq, eq, dd, de-1, ee+1/blocks[r]+1/blocks[t])
                     yield i, other, gain, True, ratio
 
 
-def _block_moves(F, ids, blocks, means, L, B=None):
-    for i, choices, gains, interchange, *ratio in _block_scores(F, ids, blocks, means, L, B):
+def _block_moves(F, ids, blocks, means, L, B, n_fixed):
+    for i, choices, gains, interchange, *ratio in _block_scores(F, ids, blocks, means, L, B, n_fixed):
         improving = gains > 0
         if ratio:
             improving &= ratio[0] > 0
@@ -666,11 +675,19 @@ def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max
     m, p = F.shape
     if not _valid_plot_sizes(blocks, n) or m < n or n - len(blocks) < p:
         raise ValueError("blocks must be positive Python ints summing to n, with m >= n and n - len(blocks) >= p")
-    if criterion not in ("D", "A", "I") or fixed_ids is not None:
-        raise ValueError("blocks supports criteria D, A and I without fixed_ids")
+    if criterion not in ("D", "A", "I"):
+        raise ValueError("blocks supports criteria D, A and I")
     if F.dtype != torch.float64 or F.device.type != "cpu":
         raise ValueError("blocked search requires CPU float64 features")
     _plot_workspace(F, restarts, max_iter, max_elements, 16, f"blocked {criterion}")
+    fixed, pool = (None, None) if fixed_ids is None else _fixed_pool(fixed_ids, m, n)
+    n_fixed = 0 if fixed is None else len(fixed)
+
+    def draw():
+        if not n_fixed:
+            return torch.randperm(m, generator=generator)[:n]
+        return torch.cat((fixed, pool[torch.randperm(len(pool), generator=generator)[:n-n_fixed]]))
+
     centered = F - F.mean(0)
     B = None
     if criterion == "A":
@@ -678,9 +695,9 @@ def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max
     elif criterion == "I":
         B = centered.mT @ centered / m
     return _plot_restarts(
-        blocks, restarts, lambda: torch.randperm(m, generator=generator)[:n],
+        blocks, restarts, draw,
         lambda ids: _block_information(F, ids, blocks),
-        lambda ids, means, L: _block_moves(F, ids, blocks, means, L, B), max_iter,
+        lambda ids, means, L: _block_moves(F, ids, blocks, means, L, B, n_fixed), max_iter,
         {"blocks": list(blocks)}, "LOCAL_BLOCK_EXCHANGE", G=centered, criterion=criterion, B=B)
 
 
@@ -703,11 +720,21 @@ def _split_ratios(incoming, outgoing, total, c):
     return torch.linalg.det(torch.eye(3, dtype=incoming.dtype) + kernel @ gram)
 
 
-def _split_draw(hard, labels, sizes, generator):
+def _split_draw(hard, labels, sizes, generator, fixed, fixed_plots):
     unused = torch.ones(len(hard), dtype=torch.bool)
+    if fixed_plots:
+        unused[fixed] = False
     plots = []
-    for size in sizes:
-        label = labels[torch.randint(len(labels), (1,), generator=generator)]
+    for k, size in enumerate(sizes):
+        prefix = fixed_plots[k] if fixed_plots else None
+        if prefix is not None and len(prefix):
+            size -= len(prefix)
+            plots.append(prefix)
+            if not size:
+                continue
+            label = hard[prefix[0]]
+        else:
+            label = labels[torch.randint(len(labels), (1,), generator=generator)]
         pool = (unused & (hard == label)).nonzero().flatten()
         if len(pool) < size:
             return None
@@ -722,7 +749,7 @@ def _split_ai_scores(d, q, dq, qq, c):
                           q.square().sum() - (1-c))
 
 
-def _split_scores(F, ids, hard, groups, coefficients, sums, L, unused, B):
+def _split_scores(F, ids, hard, groups, coefficients, sums, L, unused, B, n_fixed=0):
     rows, totals = torch.linalg.solve_triangular(
         L, torch.cat((F, sums)).mT, upper=False).mT.split((len(F), len(groups)))
     if B is not None:
@@ -730,6 +757,10 @@ def _split_scores(F, ids, hard, groups, coefficients, sums, L, unused, B):
         weighted_rows, weighted_totals = rows @ Q, totals @ Q
     for k, (group, total, c) in enumerate(zip(groups, totals, coefficients)):
         pool = (unused & (hard == hard[ids[group[0]]])).nonzero().flatten()
+        if n_fixed:
+            group = group[group >= n_fixed]
+            if not len(group):
+                continue
         incoming = rows[pool]
         if B is not None:
             weighted_incoming = weighted_rows[pool]
@@ -745,17 +776,19 @@ def _split_scores(F, ids, hard, groups, coefficients, sums, L, unused, B):
                 yield pos, pool, gains, ratios
 
 
-def _split_moves(F, ids, hard, labels, sizes, weights, coefficients, sums, L, B=None):
+def _split_moves(F, ids, hard, labels, sizes, weights, coefficients, sums, L, B, n_fixed):
     unused = torch.ones(len(F), dtype=torch.bool)
     unused[ids] = False
     groups = torch.arange(len(ids)).split(sizes)
-    for pos, pool, gains, ratios in _split_scores(F, ids, hard, groups, coefficients, sums, L, unused, B):
+    for pos, pool, gains, ratios in _split_scores(F, ids, hard, groups, coefficients, sums, L, unused, B, n_fixed):
         improving = ratios > 1 if gains is None else (ratios > 0) & (gains > 0)
         for candidate in pool[improving].tolist():
             trial = ids.clone()
             trial[pos] = candidate
             yield trial
     for k, (group, c) in enumerate(zip(groups, coefficients)):
+        if n_fixed and group[0] < n_fixed:
+            continue
         for label in labels:
             if label == hard[ids[group[0]]]:
                 continue
@@ -792,7 +825,7 @@ def _split_moves(F, ids, hard, labels, sizes, weights, coefficients, sums, L, B=
                 yield trial
 
 
-def _split_design(F, n, sizes, hard, eta, criterion, restarts, generator, max_iter, max_elements):
+def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
     if not isinstance(F, torch.Tensor) or F.ndim != 2 or F.dtype != torch.float64 or F.device.type != "cpu":
         raise ValueError(f"split-plot {criterion} search requires CPU float64 features")
     m, p = F.shape
@@ -811,6 +844,11 @@ def _split_design(F, n, sizes, hard, eta, criterion, restarts, generator, max_it
     hard = (hard.to(torch.int64) ^ -(1 << 63)
             if hard.dtype == getattr(torch, "uint64", None) else hard.to(torch.int64))
     labels = hard.unique()
+    fixed, _ = (None, None) if fixed_ids is None else _fixed_pool(fixed_ids, m, n)
+    n_fixed = 0 if fixed is None else len(fixed)
+    fixed_plots = fixed.tensor_split(list(accumulate(sizes))[:-1]) if n_fixed else ()
+    if any(hard[prefix].unique().numel() > 1 for prefix in fixed_plots):
+        raise ValueError("fixed_ids within a whole plot must share one hard label")
     counts = F.new_tensor(sizes)
     if eta >= 1:
         inverse_eta = 1 / eta
@@ -828,9 +866,9 @@ def _split_design(F, n, sizes, hard, eta, criterion, restarts, generator, max_it
         B = F.mT @ F / m
 
     return _plot_restarts(
-        sizes, restarts, lambda: _split_draw(hard, labels, sizes, generator),
+        sizes, restarts, lambda: _split_draw(hard, labels, sizes, generator, fixed, fixed_plots),
         lambda ids: _split_information(F, ids, sizes, weights),
-        lambda ids, sums, L: _split_moves(F, ids, hard, labels, sizes, weights, coefficients, sums, L, B),
+        lambda ids, sums, L: _split_moves(F, ids, hard, labels, sizes, weights, coefficients, sums, L, B, n_fixed),
         max_iter, {"whole_plots": list(sizes), "eta": eta}, "LOCAL_SPLIT_PLOT_EXCHANGE",
         G=F, criterion=criterion, B=B)
 
@@ -844,13 +882,14 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: 
 
     Set blocks to fixed block sizes for CPU float64 D/A/I search without an intercept.
     Set whole_plots, hard labels and eta for CPU float64 split-plot D/A/I search.
+    For structured designs, fixed_ids fill the leading positions, block by block.
     """
     if (whole_plots is None) != (hard is None):
         raise ValueError("whole_plots and hard must be given together")
     if whole_plots is not None:
-        if criterion not in ("D", "A", "I") or blocks is not None or fixed_ids is not None:
+        if criterion not in ("D", "A", "I") or blocks is not None:
             raise ValueError("whole_plots supports criteria D, A and I without blocks or fixed_ids")
-        return _split_design(F, n, whole_plots, hard, eta, criterion, restarts, generator, max_iter, max_elements)
+        return _split_design(F, n, whole_plots, hard, eta, criterion, fixed_ids, restarts, generator, max_iter, max_elements)
     if blocks is not None:
         return _blocked_design(F,n,blocks,criterion,fixed_ids,restarts,generator,max_iter,max_elements)
     if criterion not in ("D","A","I"):

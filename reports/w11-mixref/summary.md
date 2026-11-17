@@ -1,0 +1,9 @@
+# W11 mixture external references — NOT_RUN
+
+- Issue #283; frozen input/driver/scorer source `ec88f6300afb9d67e339cc720169b0e5459ffff1`; one pinned SAE controller run, observed Tesla T4, R CPU with CUDA hidden. No held-out input.
+- R1 vertices: NOT_RUN; R3 vertices: NOT_RUN; optFederov D: NOT_RUN. No numbers or MATCH claim. Setup failed before `M11`, installed help, `sessionInfo()` or package-version calls; usage lines and exact R version therefore NOT_RECORDED. No CSV outputs were created.
+- CRAN reported `package ‘mixexp’ is not available for this version of R`; `Error: requireNamespace("mixexp") is not TRUE`; `Execution halted`. Full error verbatim in runtime.json. AlgDesign 1.2.1.2 appears only in the installation log, not a completed version readback.
+- Failing call: `Rscript -e 'install.packages(c("mixexp","AlgDesign"), repos="https://cloud.r-project.org"); stopifnot(requireNamespace("mixexp"),requireNamespace("AlgDesign"))'`. Planned reference calls and usage extraction are frozen in `tools/r_heldout.R` M11; none executed. No retry: only ALLOCATION_FAILED before R starts permits one.
+- Transport PASS; authenticated cleanup assignments 0 → 0, credits 51.10 → 51.10, stop PASS. Download `r-heldout.json`: 1899 bytes, SHA-256 `9b0b8c3d895a03769388c233c7f861e0f1c0ac91945c8322431c042150531134`. Details: cleanup.json. No live session remains.
+- Local `PYTHONPATH=src py -3.14 -X utf8 reports/w11-mixref/run.py`: three NOT_RUN verdicts with exact setup error; no reference scoring or TorchOED search executed. Python compile 2 PASS / 0 FAIL. No full suite required (no shared library code changed).
+- Preallocation setup fixes: nonlogin WSL PATH caused CLI_UNAVAILABLE; reusing preflight output caused LOCAL_OPERATION_FAILED; login shell and new output directory passed preflight before the sole allocation. Scoped code 71 net lines (S target 50, below 75 stop threshold); no extra checks added.

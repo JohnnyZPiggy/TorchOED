@@ -261,17 +261,28 @@ def central_composite(
     return torch.cat((cube, cube.new_zeros((n_c, k)), axial, cube.new_zeros((n_s, k))))
 
 
+_BBD_BLOCKS = {
+    6: ((0, 1, 3), (1, 2, 4), (2, 3, 5), (0, 3, 4), (1, 4, 5), (0, 2, 5)),
+    7: ((3, 4, 5), (0, 5, 6), (1, 4, 6), (0, 1, 3), (2, 3, 6), (0, 2, 4), (1, 2, 5)),
+}
+
+
 def box_behnken(
     k: int, *, center: int = 3, dtype: torch.dtype = torch.float64,
     device: torch.device | str | None = None,
 ) -> torch.Tensor:
-    """Coded response-surface rows from two-factor pairs, then center rows."""
-    if type(k) is not int or k not in (3, 4, 5):
-        raise ValueError("k must be 3, 4 or 5")
+    """Coded response-surface rows from factor blocks, then center rows."""
+    if type(k) is not int or not 3 <= k <= 7:
+        raise ValueError("k must be an int from 3 to 7")
     integer(center, "center", 0)
-    pairs = [(i, j) for i in range(k) for j in range(i + 1, k)]
-    signs = ff2n(2, dtype=dtype, device=device).flip((1,))
     basis = torch.eye(k, dtype=dtype, device=device)
-    first, second = basis[torch.tensor(pairs, device=device)].unbind(dim=1)
-    rows = first[:, None, :] * signs[:, :1] + second[:, None, :] * signs[:, 1:]
+    if k in _BBD_BLOCKS:
+        blocks = basis[torch.tensor(_BBD_BLOCKS[k], device=device)]
+        signs = ff2n(3, dtype=dtype, device=device).flip((1,))
+        rows = (blocks[:, None, :, :] * signs[None, :, :, None]).sum(dim=2)
+    else:
+        pairs = [(i, j) for i in range(k) for j in range(i + 1, k)]
+        signs = ff2n(2, dtype=dtype, device=device).flip((1,))
+        first, second = basis[torch.tensor(pairs, device=device)].unbind(dim=1)
+        rows = first[:, None, :] * signs[:, :1] + second[:, None, :] * signs[:, 1:]
     return torch.cat((rows.reshape(-1, k), basis.new_zeros((center, k))))

@@ -71,8 +71,24 @@ def test_bbd_rotatability(k):
     (central_composite, 1, {}), (central_composite, 2, {"alpha": "spherical"}),
     (central_composite, 2, {"alpha": 0}), (central_composite, 2, {"alpha": True}),
     (central_composite, 2, {"center": (-1, 4)}),
-    (box_behnken, 2, {}), (box_behnken, 6, {}), (box_behnken, 3, {"center": -1}),
+    (box_behnken, 2, {}), (box_behnken, 8, {}), (box_behnken, 3, {"center": -1}),
 ])
 def test_invalid_response_surface_input(constructor, k, kwargs):
     with pytest.raises(ValueError):
         constructor(k, **kwargs)
+
+
+@pytest.mark.parametrize("k", [6, 7])
+def test_bbd_three_factor_rsm(k):
+    rows = reference("rsm_bbd67.csv", "k", k)
+    expected = [[int(r[f"x{i}"]) for i in range(1, k + 1)] for r in rows]
+    assert box_behnken(k).tolist() == expected
+
+
+@pytest.mark.parametrize("k,j,mixed", [(6, 3, 16), (7, 1, 8)])
+def test_bbd_three_factor_rotatability(k, j, mixed):
+    rows = box_behnken(k, center=0).to(torch.int64).tolist()
+    fourth_moment = sum(row[0] ** 4 for row in rows)
+    mixed_moment = sum(row[0] ** 2 * row[j] ** 2 for row in rows)
+    assert (fourth_moment, mixed_moment) == (24, mixed)
+    assert (fourth_moment == 3 * mixed_moment) == (k == 7)

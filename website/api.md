@@ -26,7 +26,7 @@ Return the generalized word-length pattern in float64 on the input device. The i
 
 `definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor`
 
-Return the (2c + 1)-run three-level definitive screening design `[C_k; −C_k; 0]` from a Paley conference matrix of order c.
+Return the (2c + 1)-run three-level definitive screening design `[C_k; −C_k; 0]` from a Paley or doubled-Paley conference matrix of order c. Supports k = 3–20 and 23–30. No order-22 conference matrix exists for k = 21 or 22.
 
 `simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 

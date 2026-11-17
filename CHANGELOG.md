@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Extend `definitive_screening` to 3–20 and 23–30 factors using Paley and doubled-Paley conference matrices (#248).
 - `fractional_factorial` constructs regular two-level designs from unsigned generators.
 - `fold_over` reverses all factors or a single factor in the added runs.
 - `word_length_pattern` computes the generalized word-length pattern for two-level designs, and `design_diagnostics(..., alias=…)` reports omitted-term aliasing for unstructured designs.

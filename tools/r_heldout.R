@@ -126,7 +126,7 @@ if (identical(commandArgs(trailingOnly=TRUE), "K4")) {
   published <- readLines("tools/r_heldout.R")
   start <- match("  set.seed(20261118)", published) + 1L
   stopifnot(identical(examples[first:last], published[start:(start + last - first)]))
-  # skpr 1.9.2 (GPL-3), gen_design.Rd, Examples lines 217Ã¢â‚¬â€œ230.
+  # skpr 1.9.2 (GPL-3), gen_design.Rd, Examples lines 217–230.
   # https://github.com/cran/skpr/blob/1.9.2/man/gen_design.Rd#L217-L230
   set.seed(20261118)
 splitplotcandidateset = expand.grid(Altitude = c(-1, 1),

@@ -595,7 +595,7 @@ def _block_moves(F, ids, blocks, means, L, B=None):
 
 
 def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, local_reason,
-                   *, criterion="D", B=None):
+                   *, G, criterion="D", B=None):
     def attempt():
         start = ids = draw()
         if ids is None:
@@ -640,8 +640,10 @@ def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, 
     (best_ids, best_value, best_reason), best_restart, starts, objectives = _restarts(restarts, attempt)
     certificate = best_reason if best_reason == local_reason else "NOT_CERTIFIED"
     ids = torch.cat([plot.sort().values for plot in best_ids.split(sizes)])
+    M, _ = information(ids)
+    floor = _dual_floor(G, M, sum(sizes), criterion, 0.0)
     return dict(ids=ids, **layout, objective=best_value, criterion=criterion,
-                stop_reason=best_reason, certificate=certificate, efficiency_lower_bound=None,
+                stop_reason=best_reason, certificate=certificate, efficiency_lower_bound=floor,
                 restart_objectives=objectives, best_restart=best_restart, starts=starts)
 
 
@@ -669,17 +671,17 @@ def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max
     if F.dtype != torch.float64 or F.device.type != "cpu":
         raise ValueError("blocked search requires CPU float64 features")
     _plot_workspace(F, restarts, max_iter, max_elements, 16, f"blocked {criterion}")
+    centered = F - F.mean(0)
     B = None
     if criterion == "A":
         B = torch.eye(p, dtype=F.dtype)
     elif criterion == "I":
-        centered = F - F.mean(0)
         B = centered.mT @ centered / m
     return _plot_restarts(
         blocks, restarts, lambda: torch.randperm(m, generator=generator)[:n],
         lambda ids: _block_information(F, ids, blocks),
         lambda ids, means, L: _block_moves(F, ids, blocks, means, L, B), max_iter,
-        {"blocks": list(blocks)}, "LOCAL_BLOCK_EXCHANGE", criterion=criterion, B=B)
+        {"blocks": list(blocks)}, "LOCAL_BLOCK_EXCHANGE", G=centered, criterion=criterion, B=B)
 
 
 def _split_information(F, ids, sizes, weights):
@@ -830,7 +832,7 @@ def _split_design(F, n, sizes, hard, eta, criterion, restarts, generator, max_it
         lambda ids: _split_information(F, ids, sizes, weights),
         lambda ids, sums, L: _split_moves(F, ids, hard, labels, sizes, weights, coefficients, sums, L, B),
         max_iter, {"whole_plots": list(sizes), "eta": eta}, "LOCAL_SPLIT_PLOT_EXCHANGE",
-        criterion=criterion, B=B)
+        G=F, criterion=criterion, B=B)
 
 
 @torch.no_grad()

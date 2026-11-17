@@ -1,0 +1,15 @@
+{
+  "source_sha": "13a444e3ccd77d8b18efc557df854eb8757c9cb0",
+  "controller_pin": "4129001fffcb336f5203e4b0d6765d7a0ea3150c",
+  "run_id": "w266-colab-20261117",
+  "started_utc": "2026-11-17T16:48:10Z",
+  "controller_exit": 1,
+  "controller_status": "FAIL",
+  "controller_error": "ALLOCATION_FAILED",
+  "device_requested": "T4",
+  "device_observed": null,
+  "device_used": null,
+  "artifact_sha256": {},
+  "artifact_bytes": null,
+  "reference_errors": {}
+}

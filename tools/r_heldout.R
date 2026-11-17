@@ -14,7 +14,7 @@ if (identical(commandArgs(trailingOnly=TRUE), "K7")) {
                  if (!"randomize" %in% names(formals(daewr::DefScreen)))
                    cat("No randomize argument; rows used as returned.\n"),
                  file=file.path(outdir, "sessionInfo.txt"))
-  rows <- lapply(calls, function(call) data.frame(k=call$m, lapply(eval(call), as.integer)))
+  rows <- Map(function(call, k) data.frame(k, lapply(eval(call), as.integer)), calls, c(6L, 7L))
   rows[[1L]]$G <- NA_integer_
   write.csv(do.call(rbind, rows), file.path(outdir, "daewr_dsd.csv"), row.names=FALSE, na="")
   quit(save="no")

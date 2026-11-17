@@ -39,9 +39,9 @@ def main():
             x = fractional_factorial(m, gen, dtype=torch.float64, device="cpu")
             assert x.shape == (n, k), row["name"]
             wlp = word_length_pattern(x)
-            scaled = wlp * n**2
-            assert torch.equal(scaled, scaled.round()), row["name"]
-            actual = wlp.round().to(torch.int64).tolist()
+            rounded = wlp.round()
+            assert torch.equal(wlp, rounded), row["name"]
+            actual = rounded.to(torch.int64).tolist()
             observed = [int(v) for v in row["WLP"].split(";")] if row["WLP"] else []
             aligned = [0] * (j0 - 1) + observed
             aligned += [0] * (k - len(aligned))
@@ -82,6 +82,14 @@ def main():
             print(f"BBD {k}: shape {n}x{k} PASS")
     else:
         print("BBD: NOT_RUN")
+
+    if (ROOT / "rsm_bbd67.csv").exists():
+        for k in (6, 7):
+            rows = group("rsm_bbd67.csv", "k", k, {"k"}, float)
+            shape = torch.tensor(rows).shape
+            print(f"BBD {k}: shape {'x'.join(map(str, shape))}")
+    else:
+        print("BBD 6 and 7: NOT_RUN")
 
 
 if __name__ == "__main__":

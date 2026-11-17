@@ -6,7 +6,7 @@ subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
 out = root/'reports/w10-heldout'
 if (out/'run.py').exists():
-    data = dict(source_sha=sha, device_used='CPU (CUDA hidden from R)', errors={})
+    data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)', errors={})
     cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
     setup_error = None
     try:

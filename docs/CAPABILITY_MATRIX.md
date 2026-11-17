@@ -5,8 +5,8 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 ## P1 / P1.5 — engine and model-driven design
 | Capability | Crit | Aug | Con | Cert | Diag | Dev | Ext | Docs | HO | Week |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `optimal_design` (plain exact) | ✅ D A I | ✅ | ✅ | ✅ KW dual floor | ✅ | ✅ CPU; GPU measured for D only (`w5-crossover`) | ✅ PyDOE, AlgDesign | ✅ | ✅ H1–H8 | done; A/I GPU timing → W19 |
-| `jacobian_features` + `next_batch` | ✅ D A I | ✅ | ✅ | ✅ linearized only | ✅ | ◐ CPU only measured | ❌ no published nonlinear design reproduced | ✅ | ✅ H9–H10 | W17 (published nonlinear examples) |
+| `optimal_design` (plain exact) | ✅ D A I | ✅ | ✅ | ✅ KW dual floor | ✅ | ✅ CPU; GPU measured for D only (`w5-crossover`) | ✅ PyDOE, AlgDesign | ✅ | ✅ H1–H8 | done; A/I GPU timing → W23 |
+| `jacobian_features` + `next_batch` | ✅ D A I | ✅ | ✅ | ✅ linearized only | ✅ | ◐ CPU only measured | ❌ no published nonlinear design reproduced | ✅ | ✅ H9–H10 | W21 (published nonlinear examples) |
 | criterion functions | ◐ D A E c evaluated; G, V, I-as-function missing | N/A | N/A | N/A | N/A | ✅ | ✅ | ✅ | N/A | W11 |
 
 ## P2 — industrial DOE (completion weeks 9–11)
@@ -26,23 +26,33 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | power | ◐ per-coefficient t-test, OLS, σ = 1 | N/A | N/A | N/A | ◐ blocked + split-plot power ✅ (#234); no effect-group F-test | ✅ | ✅ SciPy (H16) | ✅ | ✅ H16 | **W9** (structured), W11 (F-test) |
 | space filling: random LHS, Sobol | N/A | N/A | N/A | N/A | N/A | ✅ | ✅ | ✅ | N/A | done; maximin/MaxPro LHS → backlog |
 
-## P3 — torch-native frontier (weeks 17–19)
+## P2.5 — analysis and TorchOED Studio (weeks 17–19, Scientist 2026-11-17)
 | Capability | Status | Week |
 |---|---|---|
-| approximate designs (multiplicative / Frank–Wolfe weights) on GPU + equivalence-theorem certificates + efficient rounding | ❌ | W17 |
-| nonlinear local designs reproduced from the literature (ICAOD examples) | ❌ | W17 |
-| Bayesian / pseudo-Bayesian designs by batched prior Monte Carlo | ❌ | W18 |
-| minimax / maximin-efficiency robust designs | ❌ | W19 |
-| GPU-scale exchange to 10⁶ candidates | ◐ 10⁵ measured for D | W19 |
+| least-squares fit: coefficients, SEs, effect tests (t, F by term), lack of fit, residual diagnostics | ❌ | W17 |
+| REML / mixed-model fit for blocked and split-plot designs (whole-plot vs subplot error) | ❌ | W17–W18 |
+| prediction profiler data (prediction ± interval at a point, effect traces) | ❌ | W18 |
+| desirability functions and multi-response optimisation | ❌ | W18 |
+| Studio: factors/model → design → evaluate → compare → export | ❌ | W19 |
+| Studio: import responses → fit → profiler; hosted demo | ❌ | W19 |
 
-## P4 — ecosystem and 1.0 (weeks 21+)
+## P3 — torch-native frontier (weeks 21–23)
 | Capability | Status | Week |
 |---|---|---|
-| BoTorch/Ax adapter for sequential design | ❌ | W21 |
-| gradient-based continuous design | ❌ | W21–22 |
-| API freeze, semver, deprecation policy, 1.0 on PyPI | ❌ (TestPyPI 0.7.0) | W23–24 |
-| discrete choice designs (idefix-style) | ❌ | W22 |
-| JOSS paper | ❌ | W24 |
+| approximate designs (multiplicative / Frank–Wolfe weights) on GPU + equivalence-theorem certificates + efficient rounding | ❌ | W21 |
+| nonlinear local designs reproduced from the literature (ICAOD examples) | ❌ | W21 |
+| Bayesian / pseudo-Bayesian designs by batched prior Monte Carlo | ❌ | W22 |
+| minimax / maximin-efficiency robust designs | ❌ | W23 |
+| GPU-scale exchange to 10⁶ candidates | ◐ 10⁵ measured for D | W23 |
+
+## P4 — ecosystem and 1.0 (weeks 25+)
+| Capability | Status | Week |
+|---|---|---|
+| BoTorch/Ax adapter for sequential design | ❌ | W25 |
+| gradient-based continuous design | ❌ | W25–26 |
+| API freeze, semver, deprecation policy, 1.0 on PyPI | ❌ (TestPyPI 0.7.0) | W27–28 |
+| discrete choice designs (idefix-style) | ❌ | W26 |
+| JOSS paper | ❌ | W28 |
 
 ## Parity checklist vs JMP 18 DOE and R (Scientist 2026-11-16)
 One row per capability a practitioner would look for in JMP or the named R packages. "Advantage" names the TorchOED signature to demonstrate on that row where one applies.
@@ -69,16 +79,20 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | Covariates (incl. hard-to-change covariates) | Custom Design | AlgDesign (fixed rows) | ❌ | — | W11 |
 | Space filling: LHS (maximin), MaxPro, uniform, sphere packing, fast flexible filling (constrained) | Space Filling Design | `lhs`, `MaxPro`, `DiceDesign`, `SLHD` | ◐ random LHS, Sobol only | GPU-scale distance search | W13 |
 | Orthogonal arrays, Taguchi arrays, covering arrays | Taguchi Arrays, Covering Arrays | DoE.base `oa.design` | ❌ | — | W15 |
-| Nonlinear design (local, Bayesian) | Nonlinear Design | ICAOD, acebayes | ◐ local via `jacobian_features` | autograd; NN models; GPU prior MC | W17–W18 |
-| Minimax / robust designs | — | ICAOD | ❌ | certificate; links to robust optimisation | W19 |
-| Approximate designs and rounding | — | OptimalDesign (REX, KL) | ❌ | GPU weights + equivalence certificate | W17 |
-| Discrete choice / MaxDiff designs | Choice Design, MaxDiff | `idefix` | ❌ | — | W22 |
+| Nonlinear design (local, Bayesian) | Nonlinear Design | ICAOD, acebayes | ◐ local via `jacobian_features` | autograd; NN models; GPU prior MC | W21–W22 |
+| Minimax / robust designs | — | ICAOD | ❌ | certificate; links to robust optimisation | W23 |
+| Approximate designs and rounding | — | OptimalDesign (REX, KL) | ❌ | GPU weights + equivalence certificate | W21 |
+| Discrete choice / MaxDiff designs | Choice Design, MaxDiff | `idefix` | ❌ | — | W26 |
 | Incomplete block (BIBD, alpha), crossover designs | — | agricolae, crossdes | ❌ | — | backlog (Scientist decides after W16) |
-| Sequential / closed-loop design with a model | — | — | ✅ `next_batch` (linearized) | autograd + BoTorch adapter | done; adapter W21 |
-| Differentiable continuous design (no candidate grid) | — | — | ❌ | unique to TorchOED | W21–W22 |
+| Fit Model: least squares, effect tests, lack of fit, residuals | Fit Model | `lm`, `rsm` | ❌ | batched fits; autograd | W17 |
+| Mixed-model / REML analysis of split-plot and blocked experiments | Fit Model (REML) | `lme4`, `nlme` | ❌ | — | W17–W18 |
+| Prediction profiler, desirability, multi-response optimisation | Prediction Profiler | `rsm`, `desirability` | ❌ | gradient-based optimisation of the fitted model | W18 |
+| Interactive DOE workflow (design → evaluate → compare → analyse) | DOE platform GUI | — | ❌ TorchOED Studio | certificates and GPU shown in the UI | W19 |
+| Sequential / closed-loop design with a model | — | — | ✅ `next_batch` (linearized) | autograd + BoTorch adapter | done; adapter W25 |
+| Differentiable continuous design (no candidate grid) | — | — | ❌ | unique to TorchOED | W25–W26 |
 | Measurement systems analysis (MSA) designs | MSA Design | — | ❌ | — | backlog |
 
-Weeks 12, 16, 20 and 24 are consolidation weeks (refresh this matrix, published-example matches, release).
+Weeks 12, 16, 20, 24 and 28 are consolidation weeks (refresh this matrix, published-example matches, release).
 
 ## Known documentation debt (week 12 consolidation)
 `website/api.md` lists `optimal_design` without `blocks`, `whole_plots`, `hard`, `eta`; `docs/ALGORITHM_COVERAGE.md` still marks `optimal_design` PLANNED and definitive screening DEFERRED; older milestone docs (`docs/M1_API.md` … `docs/M3C_API.md`) should be merged or archived.

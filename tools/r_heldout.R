@@ -1,16 +1,20 @@
 if (identical(commandArgs(trailingOnly=TRUE), "M11")) {
   outdir <- "reports/w11-mixref"
   usage <- function(pkg, topic) paste(unlist(Filter(function(x) identical(attr(x,"Rd_tag"),"\\usage"), tools::Rd_db(pkg)[[paste0(topic,".Rd")]])[[1L]]), collapse="")
-  capture.output(cat(usage("mixexp","Xvert"), usage("AlgDesign","optFederov")), file=file.path(outdir,"sessionInfo.txt"))
-  capture.output(cat('sessionInfo(); packageVersion("mixexp"); packageVersion("AlgDesign")\n'), print(sessionInfo()), print(packageVersion("mixexp")), print(packageVersion("AlgDesign")), file=file.path(outdir,"sessionInfo.txt"), append=TRUE)
+  capture.output(print(sessionInfo()), file=file.path(outdir,"sessionInfo.txt"))
+  for (pkg in c("mixexp","AlgDesign")) if (requireNamespace(pkg, quietly=TRUE)) capture.output(print(packageVersion(pkg)), cat(usage(pkg,if (pkg=="mixexp") "Xvert" else "optFederov")), file=file.path(outdir,"sessionInfo.txt"), append=TRUE)
+  if (requireNamespace("mixexp", quietly=TRUE)) tryCatch({
   a <- mixexp::Xvert(nfac=3, lc=c(.2,.1,.1), uc=c(.6,.5,.6), ndm=0, plot=FALSE)
   b <- mixexp::Xvert(nfac=4, lc=rep(.1,4), uc=c(.6,.5,.4,.3), ndm=0, plot=FALSE)
   a <- data.frame(region="R1", a); b <- data.frame(region="R3", b)
   for (name in setdiff(names(b),names(a))) a[[name]] <- NA
   write.csv(rbind(a[,names(b)],b),file.path(outdir,"xvert.csv"),row.names=FALSE,na="")
+  }, error=function(e) message("Xvert: ",conditionMessage(e)))
+  if (requireNamespace("AlgDesign", quietly=TRUE)) tryCatch({
   candidates <- read.csv(file.path(outdir,"candidates_r1.csv")); set.seed(11)
   design <- AlgDesign::optFederov(~ -1 + x1 + x2 + x3 + x1:x2 + x1:x3 + x2:x3, data=candidates, nTrials=10, criterion="D")
   write.csv(data.frame(candidate=design$rows,design$design),file.path(outdir,"optfederov.csv"),row.names=FALSE)
+  }, error=function(e) message("optFederov: ",conditionMessage(e)))
   quit(save="no")
 }
 if (identical(commandArgs(trailingOnly=TRUE), "K7")) {
@@ -122,7 +126,7 @@ if (identical(commandArgs(trailingOnly=TRUE), "K4")) {
   published <- readLines("tools/r_heldout.R")
   start <- match("  set.seed(20261118)", published) + 1L
   stopifnot(identical(examples[first:last], published[start:(start + last - first)]))
-  # skpr 1.9.2 (GPL-3), gen_design.Rd, Examples lines 217–230.
+  # skpr 1.9.2 (GPL-3), gen_design.Rd, Examples lines 217Ã¢â‚¬â€œ230.
   # https://github.com/cran/skpr/blob/1.9.2/man/gen_design.Rd#L217-L230
   set.seed(20261118)
 splitplotcandidateset = expand.grid(Altitude = c(-1, 1),

@@ -11,8 +11,20 @@ if (out/'run.py').exists():
     try:
         if installed:
             subprocess.run(['apt-get', 'install', '-y', 'r-base-core'], env=cpu_env, check=True, capture_output=True, text=True)
-        subprocess.run(['Rscript', '-e', 'install.packages(c("mixexp","AlgDesign"), repos="https://cloud.r-project.org"); stopifnot(requireNamespace("mixexp"),requireNamespace("AlgDesign"))'], env=cpu_env, check=True, capture_output=True, text=True)
-        subprocess.run(['Rscript', 'tools/r_heldout.R', 'M11'], cwd=root, env=cpu_env, check=True, capture_output=True, text=True)
+        expressions = [('AlgDesign', 'https://cloud.r-project.org', 'install.packages("AlgDesign", repos="https://cloud.r-project.org")'),
+            ('mixexp', 'https://cloud.r-project.org', 'install.packages("mixexp", repos="https://cloud.r-project.org")'),
+            ('mixexp', 'https://cran.r-project.org/src/contrib/Archive/mixexp/', 'base <- "https://cran.r-project.org/src/contrib/Archive/mixexp/"; html <- paste(readLines(base),collapse=" "); files <- unique(regmatches(html,gregexpr("mixexp_[0-9.]+[.]tar[.]gz",html))[[1]]); url <- paste0(base,files[order(package_version(sub("mixexp_(.*)[.]tar[.]gz","\\1",files)),decreasing=TRUE)[1]]); cat("Archive URL:",url,"\\n"); dest <- tempfile(fileext=".tar.gz"); download.file(url,dest); td <- tempfile(); dir.create(td); untar(dest,exdir=td); d <- read.dcf(file.path(td,"mixexp","DESCRIPTION")); deps <- paste(d[,intersect(c("Imports","Depends"),colnames(d))],collapse=","); deps <- trimws(gsub(" *[(][^)]*[)]","",strsplit(deps,",")[[1]])); install.packages(setdiff(deps,"R"),repos="https://cloud.r-project.org"); install.packages(dest,repos=NULL,type="source")'),
+            ('mixexp', 'https://jsl5-code.r-universe.dev', 'install.packages("mixexp", repos=c("https://jsl5-code.r-universe.dev","https://cloud.r-project.org"))')]
+        data['install_attempts'] = []; loaded = set()
+        for pkg, url, expression in expressions:
+            if pkg in loaded: continue
+            result = subprocess.run(['Rscript', '-e', expression+'; stopifnot(requireNamespace("'+pkg+'"))'], env=cpu_env, capture_output=True, text=True)
+            data['install_attempts'].append(dict(package=pkg, source=url, returncode=result.returncode, stdout=result.stdout, stderr=result.stderr))
+            if result.returncode == 0: loaded.add(pkg)
+            else: data['errors'][pkg] = result.stderr or result.stdout
+        for pkg in loaded: data['errors'].pop(pkg, None)
+        result = subprocess.run(['Rscript', 'tools/r_heldout.R', 'M11'], cwd=root, env=cpu_env, capture_output=True, text=True)
+        if result.stderr: data['errors']['M11'] = result.stderr
     except subprocess.CalledProcessError as exc:
         data['errors']['M11'] = exc.stderr or exc.stdout
     for name in ('xvert.csv', 'optfederov.csv', 'sessionInfo.txt'):

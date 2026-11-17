@@ -1,11 +1,15 @@
 """Score external mixture references independently in CPU float64."""
-import csv, json
+import csv, json, sys
 from fractions import Fraction as Q
 from itertools import product
 from pathlib import Path
 import torch
 from torchoed import optimal_design
 out = Path(__file__).resolve().parent
+runtime = json.loads((out/'runtime.json').read_text(encoding='utf-8'))
+if runtime['reference_errors']:
+    print(json.dumps({case: dict(verdict='NOT_RUN', errors=runtime['reference_errors']) for case in ('R1','R3','D')}, indent=2))
+    sys.exit(0)
 torch.set_num_threads(1)
 read = lambda name: list(csv.DictReader((out/name).open()))
 tensor = lambda rows: torch.tensor(rows, dtype=torch.float64)

@@ -27,6 +27,68 @@ def ff2n(k: int, *, device: torch.device | str | None = None, dtype: torch.dtype
                               max_elements=max_elements) - 1).to(dtype=dtype)
 
 
+def fractional_factorial(
+    m: int, generators: list[list[int] | tuple[int, ...]] | tuple[list[int] | tuple[int, ...], ...],
+    *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None,
+    max_elements: int = 1_000_000,
+) -> torch.Tensor:
+    """Append unsigned products of base columns to the signed factorial grid."""
+    if integer(m, "m") >= 63:
+        raise ValueError("signed grid exceeds int64 output limit")
+    if not isinstance(generators, (list, tuple)) or not generators:
+        raise ValueError("generators must be a nonempty list or tuple")
+    terms = []
+    for generator in generators:
+        if (not isinstance(generator, (list, tuple)) or not generator
+                or any(type(c) is not int or not 0 <= c < m for c in generator)):
+            raise ValueError("each generator must list distinct Python ints in range(m)")
+        term = set(generator)
+        if len(term) != len(generator):
+            raise ValueError("each generator must list distinct Python ints in range(m)")
+        terms.append(term)
+    budget((2**m, m + len(generators)), max_elements)
+    base = ff2n(m, dtype=dtype, device=device, max_elements=max_elements)
+    signs = base.new_tensor([[-1 if c in term else 1 for term in terms] for c in reversed(range(m))])
+    generated = base.new_ones((1, len(terms)))
+    # Prepend slower factors in ff2n order, with the -1 level first.
+    for sign in signs:
+        generated = torch.cat((generated * sign, generated))
+    return torch.cat((base, generated), dim=1)
+
+
+def fold_over(X: torch.Tensor, factor: int | None = None) -> torch.Tensor:
+    """Append rows with all factors reversed, or just the chosen factor."""
+    if not isinstance(X, torch.Tensor) or X.ndim != 2 or not X.is_floating_point():
+        raise ValueError("X must be a 2-D floating tensor")
+    if factor is None:
+        return torch.cat((X, -X))
+    if type(factor) is not int or not 0 <= factor < X.shape[1]:
+        raise ValueError("factor must be a Python int in range(X.shape[1])")
+    reversed_rows = X.clone()
+    reversed_rows[:, factor] = -X[:, factor]
+    return torch.cat((X, reversed_rows))
+
+
+def word_length_pattern(X: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
+    """Return the float64 generalized word-length pattern of a signed two-level design."""
+    if not isinstance(X, torch.Tensor) or X.ndim != 2 or not X.is_floating_point():
+        raise ValueError("X must be a 2-D floating tensor")
+    n, k = X.shape
+    if n == 0:
+        raise ValueError("the word-length pattern requires at least one row")
+    if k >= 63:
+        raise ValueError("word-length pattern exceeds int64 output limit")
+    budget((n, 2**k), max_elements)
+    if not ((X == -1) | (X == 1)).all():
+        raise ValueError("X must contain only -1 and +1")
+    products = X.new_ones((n, 1), dtype=torch.float64)
+    for c in range(k):
+        products = torch.cat((products, products * X[:, c:c + 1]), dim=1)
+    lengths = torch.tensor([s.bit_count() for s in range(2**k)], device=X.device)
+    squared_j = products.sum(dim=0).square()
+    return torch.bincount(lengths, weights=squared_j, minlength=k + 1)[1:] / n**2
+
+
 def definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor:
     """Return a three-level definitive screening design from a Paley conference matrix."""
     integer(k, "k")

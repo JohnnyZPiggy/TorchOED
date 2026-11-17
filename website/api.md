@@ -1,6 +1,6 @@
 # API reference
 
-All 22 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
+All 26 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
 
 ## Candidate construction
 
@@ -11,6 +11,18 @@ Return integer level-index rows, with the last factor varying fastest.
 `ff2n(k: int, *, device: torch.device | str | None = None, dtype: torch.dtype = torch.float64, max_elements: int = 1_000_000) -> torch.Tensor`
 
 Return the signed corners of a k-factor two-level factorial.
+
+`fractional_factorial(m: int, generators: list[list[int] | tuple[int, ...]] | tuple[list[int] | tuple[int, ...], ...], *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
+
+Return `ff2n(m)` with one unsigned product column per generator. Each generator lists distinct zero-based base columns.
+
+`fold_over(X: torch.Tensor, factor: int | None = None) -> torch.Tensor`
+
+Append a copy with every factor negated, or with only the selected zero-based factor negated. Preserve dtype and device.
+
+`word_length_pattern(X: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor`
+
+Return the generalized word-length pattern in float64 on the input device. The input has one or more rows and only −1 and +1 entries. Resolution is the first nonzero word length, or infinity when every entry is zero. The product table uses `X.shape[0] * 2**X.shape[1]` elements.
 
 `definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor`
 
@@ -86,7 +98,9 @@ Form the chosen rows' Gram matrix, optionally normalized by the number of observ
 
 Form information from nonnegative candidate weights summing to one.
 
-`design_diagnostics(F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None) -> dict[str, torch.Tensor | list[int]]` returns design-column correlations and VIFs, scaled prediction variances, and their sorted values for the fraction-of-design-space curve.
+`design_diagnostics(F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None, effect: float | torch.Tensor | None = None, alpha: float = 0.05, blocks: list[int] | tuple[int, ...] | None = None, whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0, alias: torch.Tensor | None = None) -> dict[str, torch.Tensor | list[int]]` returns design-column correlations and VIFs, scaled prediction variances, and their sorted values for the fraction-of-design-space curve.
+
+Pass omitted-term columns as `alias=G` to get `(F₁ᵀF₁)⁻¹F₁ᵀF₂` under the result key `"alias"`, with `F₁ = F[ids]` and `F₂ = G[ids]`. `G` must be two-dimensional and match the row count, dtype and device of `F`. The alias calculation requires an unstructured design with a full-rank fitted model.
 
 ## Criterion scores
 

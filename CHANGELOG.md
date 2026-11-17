@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- `fractional_factorial` constructs regular two-level designs from unsigned generators.
+- `fold_over` reverses all factors or a single factor in the added runs.
+- `word_length_pattern` computes the generalized word-length pattern for two-level designs, and `design_diagnostics(..., alias=…)` reports omitted-term aliasing for unstructured designs.
+
 ## [0.7.0] — 2026-11-16
 
 ### Added

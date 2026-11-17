@@ -84,7 +84,7 @@ In the 12-run design, each main effect is partially aliased with every two-facto
 
 ## Central composite and Box–Behnken
 
-Use a central composite design to fit a quadratic response surface. For blocked analysis, pass the cube and axial block sizes in row order. Box–Behnken designs use 3 to 5 factors.
+Use a central composite design to fit a quadratic response surface. For blocked analysis, pass the cube and axial block sizes in row order. Box–Behnken designs use 3 to 7 factors.
 
 ```python
 from torchoed import box_behnken, central_composite

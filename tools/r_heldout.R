@@ -204,6 +204,27 @@ if (identical(commandArgs(trailingOnly=TRUE), "H20")) {
             file.path(outdir, "H20-design.csv"), row.names=FALSE)
   quit(save="no")
 }
+case <- commandArgs(trailingOnly=TRUE)
+if (length(case) == 1L && case %in% c("H21", "H22", "H23")) {
+  outdir <- "reports/w10-heldout"
+  package <- if (case == "H21") "FrF2" else "rsm"
+  library(package, character.only=TRUE)
+  capture.output(print(sessionInfo()), print(packageVersion(package)),
+                 file=file.path(outdir, paste0(case, "-session.txt")))
+  if (case == "H21") {
+    design <- FrF2::FrF2(nruns=16, nfactors=7, randomize=FALSE)
+    capture.output(print(FrF2::generators(design)),
+                   file=file.path(outdir, "H21-session.txt"), append=TRUE)
+    rows <- data.frame(lapply(design, function(x) as.integer(as.character(x))))
+  } else {
+    design <- if (case == "H22") rsm::ccd(3, n0=c(4,2), alpha="orthogonal", randomize=FALSE)
+              else rsm::bbd(4, n0=3, block=FALSE, randomize=FALSE)
+    rows <- as.data.frame(design)[attr(design, "rsdes")$primary]
+    if (case == "H22") rows$block <- as.integer(design$Block)
+  }
+  write.csv(rows, file.path(outdir, paste0(case, ".csv")), row.names=FALSE)
+  quit(save="no")
+}
 library(AlgDesign)
 set.seed(20261112)
 if (identical(commandArgs(trailingOnly=TRUE), "H11")) {

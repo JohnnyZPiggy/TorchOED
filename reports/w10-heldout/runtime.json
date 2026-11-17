@@ -1,0 +1,7 @@
+{
+  "source_sha": "7ec0e24f6ec7cc37ac8c93c4c0b9106b5ef72d2a", "controller_pin": "4129001fffcb336f5203e4b0d6765d7a0ea3150c", "run_id": "w271-colab-20261117",
+  "started_utc": "2026-11-17T18:54:17Z", "controller_exit": 1, "controller_status": "FAIL", "controller_error": "ARTIFACT_SOURCE_OR_STATUS_FAILED",
+  "device_requested": "T4", "device_observed": {"nvidia_smi": [{"name": "Tesla T4", "memory_total_mib": 15360, "driver_version": "580.82.07"}], "torch": {"status": "AVAILABLE", "version": "2.14.1+cu130", "cuda": "13.0", "name": "Tesla T4", "capability": [7, 5]}}, "device_used": "CPU (CUDA hidden from R)",
+  "controller_artifact_sha256": {}, "downloaded_artifact_sha256": "b03dd1337df5036eafbf18aef1102b161268704e58068b9de961cdc43b103df2", "artifact_bytes": 4858,
+  "reference_errors": {"H21": "Loading required package: DoE.base\nLoading required package: grid\nLoading required package: conf.design\nRegistered S3 method overwritten by 'DoE.base':\n  method           from       \n  factorize.factor conf.design\n\nAttaching package: ‘DoE.base’\n\nThe following objects are masked from ‘package:stats’:\n\n    aov, lm\n\nThe following object is masked from ‘package:graphics’:\n\n    plot.design\n\nThe following object is masked from ‘package:base’:\n\n    lengths\n\nError: 'generators' is not an exported object from 'namespace:FrF2'\nExecution halted\n"}
+}

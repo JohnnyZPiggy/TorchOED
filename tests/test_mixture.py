@@ -1,11 +1,11 @@
 import math
 from fractions import Fraction
-from itertools import combinations
+from itertools import combinations, combinations_with_replacement
 
 import pytest
 import torch
 
-from torchoed import optimal_design, polynomial_features, simplex_lattice, simplex_centroid, mixture_vertices
+from torchoed import scheffe_features, optimal_design, polynomial_features, simplex_lattice, simplex_centroid, mixture_vertices
 
 
 def test_simplex_lattice_exact_rows():
@@ -67,3 +67,44 @@ def test_mixture_collapsed_and_empty():
     assert mixture_vertices([0,.1,.9], [1,1,1], face_dims=(1,2)).tolist() == [[0,.1,.9]]
     with pytest.raises(ValueError):
         mixture_vertices([.5]*3, [1]*3)
+
+
+@pytest.mark.parametrize("model,degree", [("linear",1), ("quadratic",2), ("special_cubic",3)])
+def test_scheffe_columns_and_grad(model, degree):
+    x = torch.rand(5,4,dtype=torch.float64, generator=torch.Generator().manual_seed(3))
+    x = (x/x.sum(1,keepdim=True)).requires_grad_()
+    expected = torch.stack([x[:,list(s)].prod(1) for d in range(1,degree+1)
+                            for s in combinations(range(4),d)],1)
+    actual = scheffe_features(x,model)
+    assert torch.equal(actual,expected)
+    actual.sum().backward()
+    assert x.grad is not None and torch.isfinite(x.grad).all()
+
+
+@pytest.mark.parametrize("n,fixed", [(6,()), (7,()), (8,(12,12))])
+def test_scheffe_exhaustive_optima(n, fixed):
+    f = scheffe_features(mixture_vertices([.2,.1,.1],[.6,.5,.6],face_dims=(1,2)))
+    b = f.T@f/len(f)
+    best = dict(D=-math.inf,A=math.inf,I=math.inf)
+    rows = list(combinations_with_replacement(range(len(f)),n-len(fixed)))
+    for offset in range(0,len(rows),2048):
+        ids = torch.tensor([list(fixed)+list(r) for r in rows[offset:offset+2048]])
+        x = f[ids]; m = x.mT@x
+        # Dense independent enumeration; singular multisets are infeasible.
+        sign, ld = torch.linalg.slogdet(m)
+        good = (sign > 0) & (torch.linalg.eigvalsh(m)[:,0] > 1e-12)
+        m,ld = m[good],ld[good]
+        if not len(m): continue
+        inv = torch.linalg.inv(m)
+        best['D'] = max(best['D'],float(ld.max()))
+        best['A'] = min(best['A'],float(inv.diagonal(dim1=-2,dim2=-1).sum(-1).min()))
+        best['I'] = min(best['I'],float((inv*b.T).sum((-2,-1)).min()))
+    for c in ('D',) if fixed else ('D','A','I'):
+        result = optimal_design(f,n,criterion=c,fixed_ids=list(fixed),
+                                generator=torch.Generator().manual_seed(0))
+        x = f[result['ids']]; m = x.T@x
+        value = float(torch.linalg.slogdet(m).logabsdet) if c=='D' else float(
+            torch.trace(torch.linalg.inv(m) if c=='A' else torch.linalg.inv(m)@b))
+        assert value == pytest.approx(best[c],rel=1e-9)
+        assert float(result['efficiency_lower_bound']) <= 1+1e-12
+        assert result['ids'][:len(fixed)].tolist() == list(fixed)

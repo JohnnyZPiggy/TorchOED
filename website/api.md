@@ -1,6 +1,6 @@
 # API reference
 
-All 30 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
+All 31 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
 
 ## Candidate construction
 
@@ -63,6 +63,10 @@ Draw a random Latin hypercube with one sample in each marginal stratum.
 Draw exactly n points using native CPU Sobol generation followed by the requested device transfer.
 
 ## Features and constraints
+
+`scheffe_features(X: torch.Tensor, model: str = "quadratic", *, max_elements: int = 1_000_000) -> torch.Tensor`
+
+Return linear, quadratic or special-cubic Scheffé columns: components, then pair products, then triple products, each lexicographically ordered. No intercept or squares. Preserves dtype, device and autograd; accepts finite floating 2-D tensors with at least two columns. Rows need not sum to one. See [mixture guide](industrial.md#mixture-designs).
 
 `polynomial_features(C: torch.Tensor, degree: int = 2, include_bias: bool = True, *, max_elements: int = 1_000_000) -> torch.Tensor`
 

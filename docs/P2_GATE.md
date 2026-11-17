@@ -508,3 +508,25 @@ All arithmetic in this section is exact. Each bound is converted to a `fractions
 ## 47. Not in this section
 
 Optimal mixture designs with Scheffé models and certificates (§45 candidates feed `optimal_design` in part 2), mixture-process variables, general linear constraints (non-box regions), ABCD designs, pseudo-components and GPU timing.
+
+## 48. Scheffé mixture models and optimal mixture designs (W11 D1, part 2)
+
+1. **Scheffé model columns (definition).** For mixture rows `X ∈ ℝ^{m×q}`, `q ≥ 2`, the Scheffé canonical polynomials have no intercept. Columns, in this order:
+   - `"linear"`: `x_0, …, x_{q−1}` (`p = q`).
+   - `"quadratic"`: the linear columns, then `x_i x_j` for `i < j` in lexicographic order of `(i, j)` (`p = q + C(q, 2)`).
+   - `"special_cubic"`: the quadratic columns, then `x_i x_j x_k` for `i < j < k` in lexicographic order (`p = q + C(q, 2) + C(q, 3)`).
+2. **Why no intercept (PROVED).** On `Σ x = 1` the intercept equals `Σ_i x_i`, and `x_i² = x_i − Σ_{j≠i} x_i x_j`. So adding an intercept or squares to the quadratic Scheffé columns makes the model matrix rank-deficient on any mixture candidate set, and the Scheffé quadratic spans the same functions on the simplex as the full quadratic.
+3. **Optimal mixture designs (decision; no new search).** An optimal mixture design is `optimal_design(scheffe_features(X, model), n, criterion=...)` on mixture candidates `X` (for example `simplex_lattice`, `simplex_centroid` or `mixture_vertices` rows, concatenated). The exchange engine, `fixed_ids` and the efficiency certificate apply unchanged, because they take any candidate feature matrix `F` with `rank F = p` and need no intercept. The I criterion keeps its existing candidate-average moment matrix `B = FᵀF/m`, the average over the candidate rows, not the integral over the region (decision; say so in the guide).
+4. **Well-posedness (OBSERVED; Architect, 2026-11-17, sandbox).** On the 13 §45.8 R1 candidates (6 vertices, 6 edge centroids, the overall centroid) the quadratic Scheffé matrix has exact `Fraction` rank 6. The special-cubic matrix of `simplex_centroid(3)` has rank 7.
+5. **Exhaustive oracle (PROVED exact).** For a candidate set of size `m` and `n` runs, the exact optimum over designs with replication is the best of the `C(m + n − 1, n)` multisets. For `m = 13`, `n = 6, 7` that is 18 564 and 50 388 multisets.
+6. **Cost.** `scheffe_features` is `O(m p)`. The search cost is that of `optimal_design` with `p` columns.
+
+## 49. API decision: `scheffe_features`
+
+- `scheffe_features(X, model="quadratic", *, max_elements=1_000_000) -> Tensor` returns the §48.1 columns in that order, with the dtype and device of `X`, and preserves autograd.
+- `X` is a floating 2-D tensor with at least 2 columns and only finite values; `model` is one of `"linear"`, `"quadratic"`, `"special_cubic"`; the output shape is checked against `max_elements` as `polynomial_features` does. Otherwise `ValueError` (`TypeError` if `X` is not a floating tensor). Rows are not checked for `Σ x = 1`: mixture-process crossing (part 3) may pass pseudo-components.
+- Exported from `torchoed`, with an API entry, a guide snippet (an optimal 10-run D design on `mixture_vertices` candidates with its certificate) and a CHANGELOG line.
+
+## 50. Not in this section
+
+Mixture-process variables (part 3), region-integrated I moments, non-box regions, ABCD, pseudo-components, Cox or log-contrast models, GPU timing.

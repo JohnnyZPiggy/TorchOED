@@ -61,6 +61,29 @@ def polynomial_features(C: torch.Tensor, degree: int = 2, include_bias: bool = T
     return torch.cat(parts, dim=-1)
 
 
+def scheffe_features(X: torch.Tensor, model: str = "quadratic", *, max_elements: int = 1_000_000) -> torch.Tensor:
+    """Canonical mixture columns without intercept or squares; preserves autograd."""
+    if not isinstance(X, torch.Tensor):
+        raise TypeError("X must be a floating torch.Tensor")
+    floating(X.dtype)
+    if X.ndim != 2 or X.shape[1] < 2:
+        raise ValueError("X must have shape (m,q), q>=2")
+    if model not in ("linear", "quadratic", "special_cubic"):
+        raise ValueError("model must be linear, quadratic or special_cubic")
+    q = X.shape[1]
+    p = q + (q*(q-1)//2 if model != "linear" else 0)
+    p += q*(q-1)*(q-2)//6 if model == "special_cubic" else 0
+    budget((len(X), p), max_elements)
+    if not bool(torch.isfinite(X).all()):
+        raise ValueError("X must contain only finite values")
+    columns = list(X.unbind(dim=1))
+    if model != "linear":
+        columns += [X[:,i]*X[:,j] for i in range(q) for j in range(i+1,q)]
+    if model == "special_cubic":
+        columns += [X[:,i]*X[:,j]*X[:,k] for i in range(q) for j in range(i+1,q) for k in range(j+1,q)]
+    return torch.stack(columns, dim=1)
+
+
 def effects_coding(codes: torch.Tensor, levels: int) -> torch.Tensor:
     integer(levels, 'levels', 2)
     if codes.dtype != torch.int64 or bool(((codes<0)|(codes>=levels)).any()):

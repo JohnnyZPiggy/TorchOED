@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `scheffe_features` and certified optimal mixture D/A/I designs on constrained candidates (#284).
+
 - Add `simplex_centroid` and exact box-constrained `mixture_vertices` with face centroids (#281).
 
 - Add `central_composite` and `box_behnken` for coded quadratic response-surface designs (#258).

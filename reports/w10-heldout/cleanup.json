@@ -1,50 +1,7 @@
 {
-  "source_sha": "7ec0e24f6ec7cc37ac8c93c4c0b9106b5ef72d2a",
-  "run_id": "w271-colab-20261117",
-  "created": true,
-  "cleanup_confirmed": true,
-  "commands": [
-    {
-      "operation": "usage",
-      "status": "PASS",
-      "exit_code": 0
-    },
-    {
-      "operation": "new",
-      "status": "PASS",
-      "exit_code": 0
-    },
-    {
-      "operation": "exec",
-      "status": "PASS",
-      "exit_code": 0
-    },
-    {
-      "operation": "exec",
-      "status": "PASS",
-      "exit_code": 0
-    },
-    {
-      "operation": "download",
-      "status": "PASS",
-      "exit_code": 0
-    },
-    {
-      "operation": "stop",
-      "status": "PASS",
-      "exit_code": 0
-    },
-    {
-      "operation": "usage",
-      "status": "PASS",
-      "exit_code": 0
-    }
-  ],
-  "assignments_before": 0,
-  "assignments_after": 0,
-  "balance_before": 51.17,
-  "balance_after": 51.1,
-  "fresh_usage_before": "Current balance: 51.17 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
-  "fresh_usage_after": "Current balance: 51.10 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
-  "confirmed_by_readback": true
+  "source_sha": "7ec0e24f6ec7cc37ac8c93c4c0b9106b5ef72d2a", "run_id": "w271-colab-20261117", "created": true, "cleanup_confirmed": true,
+  "commands": [{"operation": "usage", "status": "PASS", "exit_code": 0}, {"operation": "new", "status": "PASS", "exit_code": 0}, {"operation": "exec", "status": "PASS", "exit_code": 0}, {"operation": "exec", "status": "PASS", "exit_code": 0}, {"operation": "download", "status": "PASS", "exit_code": 0}, {"operation": "stop", "status": "PASS", "exit_code": 0}, {"operation": "usage", "status": "PASS", "exit_code": 0}],
+  "assignments_before": 0, "assignments_after": 0,
+  "balance_before": 51.17, "balance_after": 51.1,
+  "fresh_usage_before": "Current balance: 51.17 compute units\nUsage rate: 0.00/hr\nActive assignments: 0", "fresh_usage_after": "Current balance: 51.10 compute units\nUsage rate: 0.00/hr\nActive assignments: 0", "confirmed_by_readback": true
 }

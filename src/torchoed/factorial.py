@@ -27,6 +27,44 @@ def ff2n(k: int, *, device: torch.device | str | None = None, dtype: torch.dtype
                               max_elements=max_elements) - 1).to(dtype=dtype)
 
 
+# First entries of the frozen FrF2 catalogue (P2 gate §34).
+_FRF2_GENERATORS = {
+    (4, 8): (7,),
+    (5, 8): (3, 5),
+    (6, 8): (3, 5, 6),
+    (7, 8): (3, 5, 6, 7),
+    (5, 16): (15,),
+    (6, 16): (7, 11),
+    (7, 16): (7, 11, 13),
+    (8, 16): (7, 11, 13, 14),
+    (9, 16): (3, 5, 9, 14, 15),
+    (10, 16): (3, 5, 6, 9, 14, 15),
+    (11, 16): (3, 5, 6, 9, 10, 13, 14),
+    (6, 32): (31,),
+    (7, 32): (7, 27),
+    (8, 32): (7, 11, 29),
+    (9, 32): (7, 11, 19, 29),
+    (10, 32): (7, 11, 19, 29, 30),
+    (11, 32): (7, 11, 13, 19, 21, 25),
+    (7, 64): (63,),
+    (8, 64): (15, 51),
+    (9, 64): (7, 27, 45),
+    (10, 64): (7, 27, 43, 53),
+    (11, 64): (7, 11, 29, 45, 51),
+}
+
+
+def fractional_factorial_generators(k: int, runs: int) -> list[list[int]]:
+    """Return fresh zero-based generator lists for a covered FrF2 catalogue size."""
+    if type(k) is not int or type(runs) is not int or (k, runs) not in _FRF2_GENERATORS:
+        raise ValueError(
+            "(k, runs) must have k in 4–7 for 8 runs, 5–11 for 16 runs, "
+            "6–11 for 32 runs, or 7–11 for 64 runs, with Python ints"
+        )
+    m = runs.bit_length() - 1
+    return [[c for c in range(m) if g & (1 << c)] for g in _FRF2_GENERATORS[k, runs]]
+
+
 def fractional_factorial(
     m: int, generators: list[list[int] | tuple[int, ...]] | tuple[list[int] | tuple[int, ...], ...],
     *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None,

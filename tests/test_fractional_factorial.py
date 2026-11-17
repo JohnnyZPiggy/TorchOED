@@ -1,11 +1,16 @@
+import csv
 from fractions import Fraction
 from itertools import combinations
 from math import prod
+from pathlib import Path
 
 import pytest
 import torch
 
-from torchoed import design_diagnostics, ff2n, fold_over, fractional_factorial, word_length_pattern
+from torchoed import (
+    design_diagnostics, ff2n, fold_over, fractional_factorial,
+    fractional_factorial_generators, word_length_pattern,
+)
 
 
 CASES = (
@@ -85,3 +90,34 @@ def test_fold_over():
         assert torch.equal(folded[:len(X)], X)
         expected = [sum(len(w) == j and c not in w for w in words) for j in range(1, X.shape[1] + 1)]
         assert word_length_pattern(folded).tolist() == expected
+
+
+def test_fractional_factorial_generators_catalogue():
+    catalogue = Path(__file__).resolve().parents[1] / "reports/w10-rref/frf2_catlg.csv"
+    with catalogue.open(encoding="utf-8", newline="") as file:
+        for row in csv.DictReader(file):
+            k, runs = int(row["k"]), int(row["runs"])
+            m = runs.bit_length() - 1
+            generators = fractional_factorial_generators(k, runs)
+            expected = [
+                [c for c, bit in enumerate(reversed(format(int(g), "b"))) if bit == "1"]
+                for g in row["gen"].split(";")
+            ]
+            assert generators == expected, row["name"]
+            X = fractional_factorial(m, generators)
+            assert X.shape == (runs, k)
+            for t, columns in enumerate(generators):
+                assert torch.equal(X[:, m + t], X[:, columns].prod(dim=1)), row["name"]
+
+            wlp = [0] * k
+            for word in defining_words(m, generators):
+                wlp[len(word) - 1] += 1
+            stored = list(map(int, row["WLP"].split(";")))
+            compared = min(k, len(stored))
+            assert wlp[:compared] == stored[:compared] and not any(stored[k:]), row["name"]
+
+
+@pytest.mark.parametrize("k,runs", [(3, 8), (8, 8), (12, 16), (5, 12), (True, 16)])
+def test_fractional_factorial_generators_unsupported(k, runs):
+    with pytest.raises(ValueError):
+        fractional_factorial_generators(k, runs)

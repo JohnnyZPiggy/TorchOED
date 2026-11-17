@@ -1,6 +1,6 @@
 # API reference
 
-All 29 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
+All 30 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
 
 ## Candidate construction
 
@@ -15,6 +15,10 @@ Return the signed corners of a k-factor two-level factorial.
 `fractional_factorial(m: int, generators: list[list[int] | tuple[int, ...]] | tuple[list[int] | tuple[int, ...], ...], *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 
 Return `ff2n(m)` with one unsigned product column per generator. Each generator lists distinct zero-based base columns.
+
+`fractional_factorial_generators(k: int, runs: int) -> list[list[int]]`
+
+Return fresh lists of zero-based generator columns from the first FrF2 catalogue entry for the requested size. Supports k = 4–7 with 8 runs, 5–11 with 16 runs, 6–11 with 32 runs, and 7–11 with 64 runs. Other pairs raise `ValueError`. Use `ff2n` for a full factorial.
 
 `fold_over(X: torch.Tensor, factor: int | None = None) -> torch.Tensor`
 

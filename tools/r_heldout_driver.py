@@ -13,6 +13,9 @@ if (out/'run.py').exists():
         if installed:
             subprocess.run(['apt-get', 'install', '-y', 'r-base-core'],
                            env=cpu_env, check=True, capture_output=True, text=True)
+        subprocess.run(['apt-get', 'update'], env=cpu_env, check=True, capture_output=True, text=True)
+        subprocess.run(['apt-get', 'install', '-y', 'libgmp-dev'], env=cpu_env,
+                       check=True, capture_output=True, text=True)
         for package in ('FrF2', 'rsm'):
             expression = (f'install.packages("{package}", repos="https://cloud.r-project.org"); '
                           f'stopifnot(requireNamespace("{package}", quietly=TRUE))')

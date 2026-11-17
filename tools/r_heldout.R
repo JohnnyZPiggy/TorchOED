@@ -62,6 +62,13 @@ if (identical(commandArgs(trailingOnly=TRUE), "K6")) {
     })
     save_csv(combine(rows, "k"), "rsm_bbd.csv")
   })
+  attempt("rsm_bbd67.csv", function() {
+    rows <- lapply(c(6, 7), function(k) {
+      design <- rsm::bbd(k, n0=3, block=FALSE, randomize=FALSE)
+      data.frame(k, as.data.frame(design)[attr(design, "rsdes")$primary])
+    })
+    save_csv(combine(rows, "k"), "rsm_bbd67.csv")
+  })
   quit(save="no", status=as.integer(errors))
 }
 if (identical(commandArgs(trailingOnly=TRUE), "K4")) {

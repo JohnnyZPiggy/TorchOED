@@ -89,16 +89,66 @@ def word_length_pattern(X: torch.Tensor, *, max_elements: int = 1_000_000) -> to
     return torch.bincount(lengths, weights=squared_j, minlength=k + 1)[1:] / n**2
 
 
-def definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor:
-    """Return a three-level definitive screening design from a Paley conference matrix."""
-    integer(k, "k")
-    q = k if k % 2 else k - 1
-    if q not in (3, 5, 7, 11, 13, 17, 19, 23):
-        raise ValueError("k must be a supported Paley factor count")
-    residues = {i * i % q for i in range(1, q)}
+def _paley_conference(q: int) -> list[list[int]]:
+    fields = {9: (3, (1, 0)), 25: (5, (2, 0)), 27: (3, (1, 2, 0))}
+    if q in fields:
+        p, modulus = fields[q]
+        degree = len(modulus)
+        powers = [p**t for t in range(degree)]
+        digits = [tuple(i // power % p for power in powers) for i in range(q)]
+
+        def square(a: tuple[int, ...]) -> int:
+            coeffs = [0] * (2 * degree - 1)
+            for i, x in enumerate(a):
+                for j, y in enumerate(a):
+                    coeffs[i + j] += x * y
+            for i in range(len(coeffs) - 1, degree - 1, -1):
+                for j, coefficient in enumerate(modulus):
+                    coeffs[i - degree + j] -= coeffs[i] * coefficient
+            return sum((coeffs[t] % p) * power for t, power in enumerate(powers))
+
+        def subtract(j: int, i: int) -> int:
+            return sum(((a - b) % p) * power for a, b, power in zip(digits[j], digits[i], powers))
+
+        residues = {square(a) for a in digits[1:]}
+        minus_one = p - 1
+    else:
+        def subtract(j: int, i: int) -> int:
+            return (j - i) % q
+
+        residues = {i * i % q for i in range(1, q)}
+        minus_one = q - 1
     chi = [0] + [1 if i in residues else -1 for i in range(1, q)]
-    rows = [[0] + [1] * (k - 1)]
-    rows += [[chi[-1]] + [chi[(j - i) % q] for j in range(k - 1)] for i in range(q)]
+    return [[0] + [1] * q] + [
+        [chi[minus_one]] + [chi[subtract(j, i)] for j in range(q)] for i in range(q)
+    ]
+
+
+def _double_skew(rows: list[list[int]]) -> list[list[int]]:
+    upper = [row + [x + (i == j) for j, x in enumerate(row)] for i, row in enumerate(rows)]
+    lower = [
+        [x - (i == j) for j, x in enumerate(row)] + [-x for x in row]
+        for i, row in enumerate(rows)
+    ]
+    return upper + lower
+
+
+def definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor:
+    """Return a three-level design from a Paley or doubled-Paley conference matrix.
+
+    Supports 3-20 and 23-30 factors.
+    """
+    integer(k, "k")
+    c = k + k % 2
+    if c == 22:
+        raise ValueError("no order-22 conference matrix exists")
+    if c == 16:
+        conference = _double_skew(_paley_conference(7))
+    elif c in (4, 6, 8, 10, 12, 14, 18, 20, 24, 26, 28, 30):
+        conference = _paley_conference(c - 1)
+    else:
+        raise ValueError("k must be a supported Paley factor count")
+    rows = [row[:k] for row in conference]
     return torch.tensor(rows + [[-x for x in row] for row in rows] + [[0] * k],
                         dtype=dtype, device=device)
 

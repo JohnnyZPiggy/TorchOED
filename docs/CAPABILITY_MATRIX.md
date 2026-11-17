@@ -15,7 +15,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | blocking `blocks=` | ✅ D A I (#228) | ✅ fixed_ids fill leading positions (#238) | ✅ | ✅ dual efficiency floor vs unblocked approximate optimum (#236) | ✅ M_B SPV/VIF/power (#234) | ◐ CPU float64 only | ✅ AlgDesign `optBlock` (H11) | ✅ | ✅ H11 | **W9** |
 | split-plot `whole_plots=` | ✅ D A I (#232) | ✅ fixed_ids fill leading positions, plot label inherited (#238) | ✅ | ✅ dual efficiency floor vs OLS approximate optimum, conservative (#236) | ✅ GLS SPV/VIF; power exact (balanced orthogonal) else containment-df approx. (#234) | ◐ CPU float64 only | ✅ skpr `gen_design` (`w8-skpr`); I NR | ✅ | ✅ H14 | **W9** |
 | blocks + split-plot together | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | W9 if the gate covers it, else W11 |
-| definitive screening | N/A constructor | N/A | N/A | N/A (exact orthogonality proved) | ✅ | ✅ | ◐ Paley orders only (q prime); other k raise | ✅ | ✅ H12 | W10 (non-Paley conference matrices) |
+| definitive screening | N/A constructor | N/A | N/A | N/A (exact orthogonality proved) | ✅ | ✅ | ◐ k 3–20, 23–30 (#248); k = 21, 22 impossible (no order-22 conference matrix); published DSD match NR → evidence lane | ✅ | ✅ H12 | W10 |
 | fractional factorial by generators / resolution, fold-over, alias matrix | N/A constructor | N/A constructor | N/A fixed two-level design | N/A constructor | ✅ unstructured alias matrix ([#244](https://github.com/JohnnyZPiggy/TorchOED/issues/244)) | ✅ CPU float64 with exact WLP oracle ([P2 gate §28](P2_GATE.md#28-regular-fractional-factorials-fold-over-word-length-pattern-and-alias-matrix-w10-c1-part-1)) | ❌ `(k, runs)` table path and FrF2 → W10 C1 part 2 | ✅ [API](../website/api.md#candidate-construction), [guide](../website/industrial.md#fractional-factorials-and-fold-over) | ❌ H21 at week end | **W10** |
 | Plackett–Burman, central composite (incl. blocked), Box–Behnken | ❌ | N/A | N/A | N/A | ❌ | ❌ | ❌ rsm / published tables | ❌ | ❌ | **W10** |
 | mixtures: simplex lattice | N/A constructor | N/A | N/A | N/A | ✅ | ✅ | ❌ | ✅ | ✅ H15 | done |
@@ -70,7 +70,7 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | Sample size explorer (power vs n) | Sample Size Explorers | `pwr`, skpr | ◐ power at fixed n | batched over n | W15 |
 | Compare Designs (side-by-side efficiencies, power, FDS) | Compare Designs | — | ❌ | — | W15 |
 | "If Possible" terms, Bayesian D/I (DuMouchel–Jones) | Custom Design | — | ❌ | certificate | W14 |
-| Definitive screening | Definitive Screening | `daewr` DSD | ◐ Paley orders only | exact orthogonality proof | W10 |
+| Definitive screening | Definitive Screening | `daewr` DSD | ◐ k 3–20, 23–30 (#248); published DSD match open | exact orthogonality proof | W10 |
 | Fractional factorial by generators / resolution, minimum aberration, blocked FF, fold-over | Screening | FrF2, DoE.base | ◐ generators, fold-over and WLP ([#244](https://github.com/JohnnyZPiggy/TorchOED/issues/244)); `(k, runs)` table path and FrF2 → W10 C1 part 2 | — | W10 (MA, blocked FF → W15) |
 | Plackett–Burman | Screening | FrF2 `pb` | ❌ | — | W10 |
 | Group-orthogonal supersaturated designs | Screening | — | ❌ | — | backlog |

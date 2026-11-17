@@ -71,7 +71,7 @@ assert L[ids].unique(dim=0).shape[0] == 8
 
 ## Definitive screening
 
-Pass a supported factor count to `definitive_screening(k)`: 3–8, 11–14, 17–20, or 23–24. The returned design uses three levels (−1, 0, +1) and needs no search. Here six factors take 13 runs.
+Pass a supported factor count to `definitive_screening(k)`: 3–20 or 23–30; `k = 21` and `22` raise because no conference matrix of order 22 exists. The returned design uses three levels (−1, 0, +1) and needs no search. Here six factors take 13 runs.
 
 ```python
 import torch

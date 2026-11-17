@@ -1,35 +1,88 @@
 {
-  "run_id": "w247-colab-20261117",
   "source_sha": "5809a8d328ce670b84a1561a64314a2872096075",
-  "created": false,
-  "cleanup_confirmed": true,
-  "commands": [
+  "attempts": [
     {
-      "operation": "usage",
-      "status": "PASS",
-      "exit_code": 0
+      "run_id": "w247-colab-20261117",
+      "created": false,
+      "cleanup_confirmed": true,
+      "commands": [
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "new",
+          "status": "TIMEOUT",
+          "exit_code": -1
+        },
+        {
+          "operation": "stop",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        }
+      ],
+      "assignments_before": 0,
+      "assignments_after": 0,
+      "balance_before": 51.64,
+      "balance_after": 51.64,
+      "fresh_usage_before": "Current balance: 51.64 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
+      "fresh_usage_after": "Current balance: 51.64 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
+      "confirmed_by_readback": true
     },
     {
-      "operation": "new",
-      "status": "TIMEOUT",
-      "exit_code": -1
-    },
-    {
-      "operation": "stop",
-      "status": "PASS",
-      "exit_code": 0
-    },
-    {
-      "operation": "usage",
-      "status": "PASS",
-      "exit_code": 0
+      "run_id": "w247-colab-retry1-20261117",
+      "created": true,
+      "cleanup_confirmed": true,
+      "commands": [
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "new",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "exec",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "exec",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "download",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "stop",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        }
+      ],
+      "assignments_before": 0,
+      "assignments_after": 0,
+      "balance_before": 51.48,
+      "balance_after": 51.41,
+      "fresh_usage_before": "Current balance: 51.48 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
+      "fresh_usage_after": "Current balance: 51.41 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
+      "confirmed_by_readback": true
     }
-  ],
-  "assignments_before": 0,
-  "assignments_after": 0,
-  "balance_before": 51.64,
-  "balance_after": 51.64,
-  "fresh_usage_before": "Current balance: 51.64 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
-  "fresh_usage_after": "Current balance: 51.64 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
-  "confirmed_by_readback": true
+  ]
 }

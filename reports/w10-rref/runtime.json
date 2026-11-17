@@ -1,13 +1,55 @@
 {
   "source_sha": "5809a8d328ce670b84a1561a64314a2872096075",
   "controller_pin": "4129001fffcb336f5203e4b0d6765d7a0ea3150c",
-  "device_requested": "T4",
-  "device_observed": null,
-  "device_used": null,
-  "controller_status": "FAIL",
-  "controller_exit": 1,
-  "controller_error": "ALLOCATION_FAILED",
-  "artifact_sha256": {},
-  "artifact_bytes": null,
-  "reference_errors": {}
+  "attempts": [
+    {
+      "run_id": "w247-colab-20261117",
+      "started_utc": "2026-11-17T11:51:26Z",
+      "device_requested": "T4",
+      "device_observed": null,
+      "device_used": null,
+      "controller_status": "FAIL",
+      "controller_exit": 1,
+      "controller_error": "ALLOCATION_FAILED",
+      "artifact_sha256": {},
+      "artifact_bytes": null,
+      "reference_errors": {}
+    },
+    {
+      "run_id": "w247-colab-retry1-20261117",
+      "started_utc": "2026-11-17T12:49:19Z",
+      "device_requested": "T4",
+      "device_observed": {
+        "nvidia_smi": [
+          {
+            "name": "Tesla T4",
+            "memory_total_mib": 15360,
+            "driver_version": "580.82.07"
+          }
+        ],
+        "torch": {
+          "status": "AVAILABLE",
+          "version": "2.14.1+cu130",
+          "cuda": "13.0",
+          "name": "Tesla T4",
+          "capability": [
+            7,
+            5
+          ]
+        }
+      },
+      "device_used": "CPU (CUDA hidden from R)",
+      "controller_status": "PASS",
+      "controller_exit": 0,
+      "controller_error": null,
+      "artifact_sha256": {
+        "r-heldout.json": "dc8541072f0a7101cac313c7adb3f680e037561e273b5c52e6aa9a4347181e4d"
+      },
+      "artifact_bytes": 23800,
+      "reference_errors": {
+        "FrF2": "configure: error: Header file gmp.h not found; maybe use --with-gmp-include=INCLUDE_PATH\nERROR: configuration failed for package ‘gmp’\nERROR: dependency ‘gmp’ is not available for package ‘partitions’\nERROR: dependency ‘partitions’ is not available for package ‘DoE.base’\nERROR: dependency ‘DoE.base’ is not available for package ‘FrF2’\nError: requireNamespace(\"FrF2\", quietly = TRUE) is not TRUE\nExecution halted",
+        "K6": "frf2_catlg.csv: there is no package called ‘FrF2’\nfrf2_pb.csv: there is no package called ‘FrF2’\n"
+      }
+    }
+  ]
 }

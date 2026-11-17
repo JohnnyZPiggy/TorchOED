@@ -1,0 +1,13 @@
+{
+  "source_sha": "5809a8d328ce670b84a1561a64314a2872096075",
+  "controller_pin": "4129001fffcb336f5203e4b0d6765d7a0ea3150c",
+  "device_requested": "T4",
+  "device_observed": null,
+  "device_used": null,
+  "controller_status": "FAIL",
+  "controller_exit": 1,
+  "controller_error": "ALLOCATION_FAILED",
+  "artifact_sha256": {},
+  "artifact_bytes": null,
+  "reference_errors": {}
+}

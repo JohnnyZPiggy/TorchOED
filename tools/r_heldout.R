@@ -1,3 +1,24 @@
+if (identical(commandArgs(trailingOnly=TRUE), "K7")) {
+  library(daewr)
+  outdir <- "reports/w10-dsd"
+  rd <- tools::Rd_db("daewr")[["DefScreen.Rd"]]
+  usage <- Filter(function(x) identical(attr(x, "Rd_tag"), "\\usage"), rd)[[1L]]
+  calls <- lapply(c(6L, 7L), function(k) {
+    args <- list(m=k, c=0, center=0)
+    if ("randomize" %in% names(formals(daewr::DefScreen))) args$randomize <- FALSE
+    as.call(c(list(quote(daewr::DefScreen)), args))
+  })
+  capture.output(print(sessionInfo()), print(packageVersion("daewr")),
+                 cat(trimws(paste(unlist(usage), collapse="")), "\n"),
+                 for (call in calls) cat(deparse(call), "\n"),
+                 if (!"randomize" %in% names(formals(daewr::DefScreen)))
+                   cat("No randomize argument; rows used as returned.\n"),
+                 file=file.path(outdir, "sessionInfo.txt"))
+  rows <- lapply(calls, function(call) data.frame(k=call$m, lapply(eval(call), as.integer)))
+  rows[[1L]]$G <- NA_integer_
+  write.csv(do.call(rbind, rows), file.path(outdir, "daewr_dsd.csv"), row.names=FALSE, na="")
+  quit(save="no")
+}
 if (identical(commandArgs(trailingOnly=TRUE), "K6")) {
   outdir <- "reports/w10-rref"
   save_csv <- function(rows, file) write.csv(rows, file.path(outdir, file),

@@ -1,6 +1,4 @@
 """Seeded feasible random starts followed by CPU D-optimal VND restarts."""
-from itertools import accumulate
-
 import torch
 
 from ._validation import integer
@@ -846,7 +844,7 @@ def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, genera
     labels = hard.unique()
     fixed, _ = (None, None) if fixed_ids is None else _fixed_pool(fixed_ids, m, n)
     n_fixed = 0 if fixed is None else len(fixed)
-    fixed_plots = fixed.tensor_split(list(accumulate(sizes))[:-1]) if n_fixed else ()
+    fixed_plots = fixed.tensor_split(torch.tensor(sizes).cumsum(0)[:-1]) if n_fixed else ()
     if any(hard[prefix].unique().numel() > 1 for prefix in fixed_plots):
         raise ValueError("fixed_ids within a whole plot must share one hard label")
     counts = F.new_tensor(sizes)

@@ -27,9 +27,7 @@ def _finite_output(M):
     return M
 
 
-def exact_information(F: torch.Tensor, ids: torch.Tensor, *, normalized: bool = False, allow_repeats: bool = False,
-                      max_elements: int = 1_000_000) -> torch.Tensor:
-    """Raw X.T@X, optionally divided by event count; never implicit repeats."""
+def _exact_rows(F, ids, normalized=False, allow_repeats=False, max_elements=1_000_000):
     _features(F, max_elements)
     if type(normalized) is not bool or type(allow_repeats) is not bool:
         raise TypeError("normalized and allow_repeats must be bool")
@@ -48,11 +46,16 @@ def exact_information(F: torch.Tensor, ids: torch.Tensor, *, normalized: bool = 
         ordered = ids.sort(dim=-1).values
         _reject((ordered[..., 1:] == ordered[..., :-1]).any(dim=-1), "duplicate ID")
     if F.ndim == 2:
-        X = F[ids]
-    else:
-        X = torch.gather(F, 1, ids[..., None].expand(-1, -1, F.shape[-1]))
+        return F[ids]
+    return torch.gather(F, 1, ids[..., None].expand(-1, -1, F.shape[-1]))
+
+
+def exact_information(F: torch.Tensor, ids: torch.Tensor, *, normalized: bool = False, allow_repeats: bool = False,
+                      max_elements: int = 1_000_000) -> torch.Tensor:
+    """Raw X.T@X, optionally divided by event count; never implicit repeats."""
+    X = _exact_rows(F, ids, normalized, allow_repeats, max_elements)
     M = X.mT @ X
-    return _finite_output(M / n if normalized else M)
+    return _finite_output(M / X.shape[-2] if normalized else M)
 
 
 def weighted_information(F: torch.Tensor, w: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
@@ -101,26 +104,79 @@ def _coefficient_power(noncentrality: torch.Tensor, df: int, alpha: float) -> to
 def design_diagnostics(
     F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None,
     effect: float | torch.Tensor | None = None, alpha: float = 0.05,
+    blocks: list[int] | tuple[int, ...] | None = None,
+    whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0,
 ) -> dict[str, torch.Tensor | list[int]]:
     """Return design correlations, VIFs, scaled prediction variances and their sorted values.
 
-    With `effect`, return `power` at level `alpha` for two-sided t-tests (σ = 1, ν = n − p).
+    Set either `blocks` or `whole_plots` to sizes of contiguous groups in `ids`.
+    Blocks absorb the intercept and center prediction contrasts over `region`.
+    Whole plots use GLS with positive variance ratio `eta`.
+
+    With `effect`, return `power` at level `alpha` for two-sided t-tests with
+    unit error variance. Structured results also include the per-coefficient
+    residual degrees of freedom in `df`. Split-plot power is exact only in
+    the P2_GATE section 19.5 case, otherwise approximate (containment rule).
     """
-    M = exact_information(F, ids)
+    structured = blocks is not None or whole_plots is not None
+    if structured:
+        S = _exact_rows(F, ids)
+    else:
+        M = exact_information(F, ids)
     if effect is not None:
         if type(alpha) is not float or not 0.001 <= alpha <= 0.5:
             raise ValueError("alpha must be a Python float in [0.001, 0.5]")
-        if ids.shape[-1] <= F.shape[-1]:
+        if not structured and ids.shape[-1] <= F.shape[-1]:
             raise ValueError("power requires n > p")
-    L = torch.linalg.cholesky(M)
-    S = F[ids]
+    if not structured:
+        L = torch.linalg.cholesky(M)
+        S = F[ids]
     n, p = S.shape
-    columns = (S != S[0]).any(dim=0).nonzero().flatten().tolist()
-    X = S[:, columns]
-    X = torch.nn.functional.normalize(X - X.mean(dim=0), dim=0, eps=0)
-    correlation = X.mT @ X if len(columns) != 1 else X.new_ones((1, 1))
-    vif = torch.cholesky_inverse(torch.linalg.cholesky(correlation)).diagonal()
     R = F if region is None else region
+    df = None
+    if structured:
+        # Search imports exact_information from this module.
+        from .d_optimal_design import _block_information, _split_information, _valid_plot_sizes
+
+        if blocks is not None and whole_plots is not None:
+            raise ValueError("blocks and whole_plots are mutually exclusive")
+        sizes = blocks if blocks is not None else whole_plots
+        if not _valid_plot_sizes(sizes, n):
+            raise ValueError("group sizes must be positive Python ints summing to len(ids)")
+        if blocks is not None:
+            M, _ = _block_information(F, ids, blocks)
+            C = M
+            R = R - R.mean(0)
+            if effect is not None:
+                df = ids.new_full((p,), n - len(blocks) - p)
+        else:
+            if type(eta) not in (int, float) or not 0 < eta < float("inf"):
+                raise ValueError("eta must be a finite positive Python int or float")
+            counts = F.new_tensor(whole_plots)
+            inverse_scale = ((counts + 1 / eta).reciprocal() / eta if eta >= 1
+                             else (1 + eta * counts).reciprocal())
+            M, sums = _split_information(F, ids, whole_plots, inverse_scale / counts)
+            weighted_sum = inverse_scale @ sums
+            C = M - torch.outer(weighted_sum, weighted_sum / (inverse_scale @ counts))
+            if effect is not None:
+                whole = torch.stack([(plot == plot[0]).all(0) for plot in S.split(whole_plots)]).all(0)
+                whole_count = whole.sum()
+                df = torch.where(whole, len(whole_plots) - whole_count,
+                                 n - len(whole_plots) - (p - whole_count))
+        if df is not None and (df < 1).any():
+            raise ValueError("structured power requires positive residual degrees of freedom")
+        L = torch.linalg.cholesky(M)
+
+    columns = (S != S[0]).any(dim=0).nonzero().flatten().tolist()
+    if structured:
+        C = C[columns][:, columns]
+        scale = C.diagonal().rsqrt()
+        correlation = scale[:, None] * C * scale
+    else:
+        X = S[:, columns]
+        X = torch.nn.functional.normalize(X - X.mean(dim=0), dim=0, eps=0)
+        correlation = X.mT @ X if len(columns) != 1 else X.new_ones((1, 1))
+    vif = torch.cholesky_inverse(torch.linalg.cholesky(correlation)).diagonal()
     solved = torch.cholesky_solve(R.mT, L)
     spv = n * torch.einsum("ij,ji->i", R, solved)
     result: dict[str, torch.Tensor | list[int]] = {
@@ -129,5 +185,12 @@ def design_diagnostics(
     if effect is not None:
         delta = torch.as_tensor(effect, dtype=torch.float64, device=F.device).broadcast_to((p,))
         noncentrality = delta.square() / torch.cholesky_inverse(L).diagonal()
-        result["power"] = _coefficient_power(noncentrality, n - p, alpha).to(F.dtype)
+        if df is None:
+            result["power"] = _coefficient_power(noncentrality, n - p, alpha).to(F.dtype)
+        else:
+            power = F.new_empty(p)
+            for dof in df.unique().tolist():
+                mask = df == dof
+                power[mask] = _coefficient_power(noncentrality[mask], dof, alpha).to(F.dtype)
+            result.update(power=power, df=df)
     return result

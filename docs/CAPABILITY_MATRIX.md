@@ -12,8 +12,8 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 ## P2 — industrial DOE (completion weeks 9–11)
 | Capability | Crit | Aug | Con | Cert | Diag | Dev | Ext | Docs | HO | Week |
 |---|---|---|---|---|---|---|---|---|---|---|
-| blocking `blocks=` | ✅ D A I (#228) | ❌ | ✅ | ◐ local certificate only, no efficiency floor | ❌ diagnostics ignore blocks | ◐ CPU float64 only | ✅ AlgDesign `optBlock` (H11) | ✅ | ✅ H11 | **W9** |
-| split-plot `whole_plots=` | ✅ D A I (#232) | ❌ | ✅ | ◐ local certificate only | ❌ no GLS SPV / power | ◐ CPU float64 only | ✅ skpr `gen_design` (`w8-skpr`) | ✅ | ✅ H14 | **W9** |
+| blocking `blocks=` | ✅ D A I (#228) | ❌ | ✅ | ◐ local certificate only, no efficiency floor | ✅ M_B SPV/VIF/power (#234) | ◐ CPU float64 only | ✅ AlgDesign `optBlock` (H11) | ✅ | ✅ H11 | **W9** |
+| split-plot `whole_plots=` | ✅ D A I (#232) | ❌ | ✅ | ◐ local certificate only | ✅ GLS SPV/VIF; power exact (balanced orthogonal) else containment-df approx. (#234) | ◐ CPU float64 only | ✅ skpr `gen_design` (`w8-skpr`) | ✅ | ✅ H14 | **W9** |
 | blocks + split-plot together | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | W9 if the gate covers it, else W11 |
 | definitive screening | N/A constructor | N/A | N/A | N/A (exact orthogonality proved) | ✅ | ✅ | ◐ Paley orders only (q prime); other k raise | ✅ | ✅ H12 | W10 (non-Paley conference matrices) |
 | fractional factorial by generators / resolution, fold-over, alias matrix | ❌ | ❌ | ❌ | N/A | ❌ alias diagnostics | ❌ | ❌ FrF2 | ❌ | ❌ | **W10** |
@@ -23,7 +23,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | mixture-process variables | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **W11** |
 | covariates (fixed per-run values) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **W11** |
 | alias-aware and compound (e.g. D+I) criteria | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ JMP alias-optimal | ❌ | ❌ | **W11** |
-| power | ◐ per-coefficient t-test, OLS, σ = 1 | N/A | N/A | N/A | ◐ no blocked/split-plot (GLS) power, no effect-group F-test | ✅ | ✅ SciPy (H16) | ✅ | ✅ H16 | **W9** (structured), W11 (F-test) |
+| power | ◐ per-coefficient t-test, OLS, σ = 1 | N/A | N/A | N/A | ◐ blocked + split-plot power ✅ (#234); no effect-group F-test | ✅ | ✅ SciPy (H16) | ✅ | ✅ H16 | **W9** (structured), W11 (F-test) |
 | space filling: random LHS, Sobol | N/A | N/A | N/A | N/A | N/A | ✅ | ✅ | ✅ | N/A | done; maximin/MaxPro LHS → backlog |
 
 ## P3 — torch-native frontier (weeks 17–19)

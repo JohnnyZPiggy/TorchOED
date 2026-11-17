@@ -454,3 +454,28 @@ This section extends §28. The design, generator convention and word-length patt
 ## 36. Not in this section
 
 Catalogue entries other than `.1`, `k > 11`, 128 or more runs, blocked fractional factorials, minimum-aberration search, signed generators, choosing a design by resolution alone, clear-effects or estimation-capacity criteria, and GPU timing.
+
+## 43. Box–Behnken designs for k = 6, 7 (W10 C2, part 3)
+
+This extends §40.5–§40.6 and §41. All entries are exact integers in `{−1, 0, 1}`.
+
+1. **Block designs (decision; OBSERVED source).** The three-factor blocks are taken from the rsm 2.10.6 output `bbd(k, n0=3, block=FALSE, randomize=FALSE)` frozen in `reports/w10-rref/rsm_bbd67.csv` (#257). Factors are 0-based, and the blocks are listed in rsm row order:
+   - `k = 6`: `(0,1,3), (1,2,4), (2,3,5), (0,3,4), (1,4,5), (0,2,5)`.
+   - `k = 7`: `(3,4,5), (0,5,6), (1,4,6), (0,1,3), (2,3,6), (0,2,4), (1,2,5)`.
+   TorchOED holds them as a fixed Python literal. Nothing is read from the file at run time.
+2. **Rows (decision).** For each block `(a, b, c)` with `a < b < c`, in the item-1 order, there are 8 rows for `r = 0 … 7`. In each, `x_a = 2·bit_0(r) − 1`, `x_b = 2·bit_1(r) − 1`, `x_c = 2·bit_2(r) − 1`, and all other coordinates are 0. Then come `n_0` center rows. That gives `8·6 + n_0 = 48 + n_0` rows for `k = 6` and `8·7 + n_0 = 56 + n_0` for `k = 7`.
+3. **Agreement with rsm (OBSERVED; Architect, 2026-11-17, sandbox, Python ints).** With `n_0 = 3`, the item-2 rows equal `rsm_bbd67.csv` row-for-row: 51 × 6 and 59 × 7.
+4. **Moments (PROVED).**
+   - Rotatability here means the second-order moment conditions of §40.3. All moments of order ≤ 4 with an odd exponent are 0, and `Σ x_i⁴ = 3 Σ x_i² x_j²` for all `i ≠ j`.
+   - Each block's `2³` factorial is invariant under flipping any single coordinate, and every coordinate outside the block is 0. So every moment of order ≤ 4 in which some exponent is odd is 0.
+   - Each factor lies in exactly 3 blocks for both `k` (a count over the item-1 literals). So `Σ x_i² = Σ x_i⁴ = 24`.
+   - For `i ≠ j`, `Σ x_i² x_j² = 8 λ_{ij}`, where `λ_{ij}` is the number of blocks that contain both `i` and `j`.
+   - For `k = 7`, the blocks are the lines of a Fano plane, so every pair lies in exactly one block (`λ = 1`). Then `Σ x_i⁴ = 24 = 3 · 8 = 3 Σ x_i² x_j²`, and the design is rotatable for every `n_0`.
+   - For `k = 6`, `λ_{ij} ∈ {1, 2}`: three pairs, `{0,3}`, `{1,4}` and `{2,5}`, lie in two blocks. Equality fails for those pairs, so the design is not rotatable for any `n_0`.
+5. **Cost.** At most `56 + n_0` rows of `k ≤ 7` entries.
+
+## 44. API amendment: `box_behnken`
+
+- `box_behnken(k, *, center=3, dtype=torch.float64, device=None)` now accepts `k ∈ {3, 4, 5, 6, 7}`.
+- For `k = 3, 4, 5` the output is unchanged (§40.5). For `k = 6, 7` it is the §43.2 rows.
+- Any other `k` raises `ValueError`. Blocked Box–Behnken designs, randomization and `k > 7` stay out of scope.

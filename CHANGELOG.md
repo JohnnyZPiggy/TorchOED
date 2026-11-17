@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add `central_composite` and `box_behnken` for coded quadratic response-surface designs (#258).
+- Extend `box_behnken` to 6 and 7 factors using frozen rsm designs (#262).
 - Add `plackett_burman` for balanced two-level screening designs with 4 to 48 runs in multiples of four (#255).
 - Extend `definitive_screening` to 3–20 and 23–30 factors using Paley and doubled-Paley conference matrices (#248).
 - `fractional_factorial` constructs regular two-level designs from unsigned generators.

@@ -42,7 +42,7 @@ Return the coded cube followed by axial rows, with the specified center counts i
 
 `box_behnken(k: int, *, center: int = 3, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor`
 
-Return the coded two-factor pair rows and then center rows for 3, 4 or 5 factors.
+Return coded Box–Behnken rows followed by center rows for 3 to 7 factors. Uses two-factor pairs for 3 to 5 factors and three-factor blocks for 6 or 7.
 
 `simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 

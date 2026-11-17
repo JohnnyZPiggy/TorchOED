@@ -98,7 +98,7 @@ def test_blocked_linear_scores_match_dense_projection(criterion):
                                                  rel=1e-10, abs=0)
     assert result["blocks"] == blocks and result["criterion"] == criterion
     assert result["stop_reason"] == result["certificate"] == "LOCAL_BLOCK_EXCHANGE"
-    assert result["efficiency_lower_bound"] is None
+    assert 0 < result["efficiency_lower_bound"] <= 1 + 1e-12
 
 
 def test_blocked_linear_objectives_match_fraction_optima():
@@ -219,7 +219,7 @@ def test_split_plot_linear_scores_match_dense_gls(criterion):
     assert result["objective"] == pytest.approx(expected, rel=1e-10, abs=0)
     assert result["criterion"] == criterion
     assert result["stop_reason"] == result["certificate"] == "LOCAL_SPLIT_PLOT_EXCHANGE"
-    assert result["efficiency_lower_bound"] is None
+    assert 0 < result["efficiency_lower_bound"] <= 1 + 1e-12
 
 
 @pytest.mark.parametrize("size,eta,total,singular,a,i", [

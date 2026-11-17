@@ -204,3 +204,47 @@ Coding: `X = full_factorial([3, 3, 3]).double() − 1` (codes −1, 0, 1; column
 ## 21. Not in this section
 
 Kenward–Roger or Satterthwaite degrees of freedom, unknown `η`, random block effects, blocks together with whole plots, joint F-test power, structure-aware efficiency floors (W9 B3), GPU or float32 structured diagnostics.
+
+## 22. Efficiency floors for blocked and split-plot designs (W9 B3, part 1)
+
+**Chief Architect · 2026-11-17 · Week 9 goal B3.** Status: `P2_B3A_MATH_FROZEN` once the independent fresh-context review verdict is recorded in its dispatch Issue and this section is committed byte-identically. Labels as above. Blocked notation is §1 and §12 (`F` without an intercept, `M_B` of §1.1, `B ∈ {I_p, W_c}`). Split-plot notation is §7 and §16 (`M = FₛᵀV⁻¹Fₛ`, `B ∈ {I_p, FᵀF/m}`). The dual floor is that of the [W1 gate §4b](W1_GENERIC_CRITERIA_GATE.md): weights `w ≥ 0`, `Σ w_j = 1`, `M_w = Σ_j w_j g_j g_jᵀ` positive definite, on candidate vectors `g_j`. This section supersedes `efficiency_lower_bound=None` in §2, §8, §13 and §17 and the "efficiency floor" items of §4 and §10.
+
+1. **Efficiency (definition).** Let `M(S)` be the structured information of a feasible design `S`: `M_B` (blocks) or the GLS `M` (whole plots), with the block or plot sizes fixed. Let `M°` be any feasible design with the same sizes. D-efficiency of `S` is `(det M(S) / sup det M°)^{1/p}`. For A and I it is `inf φ_B(M°) / φ_B(M(S))`, `φ_B(M) = tr(B M⁻¹)`. Both are at most 1.
+2. **Domination (PROVED).**
+   - **Blocks:** for any constant `a ∈ ℝᵖ` and every blocked design `S`, `M_B(S) ≼ Σ_{i∈S} (f_i − a)(f_i − a)ᵀ`. Proof: in block `b`, `Σ_{i∈b}(f_i − a)(f_i − a)ᵀ = Σ_{i∈b}(f_i − f̄_b)(f_i − f̄_b)ᵀ + n_b (f̄_b − a)(f̄_b − a)ᵀ`; sum over `b`.
+   - **Whole plots:** `V = I + ηZZᵀ ≽ I`, so `V⁻¹ ≼ I` and `M(S) = FₛᵀV⁻¹Fₛ ≼ FₛᵀFₛ`.
+   - **Combined:** with `g_j = f_j − f̄` (blocks; `f̄` the mean of all `m` candidate rows) or `g_j = f_j` (whole plots), `M(S) ≼ n·M̄_g(S)`. Here `M̄_g(S) = (1/n) Σ_{i∈S} g_i g_iᵀ` is the moment matrix of the uniform approximate design on `S` over the vectors `g_j`.
+3. **Floor (PROVED).** Let `M*_g` be the optimal approximate moment matrix over the `g_j`: D-optimal for D, or the infimum of `φ_B` (W1 §4 convention) for A/I. By 2, for every feasible `S°` with the same sizes, `det M(S°) ≤ nᵖ det M*_g` and `φ_B(M(S°)) ≥ φ_B(M*_g)/n` (`φ_B` is antitone on positive definite matrices). The W1 §4b dual bounds `logdet M*_g ≤ logdet M_w + p log(d̄_w/p)` and `φ_B(M*_g) ≥ φ_B(M_w)²/q̄_w` hold for every admissible `w`. Here `d̄_w = max_j g_jᵀM_w⁻¹g_j` and `q̄_w = max_j g_jᵀM_w⁻¹BM_w⁻¹g_j`. Hence:
+   - **D-eff ≥ exp((logdet(M(S)/n) − logdet M_w)/p) · p/d̄_w**;
+   - **A/I-eff ≥ φ_B(M_w)² / (q̄_w · n·φ_B(M(S)))**.
+
+   These are exactly the expressions that the existing `_dual_floor(G, M, n, criterion, current)` evaluates at its iterates (`G` the rows `g_j`, `M = M(S)`). Its `B` (`I_p` for A, `GᵀG/m` for I) equals §12.1's `W_c` for blocks (`G = F − f̄`) and §16.1's `FᵀF/m` for whole plots (`G = F`). Every iterate gives a valid floor (W1 §4b), so the returned maximum is valid.
+
+   The floor compares with the **unstructured** approximate optimum over the `g_j`, so it is conservative: it cannot be 1 unless the structured design attains that optimum. With `fixed_ids` (B3 part 2) the feasible set shrinks, so the floor stays valid.
+4. **Shift (decision).** For blocks the shift is `a = f̄` (the candidate mean); any constant is valid by 2. `f̄` is chosen because it makes the I-criterion `B` of `_dual_floor` equal `W_c`. Whole plots use no shift: the whole-plot domination of item 2 is proved only for `a = 0` (and `M` is not shift-invariant when `F` has an intercept).
+5. **Positive definiteness (PROVED).**
+   - Blocks: every `f_i − f̄_b` is a difference of two vectors in `span{g_j}` (`f̄_b − f̄` is an average of `g_j`), so `M_B ≻ 0` implies that the `g_j` span `ℝᵖ` and the uniform `M_w` is positive definite.
+   - Whole plots: `M ≻ 0` implies `F` has full column rank (§7.2), so the same holds.
+   - Hence the first iterate of `_dual_floor` is admissible for every returned design.
+6. **2³ oracle (PROVED).** In the §1.5/§12.5 case (`F = [A, B, C, AB, AC, BC]`, `n = m = 8`, blocks `[4, 4]`), `f̄ = 0` and `GᵀG/8 = I₆`. Every `g_jᵀg_j = 6 = p`, so the uniform `w` is D-, A- and I-optimal (`d̄_w = p`; `q̄_w = 6 = φ(M_w)`). At the `ABC`-confounded split (`M_B = 8I₆`) the floor equals 1 for D, A and I. At every other nonsingular split it equals the true efficiency, because here the structured optimum attains the item-3 bounds (`det 8I₆ = 8⁶ det M*_g`, `φ(8I₆) = φ(M*_g)/8`) and the dual bound is exact at the uniform `w`, the first `_dual_floor` iterate, where the iteration stops (ratio 1).
+7. **Exhaustive evidence (OBSERVED, Architect sandbox, NumPy float64, 2026-11-17).** The design-independent part of the floor was computed once by the `_dual_floor` iteration. Every nonsingular feasible design was enumerated. Results:
+
+   | Case | Nonsingular designs | Floor at the optimum, D / A / I | Min slack, true efficiency − floor, D / A / I |
+   |---|---|---|---|
+   | §12.6, blocks `[3, 4]` | 1024 | 0.867 / 0.780 / 0.810 | 0.055 / 0.0059 / 0.0063 |
+   | §12.6, blocks `[4, 4]` | 304 | 0.890 / 0.878 / 0.880 | 0.052 / 0.018 / 0.017 |
+   | item 6 (2³), blocks `[4, 4]` | 17 | 1 / 1 / 1 | 0 / 0 / 0 |
+   | §16.6, whole plots `[3, 3]`, `η = 1` | 256 | 0.567 / 0.622 / 0.451 | 0.30 / 0.21 / 0.29 |
+   | §16.6, whole plots `[2, 2, 2]`, `η = 1/2` | 864 | 0.651 / 0.614 / 0.578 | 0.24 / 0.21 / 0.18 |
+
+   The floor was never violated. The enumerated optima reproduce §12.6 and §16.6 (`max det M_B = 108` for `[3, 4]` and `240` for `[4, 4]`; `max det M = 48` and `96`). The split-plot floors are loose because `V⁻¹ ≼ I` discards the whole-plot variance. A tighter structured bound is an open question, not claimed here.
+8. **Complexity.** One `_dual_floor` call per `optimal_design` call, on the returned design only: `O(T m p²)`, `T ≤ 1000`, workspace `O(mp + p²)`. No `m×m` or `n×n` matrices.
+
+## 23. API decision: `efficiency_lower_bound` for `blocks=` and `whole_plots=`
+
+- Blocked and split-plot results (D, A and I) return `efficiency_lower_bound = _dual_floor(G, M, n, criterion, 0.0)` as a Python float. `M` is the returned design's `M_B`, resp. GLS `M`, recomputed once after the restarts. `G = F − F.mean(0)` for blocks and `G = F` for whole plots.
+- Nothing else changes, for blocked, split-plot and unblocked calls alike: IDs, objectives, stop reasons, certificates, `restart_objectives`, `best_restart`, `starts`. The value is returned as computed, with no clamp (as W1 §4b).
+
+## 24. Not in this section
+
+`fixed_ids` with `blocks` or `whole_plots` (W9 B3 part 2), a structure-aware approximate optimum or any tighter split-plot floor, between-plot interchange, blocks together with whole plots, GPU or float32.

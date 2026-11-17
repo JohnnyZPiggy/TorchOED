@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from torchoed import plackett_burman
+from torchoed import design_diagnostics, plackett_burman
 
 
 @pytest.mark.parametrize("n", range(4, 49, 4))
@@ -31,3 +31,18 @@ def test_plackett_burman_cyclic_form(q):
 def test_plackett_burman_rejects_unsupported_runs(runs):
     with pytest.raises(ValueError, match="runs"):
         plackett_burman(runs)
+
+
+def test_plackett_burman_12_partial_aliasing():
+    x = plackett_burman(12).to(torch.int64)
+    a, b = torch.triu_indices(11, 11, offset=1)
+    f1 = torch.cat((torch.ones((12, 1), dtype=x.dtype), x), dim=1)
+    f2 = x[:, a] * x[:, b]
+    cross = f1.T @ f2
+    j = torch.arange(11)[:, None]
+    expected_abs = 4 * ((j != a) & (j != b)).to(x.dtype)
+
+    assert torch.count_nonzero(cross[0]).item() == 0
+    torch.testing.assert_close(cross[1:].abs(), expected_abs)
+    result = design_diagnostics(f1.double(), torch.arange(12), alias=f2.double())
+    torch.testing.assert_close(result["alias"], cross.double() / 12, atol=1e-12, rtol=0)

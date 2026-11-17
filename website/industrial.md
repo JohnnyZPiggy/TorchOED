@@ -80,6 +80,8 @@ X = plackett_burman(12)[:, :6]
 assert X.shape == (12, 6)
 ```
 
+In the 12-run design, each main effect is partially aliased with every two-factor interaction that does not contain it, with coefficient ±1/3 as reported by `design_diagnostics(..., alias=)`.
+
 ## Central composite and Box–Behnken
 
 Use a central composite design to fit a quadratic response surface. For blocked analysis, pass the cube and axial block sizes in row order. Box–Behnken designs use 3 to 5 factors.

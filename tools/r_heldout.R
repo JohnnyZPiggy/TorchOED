@@ -1,3 +1,69 @@
+if (identical(commandArgs(trailingOnly=TRUE), "K6")) {
+  outdir <- "reports/w10-rref"
+  save_csv <- function(rows, file) write.csv(rows, file.path(outdir, file),
+                                            row.names=FALSE, na="")
+  combine <- function(rows, meta) {
+    columns <- unique(unlist(lapply(rows, names)))
+    do.call(rbind, lapply(rows, function(x) {
+      for (name in setdiff(columns, names(x))) x[[name]] <- NA
+      x[, c(meta, setdiff(columns, meta)), drop=FALSE]
+    }))
+  }
+  errors <- FALSE
+  attempt <- function(file, work) tryCatch(work(), error=function(e) {
+    errors <<- TRUE
+    message(file, ": ", conditionMessage(e))
+  })
+  packages <- c("FrF2", "DoE.base", "rsm")
+  available <- packages[vapply(packages, requireNamespace, logical(1), quietly=TRUE)]
+  capture.output(print(sessionInfo()),
+                 for (pkg in available) cat(pkg, as.character(packageVersion(pkg)), "\n"),
+                 if ("FrF2" %in% available)
+                   writeLines(grep("starting with words of length|Chen, J[.]",
+                                   capture.output(tools::Rd2txt(
+                                     tools::Rd_db("FrF2")[["CatalogueAccessors.Rd"]],
+                                     options=list(width=180))), value=TRUE)),
+                 file=file.path(outdir, "sessionInfo.txt"))
+  attempt("frf2_catlg.csv", function() {
+    table <- FrF2::catlg
+    rows <- data.frame(runs=integer(), k=integer(), name=character(),
+                       gen=character(), WLP=character())
+    for (m in 3:6) for (k in (m+1):min(11, 2^m-1)) {
+      name <- sprintf("%d-%d.1", k, k-m)
+      entry <- table[[name]]
+      if (!is.null(entry)) rows[nrow(rows)+1, ] <- list(
+        entry$nruns, entry$nfac, name, paste(entry$gen, collapse=";"),
+        paste(entry$WLP, collapse=";"))
+    }
+    save_csv(rows, "frf2_catlg.csv")
+  })
+  attempt("frf2_pb.csv", function() {
+    rows <- lapply(c(12, 20, 24), function(N) {
+      design <- FrF2::pb(nruns=N, randomize=FALSE)
+      data.frame(N, lapply(design, function(x) as.integer(as.character(x))))
+    })
+    save_csv(combine(rows, "N"), "frf2_pb.csv")
+  })
+  attempt("rsm_ccd.csv", function() {
+    designs <- list(A=rsm::ccd(2, n0=c(3,3), alpha="rotatable", randomize=FALSE),
+                    B=rsm::ccd(4, n0=c(4,2), alpha="orthogonal", randomize=FALSE),
+                    C=rsm::ccd(5, n0=c(2,2), alpha="faces", randomize=FALSE))
+    rows <- lapply(names(designs), function(case) {
+      design <- designs[[case]]
+      x <- as.data.frame(design)[attr(design, "rsdes")$primary]
+      data.frame(case, block=design$Block, x)
+    })
+    save_csv(combine(rows, c("case", "block")), "rsm_ccd.csv")
+  })
+  attempt("rsm_bbd.csv", function() {
+    rows <- lapply(c(3, 5), function(k) {
+      design <- rsm::bbd(k, n0=3, block=FALSE, randomize=FALSE)
+      data.frame(k, as.data.frame(design)[attr(design, "rsdes")$primary])
+    })
+    save_csv(combine(rows, "k"), "rsm_bbd.csv")
+  })
+  quit(save="no", status=as.integer(errors))
+}
 if (identical(commandArgs(trailingOnly=TRUE), "K4")) {
   library(skpr)
   outdir <- "reports/w8-skpr"

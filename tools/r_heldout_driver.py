@@ -4,6 +4,33 @@ root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDID
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
+out = root/'reports/w10-rref'
+if (out/'run.py').exists():
+    data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)',
+                device_observed=json.loads(os.environ['SAE_DEVICE_OBSERVED']), errors={})
+    cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    try:
+        if installed:
+            subprocess.run(['apt-get', 'install', '-y', 'r-base-core'],
+                           env=cpu_env, check=True, capture_output=True, text=True)
+        for package in ('FrF2', 'rsm'):
+            expression = (f'install.packages("{package}", repos="https://cloud.r-project.org"); '
+                          f'stopifnot(requireNamespace("{package}", quietly=TRUE))')
+            install = subprocess.run(['Rscript', '-e', expression], env=cpu_env,
+                                     capture_output=True, text=True)
+            if install.returncode:
+                data['errors'][package] = install.stderr or install.stdout
+        result = subprocess.run(['Rscript', 'tools/r_heldout.R', 'K6'], cwd=root,
+                                env=cpu_env, capture_output=True, text=True)
+        if result.returncode:
+            data['errors']['K6'] = result.stderr or result.stdout
+        for path in [*out.glob('*.csv'), out/'sessionInfo.txt']:
+            if path.exists():
+                data[path.name] = path.read_text()
+    except subprocess.CalledProcessError as exc:
+        data['errors']['r-base-core'] = exc.stderr or exc.stdout
+    pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data, allow_nan=False)+'\n')
+    sys.exit()
 out = root/'reports/w9-heldout'
 if (out/'run.py').exists():
     data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)',

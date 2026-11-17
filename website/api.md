@@ -1,6 +1,6 @@
 # API reference
 
-All 26 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
+All 27 names are exported from `torchoed`; tensor shapes, numerical guards and resource limits are detailed in the linked [source contracts](https://github.com/JohnnyZPiggy/TorchOED/tree/6c9d63d3b48b5afe6a3189364e19614d9897854d/docs). Search accepts unbatched CPU float64 features; constructors expose their explicit device/dtype choices. Signatures below preserve the source parameters, defaults and annotations.
 
 ## Candidate construction
 
@@ -27,6 +27,10 @@ Return the generalized word-length pattern in float64 on the input device. The i
 `definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor`
 
 Return the (2c + 1)-run three-level definitive screening design `[C_k; −C_k; 0]` from a Paley or doubled-Paley conference matrix of order c. Supports k = 3–20 and 23–30. No order-22 conference matrix exists for k = 21 or 22.
+
+`plackett_burman(runs: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor`
+
+Return a balanced, orthogonal two-level design of shape (runs, runs − 1) with entries ±1. Supports multiples of four from 4 to 48.
 
 `simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 

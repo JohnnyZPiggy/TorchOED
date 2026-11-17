@@ -339,3 +339,28 @@ Signature, dtype, device and row order are unchanged (§5.4). Only the set of su
 ## 33. Not in this section
 
 Conference matrices of order `> 30`, orders 22 and 34 (none exist), non-Paley constructions other than item 3, padding `k = 21, 22` onto order 24, DSD blocking or fake factors, augmented DSDs (Jones & Nachtsheim 2013), matching a published DSD (evidence lane, later), and GPU timing.
+
+## 37. Plackett–Burman designs from Hadamard matrices, N ≡ 0 (mod 4), 4 ≤ N ≤ 48 (W10 C2, part 1)
+
+This section reuses the conference matrices of §5 and §31 (items 1–3 and the item-1 field table). All arithmetic is exact (Python ints); the tensor is built only at the end.
+
+1. **Skew-type Hadamard matrix (PROVED).** If `S` is a skew conference matrix of order `N` (`Sᵀ = −S`, `SSᵀ = (N − 1)I`), then `H = S + I` satisfies `HHᵀ = SSᵀ + S + Sᵀ + I = NI`, and its entries are `±1` (off-diagonal entries of `S` are `±1`, diagonal entries of `H` are 1). So `H` is a Hadamard matrix of order `N`.
+2. **Paley II Hadamard matrix (PROVED).** If `C` is a symmetric conference matrix of order `n` (`Cᵀ = C`, `C² = (n − 1)I`), then `H = [[C + I, C − I], [C − I, −C − I]]` has entries `±1` and `HHᵀ = 2nI`. Proof: `C` commutes with `I`, so the diagonal blocks are `(C + I)² + (C − I)² = 2C² + 2I = 2nI`, and the off-diagonal block is `(C + I)(C − I) − (C − I)(C + I) = 0`.
+3. **Covered orders (decision).** With `P(q)` the §31 item-2 Paley conference matrix of order `q + 1` and `K(·)` the §31 item-3 doubling:
+   - `N ∈ {4, 8, 12, 20, 24, 28, 32, 44, 48}`: item 1 with `S = P(N − 1)`, where `N − 1 ∈ {3, 7, 11, 19, 23, 27, 31, 43, 47}` is a prime power `≡ 3 (mod 4)`, so `P(N − 1)` is skew (§5.1, §31.2). `q = 27` uses the §31.1 field; the others are prime and use arithmetic mod `q`.
+   - `N ∈ {16, 40}`: item 1 with `S = K(P(N/2 − 1))`, where `N/2 − 1 ∈ {7, 19}`; `K` preserves skewness (§31.3). The rows and columns of `K` are ordered as in §31.3: the first block, then the second.
+   - `N = 36`: item 2 with `C = P(17)`, which is symmetric because `17 ≡ 1 (mod 4)`.
+   - The table is fixed: there is no primality or prime-power code. Every other `N` raises `ValueError`. This covers every `N ≡ 0 (mod 4)` with `4 ≤ N ≤ 48`.
+4. **Design (decision).** Let `H` be the Hadamard matrix that item 3 selects (built by item 1 or item 2), rows and columns indexed `0 … N − 1`. Let `G = DH` with `D = diag(−H[r, 0])`, so column 0 of `G` is all `−1`. `plackett_burman(N)` returns the `N × (N − 1)` matrix whose rows are rows `1, 2, …, N − 1, 0` of `G` (row 0 last), with column 0 dropped and columns `1 … N − 1` of `G` kept in order. For item-1 orders `H[r, 0] = −1` for `r ≥ 1` and `H[0, ·] = 1ᵀ`, so the rows `1 … N − 1` are those of `H` and the last row is all `−1`. For `N = 36` (item 2) this does not hold: `H[r, 0] = +1` except at `r = 18`, so `D` flips 35 rows, and the last row of `X` is `−H[0, 1:]` (seventeen `−1`, then `+1`, then seventeen `−1`). Implementations must apply `D` as defined, not assume an all-`−1` last row.
+5. **Properties (PROVED).** `GᵀG = HᵀDᵀDH = HᵀH = NI`, because `D² = I` and `HᵀH = NI` follows from `HHᵀ = NI` for square `H`. Dropping column 0 and permuting rows keeps the remaining columns orthogonal: `XᵀX = NI_{N−1}`. Orthogonality to the dropped all-`−1` column gives `1ᵀX = 0`, so every column is balanced (`N/2` runs at each level).
+6. **Cyclic form (PROVED for prime `q = N − 1`).** For `N ∈ {4, 8, 12, 20, 24, 32, 44, 48}`, write `g_0 = 1` and `g_j = χ(j)` for `1 ≤ j < q`, with `χ` over `ℤ_q` and indices taken mod `q`. Then `X[i, j] = g_{(j − i) mod q}` for `0 ≤ i < q`, and the last row is all `−1`. This is the cyclic Plackett–Burman form (Plackett and Burman 1946) with generator `g`. Proof: for `r = i + 1 ≥ 1` and `j' = j + 1`, `H[r, j'] = Q[i, j] + [i = j] = χ(j − i)` for `i ≠ j`, and `1` for `i = j`. Whether this equals a published or FrF2 table row-for-row is an evidence question (§39), not claimed here. `N ∈ {16, 28, 36, 40}` are not cyclic.
+7. **Verification (Architect, and independently a fresh-context reviewer, exact Python ints, 2026-11-17).** For every covered `N`, the Architect built `X` from the §31 helpers and checked `XᵀX = NI` exactly, `±1` entries and balanced columns. The Architect also checked the item-6 cyclic form for the eight prime `q`.
+8. **Cost.** `O(N²)` Python-int operations plus the §31 field cost. The largest output is `48 × 47`, and there is no budget argument, as in §5.4.
+
+## 38. API decision: `plackett_burman(runs, *, dtype=torch.float64, device=None)`
+
+`plackett_burman(runs)` returns the §37.4 design, of shape `(runs, runs − 1)`, as a coded `±1` tensor of the given dtype on `device` (CPU by default), consistent with `ff2n` and `definitive_screening`. `runs` is validated as an integer, like `definitive_screening`'s `k`. It is exported from `torchoed`. Users who need fewer factors take the leading columns. There is no `factors=` keyword and no randomization.
+
+## 39. Not in this section
+
+`N > 48`. Orders `N ≢ 0 (mod 4)`. Matching the FrF2 `pb` or published Plackett–Burman tables row-for-row (a later test against the frozen `reports/w10-rref/frf2_pb.csv`, if #247 records it). Foldover of Plackett–Burman designs (use `fold_over`). Projectivity or alias-structure claims. Central composite and Box–Behnken designs (W10 C2, part 2). GPU timing.

@@ -1,0 +1,35 @@
+{
+  "source_sha": "13a444e3ccd77d8b18efc557df854eb8757c9cb0",
+  "run_id": "w266-colab-20261117",
+  "created": false,
+  "cleanup_confirmed": true,
+  "commands": [
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "new",
+      "status": "TIMEOUT",
+      "exit_code": -1
+    },
+    {
+      "operation": "stop",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0
+    }
+  ],
+  "assignments_before": 0,
+  "assignments_after": 0,
+  "balance_before": 51.32,
+  "balance_after": 51.32,
+  "fresh_usage_before": "Current balance: 51.32 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
+  "fresh_usage_after": "Current balance: 51.32 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
+  "confirmed_by_readback": true
+}

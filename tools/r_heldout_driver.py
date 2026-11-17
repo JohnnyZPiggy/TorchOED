@@ -4,6 +4,26 @@ root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDID
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
+out = root/'reports/w10-dsd'
+if (out/'run.py').exists():
+    data = dict(source_sha=sha, device_used='CPU (CUDA hidden from R)', errors={})
+    cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    try:
+        if installed:
+            subprocess.run(['apt-get', 'install', '-y', 'r-base-core'],
+                           env=cpu_env, check=True, capture_output=True, text=True)
+        subprocess.run(['Rscript', '-e', 'install.packages("daewr", repos="https://cloud.r-project.org"); '
+                        'stopifnot(requireNamespace("daewr", quietly=TRUE))'],
+                       env=cpu_env, check=True, capture_output=True, text=True)
+        subprocess.run(['Rscript', 'tools/r_heldout.R', 'K7'], cwd=root,
+                       env=cpu_env, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as exc:
+        data['errors']['K7'] = exc.stderr or exc.stdout
+    for name in ('daewr_dsd.csv', 'sessionInfo.txt'):
+        if (out/name).exists():
+            data[name] = (out/name).read_text()
+    pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data, allow_nan=False)+'\n')
+    sys.exit()
 out = root/'reports/w10-rref'
 if (out/'run.py').exists():
     data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)',

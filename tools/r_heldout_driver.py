@@ -4,6 +4,48 @@ root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDID
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
+out = root/'reports/w10-heldout'
+if (out/'run.py').exists():
+    data = dict(source_sha=sha, device_used='CPU (CUDA hidden from R)', errors={})
+    cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    setup_error = None
+    try:
+        if installed:
+            subprocess.run(['apt-get', 'install', '-y', 'r-base-core'],
+                           env=cpu_env, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as exc:
+        setup_error = exc.stderr or exc.stdout
+    if not setup_error:
+        gmp_error = None
+        try:
+            for args in (['update'], ['install', '-y', 'libgmp-dev']):
+                subprocess.run(['apt-get', *args], env=cpu_env, check=True,
+                               capture_output=True, text=True)
+        except subprocess.CalledProcessError as exc:
+            gmp_error = exc.stderr or exc.stdout
+        for package in ('FrF2', 'rsm'):
+            expression = (f'install.packages("{package}", repos="https://cloud.r-project.org"); '
+                          f'stopifnot(requireNamespace("{package}", quietly=TRUE))')
+            result = subprocess.run(['Rscript', '-e', expression], env=cpu_env,
+                                    capture_output=True, text=True)
+            if result.returncode:
+                data['errors'][package] = result.stderr or result.stdout
+        if gmp_error:
+            data['errors']['libgmp-dev'] = gmp_error
+    for case, package in (('H21', 'FrF2'), ('H22', 'rsm'), ('H23', 'rsm')):
+        if setup_error or package in data['errors']:
+            data['errors'][case] = setup_error or data['errors'][package]
+            continue
+        result = subprocess.run(['Rscript', 'tools/r_heldout.R', case], cwd=root,
+                                env=cpu_env, capture_output=True, text=True)
+        if result.returncode:
+            data['errors'][case] = result.stderr or result.stdout
+        for suffix in ('-session.txt', '.csv'):
+            path = out/(case + suffix)
+            if path.exists():
+                data[path.name] = path.read_text()
+    pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data, allow_nan=False)+'\n')
+    sys.exit()
 out = root/'reports/w10-dsd'
 if (out/'run.py').exists():
     data = dict(source_sha=sha, device_used='CPU (CUDA hidden from R)', errors={})

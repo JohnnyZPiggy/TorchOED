@@ -213,7 +213,7 @@ if (length(case) == 1L && case %in% c("H21", "H22", "H23")) {
                  file=file.path(outdir, paste0(case, "-session.txt")))
   if (case == "H21") {
     design <- FrF2::FrF2(nruns=16, nfactors=7, randomize=FALSE)
-    capture.output(print(DoE.base::generators(design)),
+    capture.output(print(FrF2::generators(design)),
                    file=file.path(outdir, "H21-session.txt"), append=TRUE)
     rows <- data.frame(lapply(design, function(x) as.integer(as.character(x))))
   } else {

@@ -12,8 +12,8 @@ Measurement source `7ec0e24f6ec7cc37ac8c93c4c0b9106b5ef72d2a`. One local CPU flo
 TorchOED H21 generators (zero-based): `[[0, 1, 2], [0, 1, 3], [0, 2, 3]]`.
 In-run oracles (TorchOED/R): H21 PASS/NOT_RUN, H22 PASS/PASS, H23 PASS/PASS. See [results.json](results.json).
 
-Colab controller returned `FAIL` with `ARTIFACT_SOURCE_OR_STATUS_FAILED`. The download and pinned-source check passed. The controller rejected the envelope because the driver omitted its status field. The final driver supplies that field, and the downloaded CSVs are preserved byte for byte.
-References measured: 2/3. H22 and H23 used rsm's stored `rsdes$primary` coded columns and H22 used the `Block` labels. R 4.6.1, FrF2 2.3.5, DoE.base 1.2.5 and rsm 2.10.6 are recorded in [sessionInfo.txt](sessionInfo.txt). H21 stopped at the generator lookup with the verbatim R error in [results.json](results.json). The final R branch uses the exporting DoE.base namespace. The R calls were recorded as run.
+Colab controller returned `FAIL` with `ARTIFACT_SOURCE_OR_STATUS_FAILED`. The download and pinned-source check passed. The controller rejected the envelope because the driver omitted its status field. The downloaded CSVs are preserved byte for byte.
+References measured: 2/3. H22 and H23 used rsm's stored `rsdes$primary` coded columns and H22 used the `Block` labels. R 4.6.1, FrF2 2.3.5, DoE.base 1.2.5 and rsm 2.10.6 are recorded in [sessionInfo.txt](sessionInfo.txt). H21 stopped at the generator lookup with the verbatim R error in [results.json](results.json). The tools are committed exactly as run at the measurement source. A corrected H21 call (`DoE.base::generators`) and a driver status field are suggestions only.
 Authenticated cleanup confirmed 0 → 0 assignments and 51.17 → 51.1 compute units. See [cleanup.json](cleanup.json).
 
 Earlier held-outs: [W4](../w4-heldout/), [W5](../w5-heldout/), [W6](../w6-heldout/), [W7](../w7-heldout/), [W8](../w8-heldout/), [W9](../w9-heldout/).

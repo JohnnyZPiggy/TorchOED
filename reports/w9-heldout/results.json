@@ -1,0 +1,99 @@
+{
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.14.6",
+  "torch": "2.14.1+cpu",
+  "dtype": "float64",
+  "threads": 1,
+  "seed": 20261117,
+  "H19": {
+    "objective": -0.5767369715106795,
+    "stop_reason": "LOCAL_BLOCK_EXCHANGE",
+    "certificate": "LOCAL_BLOCK_EXCHANGE",
+    "efficiency_lower_bound": 0.9070138773062332,
+    "ids": [
+      [
+        2,
+        6,
+        7,
+        10,
+        14,
+        18,
+        21,
+        26
+      ],
+      [
+        0,
+        4,
+        8,
+        15,
+        17,
+        20,
+        24,
+        25
+      ]
+    ],
+    "phi": 0.5767369715106796,
+    "wall_seconds": 0.6430388999942807,
+    "per_restart_seconds": 0.06430388999942807,
+    "checks": {
+      "metric": "PASS",
+      "layout": "PASS",
+      "floor": "PASS"
+    },
+    "status": "PASS",
+    "reference": {
+      "status": "NOT_RUN",
+      "session": "R version 4.6.1 (2026-06-24)\nPlatform: x86_64-pc-linux-gnu\nRunning under: Ubuntu 24.04.4 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 \nLAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0\n\nlocale:\n [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\ntime zone: Etc/UTC\ntzcode source: system (glibc)\n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n[1] AlgDesign_1.2.1.2\n\nloaded via a namespace (and not attached):\n[1] compiler_4.6.1 tools_4.6.1   \n[1] \u20181.2.1.2\u2019\n[1] \"D\"\n\"D\":D-criterion: \"OB\",\"OBS\": orthogonal blocks, unscaled and scaled; \"Dp\",\"Dpc\": \n\t\tProduct of block determinants, uncentered and centered. \n",
+      "error": "Installed optBlock documentation lists no I criterion."
+    }
+  },
+  "H20": {
+    "objective": -1.8978786584497733,
+    "stop_reason": "LOCAL_SPLIT_PLOT_EXCHANGE",
+    "certificate": "LOCAL_SPLIT_PLOT_EXCHANGE",
+    "efficiency_lower_bound": 0.4232082888502364,
+    "ids": [
+      [
+        20,
+        21,
+        26
+      ],
+      [
+        9,
+        14,
+        16
+      ],
+      [
+        2,
+        3,
+        4
+      ],
+      [
+        1,
+        6,
+        8
+      ]
+    ],
+    "phi": 1.8978786584497733,
+    "wall_seconds": 0.4906040000059875,
+    "per_restart_seconds": 0.04906040000059875,
+    "checks": {
+      "metric": "PASS",
+      "layout": "PASS",
+      "floor": "PASS"
+    },
+    "status": "PASS",
+    "A": [
+      1.0,
+      0.0,
+      -1.0,
+      -1.0
+    ],
+    "hard_labels": "X[:, 0].long()",
+    "reference": {
+      "status": "NOT_RUN",
+      "session": "R version 4.6.1 (2026-06-24)\nPlatform: x86_64-pc-linux-gnu\nRunning under: Ubuntu 24.04.4 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 \nLAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0\n\nlocale:\n [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\ntime zone: Etc/UTC\ntzcode source: system (glibc)\n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n[1] skpr_1.9.2\n\nloaded via a namespace (and not attached):\n [1] digest_0.6.39       codetools_0.2-20    doParallel_1.0.17  \n [4] magrittr_2.0.5      iterators_1.0.14    rngtools_1.5.2     \n [7] doRNG_1.8.6.3       parallel_4.6.1      foreach_1.5.2      \n[10] parallelly_1.50.0   future_1.82.0       doFuture_1.4.0     \n[13] compiler_4.6.1      globals_0.20.0      tools_4.6.1        \n[16] future.apply_1.21.0 listenv_1.1.0       Rcpp_1.1.2         \n[1] \u20181.9.2\u2019\n",
+      "error": "Error in `[.data.frame`(RunMatrix, , nohighorder, drop = FALSE) : \n  undefined columns selected\nCalls: gen_design -> unique -> reduceRunMatrix -> [ -> [.data.frame\nExecution halted"
+    }
+  }
+}

@@ -4,6 +4,32 @@ root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDID
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
+out = root/'reports/w9-heldout'
+if (out/'run.py').exists():
+    data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)',
+                device_observed=json.loads(os.environ['SAE_DEVICE_OBSERVED']))
+    cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    if installed:
+        setup = subprocess.run(['apt-get','install','-y','r-base-core'], capture_output=True, text=True)
+    for case, package in (('H19','AlgDesign'), ('H20','skpr')):
+        if installed and setup.returncode:
+            data[case] = dict(status='NOT_RUN', error=setup.stderr.strip())
+            continue
+        install = subprocess.run(['Rscript','-e',f'install.packages("{package}",repos="https://cloud.r-project.org")'],
+                                 env=cpu_env,capture_output=True,text=True)
+        result = subprocess.run(['Rscript','tools/r_heldout.R',case],cwd=root,
+                                env=cpu_env,capture_output=True,text=True)
+        session, design = (out/f'{case}-{name}' for name in ('session.txt','design.csv'))
+        row = data[case] = dict(status='NOT_RUN')
+        if session.exists(): row['session'] = session.read_text()
+        if result.returncode:
+            row['error'] = result.stderr.strip() or install.stderr.strip()
+        elif design.exists() and session.exists():
+            row.update(status='PASS', csv=design.read_text())
+        else:
+            row['error'] = 'Installed optBlock documentation lists no I criterion.' if case == 'H19' else 'Missing design or sessionInfo()'
+    pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data,allow_nan=False)+'\n')
+    sys.exit()
 k5 = root/'reports/w9-skpr-i'
 case, out = ('K5', k5) if (k5/'run.py').exists() else ('K4', root/'reports/w8-skpr')
 if (out/'run.py').exists():

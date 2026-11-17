@@ -74,6 +74,42 @@ if (identical(commandArgs(trailingOnly=TRUE), "H14")) {
   write.csv(data.frame(plot, fit[, c("A", "B", "C")]), file.path(outdir, "skpr.csv"), row.names=FALSE)
   quit(save="no")
 }
+if (identical(commandArgs(trailingOnly=TRUE), "H19")) {
+  library(AlgDesign)
+  outdir <- "reports/w9-heldout"
+  rd <- tools::Rd_db("AlgDesign")[["blockOpt.Rd"]]
+  args <- Filter(function(x) identical(attr(x, "Rd_tag"), "\\arguments"), rd)[[1L]]
+  criterion <- Filter(function(x) identical(attr(x, "Rd_tag"), "\\item") &&
+                        identical(as.character(x[[1L]]), "criterion"), args)[[1L]]
+  documented <- paste(as.character(criterion[[2L]]), collapse="")
+  capture.output(print(sessionInfo()), print(packageVersion("AlgDesign")),
+                 print(formals(optBlock)$criterion), cat(documented, "\n"),
+                 file=file.path(outdir, "H19-session.txt"))
+  if (grepl('"I"', documented, fixed=TRUE)) {
+    set.seed(20261117)
+    fit <- optBlock(~quad(A,B,C), withinData=read.csv(file.path(outdir, "H19.csv")),
+                    blocksizes=c(8,8), criterion="I")
+    write.csv(do.call(rbind, Map(function(rows, plot) data.frame(plot, rows),
+                                fit$Blocks, seq_along(fit$Blocks))),
+              file.path(outdir, "H19-design.csv"), row.names=FALSE)
+  }
+  quit(save="no")
+}
+if (identical(commandArgs(trailingOnly=TRUE), "H20")) {
+  library(skpr)
+  outdir <- "reports/w9-heldout"
+  capture.output(print(sessionInfo()), print(packageVersion("skpr")), file=file.path(outdir, "H20-session.txt"))
+  stopifnot(packageVersion("skpr") == "1.9.2", formals(gen_design)$varianceratio == 1)
+  set.seed(20261117)
+  wp <- gen_design(data.frame(A=c(-1,0,1)), ~A+I(A^2), trials=4, optimality="I")
+  set.seed(20261117)
+  fit <- gen_design(read.csv(file.path(outdir, "H20.csv")), ~(A+B+C)^2+I(A^2)+I(B^2)+I(C^2),
+                    trials=12, splitplotdesign=wp, optimality="I")
+  plot <- as.integer(sub("\\..*$", "", rownames(fit)))
+  write.csv(data.frame(plot, fit[, c("A", "B", "C")]),
+            file.path(outdir, "H20-design.csv"), row.names=FALSE)
+  quit(save="no")
+}
 library(AlgDesign)
 set.seed(20261112)
 if (identical(commandArgs(trailingOnly=TRUE), "H11")) {

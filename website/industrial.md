@@ -87,6 +87,23 @@ quadratic = torch.cat([D.square(), D[:, i] * D[:, j]], dim=1)
 assert torch.count_nonzero(D.T @ quadratic).item() == 0
 ```
 
+## Fractional factorials and fold-over
+
+Use zero-based base columns to specify generators. This eight-run design moves from resolution III to IV under full fold-over. Use `factor=0` to reverse only the first factor in the added rows. The interaction of the first two factors aliases with the fourth factor, which uses their product as its generator.
+
+```python
+import torch
+from torchoed import design_diagnostics, fold_over, fractional_factorial, word_length_pattern
+
+X = fractional_factorial(3, [[0, 1], [0, 2]])
+assert word_length_pattern(X).tolist() == [0, 0, 2, 1, 0]
+assert word_length_pattern(fold_over(X)).tolist() == [0, 0, 0, 1, 0]
+F = torch.cat((X.new_ones((len(X), 1)), X), dim=1)
+G = X[:, [0]] * X[:, [1]]
+A = design_diagnostics(F, torch.arange(len(X)), alias=G)["alias"]
+torch.testing.assert_close(A[4, 0], X.new_tensor(1.0))
+```
+
 ## Diagnostics and power
 
 Pass your features and selected IDs to `design_diagnostics` for variance inflation factors (VIFs) and the sorted scaled prediction variances used for the fraction-of-design-space curve. Set `effect` to a scalar or a tensor of per-coefficient effects to get power for two-sided t-tests at `alpha` (0.001 to 0.5), assuming residual standard deviation σ = 1 and more runs than coefficients (n > p).

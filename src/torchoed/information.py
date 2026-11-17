@@ -106,6 +106,7 @@ def design_diagnostics(
     effect: float | torch.Tensor | None = None, alpha: float = 0.05,
     blocks: list[int] | tuple[int, ...] | None = None,
     whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0,
+    alias: torch.Tensor | None = None,
 ) -> dict[str, torch.Tensor | list[int]]:
     """Return design correlations, VIFs, scaled prediction variances and their sorted values.
 
@@ -117,12 +118,19 @@ def design_diagnostics(
     unit error variance. Structured results also include the per-coefficient
     residual degrees of freedom in `df`. Split-plot power is exact only in
     the P2_GATE section 19.5 case, otherwise approximate (containment rule).
+    With `alias`, return omitted-term aliasing using unstructured information.
     """
     structured = blocks is not None or whole_plots is not None
+    if alias is not None and structured:
+        raise ValueError("alias is unavailable with blocks or whole_plots")
     if structured:
         S = _exact_rows(F, ids)
     else:
         M = exact_information(F, ids)
+    if alias is not None and (not isinstance(alias, torch.Tensor) or alias.ndim != 2
+                              or alias.shape[0] != F.shape[0] or alias.dtype != F.dtype
+                              or alias.device != F.device):
+        raise ValueError("alias must be a 2-D tensor with F's row count, dtype and device")
     if effect is not None:
         if type(alpha) is not float or not 0.001 <= alpha <= 0.5:
             raise ValueError("alpha must be a Python float in [0.001, 0.5]")
@@ -182,6 +190,8 @@ def design_diagnostics(
     result: dict[str, torch.Tensor | list[int]] = {
         "columns": columns, "correlation": correlation, "vif": vif, "spv": spv, "fds": spv.sort().values,
     }
+    if alias is not None:
+        result["alias"] = torch.cholesky_solve(S.mT @ alias[ids], L)
     if effect is not None:
         delta = torch.as_tensor(effect, dtype=torch.float64, device=F.device).broadcast_to((p,))
         noncentrality = delta.square() / torch.cholesky_inverse(L).diagonal()

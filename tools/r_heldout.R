@@ -1,8 +1,7 @@
 if (identical(commandArgs(trailingOnly=TRUE), "M11")) {
   outdir <- "reports/w11-mixref"
-  usage <- function(pkg, topic) paste(unlist(Filter(function(x) identical(attr(x,"Rd_tag"),"\\usage"), tools::Rd_db(pkg)[[paste0(topic,".Rd")]])[[1L]]), collapse="")
   capture.output(print(sessionInfo()), file=file.path(outdir,"sessionInfo.txt"))
-  for (pkg in c("mixexp","AlgDesign")) if (requireNamespace(pkg, quietly=TRUE)) capture.output(print(packageVersion(pkg)), cat(usage(pkg,if (pkg=="mixexp") "Xvert" else "optFederov")), file=file.path(outdir,"sessionInfo.txt"), append=TRUE)
+  for (pkg in c("mixexp","AlgDesign")) if (requireNamespace(pkg, quietly=TRUE)) capture.output(print(packageVersion(pkg)), print(args(if (pkg=="mixexp") mixexp::Xvert else AlgDesign::optFederov)), file=file.path(outdir,"sessionInfo.txt"), append=TRUE)
   if (requireNamespace("mixexp", quietly=TRUE)) tryCatch({
   a <- mixexp::Xvert(nfac=3, lc=c(.2,.1,.1), uc=c(.6,.5,.6), ndm=0, plot=FALSE)
   b <- mixexp::Xvert(nfac=4, lc=rep(.1,4), uc=c(.6,.5,.4,.3), ndm=0, plot=FALSE)

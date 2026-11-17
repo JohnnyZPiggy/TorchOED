@@ -364,3 +364,62 @@ This section reuses the conference matrices of §5 and §31 (items 1–3 and the
 ## 39. Not in this section
 
 `N > 48`. Orders `N ≢ 0 (mod 4)`. Matching the FrF2 `pb` or published Plackett–Burman tables row-for-row (a later test against the frozen `reports/w10-rref/frf2_pb.csv`, if #247 records it). Foldover of Plackett–Burman designs (use `fold_over`). Projectivity or alias-structure claims. Central composite and Box–Behnken designs (W10 C2, part 2). GPU timing.
+
+## 40. Central composite and Box–Behnken designs (W10 C2, part 2)
+
+All designs are in coded units. Everything except an irrational `α` is exact; the tensor is built at the end. The block model, `M_B` and the no-intercept rule are those of §1.
+
+1. **CCD rows (decision).** For `k ≥ 2`, center counts `n_c, n_s ≥ 0` and `α > 0`, write `n_F = 2^k`. `central_composite` returns `n_F + n_c + 2k + n_s` rows in this order:
+   - (a) cube: for `r = 0 … n_F − 1`, `x_i = 2·bit_i(r) − 1` for `i = 0 … k − 1`. Bit 0 is factor 1, so factor 1 varies fastest.
+   - (b) `n_c` center rows.
+   - (c) axial: for `i = 0 … k − 1`, the row `−α e_i`, then `+α e_i`.
+   - (d) `n_s` center rows.
+   The cube block is (a)+(b), of size `n_F + n_c`. The axial block is (c)+(d), of size `2k + n_s`. Blocked functions take `blocks=[n_F + n_c, 2k + n_s]`. The cube is always the full `2^k`.
+2. **`α` choices (decision).**
+   - `"rotatable"`: `α = n_F^{1/4}`.
+   - `"orthogonal"`: `α = √(n_F(2k + n_s) / (2(n_F + n_c)))`.
+   - `"faces"`: `α = 1`.
+   - A positive Python `int` or `float` is used as given.
+3. **CCD moments and rotatability (PROVED).** Sums are over all rows `u`.
+   - Every moment of order ≤ 4 in which some exponent is odd is 0 (this includes `Σ x_i x_j` for `i ≠ j`). The full `2^k` cube is symmetric under each sign flip `x_i → −x_i`, and so is each axial pair. Center rows add 0.
+   - `Σ_u x_{ui}² = n_F + 2α²` and `Σ_u x_{ui}⁴ = n_F + 2α⁴` for every `i`, so the pure second moments are equal for all `i`.
+   - `Σ_u x_{ui}² x_{uj}² = n_F` for `i ≠ j`. Axial rows have one nonzero coordinate, so only the cube counts.
+   - Every remaining moment of order ≤ 4 has an odd exponent, so it is 0 by the first point. Center rows change no moment sum, so they do not affect rotatability.
+   - So the Box–Hunter (1957) second-order rotatability conditions reduce to `Σ x_i⁴ = 3 Σ x_i² x_j²`, that is `n_F + 2α⁴ = 3n_F`, that is `α⁴ = n_F`. This is the `"rotatable"` `α`.
+4. **Orthogonal blocking (PROVED).** Let `f_u` be the row `u` of `F_q = polynomial_features(X, 2, include_bias=False)`, `f̄` the overall mean row, `f̄_b` the mean row of block `b` (size `n_b`), and `M_c = Σ_u (f_u − f̄)(f_u − f̄)ᵀ`.
+   - Splitting `f_u − f̄ = (f_u − f̄_b) + (f̄_b − f̄)` inside each block, the cross terms sum to 0 because `Σ_{u∈b} (f_u − f̄_b) = 0`. So `M_c = M_B + Σ_b n_b (f̄_b − f̄)(f̄_b − f̄)ᵀ`, with `M_B` from §1.1.
+   - The added sum is positive semidefinite, and its trace is `Σ_b n_b ‖f̄_b − f̄‖²`. So `M_B = M_c` if and only if `f̄_b = f̄` for every block.
+   - For the item-1 CCD with its two blocks, the linear columns `x_i` and the products `x_i x_j` (`i ≠ j`) have block mean 0 in both blocks, hence overall mean 0. In the cube, each column and each product of two distinct columns of the full `2^k` sums to 0. In the axial block, each `x_i` sums to 0, and every product `x_i x_j` is 0.
+   - The column `x_i²` has block mean `n_F / (n_F + n_c)` in the cube block and `2α² / (2k + n_s)` in the axial block.
+   - So `M_B = M_c` if and only if `n_F / (n_F + n_c) = 2α² / (2k + n_s)`, that is `α² = n_F(2k + n_s) / (2(n_F + n_c))`. This is the `"orthogonal"` `α` (Box and Hunter 1957).
+5. **Box–Behnken rows (decision).** For `k ∈ {3, 4, 5}` and `n_0 ≥ 0` center rows:
+   - For every pair `i < j`, in lexicographic order, there are four rows with `x_i = 2·bit_0(r) − 1`, `x_j = 2·bit_1(r) − 1` for `r = 0 … 3`, and all other coordinates 0.
+   - The pair rows are followed by `n_0` center rows, for `4·C(k, 2) + n_0` rows (12, 24 or 40 non-center rows).
+   - The block design is the set of all pairs. That it agrees with the published Box–Behnken (1960) designs is an evidence claim, not proved here: see item 7.
+   - Orders `k = 6, 7` use block designs that are not all pairs. They are left to a follow-up from frozen rsm output (§42).
+6. **Box–Behnken moments (PROVED).**
+   - Every entry is in `{−1, 0, 1}`. Every moment of order ≤ 4 in which some exponent is odd is 0: each pair's `2²` factorial is symmetric under each sign flip, and every other coordinate is 0.
+   - Factor `i` lies in `k − 1` pairs and is nonzero in 4 rows of each. So `Σ x_i² = Σ x_i⁴ = 4(k − 1)`.
+   - For `i ≠ j`, only the pair `{i, j}` has both coordinates nonzero, so `Σ x_i² x_j² = 4`.
+   - So the rotatability condition `Σ x_i⁴ = 3 Σ x_i² x_j²` holds if and only if `4(k − 1) = 12`, that is `k = 4`. The design with `k = 4` is rotatable, and the designs with `k = 3` and `k = 5` are not, for every `n_0`.
+7. **Verification (Architect, 2026-11-17, sandbox, Python ints, `Fraction` and float64).**
+   - rsm 2.10.6 `ccd` cases A, B and C of `reports/w10-rref/rsm_ccd.csv` equal the items 1–2 rows row-for-row, block labels included, within 1e-12. The calls run were `ccd(2, n0=c(3,3), alpha="rotatable", randomize=FALSE)`, `ccd(4, n0=c(4,2), alpha="orthogonal", randomize=FALSE)` and `ccd(5, n0=c(2,2), alpha="faces", randomize=FALSE)`.
+   - rsm `bbd(3, n0=3, block=FALSE, randomize=FALSE)` equals item 5 row-for-row. `bbd(5, n0=3, block=FALSE, randomize=FALSE)` equals it as a multiset of rows, because rsm lists the pairs in another order (OBSERVED).
+   - The item-4 block-mean equality holds exactly, with `α²` as a `Fraction`, for `(k, n_c, n_s) ∈ {(2, 3, 3), (4, 4, 2), (5, 6, 1)}`.
+   - No held-out input (H22 or H23) was evaluated.
+   - An independent fresh-context reviewer rebuilt both families from this text and checked items 3, 4 and 6 exactly with `Fraction` in 13 CCD cases (orthogonal, off-`α` and rotatable-only) and in Box–Behnken designs with `k ∈ {3, 4, 5}`, `n_0 ≤ 3` (held-out inputs excluded). Verdict: PASS.
+8. **Estimability (OBSERVED, not a guarantee).** Zero center counts are allowed but can make the second-order model singular. A Box–Behnken design with `n_0 = 0` has `Σ_i x_i² = 2` on every row, and a CCD with `n_c = n_s = 0` has a singular blocked `M_B`. These designs are returned as specified; nothing here claims they are estimable.
+9. **Cost.** `O((n_F + 2k + n_c + n_s)·k)` output elements, checked with `max_elements` as in `ff2n`. The Box–Behnken output is at most `40 + n_0` rows.
+
+## 41. API decision: `central_composite` and `box_behnken`
+
+- `central_composite(k, *, alpha="orthogonal", center=(4, 4), dtype=torch.float64, device=None, max_elements=1_000_000)` returns the §40.1 rows with `center = (n_c, n_s)`.
+  - `k` is a Python `int ≥ 2`, and `center` is a tuple of two Python `int`s ≥ 0.
+  - `alpha` is `"rotatable"`, `"orthogonal"`, `"faces"`, or a positive Python `int` or `float` that is not a `bool`. Anything else raises `ValueError`.
+- `box_behnken(k, *, center=3, dtype=torch.float64, device=None)` returns the §40.5 rows. It accepts `k ∈ {3, 4, 5}` and a Python `int` `center ≥ 0`. Any other value raises `ValueError`.
+- Both functions return a coded tensor of the given dtype on `device` (CPU by default), are exported from `torchoed`, and do not randomize.
+- No block labels are returned: the block sizes are those of §40.1.
+
+## 42. Not in this section
+
+A fractional cube portion. Spherical or inscribed CCDs. Box–Behnken designs for `k = 6, 7` (a follow-up tested against frozen rsm `bbd` output) and blocked Box–Behnken designs. Randomization. Optimal augmentation of these designs. GPU timing. Any claim about the held-out cases H22 and H23 beyond what the week-end run records.

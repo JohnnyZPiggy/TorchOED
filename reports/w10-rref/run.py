@@ -5,7 +5,7 @@ from pathlib import Path
 
 import torch
 
-from torchoed import fractional_factorial, word_length_pattern
+from torchoed import fractional_factorial, plackett_burman, word_length_pattern
 
 ROOT = Path(__file__).resolve().parent
 
@@ -31,7 +31,7 @@ def main():
         expected = {f"{k}-{k-m}.1" for m in range(3, 7)
                     for k in range(m + 1, min(11, 2**m - 1) + 1)}
         rows = read(catlg.name)
-        matches = 0
+        matches = gate_matches = 0
         for row in rows:
             n, k = int(row["runs"]), int(row["k"])
             m = n.bit_length() - 1
@@ -49,10 +49,17 @@ def main():
                 matches += 1
             else:
                 print(f'{row["name"]} mismatch: TorchOED {actual}, FrF2 (j0={j0}) {observed}')
+            end = min(k, j0 - 1 + len(observed))
+            compared = end - (j0 - 1)
+            if (not any(actual[:j0 - 1])
+                    and actual[j0 - 1:end] == observed[:compared]
+                    and not any(observed[compared:])):
+                gate_matches += 1
             if row["name"] == "7-4.1":
                 print(f"7-4.1 stored WLP: {observed}, j0={j0}")
         print(f"Catalogue: {len(rows)}/{len(expected)} rows, {matches}/{len(rows)} WLP matches")
         print(f'Missing names: {sorted(expected - {row["name"] for row in rows})}')
+        print(f"Catalogue §34.3: {gate_matches}/{len(rows)} WLP matches")
     else:
         print("Catalogue WLP: NOT_RUN")
 
@@ -62,6 +69,16 @@ def main():
             assert x.shape == (n, n - 1) and (x.abs() == 1).all(), n
             assert torch.equal(x.T @ x, n * torch.eye(n - 1, dtype=torch.int64)), n
             print(f"PB {n}: exact Gram PASS")
+            design = plackett_burman(n, dtype=torch.float64, device="cpu")
+            reference = x.to(torch.float64)
+            exact = torch.equal(design, reference)
+            print(f"PB {n}: exact match {'PASS' if exact else 'FAIL'}")
+            if not exact:
+                same_rows = sorted(design.tolist()) == sorted(reference.tolist())
+                print(f"PB {n}: row permutation {'PASS' if same_rows else 'FAIL'}")
+                i = (design != reference).any(dim=1).nonzero()[0].item()
+                print(f"PB {n}: first differing row {i + 1}: "
+                      f"TorchOED {design[i].tolist()}, FrF2 {reference[i].tolist()}")
     else:
         print("PB: NOT_RUN")
 

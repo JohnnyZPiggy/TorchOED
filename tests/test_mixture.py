@@ -108,4 +108,6 @@ def test_scheffe_exhaustive_optima(n, fixed):
             torch.trace(torch.linalg.inv(m) if c=='A' else torch.linalg.inv(m)@b))
         assert value == pytest.approx(best[c],rel=1e-9)
         assert float(result['efficiency_lower_bound']) <= 1+1e-12
-        assert result['ids'][:len(fixed)].tolist() == list(fixed)
+        ids = result['ids'].tolist()
+        assert len(ids) == len(set(ids)) == n
+        assert set(fixed) <= set(ids)

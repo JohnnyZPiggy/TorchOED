@@ -99,8 +99,16 @@
       "D": 0.006961468621390309,
       "rank": 6,
       "oracle": "PASS",
-      "floor": "NOT_RUN: no public evaluation-only floor API (fixed_ids length < n)",
-      "delta": -1.9081958235744878e-17
+      "floor": 0.9139763584432251,
+      "delta": -1.9081958235744878e-17,
+      "floor_check": {
+        "dense_lower": 0.7731778046135993,
+        "oracle": "PASS"
+      }
+    },
+    "evaluation_check": {
+      "floor": 0.9139763584432251,
+      "oracle": "PASS"
     }
   },
   "H26": {
@@ -132,7 +140,7 @@
     "reference": {
       "status": "NOT_RUN",
       "reason": "argument must be coercible to non-negative integer; undefined columns selected",
-      "floor": "NOT_RUN: no public evaluation-only floor API (fixed_ids length < n)"
+      "floor": "NOT_RUN: no skpr reference design: both gen_design calls errored, #329"
     }
   },
   "R": {

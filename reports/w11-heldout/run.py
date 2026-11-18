@@ -43,7 +43,21 @@ def h24():
     ok=ok and set(rational)==exact and len(v)==len(exact)
     ref=torch.tensor([[float(r[k]) for k in ('x1','x2','x3')] for r in read('H24.csv')],dtype=torch.float64)
     return dict(call='mixture_vertices([0.1, 0.1, 0.05], [0.5, 0.7, 0.6])',rationalisation='Fraction(x).limit_denominator(10**6); error <= 1e-12; all rows, exact bounds/sum/set/count',vertices=v.tolist(),count=len(v),oracle='PASS' if ok else 'FAIL',exact_vertices=[[str(x) for x in row] for row in sorted(exact)],reference=dict(count=len(ref),delta=hausdorff(v,ref)))
-if '--h24' in sys.argv:
+if '--floors' in sys.argv:
+    result=json.loads(p.joinpath('results.json').read_text())
+    x=torch.tensor([[float(r[k]) for k in ('x1','x2','x3')] for r in read('H25-candidates.csv')],dtype=torch.float64)
+    f=scheffe_features(x)
+    ids=torch.tensor([int(r['candidate'])-1 for r in read('H25.csv')])
+    floor=optimal_design(f,10,criterion="D",fixed_ids=ids,restarts=1)['efficiency_lower_bound']
+    saved=optimal_design(f,10,criterion="D",fixed_ids=torch.tensor(result['H25']['ids']),restarts=1)['efficiency_lower_bound']
+    m=f[ids].mT@f[ids]
+    lower=(6/(10*(f*torch.linalg.solve(m,f.mT).mT).sum(1)).max()).item()
+    result['H26']['reference']['floor']='NOT_RUN: no skpr reference design: both gen_design calls errored, #329'
+    result['H25']['reference']['floor']=floor
+    result['H25']['evaluation_check']=dict(floor=saved,oracle='PASS' if abs(saved-result['H25']['floor'])<=1e-12 else 'FAIL')
+    result['H25']['reference']['floor_check']=dict(dense_lower=lower,oracle='PASS' if floor>=lower-1e-12 else 'FAIL')
+    p.joinpath('results.json').write_text(json.dumps(result,indent=2)+'\n')
+elif '--h24' in sys.argv:
     result=json.loads(p.joinpath('results.json').read_text())
     result['H24']=h24()
     p.joinpath('results.json').write_text(json.dumps(result,indent=2)+'\n')

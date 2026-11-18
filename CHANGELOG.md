@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `mixture_process_features` for certified mixture-process D/A/I designs (#306).
+
 - Add effect-group F-test power to `design_diagnostics(groups=...)` (#302).
 
 - Support nested whole plots in fixed blocks for D/A/I, augmentation and dual floors (#297).

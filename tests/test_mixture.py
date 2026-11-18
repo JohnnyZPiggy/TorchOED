@@ -1,6 +1,6 @@
 import math
 from fractions import Fraction
-from itertools import combinations, combinations_with_replacement
+from itertools import combinations
 
 import pytest
 import torch
@@ -81,16 +81,17 @@ def test_scheffe_columns_and_grad(model, degree):
     assert x.grad is not None and torch.isfinite(x.grad).all()
 
 
-@pytest.mark.parametrize("n,fixed", [(6,()), (7,()), (8,(12,12))])
+@pytest.mark.parametrize("n,fixed", [(6,()), (7,()), (8,(12,13))])
 def test_scheffe_exhaustive_optima(n, fixed):
     f = scheffe_features(mixture_vertices([.2,.1,.1],[.6,.5,.6],face_dims=(1,2)))
+    if fixed: f = torch.cat((f, f[12:13]))
     b = f.T@f/len(f)
     best = dict(D=-math.inf,A=math.inf,I=math.inf)
-    rows = list(combinations_with_replacement(range(len(f)),n-len(fixed)))
+    rows = list(combinations(range(12) if fixed else range(13),n-len(fixed)))
     for offset in range(0,len(rows),2048):
         ids = torch.tensor([list(fixed)+list(r) for r in rows[offset:offset+2048]])
         x = f[ids]; m = x.mT@x
-        # Dense independent enumeration; singular multisets are infeasible.
+        # Dense independent enumeration; singular subsets are infeasible.
         sign, ld = torch.linalg.slogdet(m)
         good = (sign > 0) & (torch.linalg.eigvalsh(m)[:,0] > 1e-12)
         m,ld = m[good],ld[good]

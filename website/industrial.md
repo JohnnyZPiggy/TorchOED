@@ -54,6 +54,8 @@ assert math.isclose(result["objective"], logdet, rel_tol=1e-9)
 
 ## Mixture designs
 
+Designs are without replacement; replicate a point (for example the centroid) by appending copies of its candidate row.
+
 Use `scheffe_features` to build canonical linear, quadratic or special-cubic columns without an intercept or pure squares. Since proportions sum to one, an intercept or squares would make the quadratic model rank-deficient. Pass the features to the existing search and certificate machinery:
 
 ```python

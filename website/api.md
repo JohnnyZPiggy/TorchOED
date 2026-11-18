@@ -146,6 +146,8 @@ Return the minimum eigenvalue for numerically positive-semidefinite information 
 
 `c_optimality(M: torch.Tensor, c: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor`
 
+Return −cᵀM⁻¹c for a matched contrast vector and positive-definite information matrix.
+
 `g_optimality(M: torch.Tensor, F: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor`
 
 `v_optimality(M: torch.Tensor, F: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor`
@@ -154,9 +156,6 @@ Return the minimum eigenvalue for numerically positive-semidefinite information 
 
 G and V return negative maximum and mean prediction variance; I returns `-tr(M^-1 W)`.
 Inputs match batches exactly: SPD `M`, candidate rows `F`, symmetric PSD moment `W`.
-
-
-Return −cᵀM⁻¹c for a matched contrast vector and positive-definite information matrix.
 
 ## Exchange and restarted design
 

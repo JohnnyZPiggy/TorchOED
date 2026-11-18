@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add fixed per-run covariates to certified D/A/I search, preserving run order (#310).
+
 - Add `mixture_process_features` for certified mixture-process D/A/I designs (#306).
 
 - Add effect-group F-test power to `design_diagnostics(groups=...)` (#302).

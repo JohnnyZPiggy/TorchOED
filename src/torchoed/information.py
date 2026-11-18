@@ -165,8 +165,6 @@ def design_diagnostics(
         # Search imports exact_information from this module.
         from .d_optimal_design import _block_information, _split_information, _valid_plot_sizes
 
-        if blocks is not None and whole_plots is not None:
-            raise ValueError("blocks and whole_plots are mutually exclusive")
         if covariates is not None:
             Z = covariates
             if (not isinstance(Z, torch.Tensor) or Z.ndim != 2 or Z.shape[0] != n
@@ -185,10 +183,10 @@ def design_diagnostics(
             if effect is not None:
                 df = ids.new_full((p,), n - 1 - Z.shape[1] - p)
         else:
-            sizes = blocks if blocks is not None else whole_plots
+            sizes = whole_plots if whole_plots is not None else blocks
             if not _valid_plot_sizes(sizes, n):
                 raise ValueError("group sizes must be positive Python ints summing to len(ids)")
-            if blocks is not None:
+            if whole_plots is None:
                 M, _ = _block_information(F, ids, blocks)
                 C = M
                 R = R - R.mean(0)
@@ -200,13 +198,22 @@ def design_diagnostics(
                 counts = F.new_tensor(whole_plots)
                 inverse_scale = ((counts + 1 / eta).reciprocal() / eta if eta >= 1
                                  else (1 + eta * counts).reciprocal())
-                M, sums = _split_information(F, ids, whole_plots, inverse_scale / counts)
-                weighted_sum = inverse_scale @ sums
-                C = M - torch.outer(weighted_sum, weighted_sum / (inverse_scale @ counts))
+                if blocks is not None:
+                    boundaries = torch.tensor(whole_plots).cumsum(0).tolist()
+                    if (not _valid_plot_sizes(blocks, n)
+                            or any(b not in boundaries for b in torch.tensor(blocks).cumsum(0).tolist())):
+                        raise ValueError("blocks must sum to len(ids) with boundaries at whole-plot boundaries")
+                    M, _ = _split_information(F, ids, whole_plots, inverse_scale / counts, blocks)
+                    C = M
+                    R = R - R.mean(0)
+                else:
+                    M, sums = _split_information(F, ids, whole_plots, inverse_scale / counts)
+                    weighted_sum = inverse_scale @ sums
+                    C = M - torch.outer(weighted_sum, weighted_sum / (inverse_scale @ counts))
                 if effect is not None:
                     whole = torch.stack([(plot == plot[0]).all(0) for plot in S.split(whole_plots)]).all(0)
                     whole_count = whole.sum()
-                    df = torch.where(whole, len(whole_plots) - whole_count,
+                    df = torch.where(whole, len(whole_plots) - whole_count - (len(blocks) if blocks is not None else 0),
                                      n - len(whole_plots) - (p - whole_count))
         if df is not None and (df < 1).any():
             raise ValueError("structured power requires positive residual degrees of freedom")

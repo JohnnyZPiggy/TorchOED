@@ -75,8 +75,8 @@ def test_structured_diagnostics_invalid_inputs():
     ids = F.prod(1).argsort()
     a, b, c = F.unbind(1)
     saturated = torch.cat((F, torch.stack((a * b, a * c, b * c), dim=1)), dim=1)
-    with pytest.raises(ValueError, match="mutually exclusive"):
-        design_diagnostics(F, ids, blocks=[4, 4], whole_plots=[2, 2, 2, 2])
+    with pytest.raises(ValueError, match="boundaries"):
+        design_diagnostics(F, ids, blocks=[3, 5], whole_plots=[2, 2, 2, 2])
     with pytest.raises(ValueError, match="summing"):
         design_diagnostics(F, ids, blocks=[3, 4])
     with pytest.raises(ValueError, match="degrees of freedom"):
@@ -163,3 +163,55 @@ def test_covariate_diagnostics_trust_boundary():
                      (Z[:-1], {}), (torch.ones_like(Z), {})):
         with pytest.raises(ValueError):
             design_diagnostics(F, ids, covariates=z, **extra)
+
+
+def _combined_candidates():
+    h, x = torch.cartesian_prod(torch.tensor([-1., 1.]), torch.tensor([-1., 0., 1.])).double().unbind(1)
+    return torch.stack((h, x, x*x, h*x), 1).repeat(2, 1), torch.tensor([0, 2, 3, 4, 9, 11, 7, 8])
+
+
+def test_combined_diagnostics_dense_gls():
+    F, ids = _combined_candidates()
+    Z = torch.eye(4, dtype=F.dtype).repeat_interleave(2, 0)
+    B = torch.eye(2, dtype=F.dtype).repeat_interleave(4, 0)
+    X = torch.cat((B, F[ids]), 1)
+    V = torch.eye(8, dtype=F.dtype) + Z @ Z.mT
+    sigma = torch.linalg.inv(X.mT @ torch.linalg.solve(V, X))[2:, 2:]
+    C = torch.linalg.inv(sigma)
+    R = F - F.mean(0)
+    d = design_diagnostics(F, ids, blocks=[4, 4], whole_plots=[2]*4, eta=1.,
+                           effect=1., groups=[[1, 2, 3]])
+    expected = {'correlation': C / torch.outer(C.diagonal().sqrt(), C.diagonal().sqrt()),
+                'vif': C.diagonal()*sigma.diagonal(), 'spv': 8*(R @ sigma @ R.mT).diagonal(),
+                'power': _coefficient_power(1/sigma.diagonal(), 1, .05)}
+    for key, value in expected.items():
+        torch.testing.assert_close(d[key], value, rtol=1e-12, atol=1e-12)
+    assert torch.equal(d['df'], torch.ones(4, dtype=torch.int64))
+    assert d['group_df'].tolist() == [1]
+
+
+def test_combined_diagnostics_reductions():
+    F, ids = _combined_candidates()
+    d = design_diagnostics(F, ids, blocks=[8], whole_plots=[2]*4, effect=1.)
+    w = design_diagnostics(torch.cat((F.new_ones(12, 1), F), 1), ids,
+                           whole_plots=[2]*4, effect=1.)
+    for key in ('correlation', 'vif', 'power', 'df'):
+        expected = w[key][1:] if key in ('power', 'df') else w[key]
+        torch.testing.assert_close(d[key], expected, rtol=1e-12, atol=1e-12)
+    assert torch.equal(d['df'], w['df'][1:])
+    d = design_diagnostics(F, ids, blocks=[4, 4], whole_plots=[1]*8, eta=.5,
+                           effect=1., groups=[[0, 1], [2, 3]])
+    b = design_diagnostics(F, ids, blocks=[4, 4], effect=1/1.5**.5, groups=[[0, 1], [2, 3]])
+    for key in ('correlation', 'vif', 'spv', 'power', 'group_power', 'df', 'group_df'):
+        torch.testing.assert_close(d[key], b[key]*(1.5 if key == 'spv' else 1), rtol=1e-12, atol=1e-12)
+    for key in ('df', 'group_df'):
+        assert torch.equal(d[key], b[key])
+
+
+def test_combined_diagnostics_trust_boundary():
+    F, ids = _combined_candidates()
+    for extra in ({'blocks': [3, 5]}, {'groups': [[0, 1]]}, {'covariates': F.new_zeros(8, 1)}):
+        args = dict(blocks=[4, 4], whole_plots=[2]*4, effect=1.)
+        args.update(extra)
+        with pytest.raises(ValueError):
+            design_diagnostics(F, ids, **args)

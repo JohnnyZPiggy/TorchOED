@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add diagnostics and containment-df t/F power for whole plots nested in fixed blocks (#325).
 - Add alias-penalised D search, alias traces and a D-efficiency floor (#322).
 
 - Add covariate-adjusted design diagnostics, prediction variance and t/F power (#318).

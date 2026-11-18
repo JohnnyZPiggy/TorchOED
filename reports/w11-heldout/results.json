@@ -69,7 +69,11 @@
         "9/20",
         "1/20"
       ]
-    ]
+    ],
+    "reference": {
+      "count": 6,
+      "delta": 7.152557390810443e-08
+    }
   },
   "H25": {
     "candidate_count": 13,
@@ -88,7 +92,14 @@
     "floor": 0.9139763584432278,
     "D": 0.006961468621390328,
     "rank": 6,
-    "oracle": "PASS"
+    "oracle": "PASS",
+    "reference": {
+      "D": 0.006961468621390309,
+      "rank": 6,
+      "oracle": "PASS",
+      "floor": "NOT_RUN: no public evaluation-only floor API (fixed_ids length < n)",
+      "delta": -1.9081958235744878e-17
+    }
   },
   "H26": {
     "ids": [
@@ -111,9 +122,45 @@
     ],
     "floor": 0.6933612743506348,
     "objective": 14.438307756102468,
-    "D": 0.6933612690681804,
+    "D": 0.6933612743506347,
     "logdet": 14.438307756102468,
     "oracle": "PASS",
-    "objective_oracle": "FAIL"
+    "objective_oracle": "PASS",
+    "objective_normalization": "exp(objective) = det M_C; D = exp(objective/6)/16",
+    "reference": {
+      "status": "NOT_RUN",
+      "reason": "argument must be coercible to non-negative integer; undefined columns selected",
+      "floor": "NOT_RUN: no public evaluation-only floor API (fixed_ids length < n)"
+    }
+  },
+  "R": {
+    "status": "PASS",
+    "source_sha": "092127267066f77d898e77ce468110c5fcf236b0",
+    "device_used": "CPU (CUDA hidden from R)",
+    "H24": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "H25": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "H26": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Warning message:\nIn seq_len(ncol(design)) : first element used of 'length.out' argument\n",
+      "errors": [
+        "argument must be coercible to non-negative integer",
+        "undefined columns selected"
+      ]
+    },
+    "versions": {
+      "R": "4.6.1",
+      "mixexp": "1.2.7.1",
+      "AlgDesign": "1.2.1.2",
+      "skpr": "1.9.2"
+    }
   }
 }

@@ -1,19 +1,19 @@
-# W11 held-out H24–H26 — blocked single attempt
+# W11 held-out H24–H26
 
-Refs #329. Local numerical source `main@4aad71e39cc1ac2f37c924f763db229dc360a6dd`; committed controller source `149a5f40a6f76f19aaa09275eaababdb67127f82`. Python 3.14.6, torch 2.15.0+cpu, float64, seed 0. No timing or tuning claim.
+Refs #329. Local numerical source `4aad71e39cc1ac2f37c924f763db229dc360a6dd`; second controller source `092127267066f77d898e77ce468110c5fcf236b0`. Python 3.14.6, torch 2.15.0+cpu, CPU float64, seed 0. R seed 20261124.
 
 | Case | TorchOED value | Reference value | Δ |
 |---|---|---|---|
-| H24 | 6 vertices; exact rational exhaustive vertex-set oracle PASS | NOT_RUN: allocation failed | N/A |
-| H25 | 13 candidates frozen; D unavailable (first search output lost before saving) | NOT_RUN: allocation failed | N/A |
-| H26 | NOT_RUN: frozen float64 `hard=C[:,0]` rejected | NOT_RUN: allocation failed | N/A |
+| H24 | 6 vertices; exact rational oracle PASS | mixexp 6 vertices | Hausdorff 7.152557390810443e-08 (coordinates NO MATCH at 1e-12) |
+| H25 | D 0.006961468621390328; floor 0.9139763584432278 | AlgDesign D 0.006961468621390309; floor NOT_RUN | reference − TorchOED D = −1.9081958235744878e-17 |
+| H26 | D 0.6933612743506347; floor 0.6933612743506348 | skpr NOT_RUN (two captured errors) | N/A |
 
-H24 rational coordinates are reconstructed from float64 with `Fraction.limit_denominator(10**6)` and equal exhaustive rational bound-pair enumeration; every rational row is feasible and sums exactly to one. Raw returned coordinates and exact rows are in results.json. H25 search ran once, but the prescribed all-fixed certificate call raised `ValueError: fixed_ids must be distinct candidate IDs with length < n` before its outputs were saved. H26 raised `ValueError: hard must be a length-m integer tensor on F's device` before search. H25/H26 metric oracles are NOT_RUN; neither search was repeated with changed arguments. Architect ruling is required before additional measurements.
+H24 matches exhaustive Fraction bound-pair enumeration (six feasible vertices, exact sum one). H25 slogdet/eigenvalue D agreement and rank-six oracle PASS. H26 dense θ inverse-block and Schur logdet agree at 1e-10; `exp(objective) = det M_C` at 1e-9 relative, so `D = exp(objective/6)/16`; objective 14.438307756102468. TorchOED floors are from the returned frozen search results. Reference floors remain NOT_RUN per the Architect ruling: no public evaluation-only floor API (fixed_ids length < n).
 
-One pinned SAE controller attempt, T4 allocation requested solely for CPU R, CUDA hidden in the driver: preflight PASS, allocation `new` TIMEOUT / ALLOCATION_FAILED, no observed device or R execution. `sessionInfo()`, mixexp, AlgDesign and skpr versions: NOT_RUN. Reference columns are all NOT_RUN. Controller stop PASS; fresh authenticated usage confirms zero assignments and unchanged balance 50.87 → 50.87 compute units (cleanup.json).
+Per ruling 6986066119, H25 is the second execution of the unchanged deterministic call; the first output was never seen or saved because its subsequent all-fixed certificate call raised. H26 ran once after the prescribed label-preserving cast to int64. No changed seed, model, size, criterion or tuning. A temporary metric self-check compared D directly with exp(objective); corrected to the required normalization and re-scored saved IDs only. A float32 log(16) constant was replaced by float64 before the final D score. No additional search.
 
-Command: pinned `colab_control.py --repo-path <linux-repo> --source-sha 149a5f40a6f76f19aaa09275eaababdb67127f82 --run-id w329-colab-20261118 --out <scratch>/colab --cli colab --device T4 --temp-root <scratch>/temp --driver tools/r_heldout_driver.py --artifacts tools/r_heldout_artifacts.json --task-seconds 2400 --allocation-seconds 2100 --kernel-timeout 120 --work-timeout 1500 --cleanup-seconds 180`.
+Both controller attempts use the pinned #271 command form, CPU R with CUDA hidden: task 2400 s, allocation 2100 s, kernel 120 s, work 1500 s, cleanup 180 s. First source 149a5f40a6f76f19aaa09275eaababdb67127f82: allocation TIMEOUT/ALLOCATION_FAILED; stop PASS, zero assignments, balance 50.87 → 50.87. Second source 092127267066f77d898e77ce468110c5fcf236b0: controller PASS, observed Tesla T4 (R used CPU only), stop PASS, assignments 0 → 0, balance 50.70 → 50.51; usage rate after 0.00/hr. R 4.6.1, mixexp 1.2.7.1, AlgDesign 1.2.1.2, skpr 1.9.2; full sessionInfo() recorded. H26 errors verbatim: "argument must be coercible to non-negative integer" and "undefined columns selected"; stderr warning: "In seq_len(ncol(design)) : first element used of 'length.out' argument". H25 reference metric oracle PASS. Five required metric/oracle checks PASS, zero FAIL; external H24 coordinate mismatch reported as-is. No third attempt. Exact usage and cleanup readback for both attempts are in cleanup.json.
 
-An initial CRLF shell setup failed before any controller invocation; corrected LF and login PATH, then made the single controller attempt above. Local H25/H26 dispatch conflicts are recorded on #329. H1–H23 were not rerun: prior evidence remains in reports/w3-heldout, reports/w6-heldout, reports/w7-heldout, reports/w8-heldout, reports/w9-heldout and reports/w10-heldout. Seven evidence files; no production/test/doc/website edits.
+H1–H23 were not rerun; see earlier reports/w*-heldout. No source/tests/docs/website edits, GPU science, timing or speed claims.
 
 measurement only; no tuning followed

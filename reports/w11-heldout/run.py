@@ -25,7 +25,7 @@ def combined_metric(s, blocks, plots):
     vi=torch.linalg.solve(v,s); vb=torch.linalg.solve(v,b)
     schur=s.mT@vi-s.mT@vb@torch.linalg.solve(b.mT@vb,b.mT@vi)
     ld=torch.linalg.slogdet(m).logabsdet; alt=torch.linalg.slogdet(schur).logabsdet
-    return dict(D=(ld/6-torch.tensor(16.).log()).exp().item(), logdet=ld.item(), oracle='PASS' if torch.isclose(ld,alt,rtol=0,atol=1e-10) else 'FAIL')
+    return dict(D=(ld/6-ld.new_tensor(16.).log()).exp().item(), logdet=ld.item(), oracle='PASS' if torch.isclose(ld,alt,rtol=0,atol=1e-10) else 'FAIL')
 if '--score' not in sys.argv:
     lo=list(map(Q,['0.1','0.1','0.05'])); hi=list(map(Q,['0.5','0.7','0.6']))
     exact=set()
@@ -47,18 +47,22 @@ if '--score' not in sys.argv:
     c=(full_factorial([2,2,2]).double()*2-1).repeat(4,1); a,b,e=c.unbind(1); f=torch.stack((a,b,e,a*b,a*e,b*e),1)
     r=optimal_design(f,16,blocks=[8,8],whole_plots=[2]*8,hard=c[:,0].long(),eta=1,generator=torch.Generator().manual_seed(0))
     result['H26']=dict(ids=r['ids'].tolist(),floor=r['efficiency_lower_bound'],objective=r['objective'],**combined_metric(f[r['ids']],[0]*8+[1]*8,[i//2 for i in range(16)]))
-    result['H26']['objective_oracle']='PASS' if abs(result['H26']['D']-torch.tensor(r['objective'],dtype=torch.float64).exp().item())<1e-10 else 'FAIL'
+    result['H26']['objective_oracle']='PASS' if abs(result['H26']['logdet']-r['objective'])<1e-9 else 'FAIL'
     p.joinpath('results.json').write_text(json.dumps(result,indent=2)+'\n')
 else:
     result=json.loads(p.joinpath('results.json').read_text())
-    for case in ('H24','H25','H26'): result[case]['reference']=dict(status='NOT_RUN')
+    c=(full_factorial([2,2,2]).double()*2-1).repeat(4,1); a,b,e=c.unbind(1); f=torch.stack((a,b,e,a*b,a*e,b*e),1)
+    result['H26'].update(combined_metric(f[result['H26']['ids']],[0]*8+[1]*8,[i//2 for i in range(16)]))
+    result['H26']['objective_oracle']='PASS' if abs(result['H26']['logdet']-result['H26']['objective'])<1e-9 else 'FAIL'
+    result['H26']['objective_normalization']='exp(objective) = det M_C; D = exp(objective/6)/16'
+    for case in ('H24','H25','H26'): result[case]['reference']=dict(status='NOT_RUN',reason='; '.join(result.get('R',{}).get(case,{}).get('errors',[])) or 'Reference output unavailable')
     if (p/'H24.csv').exists():
         ref=torch.tensor([[float(r[k]) for k in ('x1','x2','x3')] for r in read('H24.csv')],dtype=torch.float64)
         result['H24']['reference']=dict(count=len(ref),delta=hausdorff(torch.tensor(result['H24']['vertices'],dtype=torch.float64),ref))
     if (p/'H25.csv').exists():
         x=torch.tensor([[float(r[k]) for k in ('x1','x2','x3')] for r in read('H25-candidates.csv')],dtype=torch.float64); f=scheffe_features(x)
         ids=torch.tensor([int(r['candidate'])-1 for r in read('H25.csv')]); r=mixture_metric(f[ids])
-        r['floor']='NOT_RUN: fixed_ids must be distinct candidate IDs with length < n'
+        r['floor']='NOT_RUN: no public evaluation-only floor API (fixed_ids length < n)'
         r['delta']=r['D']-result['H25']['D']; result['H25']['reference']=r
     if (p/'H26.csv').exists():
         rows=read('H26.csv'); c=torch.tensor([[float(r[k]) for k in ('A','B','C')] for r in rows],dtype=torch.float64); a,b,e=c.unbind(1)

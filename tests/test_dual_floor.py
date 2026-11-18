@@ -196,3 +196,31 @@ def test_alias_local_certificate_and_boundary():
                 assert value.item()<=r['objective']+1e-12*abs(r['objective'])
     for options in ({'alias':G[:-1]}, {'alias_weight':-1}, {'criterion':'A'}, {'criterion':{'D':1}}, {'blocks':[3,3]}):
         with pytest.raises(ValueError): optimal_design(F,6,**({'alias':G}|options))
+
+
+@pytest.mark.parametrize('case', ['D','A','I','compound','alias','blocks','split','both','covariates'])
+def test_given_design_roundtrip(case):
+    X=full_factorial([2]*3).double()*2-1; F=polynomial_features(X,1); n=6
+    options={'criterion':case} if case in ('D','A','I') else {}
+    if case in ('D','A','I'): n=8
+    if case=='compound': options={'criterion':{'D':.5,'I':.5}}
+    if case=='alias': options={'alias':X[:, :1]*X[:,1:2]}
+    if case in ('blocks','split','both','covariates'): F=X
+    if case in ('blocks','both'): options['blocks']=[4,4]; n=8
+    if case in ('split','both'): options.update(whole_plots=[2]*(n//2),hard=X[:,0].long())
+    if case=='covariates': options['covariates']=torch.arange(n,dtype=F.dtype)[:,None]
+    r=optimal_design(F,n,restarts=2,generator=torch.Generator().manual_seed(0),**options)
+    e=optimal_design(F,n,fixed_ids=r['ids'],restarts=1,**options)
+    assert torch.equal(e['ids'],r['ids'])
+    for key in ('objective','efficiency_lower_bound'):
+        assert e[key]==pytest.approx(r[key],abs=1e-12,rel=0)
+
+
+def test_given_design_poor_oracle_and_boundary():
+    F=polynomial_features(torch.arange(-4,5,dtype=torch.float64)[:,None],2); ids=[0,1,2,3]; n=4
+    M=F[ids].T@F[ids]; best=max(torch.linalg.det(F[list(s)].T@F[list(s)]).item() for s in combinations(range(9),n))
+    e=optimal_design(F,n,fixed_ids=ids,restarts=1)
+    kw=3/(n*(F*torch.linalg.solve(M,F.T).T).sum(1).max().item())
+    assert torch.linalg.det(M).item()<best
+    assert kw-1e-12<=e['efficiency_lower_bound']<=(torch.linalg.det(M).item()/best)**(1/3)+1e-12
+    with pytest.raises(ValueError): optimal_design(F,n,fixed_ids=[0,1,2,3,4],restarts=1)

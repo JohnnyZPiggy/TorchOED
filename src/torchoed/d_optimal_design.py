@@ -11,10 +11,10 @@ from .two_swap import _pair_tiles
 
 def _fixed_pool(fixed_ids, m, n):
     fixed = torch.as_tensor(fixed_ids)
-    if (fixed.ndim != 1 or len(fixed) >= n or
+    if (fixed.ndim != 1 or len(fixed) > n or
             (len(fixed) and (fixed.dtype not in (torch.int32, torch.int64) or
              fixed.min() < 0 or fixed.max() >= m or len(fixed.unique()) != len(fixed)))):
-        raise ValueError('fixed_ids must be distinct candidate IDs with length < n')
+        raise ValueError('fixed_ids must be distinct candidate IDs with length <= n')
     fixed = fixed.to(dtype=torch.int64)
     return fixed, torch.tensor(sorted(set(range(m))-set(fixed.tolist())),dtype=torch.int64)
 
@@ -109,7 +109,7 @@ def _linear_scores(F, ids, B, criterion):
         HZ = (Z@Z.mT/len(F))@Z
         Qs, diagonal = Z[:,ids].mT@HZ, (Z*HZ).sum(dim=0)
     Gs, gd = Z[:,ids].mT@Z, Z.square().sum(dim=0)
-    incoming = torch.tensor(sorted(set(range(len(F)))-set(ids.tolist())))
+    incoming = torch.tensor(sorted(set(range(len(F)))-set(ids.tolist())), dtype=torch.int64)
     u, v, c = Gs[:,ids].diagonal()[:,None], gd[incoming], Gs[:,incoming]
     alpha, beta, gamma = Qs[:,ids].diagonal()[:,None], diagonal[incoming], Qs[:,incoming]
     ratio = (1-u)*(1+v)+c.square()

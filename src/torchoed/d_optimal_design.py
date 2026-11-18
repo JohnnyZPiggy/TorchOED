@@ -1061,7 +1061,7 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
             raise ValueError("compound weights must be finite nonnegative D/A/I values with positive sum")
         if blocks is not None or whole_plots is not None or covariates is not None or hard is not None:
             raise ValueError("compound criteria require an unstructured design")
-        weights = {k: v/sum(criterion.values()) for k, v in criterion.items()}
+        weights = {k: float(v/sum(criterion.values())) for k, v in criterion.items()}
         return _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, max_elements)
     if covariates is not None:
         if blocks is not None or whole_plots is not None:

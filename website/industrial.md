@@ -4,6 +4,17 @@ These examples use CPU float64 features. Each search uses a fresh generator seed
 
 ## Blocking
 
+Fixed per-run covariates absorb nuisance effects while the design chooses the factors. Supply features without an intercept; the returned IDs keep run order and `fixed_ids` stay leading. Covariates cannot combine with blocks or whole plots. Covariate-aware diagnostics are pending.
+
+```python
+import torch
+from torchoed import full_factorial, optimal_design
+F = torch.cartesian_prod(torch.tensor([-1., 1.], dtype=torch.float64), torch.tensor([-1., 0., 1.], dtype=torch.float64))
+Z = torch.arange(5, dtype=torch.float64)[:, None]  # fixed linear time trend
+result = optimal_design(F, 5, covariates=Z, generator=torch.Generator().manual_seed(0))
+assert torch.equal(result["covariates"], Z)
+```
+
 Pass fixed block sizes in `blocks` when runs are grouped by a nuisance factor, such as day or batch. The sizes must sum to the number of runs. This is a D-optimal search without `fixed_ids`; omit the intercept because centering the features within each block removes it. The returned IDs are grouped by block.
 
 ```python

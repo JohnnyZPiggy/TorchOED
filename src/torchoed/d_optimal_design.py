@@ -669,6 +669,69 @@ def _plot_workspace(F, restarts, max_iter, max_elements, per_row, kind):
         raise ValueError(f"insufficient max_elements for {kind} workspace")
 
 
+def _covariate_design(F, n, Z, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
+    _features(F, max_elements)
+    m, p = F.shape
+    if (F.dtype != torch.float64 or F.device.type != "cpu" or criterion not in ("D", "A", "I")
+            or not isinstance(Z, torch.Tensor) or Z.ndim != 2 or Z.shape[0] != n
+            or Z.shape[1] < 1 or Z.dtype != F.dtype or Z.device != F.device or not torch.isfinite(Z).all()):
+        raise ValueError("covariates requires CPU float64 F and finite (n, c) covariates, c >= 1, for D/A/I")
+    if type(n) is not int or not m >= n >= 1 + Z.shape[1] + p:
+        raise ValueError("covariates requires m >= n >= 1 + c + p")
+    _plot_workspace(F, restarts, max_iter, max_elements - n*n - 4*n*(p+Z.shape[1]+1), 16, "covariate")
+    X = torch.cat((F.new_ones(n, 1), Z), 1)
+    gram = X.mT @ X
+    L, info = torch.linalg.cholesky_ex(gram)
+    if info != 0 or (L.diagonal().square() <= 64*len(gram)*torch.finfo(F.dtype).eps*gram.abs().amax()).any():
+        raise ValueError("[1 covariates] must have full column rank")
+    U = torch.linalg.qr(X, mode="reduced").Q
+    Q = torch.eye(n, dtype=F.dtype) - U @ U.mT
+    fixed, pool = (None, None) if fixed_ids is None else _fixed_pool(fixed_ids, m, n)
+    n_fixed = 0 if fixed is None else len(fixed)
+    centered = F - F.mean(0)
+    B = None if criterion == "D" else torch.eye(p, dtype=F.dtype) if criterion == "A" else centered.mT @ centered / m
+
+    def draw():
+        if not n_fixed:
+            return torch.randperm(m, generator=generator)[:n]
+        return torch.cat((fixed, pool[torch.randperm(len(pool), generator=generator)[:n-n_fixed]]))
+
+    def information(ids):
+        R = Q @ F[ids]
+        return R.mT @ R, R
+
+    def moves(ids, R, L):
+        rows, residuals = torch.linalg.solve_triangular(L, torch.cat((F, R)).mT, upper=False).mT.split((m, n))
+        H = None if B is None else _whitened_moment(L, B)
+        unused = torch.ones(m, dtype=torch.bool)
+        unused[ids] = False
+        incoming = unused.nonzero().flatten()
+        # Exchange first, then interchange: both use the gate's det(K) = -1 kernel.
+        for interchange in (False, True):
+            for i in range(n_fixed, n):
+                choices = torch.arange(i+1, n) if interchange else incoming
+                d = rows[ids[choices] if interchange else choices] - rows[ids[i]]
+                q = residuals[i] - residuals[choices] if interchange else residuals[i].expand_as(d)
+                k = Q[i,i] + Q[choices,choices] - 2*Q[i,choices] if interchange else Q[i,i]
+                a, b, e = d.square().sum(1), (d*q).sum(1), q.square().sum(1)
+                ratio = 1 + k*a + 2*b - (a*e-b.square())
+                if H is None:
+                    improving = ratio > 1
+                else:
+                    dq, qq = d @ H, q @ H
+                    gain = (2*(b+1)*(d*qq).sum(1) - (e-k)*(d*dq).sum(1) - a*(q*qq).sum(1)) / ratio.masked_fill(ratio <= 0, torch.inf)
+                    improving = (ratio > 0) & (gain > 0)
+                for j in choices[improving].tolist():
+                    trial = ids.clone()
+                    trial[i] = ids[j] if interchange else j
+                    if interchange:
+                        trial[j] = ids[i]
+                    yield trial
+
+    return _plot_restarts([1]*n, restarts, draw, information, moves, max_iter,
+                          {"covariates": Z}, "LOCAL_COVARIATE_EXCHANGE", G=centered, criterion=criterion, B=B)
+
+
 def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
     m, p = F.shape
     if not _valid_plot_sizes(blocks, n) or m < n or n - len(blocks) < p:
@@ -914,13 +977,21 @@ def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, genera
 def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None,
                    max_iter: int = 100, max_elements: int = 1_000_000, blocks: list[int] | tuple[int, ...] | None = None,
                    whole_plots: list[int] | tuple[int, ...] | None = None,
-                   hard: torch.Tensor | None = None, eta: int | float = 1.0) -> dict[str, object]:
+                   hard: torch.Tensor | None = None, eta: int | float = 1.0,
+                   covariates: torch.Tensor | None = None) -> dict[str, object]:
     """D/A/I VND restarts with criterion-specific efficiency floor.
 
     Set blocks to fixed block sizes for CPU float64 D/A/I search without an intercept.
     Set whole_plots, hard labels and eta for CPU float64 split-plot D/A/I search.
+    Set covariates to fixed per-run columns; ids keep run order and covariates never move.
     For structured designs, fixed_ids fill the leading positions, block by block.
     """
+    if covariates is not None:
+        if blocks is not None or whole_plots is not None:
+            raise ValueError("covariates cannot be combined with blocks or whole_plots")
+        if hard is not None:
+            raise ValueError("hard requires whole_plots")
+        return _covariate_design(F, n, covariates, criterion, fixed_ids, restarts, generator, max_iter, max_elements)
     if (whole_plots is None) != (hard is None):
         raise ValueError("whole_plots and hard must be given together")
     if whole_plots is not None:

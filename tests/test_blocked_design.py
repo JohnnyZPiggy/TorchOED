@@ -285,3 +285,46 @@ def test_combined_fixed_ids_and_boundary():
     assert math.exp(result['objective']) == pytest.approx(220/9, rel=1e-9)
     with pytest.raises(ValueError):
         optimal_design(F, 8, whole_plots=[2]*4, blocks=[3, 5], hard=h)
+
+
+@pytest.mark.parametrize("case", (0, 1))
+def test_covariate_frozen_exhaustive_oracles(case):
+    h, x = torch.cartesian_prod(torch.tensor([-1., 1.], dtype=torch.float64), torch.tensor([-1., 0., 1.], dtype=torch.float64)).mT
+    F = torch.stack((h, x, h*x if case == 0 else x*x), 1)
+    n = 5 + case
+    t = torch.arange(n, dtype=F.dtype)
+    Z = t[:, None] if case == 0 else torch.stack((t, (-1)**t), 1)
+    X = torch.cat((torch.ones(n, 1, dtype=F.dtype), Z), 1)
+    Q = torch.eye(n, dtype=F.dtype) - X @ torch.linalg.lstsq(X, torch.eye(n, dtype=F.dtype)).solution
+    expected = (math.log(1568/25), -149/196, -7/12) if case == 0 else (math.log(256/9), -19/16, -25/48)
+    for criterion, value in zip(("D", "A", "I"), expected):
+        result = optimal_design(F, n, criterion=criterion, covariates=Z, restarts=20, generator=torch.Generator().manual_seed(0))
+        ids = result["ids"]
+        assert torch.equal(result["covariates"], Z) and len(set(ids.tolist())) == n
+        M = F[ids].mT @ Q @ F[ids]
+        B = torch.eye(3, dtype=F.dtype) if criterion == "A" else (F-F.mean(0)).mT @ (F-F.mean(0))/6
+        dense = torch.linalg.slogdet(M).logabsdet.item() if criterion == "D" else -torch.trace(torch.linalg.solve(M, B)).item()
+        assert result["objective"] == pytest.approx(value, abs=1e-12, rel=0)
+        assert result["objective"] == pytest.approx(dense, abs=1e-12, rel=0)
+        assert result["certificate"] == "LOCAL_COVARIATE_EXCHANGE" and 0 < result["efficiency_lower_bound"] <= 1 + 1e-12
+
+
+def test_covariate_blocks_reduction_and_fixed_order():
+    a, b, c = ff2n(3).mT
+    F = torch.stack((a,b,c,a*b,a*c,b*c), 1)
+    ids = (a*b*c).argsort(stable=True)
+    Z = torch.tensor([[0.]]*4 + [[1.]]*4, dtype=F.dtype)
+    X = torch.cat((torch.ones(8, 1, dtype=F.dtype), Z), 1)
+    Q = torch.eye(8, dtype=F.dtype) - X @ torch.linalg.solve(X.mT @ X, X.mT)
+    torch.testing.assert_close(F[ids].mT @ Q @ F[ids], _block_information(F, ids, [4,4])[0], atol=1e-12, rtol=0)
+    result = optimal_design(F, 8, covariates=Z, fixed_ids=ids[:3], generator=torch.Generator().manual_seed(0))
+    assert torch.equal(result["ids"][:3], ids[:3])
+
+
+def test_covariate_boundary():
+    F = torch.cartesian_prod(torch.tensor([-1., 1.], dtype=torch.float64), torch.tensor([-1., 0., 1.], dtype=torch.float64))
+    Z = torch.arange(5, dtype=F.dtype)[:,None]
+    for kwargs in ({"blocks":[5]}, {"covariates":Z[:4]}, {"covariates":torch.ones_like(Z)},
+                   {"covariates":Z*float("nan")}, {"n":3,"covariates":Z[:3]}):
+        args = dict(n=5, covariates=Z); args.update(kwargs)
+        with pytest.raises(ValueError): optimal_design(F, **args)

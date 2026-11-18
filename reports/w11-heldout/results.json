@@ -1,0 +1,83 @@
+{
+  "environment": {
+    "torch": "2.15.0+cpu",
+    "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]"
+  },
+  "H24": {
+    "vertices": [
+      [
+        0.1,
+        0.3,
+        0.6
+      ],
+      [
+        0.1,
+        0.7,
+        0.2
+      ],
+      [
+        0.25,
+        0.7,
+        0.05
+      ],
+      [
+        0.3,
+        0.1,
+        0.6
+      ],
+      [
+        0.5,
+        0.1,
+        0.4
+      ],
+      [
+        0.5,
+        0.45,
+        0.05
+      ]
+    ],
+    "count": 6,
+    "oracle": "PASS",
+    "exact_vertices": [
+      [
+        "1/10",
+        "3/10",
+        "3/5"
+      ],
+      [
+        "1/10",
+        "7/10",
+        "1/5"
+      ],
+      [
+        "1/4",
+        "7/10",
+        "1/20"
+      ],
+      [
+        "3/10",
+        "1/10",
+        "3/5"
+      ],
+      [
+        "1/2",
+        "1/10",
+        "2/5"
+      ],
+      [
+        "1/2",
+        "9/20",
+        "1/20"
+      ]
+    ]
+  },
+  "H25": {
+    "candidate_count": 13,
+    "status": "NOT_RUN",
+    "error": "First search completed but all-fixed certificate raised ValueError: fixed_ids must be distinct candidate IDs with length < n; search outputs were not saved. No rerun."
+  },
+  "H26": {
+    "status": "NOT_RUN",
+    "error": "ValueError: hard must be a length-m integer tensor on F's device; frozen hard=C[:,0] is float64. No changed-argument retry."
+  }
+}

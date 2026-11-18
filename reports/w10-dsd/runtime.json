@@ -1,8 +1,8 @@
 {
   "status": "FAIL",
-  "error": "DOWNLOAD_FAILED",
-  "source_sha": "31f63ea26f6776608aa31cef859008522ba82978",
-  "run_id": "w305-colab-20261118",
+  "error": "ARTIFACT_SOURCE_OR_STATUS_FAILED",
+  "source_sha": "51e02839f9be4ad57ca90a99c6d543646d377092",
+  "run_id": "w309-colab-20261118",
   "created": true,
   "cleanup_confirmed": true,
   "commands": [
@@ -28,8 +28,8 @@
     },
     {
       "operation": "download",
-      "status": "FAIL",
-      "exit_code": 1
+      "status": "PASS",
+      "exit_code": 0
     },
     {
       "operation": "stop",
@@ -64,9 +64,9 @@
   },
   "assignments_before": 0,
   "assignments_after": 0,
-  "balance_before": 50.89,
-  "balance_after": 50.89,
+  "balance_before": 50.87,
+  "balance_after": 50.87,
   "artifact_sha256": {},
   "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
-  "total_seconds": 56.126675252999995
+  "total_seconds": 41.50996146899999
 }

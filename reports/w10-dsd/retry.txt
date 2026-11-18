@@ -1,1 +1,1 @@
-Issue #305; final attempt; measured source SHA 31f63ea26f6776608aa31cef859008522ba82978.
+Issue #309; corrected driver precedence and pushed source before allocation.

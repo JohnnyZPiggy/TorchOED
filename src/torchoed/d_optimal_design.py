@@ -1080,10 +1080,10 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
     For structured designs, fixed_ids fill the leading positions, block by block.
     """
     if alias is not None:
-        from numbers import Real
+        from fractions import Fraction
         if (not isinstance(alias, torch.Tensor) or alias.ndim != 2 or alias.shape[0] != F.shape[0]
                 or alias.dtype != F.dtype or alias.device != F.device or not torch.isfinite(alias).all()
-                or not isinstance(alias_weight, Real) or not 0 <= alias_weight < float("inf")):
+                or not isinstance(alias_weight, (int, float, Fraction)) or not 0 <= alias_weight < float("inf")):
             raise ValueError("alias requires finite matching candidate rows and a finite nonnegative weight")
         if (not isinstance(criterion, str) or criterion != "D" or blocks is not None
                 or whole_plots is not None or covariates is not None or hard is not None):

@@ -1,0 +1,83 @@
+{
+  "source_sha": "25856bda2583125b75334555cbf9b391470fd547",
+  "python": "3.14.6",
+  "torch": "2.15.0+cpu",
+  "device": "CPU",
+  "dtype": "float64",
+  "threads": 1,
+  "seed": 0,
+  "restarts": 10,
+  "TorchOED": {
+    "rows": [
+      [
+        1.0,
+        -1.0,
+        -1.0
+      ],
+      [
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      [
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        -1.0,
+        -1.0,
+        1.0
+      ],
+      [
+        1.0,
+        -1.0,
+        -1.0
+      ]
+    ],
+    "det_M_Z": 81.91999999999997,
+    "verdict": "MATCH",
+    "ids": [
+      1,
+      4,
+      29,
+      0,
+      7
+    ],
+    "objective": 4.405743161291198,
+    "covariates_equal": true
+  },
+  "oracle": {
+    "visited": 7776,
+    "maximum": "2048/25",
+    "maximisers": 24
+  },
+  "tests": {
+    "exhaustive_oracle": "PASS",
+    "dense_rescore": "PASS"
+  },
+  "skpr": {
+    "verdict": "NOT_RUN",
+    "error": "Attempt 1 (transport failure):\nNOT_RUN: KERNEL_PROBE_FAILED; kernel_smoke.py timed out before the R driver was invoked. R/skpr versions and sessionInfo() unavailable. No skpr call or second Colab session attempted.\n\nAttempt 2 (Architect-authorized retry, same source and driver; kernel timeout 300):\nR version 4.6.1 (2026-06-24)\nPlatform: x86_64-pc-linux-gnu\nRunning under: Ubuntu 24.04.4 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 \nLAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0\n\nlocale:\n [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\ntime zone: Etc/UTC\ntzcode source: system (glibc)\n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n[1] skpr_1.9.2\n\nloaded via a namespace (and not attached):\n [1] digest_0.6.39       codetools_0.2-20    doParallel_1.0.17  \n [4] magrittr_2.0.5      iterators_1.0.14    rngtools_1.5.2     \n [7] doRNG_1.8.6.3       parallel_4.6.1      foreach_1.5.2      \n[10] parallelly_1.50.0   future_1.82.0       doFuture_1.4.0     \n[13] compiler_4.6.1      globals_0.20.0      tools_4.6.1        \n[16] future.apply_1.21.0 listenv_1.1.0       Rcpp_1.1.2         \n[1] \u20181.9.2\u2019\nfunction (candidateset, model, trials, splitplotdesign = NULL, \n    blocksizes = NULL, optimality = \"D\", augmentdesign = NULL, \n    repeats = 20, custom_v = NULL, varianceratio = 1, contrasts = contr.simplex, \n    aliaspower = 2, minDopt = 0.8, k = NA, moment_sample_density = 10, \n    high_resolution_candidate_set = NA, parallel = FALSE, progress = TRUE, \n    add_blocking_columns = FALSE, randomized = TRUE, advancedoptions = NULL, \n    timer = NULL) \nNULL\nundefined columns selected \n"
+  },
+  "feature_columns": [
+    "h",
+    "x",
+    "h*x"
+  ],
+  "status": "COMPLETE_REFERENCE_NOT_RUN",
+  "reference_attempts": [
+    {
+      "attempt": 1,
+      "error": "KERNEL_PROBE_FAILED; exec TIMEOUT exit -1 before R",
+      "sessionInfo": "NOT_RUN"
+    },
+    {
+      "attempt": 2,
+      "error": "undefined columns selected ",
+      "R": "4.6.1",
+      "skpr": "1.9.2",
+      "design": "NOT_RUN"
+    }
+  ]
+}

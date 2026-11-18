@@ -1,4 +1,3 @@
-"""#339 frozen replicated covariate case; --score never repeats the search/oracle."""
 import csv, itertools, json, math, platform, subprocess, sys
 from fractions import Fraction
 from pathlib import Path

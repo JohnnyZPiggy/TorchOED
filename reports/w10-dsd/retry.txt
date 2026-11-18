@@ -1,1 +1,1 @@
-Issue #301; measured source SHA 5ee662d3b6c69c16d24455f5f818475f9b6e50d2.
+Issue #305; final attempt; measured source SHA 31f63ea26f6776608aa31cef859008522ba82978.

@@ -1,3 +1,17 @@
+if (identical(commandArgs(trailingOnly=TRUE), "ML11")) {
+  outdir <- "reports/w11-mixlat"
+  capture.output(print(sessionInfo()), print(packageVersion("mixexp")), print(args(mixexp::SLD)), print(args(mixexp::SCD)), file=file.path(outdir,"sessionInfo.txt"))
+  all <- list()
+  for (case in c("L32","L33","L42","L43","C3","C4","C5")) tryCatch({
+    q <- as.integer(substr(case,2,2)); x <- if (substr(case,1,1)=="L") mixexp::SLD(q,as.integer(substr(case,3,3))) else mixexp::SCD(q)
+    x <- as.matrix(x[,seq_len(q)])
+    padded <- matrix(NA_character_,nrow(x),5); padded[,seq_len(q)] <- sprintf("%.17g",x)
+    all[[case]] <- data.frame(case=case,row=seq_len(nrow(x)),padded)
+  }, error=function(e) cat(case, ": ", conditionMessage(e), "\n",file=file.path(outdir,"sessionInfo.txt"),append=TRUE,sep=""))
+  result <- do.call(rbind,all); names(result) <- c("case","row",paste0("x",1:5))
+  write.csv(result,file.path(outdir,"mixexp.csv"),row.names=FALSE,na="NA")
+  quit(save="no")
+}
 if (identical(commandArgs(trailingOnly=TRUE), "MP11")) {
   outdir <- "reports/w11-mixproc"
   capture.output(print(sessionInfo()), print(packageVersion("AlgDesign")), print(args(AlgDesign::optFederov)), file=file.path(outdir,"sessionInfo.txt"))

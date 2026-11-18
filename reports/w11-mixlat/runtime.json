@@ -1,0 +1,78 @@
+{
+  "controller": {
+    "status": "PASS",
+    "error": null,
+    "source_sha": "e7d3a21296552813b663437f2b7a9ffdede95940",
+    "run_id": "w317-colab-20261118",
+    "created": true,
+    "cleanup_confirmed": true,
+    "commands": [
+      {
+        "operation": "usage",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "new",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "exec",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "exec",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "download",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "stop",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "usage",
+        "status": "PASS",
+        "exit_code": 0
+      }
+    ],
+    "device_requested": "T4",
+    "device_observed": {
+      "nvidia_smi": [
+        {
+          "name": "Tesla T4",
+          "memory_total_mib": 15360,
+          "driver_version": "580.82.07"
+        }
+      ],
+      "torch": {
+        "status": "AVAILABLE",
+        "version": "2.14.1+cu130",
+        "cuda": "13.0",
+        "name": "Tesla T4",
+        "capability": [
+          7,
+          5
+        ]
+      }
+    },
+    "assignments_before": 0,
+    "assignments_after": 0,
+    "balance_before": 50.87,
+    "balance_after": 50.87,
+    "artifact_sha256": {
+      "r-heldout.json": "ffec9a23b0d091e911fcfc940757ca962253c089ba90e2425f104bbd21a2dcbc"
+    },
+    "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+    "total_seconds": 70.74707399600004
+  },
+  "call": null,
+  "setup_error": "Installing package into \u2018/usr/local/lib/R/site-library\u2019\n(as \u2018lib\u2019 is unspecified)\nWarning message:\npackage \u2018mixexp\u2019 is not available for this version of R\n\nA version of this package for your version of R might be available elsewhere,\nsee the ideas at\nhttps://cran.r-project.org/doc/manuals/r-patched/R-admin.html#Installing-packages \nLoading required namespace: mixexp\nFailed with error:  \u2018there is no package called \u2018mixexp\u2019\u2019\nError: requireNamespace(\"mixexp\") is not TRUE\nExecution halted\n"
+}

@@ -125,6 +125,14 @@ mixture_runs, process_runs = X[r["ids"] // len(Z)], Z[r["ids"] % len(Z)]
 assert r["certificate"] == "LOCAL_2_NUMERICAL" and 0 < r["efficiency_lower_bound"] <= 1+1e-12
 ```
 
+For no-intercept mixture models, request uncentred VIFs:
+
+```python
+from torchoed import design_diagnostics, simplex_centroid, scheffe_features
+F = scheffe_features(simplex_centroid(3), model="quadratic")
+print(design_diagnostics(F, torch.arange(len(F)), centered=False)["vif"])
+```
+
 ## Plackett–Burman
 
 Choose a multiple of four from 4 to 48. For fewer factors, take the leading columns. This example screens six factors in 12 runs.

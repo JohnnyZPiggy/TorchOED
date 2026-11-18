@@ -768,3 +768,28 @@ The constrained Jones–Nachtsheim form (alias trace subject to a D-efficiency f
 ## 76. Not in this section
 
 Kenward–Roger or Satterthwaite degrees of freedom, unknown `η` or REML, random block effects, covariates or alias matrices with blocks or whole plots, a plot split across blocks, split-split-plot, GPU.
+
+## 77. Uncentred diagnostics for no-intercept models (W11 D1, part 5)
+
+**Chief Architect · 2026-11-18 · Week 11 goal D1.** Status: `P2_D1E_MATH_FROZEN` once the independent fresh-context review verdict is recorded in its dispatch Issue and this section is committed byte-identically. Notation: candidate rows `F ∈ ℝ^{m×p}`, distinct design IDs `ids` (`n` of them), `S = F[ids]` with columns `s₁, …, s_p`, `M = SᵀS` positive definite, `W = M⁻¹`. Unstructured designs only (§79).
+
+1. **Why the existing VIFs fail (PROVED).** The unstructured branch of `design_diagnostics` centres the non-constant columns of `S`, scales them to unit length and inverts their correlation matrix. Suppose a vector `c` with at least two nonzero entries satisfies `Sc = 1ₙ`. If `M` is positive definite, no column of `S` is constant (if `sⱼ = a1ₙ`, then `S(ac − eⱼ) = 0` with `ac − eⱼ ≠ 0`). Averaging `Sc = 1ₙ` gives `Σⱼ cⱼ s̄ⱼ = 1`, so the centred columns satisfy `Σⱼ cⱼ (sⱼ − s̄ⱼ1ₙ) = 1ₙ − 1ₙ = 0`: the centred correlation matrix is singular and the VIFs are undefined. This holds for every Scheffé design with `q ≥ 2` components (§48: the linear blend columns sum to `Σ xₖ = 1` on each run, `c = (1, …, 1, 0, …, 0)`) and for every mixture-process design (§59: each run is the row-wise product of its blend and process features) whose process model has a constant column (the blend columns times that constant sum to it).
+2. **Uncentred correlation (decision).** With `D = diag(M)`, define `R_u = D^{−1/2} M D^{−1/2}`, the Gram matrix of the unit-length but uncentred columns `sⱼ/‖sⱼ‖`, and the uncentred variance inflation factors `VIF_u = diag(R_u⁻¹)` (Belsley, Kuh and Welsch 1980, scaling without centring for models without an intercept). All `p` columns are used, constant or not.
+3. **Closed form (PROVED).** `R_u⁻¹ = D^{1/2} W D^{1/2}`, so `VIF_u,j = M_jj W_jj = ‖sⱼ‖² (M⁻¹)_jj`. `R_u` is positive definite because `M` is; `|(R_u)_ij| ≤ 1` (Cauchy–Schwarz) with unit diagonal; `VIF_u,j ≥ 1`, with equality for all `j` iff `M` is diagonal (Cauchy–Schwarz on `1 = eⱼᵀeⱼ = ⟨M^{1/2}eⱼ, M^{−1/2}eⱼ⟩`: `1 ≤ M_jj W_jj`, equality iff `M^{1/2}eⱼ ∥ M^{−1/2}eⱼ`, i.e. `eⱼ` is an eigenvector of `M`; every `eⱼ` is an eigenvector only when `M` is diagonal).
+4. **Unchanged quantities.** SPV `n f(x)ᵀWf(x)`, its sorted values `fds`, power and alias already use `M` directly and need no centring; they are unchanged by this section.
+5. **Cost.** One Cholesky of `M` (already formed) and its inverse diagonal: `O(np² + p³)`.
+6. **Exact oracles (PROVED by exact `Fraction` computation; Architect, 2026-11-18).** With `h = 1/2`, `t = 1/3`:
+   - (MX-a) Scheffé linear, `X` = the three vertices: `VIF_u = (1, 1, 1)`, `R_u = I`.
+   - (MX-b) Scheffé linear, `X = simplex_centroid(3)` (7 runs: vertices, edge midpoints, centroid): `VIF_u = 2059/1890` for each blend.
+   - (MX-c) Scheffé quadratic, `X` = the `{3, 2}` simplex lattice (3 vertices, 3 edge midpoints; saturated): `VIF_u = 3/2` for all six columns.
+   - (MX-d) Scheffé quadratic, `X = simplex_centroid(3)`: `VIF_u = 3799/2376` for the three blends and `16781/10692` for the three cross-products.
+
+## 78. API decision: `design_diagnostics(F, ids, *, centered=True)`
+
+- `centered` must satisfy `isinstance(centered, bool)` (so `1` and NumPy booleans are rejected with `ValueError`). The default `True` is byte-identical to `main`, including on Scheffé designs, where the centred VIFs stay undefined as in item 1.
+- `centered=False` is unstructured only: with `blocks`, `whole_plots` or `covariates` it raises `ValueError` (those branches already define their own reference). With `centered=False`, `columns` and `correlation` change meaning: `columns = list(range(p))` (all columns, uncentred, instead of the non-constant centred ones), `correlation = R_u` and `vif = VIF_u` of §77.2–§77.3; `spv`, `fds`, `power`, `group_power` and `alias` are computed exactly as with `centered=True`.
+- An API sentence in the `design_diagnostics` entry, one runnable snippet in the guide's mixture section (MX-d with `centered=False`, printing `vif`) and a CHANGELOG line.
+
+## 79. Not in this section
+
+Pseudo-component or L-pseudo-component transforms, Cox-direction or Piepel-direction effects, mixture-specific power definitions, uncentred diagnostics for blocked, split-plot or covariate designs, automatic switching on detected collinearity, GPU.

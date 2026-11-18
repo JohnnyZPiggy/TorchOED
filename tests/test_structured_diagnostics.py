@@ -215,3 +215,34 @@ def test_combined_diagnostics_trust_boundary():
         args.update(extra)
         with pytest.raises(ValueError):
             design_diagnostics(F, ids, **args)
+
+
+@pytest.mark.parametrize("case,degree,expected", [(0, "linear", [1]*3), (1, "linear", [2059/1890]*3),
+    (2, "quadratic", [1.5]*6), (1, "quadratic", [3799/2376]*3 + [16781/10692]*3)])
+def test_uncentered_mixture_oracles(case, degree, expected):
+    from torchoed import simplex_centroid, simplex_lattice, scheffe_features
+    X = simplex_lattice(3, 2) if case == 2 else simplex_centroid(3)
+    if case == 0: X = X[(X == 1).any(1)]
+    F = scheffe_features(X, model=degree)
+    ids = torch.arange(len(F))
+    d = design_diagnostics(F, ids, centered=False, effect=1. if len(F) > F.shape[1] else None)
+    U = F / F.norm(dim=0)
+    for value in (F.new_tensor(expected), torch.linalg.inv(U.mT @ U).diagonal()):
+        torch.testing.assert_close(d['vif'], value, rtol=1e-12, atol=1e-12)
+    assert d['columns'] == list(range(F.shape[1]))
+    if case == 1 and degree == "quadratic":
+        inverse = torch.linalg.inv(F.mT @ F)
+        spv = len(F)*(F @ inverse @ F.mT).diagonal()
+        for key, value in dict(spv=spv, fds=spv.sort().values,
+                power=_coefficient_power(1/inverse.diagonal(), len(F)-F.shape[1], .05)).items():
+            torch.testing.assert_close(d[key], value, rtol=1e-12, atol=1e-12)
+
+
+def test_uncentered_boundary_and_polynomial_spv():
+    from torchoed import polynomial_features
+    F = polynomial_features(full_factorial([3, 3]).double(), degree=1)
+    ids = torch.arange(len(F))
+    assert torch.equal(design_diagnostics(F, ids)['spv'], design_diagnostics(F, ids, centered=False)['spv'])
+    for kwargs in (dict(centered=1), dict(centered=False, blocks=[3]*3),
+                   dict(centered=False, whole_plots=[3]*3), dict(centered=False, covariates=F[:, :1])):
+        with pytest.raises(ValueError): design_diagnostics(F, ids, **kwargs)

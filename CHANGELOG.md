@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add uncentred VIFs for mixture and mixture-process diagnostics via `centered=False` (#327).
+
 - Add diagnostics and containment-df t/F power for whole plots nested in fixed blocks (#325).
 - Add alias-penalised D search, alias traces and a D-efficiency floor (#322).
 

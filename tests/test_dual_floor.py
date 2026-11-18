@@ -115,3 +115,45 @@ def test_design_diagnostics_d_floor():
     maximum = design_diagnostics(F, r["ids"])["spv"].max().item()
     assert maximum >= F.shape[1] * (1 - 1e-12)
     assert r["efficiency_lower_bound"] >= F.shape[1] / maximum * (1 - 1e-12)
+
+
+@pytest.mark.parametrize("case,weights,values", [
+    ('a', {'D':.5,'A':.5}, (256,11/2,3/2)),
+    ('a', {'D':1/3,'A':1/3,'I':1/3}, (256,11/2,3/2)),
+    ('b', {'D':.5,'I':.5}, (3/8,None,7/9)),
+    ('b', {'D':1/3,'A':1/3,'I':1/3}, (3/8,70/3,7/9))])
+def test_compound_oracles(case, weights, values):
+    from torchoed import mixture_process_features, scheffe_features, simplex_centroid
+    F = (polynomial_features(full_factorial([3,3]).double()-1) if case=='a' else
+         mixture_process_features(scheffe_features(simplex_centroid(2),'quadratic'),
+                                  torch.tensor([[1.,-1],[1,0],[1,1]],dtype=torch.float64)))
+    n = 6 if case=='a' else 7; p = F.shape[1]; B = F.T@F/len(F)
+    def objective(M):
+        return sum(w * (torch.linalg.slogdet(M/n).logabsdet/p if k=='D' else
+                   -torch.trace(torch.linalg.solve(M/n,torch.eye(p,dtype=F.dtype) if k=='A' else B)).log())
+                   for k,w in weights.items())
+    for fixed in ([],[4]) if case=='a' and 'I' not in weights else ([],):
+        r = optimal_design(F,n,criterion=weights,fixed_ids=fixed,restarts=20,generator=torch.Generator().manual_seed(0))
+        M = F[r['ids']].T@F[r['ids']]
+        all_ids = [list(fixed)+list(s) for s in combinations([i for i in range(9) if i not in fixed],n-len(fixed))]
+        optima = [objective(x.T@x).item() for s in all_ids if torch.linalg.eigvalsh((x:=F[s]).T@x)[0]>1e-12]
+        assert r['objective'] == pytest.approx(max(optima),rel=1e-9)
+        assert r['objective'] == pytest.approx(objective(M).item(),rel=1e-9)
+        if not fixed:
+            actual = (torch.linalg.det(M),torch.trace(torch.linalg.inv(M)),torch.trace(B@torch.linalg.inv(M)))
+            for got, expected in zip(actual,values):
+                if expected is not None: assert got.item() == pytest.approx(expected,rel=1e-9)
+        assert r['ids'].tolist() == sorted(set(r['ids'].tolist()))
+        assert set(fixed) <= set(r['ids'].tolist()) and r['efficiency_lower_bound'] <= 1+1e-12
+
+
+def test_compound_weight_one_and_boundary():
+    F = polynomial_features(full_factorial([3,3]).double()-1)
+    for c in ('D','A','I'):
+        r = optimal_design(F,6,criterion=c,generator=torch.Generator().manual_seed(0)); M=F[r['ids']].T@F[r['ids']]
+        assert _dual_floor(F,M,6,{c:1.},0.) == pytest.approx(_dual_floor(F,M,6,c,0.),rel=1e-12)
+    r = optimal_design(F,6,criterion={'D':2.},generator=torch.Generator().manual_seed(0)); M=F[r['ids']].T@F[r['ids']]
+    assert r['criterion'] == {'D':1.}
+    assert r['objective'] == pytest.approx((torch.linalg.slogdet(M/6).logabsdet/6).item(),rel=1e-12)
+    for weights, options in [({'X':1},{}),({'D':-1},{}),({'D':0},{}),({'D':1},{'blocks':[3,3]})]:
+        with pytest.raises(ValueError): optimal_design(F,6,criterion=weights,**options)

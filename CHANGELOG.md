@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add compound D/A/I log-efficiency search with a dual efficiency floor (#314).
+
 - Add fixed per-run covariates to certified D/A/I search, preserving run order (#310).
 
 - Add `mixture_process_features` for certified mixture-process D/A/I designs (#306).

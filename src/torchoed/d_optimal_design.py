@@ -37,6 +37,28 @@ def _restarts(restarts, attempt):
 
 
 def _dual_floor(F, M, n, criterion, current):
+    if isinstance(criterion, dict):
+        if len(active := {k: v for k, v in criterion.items() if v}) == 1:
+            return _dual_floor(F, M, n, next(iter(active)), current)
+        m, p = F.shape
+        w = F.new_full((m,), 1/m)
+        moments = {k: torch.eye(p, dtype=F.dtype) if k == "A" else F.T@F/m
+                   for k in active if k != "D"}
+        def value(matrix):
+            return sum(v * (torch.linalg.slogdet(matrix).logabsdet/p if k == "D" else
+                       -torch.trace(torch.linalg.solve(matrix, moments[k])).log()) for k, v in active.items())
+        own, best = value(M/n), current
+        for _ in range(1000):
+            matrix = F.T@(w[:, None]*F)
+            W = torch.linalg.inv(matrix)
+            gradient = sum(v * (W/p if k == "D" else W@moments[k]@W/torch.trace(moments[k]@W))
+                           for k, v in active.items())
+            scores = (F*(F@gradient)).sum(1)
+            ratio = 1/scores.max()
+            best = max(best, float((own-value(matrix)).exp()*ratio))
+            if ratio >= 1-1e-3: break
+            w = w*scores; w = w/w.sum()
+        return best
     m, p = F.shape
     w = F.new_full((m,),1/m)
     B = torch.eye(p,dtype=F.dtype,device=F.device) if criterion=='A' else F.mT@F/m
@@ -602,7 +624,8 @@ def _block_moves(F, ids, blocks, means, L, B, n_fixed):
 
 
 def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, local_reason,
-                   *, G, criterion="D", B=None):
+                   *, G, criterion="D", B=None, value=None):
+    evaluate = value
     def attempt():
         start = ids = draw()
         if ids is None:
@@ -612,13 +635,19 @@ def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, 
         pivot_floor = 64*len(M)*torch.finfo(M.dtype).eps*M.abs().amax()
         if not (info == 0 and (L.diagonal().square() > pivot_floor).all()):
             return None
-        value = (torch.linalg.slogdet(M).logabsdet.item() if B is None
+        value = (evaluate(M, L) if evaluate is not None else
+                 torch.linalg.slogdet(M).logabsdet.item() if B is None
                  else -torch.trace(torch.cholesky_solve(B, L)).item())
         condition = torch.linalg.cond(M).item()
         for _ in range(max_iter):
             for trial in moves(ids, summaries, L):
                 candidate, new_summaries = information(trial)
-                if B is None:
+                if evaluate is not None:
+                    new_L, info = torch.linalg.cholesky_ex(candidate)
+                    if info != 0: continue
+                    new_value = evaluate(candidate, new_L)
+                    if new_value <= value: continue
+                elif B is None:
                     sign, logdet = torch.linalg.slogdet(candidate)
                     if sign <= 0 or logdet <= value:
                         continue
@@ -633,7 +662,7 @@ def _plot_restarts(sizes, restarts, draw, information, moves, max_iter, layout, 
                 new_condition = torch.linalg.cond(candidate).item()
                 if not new_value - value > _tolerance(value, new_value, condition, new_condition, len(M)):
                     continue
-                if B is None:
+                if B is None and evaluate is None:
                     new_L, info = torch.linalg.cholesky_ex(candidate)
                     if info != 0:
                         continue
@@ -730,6 +759,44 @@ def _covariate_design(F, n, Z, criterion, fixed_ids, restarts, generator, max_it
 
     return _plot_restarts([1]*n, restarts, draw, information, moves, max_iter,
                           {"covariates": Z}, "LOCAL_COVARIATE_EXCHANGE", G=centered, criterion=criterion, B=B)
+
+
+def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, max_elements):
+    m, p = F.shape
+    if F.dtype != torch.float64 or F.device.type != "cpu" or type(n) is not int or not m >= n >= p:
+        raise ValueError("compound search requires CPU float64 features and m >= n >= p")
+    _plot_workspace(F, restarts, max_iter, max_elements, 16*n, "compound")
+    fixed, pool = _fixed_pool([] if fixed_ids is None else fixed_ids, m, n)
+    active = {k: v for k, v in weights.items() if v}
+    moments = {k: torch.eye(p, dtype=F.dtype) if k == "A" else F.T@F/m
+               for k in active if k != "D"}
+    def value(M, L):
+        return sum(v * (torch.linalg.slogdet(M/n).logabsdet/p if k == "D" else
+                   -(n*torch.trace(torch.cholesky_solve(moments[k], L))).log())
+                   for k, v in active.items()).item()
+    def moves(ids, _, L):
+        Z = torch.linalg.solve_triangular(L, F.T, upper=False)
+        G = Z[:, ids].T@Z; diagonal = Z.square().sum(0)
+        incoming = torch.tensor(sorted(set(range(m))-set(ids.tolist())), dtype=torch.int64)
+        a, b, c = diagonal[incoming], G[:, incoming], diagonal[ids, None]
+        ratio = (1+a)*(1-c)+b.square()
+        gains = weights.get("D", 0)/p*ratio.clamp_min(0).log()
+        Y = torch.linalg.solve_triangular(L.T, Z, upper=True) if moments else None
+        for k, C in moments.items():
+            Q = Y[:, ids].T@C@Y; d = (Y*(C@Y)).sum(0)
+            t = torch.trace(torch.cholesky_solve(C, L))
+            after = t-((1-c)*d[incoming]+2*b*Q[:, incoming]-(1+a)*d[ids, None])/ratio
+            gains = gains-active[k]*(after/t).log()
+        gains = gains.masked_fill((ratio <= 0) | torch.isin(ids, fixed)[:, None], -torch.inf)
+        for flat in gains.flatten().argsort(descending=True).tolist():
+            i, j = divmod(flat, len(incoming))
+            if not gains[i, j] > 0: break
+            trial = ids.clone(); trial[i] = incoming[j]
+            yield trial
+    return _plot_restarts([n], restarts,
+        lambda: torch.cat((fixed, pool[torch.randperm(len(pool), generator=generator)[:n-len(fixed)]])),
+        lambda ids: (F[ids].T@F[ids], None), moves, max_iter, {}, "LOCAL_COMPOUND_EXCHANGE",
+        G=F, criterion=weights, value=value)
 
 
 def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
@@ -974,7 +1041,7 @@ def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, genera
 
 
 @torch.no_grad()
-def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None,
+def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float] = "D", fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None,
                    max_iter: int = 100, max_elements: int = 1_000_000, blocks: list[int] | tuple[int, ...] | None = None,
                    whole_plots: list[int] | tuple[int, ...] | None = None,
                    hard: torch.Tensor | None = None, eta: int | float = 1.0,
@@ -986,6 +1053,17 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: 
     Set covariates to fixed per-run columns; ids keep run order and covariates never move.
     For structured designs, fixed_ids fill the leading positions, block by block.
     """
+    if isinstance(criterion, dict):
+        import math
+        from numbers import Real
+        if (not criterion or not criterion.keys() <= {"D", "A", "I"}
+                or any(not isinstance(v, Real) or not math.isfinite(v) or v < 0 for v in criterion.values())
+                or not 0 < sum(criterion.values()) < math.inf):
+            raise ValueError("compound weights must be finite nonnegative D/A/I values with positive sum")
+        if blocks is not None or whole_plots is not None or covariates is not None or hard is not None:
+            raise ValueError("compound criteria require an unstructured design")
+        weights = {k: v/sum(criterion.values()) for k, v in criterion.items()}
+        return _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, max_elements)
     if covariates is not None:
         if blocks is not None or whole_plots is not None:
             raise ValueError("covariates cannot be combined with blocks or whole_plots")

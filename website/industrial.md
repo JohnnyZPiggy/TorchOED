@@ -8,7 +8,7 @@ Fixed per-run covariates absorb nuisance effects while the design chooses the fa
 
 ```python
 import torch
-from torchoed import full_factorial, optimal_design
+from torchoed import optimal_design
 F = torch.cartesian_prod(torch.tensor([-1., 1.], dtype=torch.float64), torch.tensor([-1., 0., 1.], dtype=torch.float64))
 Z = torch.arange(5, dtype=torch.float64)[:, None]  # fixed linear time trend
 result = optimal_design(F, 5, covariates=Z, generator=torch.Generator().manual_seed(0))
@@ -206,4 +206,18 @@ print("FDS quantiles (10%, 50%, 90%):",
       torch.quantile(diagnostics["fds"], F.new_tensor([0.1, 0.5, 0.9])).tolist())
 print("Power:", power.tolist())
 assert ((alpha <= power) & (power <= 1)).all()
+```
+
+## Compound D/I compromise
+
+Trade estimation and prediction using normalised nonnegative weights; the floor is relative to the compound optimum, not either single-criterion optimum.
+
+```python
+import torch
+from torchoed import full_factorial, polynomial_features, optimal_design
+F = polynomial_features(full_factorial([3, 3]).double() - 1)
+result = optimal_design(F, 6, criterion={"D": 0.5, "I": 0.5},
+                        generator=torch.Generator().manual_seed(0))
+print(result["objective"], result["efficiency_lower_bound"])
+assert result["efficiency_lower_bound"] <= 1 + 1e-12
 ```

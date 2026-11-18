@@ -4,6 +4,21 @@ root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDID
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
+out = root/'reports/w11-mixproc'
+if (out/'run.py').exists():
+    data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)', device_observed=json.loads(os.environ['SAE_DEVICE_OBSERVED']))
+    cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    try:
+        if installed: subprocess.run(['apt-get','install','-y','r-base-core'],env=cpu_env,check=True,capture_output=True,text=True)
+        subprocess.run(['Rscript','-e','install.packages("AlgDesign",repos="https://cloud.r-project.org"); stopifnot(requireNamespace("AlgDesign"))'],env=cpu_env,check=True,capture_output=True,text=True)
+        result = subprocess.run(['Rscript','tools/r_heldout.R','MP11'],cwd=root,env=cpu_env,capture_output=True,text=True)
+        data['call'] = dict(returncode=result.returncode,stdout=result.stdout,stderr=result.stderr)
+        for name in ('sessionInfo.txt','optfederov_d.csv','optfederov_a.csv','optfederov_i.csv'):
+            if (out/name).exists(): data[name] = (out/name).read_text()
+    except subprocess.CalledProcessError as exc:
+        data['setup_error'] = exc.stderr or exc.stdout
+    pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data,allow_nan=False)+'\n')
+    sys.exit()
 out = root/'reports/w10-dsd'
 if (out/'retry.txt').exists():
     data = dict(source_sha=sha, device_used='CPU (CUDA hidden from R)', errors={})

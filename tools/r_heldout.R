@@ -1,3 +1,14 @@
+if (identical(commandArgs(trailingOnly=TRUE), "MP11")) {
+  outdir <- "reports/w11-mixproc"
+  capture.output(print(sessionInfo()), print(packageVersion("AlgDesign")), print(args(AlgDesign::optFederov)), file=file.path(outdir,"sessionInfo.txt"))
+  candidates <- read.csv(file.path(outdir,"candidates_mp.csv"))
+  for (crit in c("D", "A", "I")) tryCatch({
+    set.seed(11)
+    design <- AlgDesign::optFederov(~ -1 + (x1 + x2 + x3 + x1:x2 + x1:x3 + x2:x3) + (x1 + x2 + x3 + x1:x2 + x1:x3 + x2:x3):(z1 + z2), data=candidates, nTrials=24, criterion=crit)
+    write.csv(data.frame(candidate=design$rows),file.path(outdir,paste0("optfederov_",tolower(crit),".csv")),row.names=FALSE)
+  }, error=function(e) message(crit, ": ", conditionMessage(e)))
+  quit(save="no")
+}
 if (identical(commandArgs(trailingOnly=TRUE), "A11")) {
   outdir <- "reports/w11-mixai"
   capture.output(print(sessionInfo()), print(packageVersion("AlgDesign")), print(args(AlgDesign::optFederov)), file=file.path(outdir,"sessionInfo.txt"))

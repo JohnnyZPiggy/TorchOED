@@ -530,3 +530,21 @@ Optimal mixture designs with Scheffé models and certificates (§45 candidates f
 ## 50. Not in this section
 
 Mixture-process variables (part 3), region-integrated I moments, non-box regions, ABCD, pseudo-components, Cox or log-contrast models, GPU timing.
+
+## 51. G, V and I as criterion functions (W11 D3, part 1)
+
+All three functions are maximisation-oriented, like `d_optimality` … `c_optimality`: each returns the negative of a quantity to be minimised. `M` is a symmetric positive definite `(p, p)` or `(B, p, p)` floating tensor, checked exactly as `a_optimality` checks it (same Cholesky pivot rule, no ridge). Solves use the Cholesky factor `L` of `M`; no explicit inverse.
+
+1. **Prediction variance (definition).** For a row `f ∈ ℝ^p`, `d(f; M) = fᵀ M⁻¹ f = ‖L⁻¹ f‖²`. For candidate rows `F ∈ ℝ^{m×p}` (or `(B, m, p)`, matched to `M`'s batch), `d_i = d(F_i; M)`.
+2. **I (definition).** `i_optimality(M, W) = −tr(M⁻¹ W)` for a symmetric positive semidefinite moment matrix `W` of the same shape as `M` (checked symmetric and finite with the same rule as `M`; PSD is not checked). With `W = FᵀF/m`, `tr(M⁻¹ W)` is the candidate-average quantity that `optimal_design(criterion="I")` minimises, so it maximises `i_optimality`.
+3. **G (definition).** `g_optimality(M, F) = −max_i d_i`.
+4. **V (definition).** `v_optimality(M, F) = −(1/m) Σ_i d_i`.
+5. **V = I with the candidate moment matrix (PROVED).** `(1/m) Σ_i F_iᵀ M⁻¹ F_i = (1/m) tr(M⁻¹ Σ_i F_i F_iᵀ) = tr(M⁻¹ FᵀF/m)`, by linearity and cyclicity of the trace. So `v_optimality(M, F) = i_optimality(M, FᵀF/m)`.
+6. **Kiefer–Wolfowitz lower bound for G (PROVED).** Let the design have `n` rows `X ∈ ℝ^{n×p}`, each equal to some row of `F`, and `M = XᵀX/n` nonsingular. Then `(1/n) Σ_j X_jᵀ M⁻¹ X_j = tr(M⁻¹ XᵀX/n) = tr(I_p) = p`. A maximum is at least a mean, and every `X_j` is a row of `F`, so `max_i d_i ≥ p`. Hence the G-efficiency `p / max_i d_i = p / (−g_optimality(M, F))` lies in `(0, 1]`. The bound needs both preconditions: every design row is a row of `F`, and `M` is exactly `XᵀX/n` (no ridge, no other scaling). `g_optimality` never sees `X` and cannot check them; the docstring says that an `F` omitting a design row can give a ratio above 1. With unnormalised `M = XᵀX` the same argument gives `max_i d_i ≥ p/n`, so the efficiency is `p / (n max_i d_i)`. Repeated design rows do not affect the argument.
+7. **Cost.** One Cholesky `O(p³)` and one triangular solve with `m` right-hand sides `O(m p²)`; `i_optimality` solves with `p` right-hand sides.
+
+## 52. API decision: `g_optimality`, `v_optimality`, `i_optimality`
+
+- `g_optimality(M, F, *, max_elements=1_000_000) -> Tensor`, `v_optimality(M, F, *, max_elements=1_000_000) -> Tensor`, `i_optimality(M, W, *, max_elements=1_000_000) -> Tensor`, in `src/torchoed/criteria.py`, exported from `torchoed`.
+- Shapes: `F` is `(m, p)` with `M` `(p, p)`, or `(B, m, p)` with `M` `(B, p, p)`; `m ≥ 1`; no broadcasting. `W` has exactly `M`'s shape. `F` and `W` must have `M`'s dtype and device and only finite values; `W` must be symmetric (same rule as `M`). `max_elements` has the meaning it has in `c_optimality`: each input's shape is checked against it. Otherwise `ValueError` (`TypeError` for a non-tensor or a dtype mismatch), as `c_optimality` does for `c`. The output has shape `()` or `(B,)`.
+- Not in this section: G or V as `optimal_design` search criteria, region-integrated moments, compound criteria (D3, part 2).

@@ -1,4 +1,4 @@
-"""Maximization-oriented D/A/E/c scores without implicit regularization."""
+"""Maximization-oriented D/A/E/c/G/V/I scores without implicit regularization."""
 import torch
 
 from ._validation import budget, floating
@@ -81,3 +81,37 @@ def c_optimality(M: torch.Tensor, c: torch.Tensor, *, max_elements: int = 1_000_
     L = _cholesky(M, max_elements)
     y = torch.linalg.solve_triangular(L, c.unsqueeze(-1), upper=False)
     return _score(-y.square().sum(dim=(-2, -1)))
+
+
+def _prediction(M, F, max_elements):
+    L = _cholesky(M, max_elements)
+    if not isinstance(F, torch.Tensor): raise TypeError("F must be a tensor")
+    if F.dtype != M.dtype: raise TypeError("F must have M's dtype")
+    if F.device != M.device: raise ValueError("F must have M's device")
+    if F.ndim != M.ndim or F.shape[:-2] != M.shape[:-2] or F.shape[-1] != M.shape[-1] or F.shape[-2] < 1:
+        raise ValueError("F must have matched shape (m,p) or (B,m,p), m>=1")
+    budget(F.shape, max_elements)
+    _reject(~torch.isfinite(F).all(dim=(-2,-1)), "nonfinite F")
+    return torch.linalg.solve_triangular(L, F.mT, upper=False).square().sum(dim=-2)
+
+
+def g_optimality(M: torch.Tensor, F: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
+    """Maximize negative maximum prediction variance. p/(-G) is efficiency only
+    for M=X.T@X/n with every X row in F; omitting rows can give a ratio above 1.
+    """
+    return _score(-_prediction(M, F, max_elements).amax(dim=-1))
+
+
+def v_optimality(M: torch.Tensor, F: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
+    """Maximize negative candidate-average prediction variance; no broadcasting."""
+    return _score(-_prediction(M, F, max_elements).mean(dim=-1))
+
+
+def i_optimality(M: torch.Tensor, W: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
+    """Maximize -trace(M^-1 W); W is symmetric PSD (PSD is not checked)."""
+    L = _cholesky(M, max_elements)
+    if not isinstance(W, torch.Tensor): raise TypeError("W must be a tensor")
+    if W.dtype != M.dtype: raise TypeError("W must have M's dtype")
+    if W.device != M.device or W.shape != M.shape: raise ValueError("W must match M's shape and device")
+    W, _ = _symmetric(W, max_elements)
+    return _score(-torch.cholesky_solve(W, L).diagonal(dim1=-2,dim2=-1).sum(dim=-1))

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add standalone G, V and I criterion functions (#290).
+
 - Add `scheffe_features` and certified optimal mixture D/A/I designs on constrained candidates (#284).
 
 - Add `simplex_centroid` and exact box-constrained `mixture_vertices` with face centroids (#281).

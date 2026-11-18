@@ -73,19 +73,28 @@ def weighted_information(F: torch.Tensor, w: torch.Tensor, *, max_elements: int 
     return _finite_output(F.mT @ (w[..., None] * F))
 
 
-def _coefficient_power(noncentrality: torch.Tensor, df: int, alpha: float) -> torch.Tensor:
+def _coefficient_power(noncentrality: torch.Tensor, df: int, alpha: float, r: int = 1) -> torch.Tensor:
     # Central beta quantile via the b-recurrence in P2_GATE §11.
     b = df / 2
+    a0 = 0.5 if r % 2 else 1.0
     steps = torch.arange(0.5 if df % 2 else 1.0, b, device=noncentrality.device,
                          dtype=noncentrality.dtype)
-    log_u = (steps + 0.5).lgamma() - (steps + 1).lgamma() - noncentrality.new_tensor(0.5).lgamma()
+    log_u = (steps + a0).lgamma() - (steps + 1).lgamma() - noncentrality.new_tensor(a0).lgamma()
+    shifts = torch.arange(a0, r / 2, device=noncentrality.device, dtype=noncentrality.dtype)
+    log_shift = ((shifts + b).lgamma() - (shifts + 1).lgamma()
+                 - noncentrality.new_tensor(b).lgamma())
     lo, hi = noncentrality.new_tensor(0.0), noncentrality.new_tensor(1.0)
     for _ in range(64):
         x = (lo + hi) / 2
         root = x.sqrt()
         central = (2 / torch.pi) * root.asin() if df % 2 else root
-        central = central + (log_u + 0.5 * x.log() + steps * (-x).log1p()).exp().sum()
-        below = central < 1 - alpha
+        if r % 2 == 0:
+            central = 1 - (1 - x).sqrt() if df % 2 else x
+        central = central + (log_u + a0 * x.log() + steps * (-x).log1p()).exp().sum()
+        q0 = 1 - central
+        if r > 1:
+            q0 = q0 + (log_shift + shifts * x.log() + b * (-x).log1p()).exp().sum()
+        below = central < 1 - alpha if r == 1 else q0 > alpha
         lo = torch.where(below, x, lo)
         hi = torch.where(below, hi, x)
 
@@ -93,10 +102,10 @@ def _coefficient_power(noncentrality: torch.Tensor, df: int, alpha: float) -> to
     mu = noncentrality[:, None] / 2
     cutoff = (mu + 12 * mu.sqrt() + 30).ceil()
     k = torch.arange(int(cutoff.max()) + 1, device=mu.device, dtype=mu.dtype)
-    a = k[:-1] + 0.5
+    a = k[:-1] + r / 2
     log_t = ((a + b).lgamma() - (a + 1).lgamma() - mu.new_tensor(b).lgamma()
              + a * x.log() + b * (-x).log1p())
-    q = (1 - central) + torch.cat((k[:1], log_t.exp().cumsum(dim=0)))
+    q = q0 + torch.cat((k[:1], log_t.exp().cumsum(dim=0)))
     weights = (torch.xlogy(k, mu) - mu - (k + 1).lgamma()).exp()
     return (weights * q).masked_fill(k > cutoff, 0).sum(dim=1)
 
@@ -106,7 +115,7 @@ def design_diagnostics(
     effect: float | torch.Tensor | None = None, alpha: float = 0.05,
     blocks: list[int] | tuple[int, ...] | None = None,
     whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0,
-    alias: torch.Tensor | None = None,
+    alias: torch.Tensor | None = None, groups: list[list[int]] | None = None,
 ) -> dict[str, torch.Tensor | list[int]]:
     """Return design correlations, VIFs, scaled prediction variances and their sorted values.
 
@@ -118,6 +127,8 @@ def design_diagnostics(
     unit error variance. Structured results also include the per-coefficient
     residual degrees of freedom in `df`. Split-plot power is exact only in
     the P2_GATE section 19.5 case, otherwise approximate (containment rule).
+    With `groups`, return effect-group F-test `group_power`; structured results
+    also include `group_df`. Whole-plot groups must lie in one stratum.
     With `alias`, return omitted-term aliasing using unstructured information.
     """
     structured = blocks is not None or whole_plots is not None
@@ -140,6 +151,11 @@ def design_diagnostics(
         L = torch.linalg.cholesky(M)
         S = F[ids]
     n, p = S.shape
+    if groups is not None:
+        if (effect is None or type(groups) is not list or not groups
+                or any(type(g) is not list or not g or any(type(j) is not int or not 0 <= j < p for j in g)
+                       or len(set(g)) != len(g) for g in groups)):
+            raise ValueError("groups requires effect and a non-empty list of non-empty distinct coefficient lists")
     R = F if region is None else region
     df = None
     if structured:
@@ -194,7 +210,8 @@ def design_diagnostics(
         result["alias"] = torch.cholesky_solve(S.mT @ alias[ids], L)
     if effect is not None:
         delta = torch.as_tensor(effect, dtype=torch.float64, device=F.device).broadcast_to((p,))
-        noncentrality = delta.square() / torch.cholesky_inverse(L).diagonal()
+        inverse = torch.cholesky_inverse(L)
+        noncentrality = delta.square() / inverse.diagonal()
         if df is None:
             result["power"] = _coefficient_power(noncentrality, n - p, alpha).to(F.dtype)
         else:
@@ -203,4 +220,20 @@ def design_diagnostics(
                 mask = df == dof
                 power[mask] = _coefficient_power(noncentrality[mask], dof, alpha).to(F.dtype)
             result.update(power=power, df=df)
+        if groups is not None:
+            group_power, group_df = [], []
+            for g in groups:
+                if whole_plots is not None and not (whole[g] == whole[g[0]]).all():
+                    raise ValueError("group contains mixed whole-plot and subplot strata")
+                dof = n - p if df is None else int(df[g[0]])
+                covariance = inverse[g][:, g].to(delta.dtype)
+                lam = (delta[g] @ torch.cholesky_solve(delta[g, None], torch.linalg.cholesky(covariance))).reshape(1)
+                # Use the existing scalar noncentrality for byte-identical one-term power.
+                if len(g) == 1:
+                    lam = noncentrality[g]
+                group_power.append(_coefficient_power(lam, dof, alpha, len(g))[0])
+                group_df.append(dof)
+            result["group_power"] = torch.stack(group_power).to(F.dtype)
+            if df is not None:
+                result["group_df"] = ids.new_tensor(group_df)
     return result

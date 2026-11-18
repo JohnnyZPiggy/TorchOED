@@ -1,0 +1,1 @@
+NOT_RUN: ALLOCATION_FAILED (new command TIMEOUT); R never started, so sessionInfo() and mixexp/AlgDesign/skpr versions are unavailable. No reference values are claimed.

@@ -1,0 +1,39 @@
+{
+  "status": "FAIL",
+  "error": "ALLOCATION_FAILED",
+  "source_sha": "149a5f40a6f76f19aaa09275eaababdb67127f82",
+  "run_id": "w329-colab-20261118",
+  "created": false,
+  "cleanup_confirmed": true,
+  "commands": [
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "new",
+      "status": "TIMEOUT",
+      "exit_code": -1
+    },
+    {
+      "operation": "stop",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0
+    }
+  ],
+  "device_requested": "T4",
+  "device_observed": null,
+  "assignments_before": 0,
+  "assignments_after": 0,
+  "balance_before": 50.87,
+  "balance_after": 50.87,
+  "artifact_sha256": {},
+  "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+  "total_seconds": 136.388255666
+}

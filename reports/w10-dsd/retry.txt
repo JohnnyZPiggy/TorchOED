@@ -1,1 +1,1 @@
-Issue #305; final attempt with kernel-timeout 300; measured source SHA is this commit.
+Issue #305; final attempt; measured source SHA 31f63ea26f6776608aa31cef859008522ba82978.

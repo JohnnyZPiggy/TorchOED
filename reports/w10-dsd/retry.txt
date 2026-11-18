@@ -1,1 +1,1 @@
-Issue #301; source SHA is the commit introducing this marker (git log -1 --format=%H -- reports/w10-dsd/retry.txt).
+Issue #301; measured source SHA 5ee662d3b6c69c16d24455f5f818475f9b6e50d2.

@@ -115,6 +115,7 @@ def design_diagnostics(
     effect: float | torch.Tensor | None = None, alpha: float = 0.05,
     blocks: list[int] | tuple[int, ...] | None = None,
     whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0,
+    covariates: torch.Tensor | None = None,
     alias: torch.Tensor | None = None, groups: list[list[int]] | None = None,
 ) -> dict[str, torch.Tensor | list[int]]:
     """Return design correlations, VIFs, scaled prediction variances and their sorted values.
@@ -131,7 +132,9 @@ def design_diagnostics(
     also include `group_df`. Whole-plot groups must lie in one stratum.
     With `alias`, return omitted-term aliasing using unstructured information.
     """
-    structured = blocks is not None or whole_plots is not None
+    if covariates is not None and (blocks is not None or whole_plots is not None or alias is not None):
+        raise ValueError("covariates cannot be combined with blocks, whole_plots or alias")
+    structured = blocks is not None or whole_plots is not None or covariates is not None
     if alias is not None and structured:
         raise ValueError("alias is unavailable with blocks or whole_plots")
     if structured:
@@ -164,29 +167,47 @@ def design_diagnostics(
 
         if blocks is not None and whole_plots is not None:
             raise ValueError("blocks and whole_plots are mutually exclusive")
-        sizes = blocks if blocks is not None else whole_plots
-        if not _valid_plot_sizes(sizes, n):
-            raise ValueError("group sizes must be positive Python ints summing to len(ids)")
-        if blocks is not None:
-            M, _ = _block_information(F, ids, blocks)
-            C = M
+        if covariates is not None:
+            Z = covariates
+            if (not isinstance(Z, torch.Tensor) or Z.ndim != 2 or Z.shape[0] != n
+                    or Z.shape[1] < 1 or Z.dtype != F.dtype or Z.device != F.device
+                    or not torch.isfinite(Z).all()):
+                raise ValueError("covariates must be finite (len(ids), c), c >= 1, with F's dtype and device")
+            X = torch.cat((F.new_ones(n, 1), Z), 1)
+            gram = X.mT @ X
+            L, info = torch.linalg.cholesky_ex(gram)
+            if info != 0 or (L.diagonal().square() <= 64*len(gram)*torch.finfo(F.dtype).eps*gram.abs().amax()).any():
+                raise ValueError("[1 covariates] must have full column rank")
+            U = torch.linalg.qr(X, mode="reduced").Q
+            residual = S - U @ (U.mT @ S)
+            M = C = residual.mT @ residual
             R = R - R.mean(0)
             if effect is not None:
-                df = ids.new_full((p,), n - len(blocks) - p)
+                df = ids.new_full((p,), n - 1 - Z.shape[1] - p)
         else:
-            if type(eta) not in (int, float) or not 0 < eta < float("inf"):
-                raise ValueError("eta must be a finite positive Python int or float")
-            counts = F.new_tensor(whole_plots)
-            inverse_scale = ((counts + 1 / eta).reciprocal() / eta if eta >= 1
-                             else (1 + eta * counts).reciprocal())
-            M, sums = _split_information(F, ids, whole_plots, inverse_scale / counts)
-            weighted_sum = inverse_scale @ sums
-            C = M - torch.outer(weighted_sum, weighted_sum / (inverse_scale @ counts))
-            if effect is not None:
-                whole = torch.stack([(plot == plot[0]).all(0) for plot in S.split(whole_plots)]).all(0)
-                whole_count = whole.sum()
-                df = torch.where(whole, len(whole_plots) - whole_count,
-                                 n - len(whole_plots) - (p - whole_count))
+            sizes = blocks if blocks is not None else whole_plots
+            if not _valid_plot_sizes(sizes, n):
+                raise ValueError("group sizes must be positive Python ints summing to len(ids)")
+            if blocks is not None:
+                M, _ = _block_information(F, ids, blocks)
+                C = M
+                R = R - R.mean(0)
+                if effect is not None:
+                    df = ids.new_full((p,), n - len(blocks) - p)
+            else:
+                if type(eta) not in (int, float) or not 0 < eta < float("inf"):
+                    raise ValueError("eta must be a finite positive Python int or float")
+                counts = F.new_tensor(whole_plots)
+                inverse_scale = ((counts + 1 / eta).reciprocal() / eta if eta >= 1
+                                 else (1 + eta * counts).reciprocal())
+                M, sums = _split_information(F, ids, whole_plots, inverse_scale / counts)
+                weighted_sum = inverse_scale @ sums
+                C = M - torch.outer(weighted_sum, weighted_sum / (inverse_scale @ counts))
+                if effect is not None:
+                    whole = torch.stack([(plot == plot[0]).all(0) for plot in S.split(whole_plots)]).all(0)
+                    whole_count = whole.sum()
+                    df = torch.where(whole, len(whole_plots) - whole_count,
+                                     n - len(whole_plots) - (p - whole_count))
         if df is not None and (df < 1).any():
             raise ValueError("structured power requires positive residual degrees of freedom")
         L = torch.linalg.cholesky(M)

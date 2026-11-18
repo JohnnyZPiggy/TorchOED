@@ -113,3 +113,45 @@ def test_group_power_trust_boundary():
                            ([[1, 1]], .5), ([[True]], .5), (((1,),), .5)):
         with pytest.raises(ValueError, match="groups"):
             design_diagnostics(split, ids, effect=effect, groups=groups)
+
+
+def test_covariate_diagnostics_blocks_reduction():
+    F = 2 * full_factorial([2, 2, 2]).double() - 1
+    a, b, c = F.unbind(1)
+    F = torch.cat((F, torch.stack((a*b, a*c, b*c), 1)), 1)
+    ids = (a*b*c).argsort()
+    Z = F.new_tensor([0]*4 + [1]*4)[:, None]
+    d = design_diagnostics(F, ids, covariates=Z)
+    blocked = design_diagnostics(F, ids, blocks=[4, 4])
+    for key in ('correlation', 'vif', 'spv', 'fds'):
+        torch.testing.assert_close(d[key], blocked[key], rtol=0, atol=1e-12)
+    for structure in ({'covariates': Z}, {'blocks': [4, 4]}):
+        with pytest.raises(ValueError, match='degrees of freedom'):
+            design_diagnostics(F, ids, effect=1.0, groups=[[0, 1, 2], [3]], **structure)
+
+
+def test_covariate_diagnostics_dense_oracle():
+    h, x = torch.cartesian_prod(torch.tensor([-1., 1.]), torch.tensor([-1., 0., 1.])).double().unbind(1)
+    F = torch.stack((h, x, h*x), 1)
+    ids = torch.tensor([0, 2, 3, 5, 1])
+    Z = torch.arange(5, dtype=F.dtype)[:, None]
+    X = torch.cat((F.new_ones(5, 1), Z, F[ids]), 1)
+    inverse = torch.linalg.inv(X.mT @ X)[2:, 2:]
+    C = torch.linalg.inv(inverse)
+    correlation = C / torch.outer(C.diagonal().sqrt(), C.diagonal().sqrt())
+    R = F - F.mean(0)
+    d = design_diagnostics(F, ids, covariates=Z)
+    torch.testing.assert_close(d['vif'], torch.linalg.inv(correlation).diagonal(), rtol=1e-12, atol=1e-12)
+    torch.testing.assert_close(d['spv'], 5*(R @ inverse @ R.mT).diagonal(), rtol=1e-12, atol=1e-12)
+    with pytest.raises(ValueError, match='degrees of freedom'):
+        design_diagnostics(F, ids, covariates=Z, effect=1.0)
+
+
+def test_covariate_diagnostics_trust_boundary():
+    F = 2 * full_factorial([2, 2, 2]).double() - 1
+    ids = torch.arange(8)
+    Z = torch.arange(8, dtype=F.dtype)[:, None]
+    for z, extra in ((Z, {'blocks': [4, 4]}), (Z, {'alias': F}),
+                     (Z[:-1], {}), (torch.ones_like(Z), {})):
+        with pytest.raises(ValueError):
+            design_diagnostics(F, ids, covariates=z, **extra)

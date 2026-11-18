@@ -81,3 +81,35 @@ def test_structured_diagnostics_invalid_inputs():
         design_diagnostics(F, ids, blocks=[3, 4])
     with pytest.raises(ValueError, match="degrees of freedom"):
         design_diagnostics(saturated, ids, blocks=[4, 4], effect=0.5)
+
+
+def test_group_power_scipy_oracles_and_one_term():
+    F = 2 * full_factorial([2, 2, 2]).double() - 1
+    h, x = F[:, 0], F[:, 2]
+    split = torch.stack((torch.ones_like(h), h, x, h * x), dim=1)
+    plain = torch.cat((F.new_ones((8, 1)), F), dim=1)
+    for features, ids, structure, effect, group, expected, df in (
+        (plain, torch.arange(8), {}, [0, .5, .5, .5], [1, 2, 3], 0.23428437233178745, None),
+        (F, F.prod(1).argsort(), {"blocks": [4, 4]}, [.5, .5, 0], [0, 1], 0.18506177481105285, 3),
+        (split, torch.arange(8), {"whole_plots": [2]*4, "eta": 1}, [.5, .5, 0, 0], [0, 1],
+         0.08114470454209445, 2),
+    ):
+        groups = [group] + [[j] for j in range(features.shape[1])]
+        d = design_diagnostics(features, ids, effect=F.new_tensor(effect), groups=groups, **structure)
+        torch.testing.assert_close(d["group_power"][0], F.new_tensor(expected), rtol=0, atol=1e-10)
+        assert torch.equal(d["group_power"][1:], d["power"])
+        if df is not None:
+            assert torch.equal(d["group_df"], ids.new_full((len(groups),), df))
+
+
+def test_group_power_trust_boundary():
+    F = 2 * full_factorial([2, 2, 2]).double() - 1
+    h, x = F[:, 0], F[:, 2]
+    split = torch.stack((torch.ones_like(h), h, x, h * x), dim=1)
+    ids = torch.arange(8)
+    with pytest.raises(ValueError, match="mixed"):
+        design_diagnostics(split, ids, effect=.5, groups=[[1, 2]], whole_plots=[2]*4)
+    for groups, effect in (([[1]], None), ([[]], .5), ([[4]], .5), ([], .5),
+                           ([[1, 1]], .5), ([[True]], .5), (((1,),), .5)):
+        with pytest.raises(ValueError, match="groups"):
+            design_diagnostics(split, ids, effect=effect, groups=groups)

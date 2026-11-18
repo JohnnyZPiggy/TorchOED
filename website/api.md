@@ -126,7 +126,9 @@ Form the chosen rows' Gram matrix, optionally normalized by the number of observ
 
 Form information from nonnegative candidate weights summing to one.
 
-`design_diagnostics(F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None, effect: float | torch.Tensor | None = None, alpha: float = 0.05, blocks: list[int] | tuple[int, ...] | None = None, whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0, alias: torch.Tensor | None = None) -> dict[str, torch.Tensor | list[int]]` returns design-column correlations and VIFs, scaled prediction variances, and their sorted values for the fraction-of-design-space curve.
+`design_diagnostics(F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None, effect: float | torch.Tensor | None = None, alpha: float = 0.05, blocks: list[int] | tuple[int, ...] | None = None, whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0, alias: torch.Tensor | None = None, groups: list[list[int]] | None = None) -> dict[str, torch.Tensor | list[int]]` returns design-column correlations and VIFs, scaled prediction variances, and their sorted values for the fraction-of-design-space curve.
+
+With `effect`, `groups=[[j, ...], ...]` adds effect-group F-test `group_power` in the given order (§56–§57). Groups must be a non-empty list of non-empty lists of distinct Python coefficient indices; overlaps are allowed. Structured designs also return int64 `group_df`; whole-plot groups must lie in one stratum. The existing `power` and `df` are unchanged. Whole-plot F power is exact in §19.5 and otherwise uses approximate containment degrees of freedom. Groups require `effect`.
 
 Pass omitted-term columns as `alias=G` to get `(F₁ᵀF₁)⁻¹F₁ᵀF₂` under the result key `"alias"`, with `F₁ = F[ids]` and `F₂ = G[ids]`. `G` must be two-dimensional and match the row count, dtype and device of `F`. The alias calculation requires an unstructured design with a full-rank fitted model.
 

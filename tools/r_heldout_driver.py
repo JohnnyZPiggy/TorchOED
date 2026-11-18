@@ -4,6 +4,23 @@ root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDID
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
+out = root/'reports/w11-skpr'
+if (out/'run.py').exists():
+    data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)', reference_status='NOT_RUN')
+    cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    try:
+        if installed: subprocess.run(['apt-get','install','-y','r-base-core'],env=cpu_env,check=True,capture_output=True,text=True)
+        setup = subprocess.run(['Rscript','-e','install.packages("skpr",repos="https://cloud.r-project.org"); stopifnot(requireNamespace("skpr"))'],env=cpu_env,capture_output=True,text=True)
+        data['installation'] = dict(returncode=setup.returncode,stdout=setup.stdout,stderr=setup.stderr)
+        result = subprocess.run(['Rscript','tools/r_heldout.R','K11'],cwd=root,env=cpu_env,capture_output=True,text=True)
+        data['call'] = dict(returncode=result.returncode,stdout=result.stdout,stderr=result.stderr)
+        for name in ('sessionInfo.txt','calls.txt','skpr.csv'):
+            if (out/name).exists(): data[name] = (out/name).read_text()
+        if result.returncode == 0 and 'skpr.csv' in data: data['reference_status'] = 'PASS'
+    except subprocess.CalledProcessError as exc:
+        data['setup_error'] = exc.stderr or exc.stdout
+    pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data,allow_nan=False)+'\n')
+    sys.exit()
 out = root/'reports/w11-mixref'
 if (out/'run.py').exists():
     data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)', errors={})

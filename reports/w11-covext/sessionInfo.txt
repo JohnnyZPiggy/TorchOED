@@ -1,0 +1,1 @@
+NOT_RUN: KERNEL_PROBE_FAILED; kernel_smoke.py timed out before the R driver was invoked. R/skpr versions and sessionInfo() unavailable. No skpr call or second Colab session attempted.

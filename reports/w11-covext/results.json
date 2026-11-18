@@ -1,0 +1,69 @@
+{
+  "source_sha": "25856bda2583125b75334555cbf9b391470fd547",
+  "python": "3.14.6",
+  "torch": "2.15.0+cpu",
+  "device": "CPU",
+  "dtype": "float64",
+  "threads": 1,
+  "seed": 0,
+  "restarts": 10,
+  "TorchOED": {
+    "rows": [
+      [
+        1.0,
+        -1.0,
+        -1.0
+      ],
+      [
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      [
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        -1.0,
+        -1.0,
+        1.0
+      ],
+      [
+        1.0,
+        -1.0,
+        -1.0
+      ]
+    ],
+    "det_M_Z": 81.91999999999997,
+    "verdict": "MATCH",
+    "ids": [
+      1,
+      4,
+      29,
+      0,
+      7
+    ],
+    "objective": 4.405743161291198,
+    "covariates_equal": true
+  },
+  "oracle": {
+    "visited": 7776,
+    "maximum": "2048/25",
+    "maximisers": 24
+  },
+  "tests": {
+    "exhaustive_oracle": "PASS",
+    "dense_rescore": "PASS"
+  },
+  "skpr": {
+    "verdict": "NOT_RUN",
+    "error": "NOT_RUN: KERNEL_PROBE_FAILED; kernel_smoke.py timed out before the R driver was invoked. R/skpr versions and sessionInfo() unavailable. No skpr call or second Colab session attempted.\n"
+  },
+  "feature_columns": [
+    "h",
+    "x",
+    "h*x"
+  ],
+  "status": "BLOCKED"
+}

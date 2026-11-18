@@ -1,0 +1,44 @@
+{
+  "status": "FAIL",
+  "error": "KERNEL_PROBE_FAILED",
+  "source_sha": "25856bda2583125b75334555cbf9b391470fd547",
+  "run_id": "w339-colab-20261118",
+  "created": true,
+  "cleanup_confirmed": true,
+  "commands": [
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "new",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "exec",
+      "status": "TIMEOUT",
+      "exit_code": -1
+    },
+    {
+      "operation": "stop",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "operation": "usage",
+      "status": "PASS",
+      "exit_code": 0
+    }
+  ],
+  "device_requested": "T4",
+  "device_observed": null,
+  "assignments_before": 0,
+  "assignments_after": 0,
+  "balance_before": 50.51,
+  "balance_after": 50.5,
+  "artifact_sha256": {},
+  "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+  "total_seconds": 149.276046151
+}

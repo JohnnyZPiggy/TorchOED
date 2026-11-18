@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-
+- Evaluate a given design with `fixed_ids` of length `n` (§80, #332).
 - Add uncentred VIFs for mixture and mixture-process diagnostics via `centered=False` (#327).
 
 - Add diagnostics and containment-df t/F power for whole plots nested in fixed blocks (#325).

@@ -4,7 +4,7 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 
 | Directory | Measurement / producing PR | Status |
 |---|---|---|
-| [w11-heldout](w11-heldout/) | current (W11 held-out H24–H26; no tuning) | H24 frozen call 6 vertices, unfiltered Fraction PASS, Hausdorff 7.15e-8; H25 AlgDesign D MATCH; H26 skpr NOT_RUN (errors); five oracles PASS, cleanup confirmed |
+| [w11-heldout](w11-heldout/) | current (W11 held-out H24–H26; no tuning) | H24 frozen call 6 vertices, unfiltered Fraction PASS, Hausdorff 7.15e-8; H25 AlgDesign D MATCH, reference floor 0.9139763584432251 (two evaluation checks PASS, #334); H26 skpr NOT_RUN (errors); five original oracles PASS, cleanup confirmed |
 | [b0](b0/) | Initial fixed CPU D comparison against PyDOE 1.6.0; [#42](https://github.com/JohnnyZPiggy/TorchOED/pull/42) | superseded by b1 |
 | [b1](b1/) | G-based score-first / verify-top exchange; [#46](https://github.com/JohnnyZPiggy/TorchOED/pull/46) | superseded by b2 |
 | [b2](b2/) | D-efficiency lower bounds and CPU comparison; [#53](https://github.com/JohnnyZPiggy/TorchOED/pull/53) | superseded by b3 |

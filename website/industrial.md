@@ -26,7 +26,7 @@ assert math.isclose(result["objective"], logdet, rel_tol=1e-9)
 
 ## Split-plot designs
 
-Use `whole_plots` for the plot sizes, `hard` for one integer setting label per candidate, and `eta` for the positive ratio of whole-plot to residual variance. In this example, factor A must stay fixed within each plot. Split-plot search supports D only and cannot be combined with `blocks` or `fixed_ids`.
+Use `whole_plots` for the plot sizes, `hard` for one integer setting label per candidate, and `eta` for the positive ratio of whole-plot to residual variance. In this example, factor A must stay fixed within each plot. Split-plot search supports D, A and I, including `fixed_ids` and fixed blocks whose boundaries coincide with plot boundaries. Omit the intercept when blocks are present.
 
 ```python
 import math
@@ -50,6 +50,22 @@ V = torch.eye(8, dtype=F.dtype) + eta * (Z @ Z.T)
 selected = F[ids]
 logdet = torch.linalg.slogdet(selected.T @ torch.linalg.solve(V, selected)).logabsdet.item()
 assert math.isclose(result["objective"], logdet, rel_tol=1e-9)
+```
+
+For blocks with whole plots, use block run counts and a model without an intercept. This is the frozen §53.8 (C-a) example; the floor is relative to the centered unstructured approximate optimum.
+
+```python
+import math
+import torch
+from torchoed import optimal_design
+
+h, x = torch.cartesian_prod(torch.tensor([-1, 1]), torch.arange(-1, 2)).repeat(2, 1).T
+F = torch.stack((h, x, x.square(), h*x), 1).double()
+result = optimal_design(F, 8, blocks=[4, 4], whole_plots=[2]*4, hard=h, eta=1,
+                        generator=torch.Generator().manual_seed(0))
+assert math.isclose(math.exp(result["objective"]), 640/9, rel_tol=1e-9)
+assert result["certificate"] == "LOCAL_SPLIT_PLOT_EXCHANGE"
+assert 0 < result["efficiency_lower_bound"] <= 1 + 1e-12
 ```
 
 ## Mixture designs

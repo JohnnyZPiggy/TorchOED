@@ -241,8 +241,47 @@ def test_split_plot_linear_objectives_match_fraction_optima(size, eta, total, si
         assert result["objective"] == pytest.approx(-float(optimum), rel=0, abs=1e-10)
 
 
-@pytest.mark.parametrize("kwargs", [{"blocks": [3, 3]}])
-def test_split_plot_still_rejects_blocks_and_fixed_ids(kwargs):
-    F = ff2n(3)
-    with pytest.raises(ValueError, match="without blocks or fixed_ids"):
-        optimal_design(F, 6, whole_plots=[3, 3], hard=F[:, 0].long(), criterion="A", **kwargs)
+
+def test_combined_information_identities():
+    F = torch.randn(7, 3, dtype=torch.float64, generator=torch.Generator().manual_seed(14))
+    sizes, blocks, eta = [3, 2, 2], [5, 2], 0.7
+    Z = torch.eye(3, dtype=F.dtype).repeat_interleave(torch.tensor(sizes), dim=0)
+    Zb = torch.eye(2, dtype=F.dtype).repeat_interleave(torch.tensor(blocks), dim=0)
+    Vi = torch.linalg.inv(torch.eye(7, dtype=F.dtype) + eta * Z @ Z.mT)
+    P = Vi - Vi @ Zb @ torch.linalg.solve(Zb.mT @ Vi @ Zb, Zb.mT @ Vi)
+    weights = lambda sizes: 1 / (F.new_tensor(sizes) * (1 + eta * F.new_tensor(sizes)))
+    M, _ = _split_information(F, torch.arange(7), sizes, weights(sizes), blocks)
+    torch.testing.assert_close(M, F.mT @ P @ F, rtol=0, atol=1e-12)
+    M, _ = _split_information(F, torch.arange(6), [1]*6, weights([1]*6), [3, 3])
+    blocked, _ = _block_information(F, torch.arange(6), [3, 3])
+    torch.testing.assert_close(M, blocked/(1+eta), rtol=0, atol=1e-12)
+    M, _ = _split_information(F, torch.arange(7), sizes, weights(sizes), [7])
+    MW, _ = _split_information(torch.cat((torch.ones(7, 1), F), 1), torch.arange(7), sizes, weights(sizes))
+    tau = sum(size/(1+eta*size) for size in sizes)
+    torch.testing.assert_close(torch.linalg.det(MW), tau*torch.linalg.det(M), rtol=0, atol=1e-12)
+
+
+def test_combined_frozen_exhaustive_optima():
+    h, x = torch.cartesian_prod(torch.tensor([-1, 1]), torch.arange(-1, 2)).repeat(2, 1).T
+    F = torch.stack((h, x, x.square(), h*x), 1).double()
+    for sizes, blocks, eta, optima in (([2]*4, [4, 4], 1, (640/9, 177/103, 127/144)),
+                                        ([2]*3, [2, 4], 0.5, (16, 19/8, 97/72))):
+        for criterion, optimum in zip('DAI', optima):
+            result = optimal_design(F, sum(sizes), whole_plots=sizes, blocks=blocks, hard=h,
+                                    eta=eta, criterion=criterion, generator=torch.Generator().manual_seed(0))
+            expected = math.log(optimum) if criterion == 'D' else -optimum
+            assert result['objective'] == pytest.approx(expected, rel=1e-9)
+            assert result['efficiency_lower_bound'] <= 1+1e-12
+            assert result['blocks'] == blocks
+            assert all(plot.unique().numel() == 1 for plot in h[result['ids']].split(sizes))
+
+
+def test_combined_fixed_ids_and_boundary():
+    h, x = torch.cartesian_prod(torch.tensor([-1, 1]), torch.arange(-1, 2)).repeat(2, 1).T
+    F = torch.stack((h, x, x.square(), h*x), 1).double()
+    result = optimal_design(F, 8, whole_plots=[2]*4, blocks=[4, 4], hard=h, fixed_ids=[0, 6],
+                            generator=torch.Generator().manual_seed(0))
+    assert result['ids'][:2].tolist() == [0, 6]
+    assert math.exp(result['objective']) == pytest.approx(220/9, rel=1e-9)
+    with pytest.raises(ValueError):
+        optimal_design(F, 8, whole_plots=[2]*4, blocks=[3, 5], hard=h)

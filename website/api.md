@@ -175,6 +175,6 @@ Run deterministic one-/two-swap D search from supplied IDs; `_free_positions` is
 
 Return the best seeded feasible D restart, its IDs, objective and conservative D-efficiency bound.
 
-`optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None, max_iter: int = 100, max_elements: int = 1_000_000) -> dict[str, object]`
+`optimal_design(F: torch.Tensor, n: int, *, criterion: str = "D", fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None, max_iter: int = 100, max_elements: int = 1_000_000, blocks: list[int] | tuple[int, ...] | None = None, whole_plots: list[int] | tuple[int, ...] | None = None, hard: torch.Tensor | None = None, eta: int | float = 1.0) -> dict[str, object]`
 
-Return the best D/A/I restart with the selected criterion's objective, efficiency lower bound and local numerical certificate.
+Return the best D/A/I restart with the selected criterion's objective, efficiency lower bound and local numerical certificate. CPU float64 supports fixed blocks and whole plots together: each block is a union of consecutive plots, `eta > 0`, and features omit the intercept. `fixed_ids` fill leading positions; fixed plots retain their hard label. Results include both layouts and the centered-candidate dual floor. The local certificate covers within-plot exchanges and greedy relabels; combined diagnostics are not yet supported.

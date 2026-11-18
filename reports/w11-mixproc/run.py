@@ -3,7 +3,6 @@ import csv
 from pathlib import Path
 import torch
 from torchoed import ff2n, scheffe_features, mixture_process_features, optimal_design
-
 torch.set_num_threads(1); p = Path(__file__).parent
 rows = list(csv.DictReader((p/'candidates_mp.csv').open()))
 x = torch.tensor([[float(r[k]) for k in ('x1','x2','x3','z1','z2')] for r in rows],dtype=torch.float64)
@@ -23,4 +22,3 @@ for c in ('D','A','I'):
     delta = (ours-value)*(1 if c=='D' else -1)
     verdict = 'MATCH' if abs(ours-value)<=1e-10*abs(value) else 'TorchOED better' if delta>0 else 'R better'
     print(c,verdict,'TorchOED',ours,'R',value,'R repeats',len(set(ids))!=len(ids))
-

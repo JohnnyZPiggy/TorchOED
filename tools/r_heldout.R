@@ -1,3 +1,13 @@
+if (identical(commandArgs(trailingOnly=TRUE), "CV11")) {
+  library(skpr); outdir <- "reports/w11-covext"
+  capture.output(print(sessionInfo()), print(packageVersion("skpr")), print(args(skpr::gen_design)), file=file.path(outdir,"sessionInfo.txt"))
+  stopifnot(getRversion() == "4.6.1", packageVersion("skpr") == "1.9.2")
+  record <- function(e) cat(conditionMessage(e), "\n", file=file.path(outdir,"sessionInfo.txt"), append=TRUE)
+  set.seed(20261119); cand <- expand.grid(h=c(-1,1), x=c(-1,0,1)); fixed <- data.frame(Z=0:4)
+  design <- tryCatch(withCallingHandlers(gen_design(cand, model=~Z+h+x+h:x, trials=5, splitplotdesign=fixed, blocksizes=rep(1,5), optimality="D", repeats=20), warning=record), error=function(e) { record(e); NULL })
+  if (!is.null(design)) write.csv(data.frame(run=seq_len(nrow(design)), lapply(design[,c("Z","h","x")], function(x) sprintf("%.17g",x)), rowname=rownames(design)), file.path(outdir,"skpr.csv"), row.names=FALSE)
+  quit(save="no")
+}
 if (identical(commandArgs(trailingOnly=TRUE), "ML11")) {
   outdir <- "reports/w11-mixlat"
   capture.output(print(sessionInfo()), print(packageVersion("mixexp")), print(args(mixexp::SLD)), print(args(mixexp::SCD)), file=file.path(outdir,"sessionInfo.txt"))

@@ -125,17 +125,19 @@ def test_mixture_process_optima(q, model, P, n, fixed, values):
         r = optimal_design(f,n,criterion=c,fixed_ids=fixed,restarts=20,generator=torch.Generator().manual_seed(0))
         assert r['objective'] == pytest.approx(math.log(value) if c=='D' else -value,rel=1e-9)
         assert r['efficiency_lower_bound'] <= 1+1e-12
-    assert r['ids'][:len(fixed)].tolist() == fixed
+        assert set(fixed) <= set(r['ids'].tolist())
+        assert len(set(r['ids'].tolist())) == n
 
 
-def test_mixture_process_rows_spv_and_boundary():
-    from torchoed import mixture_process_features, ff2n, design_diagnostics
+def test_mixture_process_rows_information_and_boundary():
+    from torchoed import mixture_process_features, ff2n
     s = scheffe_features(mixture_vertices([.2,.1,.1],[.6,.5,.6],face_dims=(1,2)))
     p = polynomial_features(ff2n(2),1); f = mixture_process_features(s,p)
     assert f.shape == (52,18)
     assert all(torch.equal(f[i*4+j],torch.kron(s[i],p[j])) for i in range(13) for j in range(4))
-    spv = lambda x: design_diagnostics(x,torch.arange(len(x)))['spv']
-    torch.testing.assert_close(spv(f),torch.outer(spv(s),spv(p)).flatten(),rtol=1e-12,atol=0)
+    torch.testing.assert_close(f.T@f,torch.kron(s.T@s,p.T@p),rtol=1e-12,atol=0)
+    ld = lambda m: torch.linalg.slogdet(m).logabsdet
+    torch.testing.assert_close(ld(f.T@f),3*ld(s.T@s)+6*ld(p.T@p),rtol=1e-12,atol=0)
     with pytest.raises(ValueError): mixture_process_features(s,p.float())
     with pytest.raises(TypeError): mixture_process_features(s,[[1.]])
     with pytest.raises(ValueError): mixture_process_features(s,p,max_elements=935)

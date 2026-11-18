@@ -1,0 +1,168 @@
+{
+  "environment": {
+    "torch": "2.15.0+cpu",
+    "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]"
+  },
+  "H24": {
+    "vertices": [
+      [
+        0.1,
+        0.3,
+        0.6
+      ],
+      [
+        0.1,
+        0.7,
+        0.2
+      ],
+      [
+        0.25,
+        0.7,
+        0.05
+      ],
+      [
+        0.3,
+        0.1,
+        0.6
+      ],
+      [
+        0.5,
+        0.1,
+        0.4
+      ],
+      [
+        0.5,
+        0.45,
+        0.05
+      ]
+    ],
+    "count": 6,
+    "oracle": "PASS",
+    "exact_vertices": [
+      [
+        "1/10",
+        "3/10",
+        "3/5"
+      ],
+      [
+        "1/10",
+        "7/10",
+        "1/5"
+      ],
+      [
+        "1/4",
+        "7/10",
+        "1/20"
+      ],
+      [
+        "3/10",
+        "1/10",
+        "3/5"
+      ],
+      [
+        "1/2",
+        "1/10",
+        "2/5"
+      ],
+      [
+        "1/2",
+        "9/20",
+        "1/20"
+      ]
+    ],
+    "reference": {
+      "count": 6,
+      "delta": 7.152557390810443e-08
+    },
+    "call": "mixture_vertices([0.1, 0.1, 0.05], [0.5, 0.7, 0.6])",
+    "rationalisation": "Fraction(x).limit_denominator(10**6); error <= 1e-12; all rows, exact bounds/sum/set/count"
+  },
+  "H25": {
+    "candidate_count": 13,
+    "ids": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      12,
+      4,
+      9,
+      11
+    ],
+    "floor": 0.9139763584432278,
+    "D": 0.006961468621390328,
+    "rank": 6,
+    "oracle": "PASS",
+    "reference": {
+      "D": 0.006961468621390309,
+      "rank": 6,
+      "oracle": "PASS",
+      "floor": "NOT_RUN: no public evaluation-only floor API (fixed_ids length < n)",
+      "delta": -1.9081958235744878e-17
+    }
+  },
+  "H26": {
+    "ids": [
+      0,
+      27,
+      12,
+      14,
+      17,
+      18,
+      13,
+      23,
+      1,
+      2,
+      5,
+      30,
+      4,
+      15,
+      3,
+      24
+    ],
+    "floor": 0.6933612743506348,
+    "objective": 14.438307756102468,
+    "D": 0.6933612743506347,
+    "logdet": 14.438307756102468,
+    "oracle": "PASS",
+    "objective_oracle": "PASS",
+    "objective_normalization": "exp(objective) = det M_C; D = exp(objective/6)/16",
+    "reference": {
+      "status": "NOT_RUN",
+      "reason": "argument must be coercible to non-negative integer; undefined columns selected",
+      "floor": "NOT_RUN: no public evaluation-only floor API (fixed_ids length < n)"
+    }
+  },
+  "R": {
+    "status": "PASS",
+    "source_sha": "092127267066f77d898e77ce468110c5fcf236b0",
+    "device_used": "CPU (CUDA hidden from R)",
+    "H24": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "H25": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "H26": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Warning message:\nIn seq_len(ncol(design)) : first element used of 'length.out' argument\n",
+      "errors": [
+        "argument must be coercible to non-negative integer",
+        "undefined columns selected"
+      ]
+    },
+    "versions": {
+      "R": "4.6.1",
+      "mixexp": "1.2.7.1",
+      "AlgDesign": "1.2.1.2",
+      "skpr": "1.9.2"
+    }
+  }
+}

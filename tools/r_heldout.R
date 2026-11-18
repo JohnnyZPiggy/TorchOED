@@ -298,6 +298,30 @@ if (length(case) == 1L && case %in% c("H21", "H22", "H23")) {
   write.csv(rows, file.path(outdir, paste0(case, ".csv")), row.names=FALSE)
   quit(save="no")
 }
+if (commandArgs(trailingOnly=TRUE) %in% c("H24", "H25", "H26")) {
+  case <- commandArgs(trailingOnly=TRUE); outdir <- "reports/w11-heldout"
+  capture.output(print(sessionInfo()), lapply(c("mixexp","AlgDesign","skpr"), function(p) print(packageVersion(p))), file=file.path(outdir,"sessionInfo.txt"))
+  set.seed(20261124)
+  attempt <- function(expr) tryCatch(expr, error=function(e) cat(conditionMessage(e), "\n", file=file.path(outdir,"sessionInfo.txt"),append=TRUE))
+  if (case == "H24") attempt({
+    x <- mixexp::Xvert(nfac=3,lc=c(.1,.1,.05),uc=c(.5,.7,.6),ndm=0,plot=FALSE)
+    x <- x[x$dimen==0,1:3]; names(x) <- c("x1","x2","x3")
+    write.csv(x,file.path(outdir,"H24.csv"),row.names=FALSE)
+  })
+  if (case == "H25" && file.exists(file.path(outdir,"H25-candidates.csv"))) attempt({
+    fit <- AlgDesign::optFederov(~ -1+x1+x2+x3+x1:x2+x1:x3+x2:x3,data=read.csv(file.path(outdir,"H25-candidates.csv")),nTrials=10,criterion="D")
+    write.csv(data.frame(candidate=fit$rows,fit$design),file.path(outdir,"H25.csv"),row.names=FALSE)
+  })
+  if (case == "H26") {
+    wp <- attempt(skpr::gen_design(data.frame(A=c(-1,1)),~A,trials=8,blocksizes=4))
+    fit <- attempt(skpr::gen_design(expand.grid(B=c(-1,1),C=c(-1,1)),~(A+B+C)^2,trials=16,splitplotdesign=wp,blocksizes=2))
+    if (is.data.frame(fit)) {
+      cat("H26 row names: ",paste(rownames(fit),collapse=","),"\n",file=file.path(outdir,"sessionInfo.txt"),append=TRUE)
+      saveRDS(fit,file.path(outdir,"H26-raw.rds"))
+    }
+  }
+  quit(save="no")
+}
 library(AlgDesign)
 set.seed(20261112)
 if (identical(commandArgs(trailingOnly=TRUE), "H11")) {

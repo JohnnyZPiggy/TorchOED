@@ -10,7 +10,7 @@ if (out/'run.py').exists():
     cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
     try:
         if installed: subprocess.run(['apt-get','install','-y','r-base-core'],env=cpu_env,check=True,capture_output=True,text=True)
-        subprocess.run(['Rscript','-e','install.packages("mixexp",repos="https://cloud.r-project.org"); stopifnot(requireNamespace("mixexp"))'],env=cpu_env,check=True,capture_output=True,text=True)
+        subprocess.run(['Rscript','-e','install.packages(c("lattice","daewr"), repos="https://cloud.r-project.org"); dest <- tempfile(fileext=".tar.gz"); download.file("https://cran.r-project.org/src/contrib/Archive/mixexp/mixexp_1.2.7.1.tar.gz", dest); install.packages(dest, repos=NULL, type="source"); stopifnot(requireNamespace("mixexp"))'],env=cpu_env,check=True,capture_output=True,text=True)
         result = subprocess.run(['Rscript','tools/r_heldout.R','ML11'],cwd=root,env=cpu_env,capture_output=True,text=True)
         data['call'] = dict(returncode=result.returncode,stdout=result.stdout,stderr=result.stderr)
         for name in ('sessionInfo.txt','mixexp.csv'):

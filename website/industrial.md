@@ -72,6 +72,8 @@ assert design["efficiency_lower_bound"] <= 1 + 1e-12
 
 D, A and I use the same engine and support `fixed_ids`. I uses the **candidate-average** moment `F.T @ F / len(F)`, not an integral over the mixture region.
 
+Use `simplex_lattice(q, m)` for the `{q, m}` simplex lattice: every row is a mixture of `q` components whose proportions are multiples of `1/m`. Its rows are valid candidates for `scheffe_features` and `optimal_design` too.
+
 Use `simplex_centroid` for one equal-proportion point per nonempty subset, or `mixture_vertices` for box-constrained vertices and face centroids. Centroids average the face's extreme vertices. Decimal float bounds are interpreted exactly as typed; pass `"1/3"` or `Fraction(1, 3)` for an exact third, because the float `1/3` repeated three times is below one in this decimal convention.
 
 ```python

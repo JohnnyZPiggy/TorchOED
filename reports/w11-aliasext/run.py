@@ -1,6 +1,5 @@
 import csv, itertools, json, math, platform, subprocess, sys
-from collections import Counter
-from fractions import Fraction as Q
+from collections import Counter; from fractions import Fraction as Q
 from pathlib import Path
 import torch
 from torchoed import optimal_design

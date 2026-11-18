@@ -115,7 +115,7 @@ def design_diagnostics(
     effect: float | torch.Tensor | None = None, alpha: float = 0.05,
     blocks: list[int] | tuple[int, ...] | None = None,
     whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0,
-    covariates: torch.Tensor | None = None,
+    covariates: torch.Tensor | None = None, centered: bool = True,
     alias: torch.Tensor | None = None, groups: list[list[int]] | None = None,
 ) -> dict[str, torch.Tensor | list[int]]:
     """Return design correlations, VIFs, scaled prediction variances and their sorted values.
@@ -135,6 +135,8 @@ def design_diagnostics(
     if covariates is not None and (blocks is not None or whole_plots is not None or alias is not None):
         raise ValueError("covariates cannot be combined with blocks, whole_plots or alias")
     structured = blocks is not None or whole_plots is not None or covariates is not None
+    if not isinstance(centered, bool) or (not centered and structured):
+        raise ValueError("centered must be bool; centered=False is unstructured only")
     if alias is not None and structured:
         raise ValueError("alias is unavailable with blocks or whole_plots")
     if structured:
@@ -224,11 +226,16 @@ def design_diagnostics(
         C = C[columns][:, columns]
         scale = C.diagonal().rsqrt()
         correlation = scale[:, None] * C * scale
+    elif not centered:
+        columns = list(range(p))
+        scale = M.diagonal().rsqrt()
+        correlation = scale[:, None] * M * scale
     else:
         X = S[:, columns]
         X = torch.nn.functional.normalize(X - X.mean(dim=0), dim=0, eps=0)
         correlation = X.mT @ X if len(columns) != 1 else X.new_ones((1, 1))
-    vif = torch.cholesky_inverse(torch.linalg.cholesky(correlation)).diagonal()
+    vif = (torch.cholesky_inverse(torch.linalg.cholesky(correlation)).diagonal() if centered
+           else M.diagonal() * torch.cholesky_inverse(L).diagonal())
     solved = torch.cholesky_solve(R.mT, L)
     spv = n * torch.einsum("ij,ji->i", R, solved)
     result: dict[str, torch.Tensor | list[int]] = {

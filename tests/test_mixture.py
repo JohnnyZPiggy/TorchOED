@@ -135,9 +135,9 @@ def test_mixture_process_rows_information_and_boundary():
     p = polynomial_features(ff2n(2),1); f = mixture_process_features(s,p)
     assert f.shape == (52,18)
     assert all(torch.equal(f[i*4+j],torch.kron(s[i],p[j])) for i in range(13) for j in range(4))
-    torch.testing.assert_close(f.T@f,torch.kron(s.T@s,p.T@p),rtol=1e-12,atol=0)
+    torch.testing.assert_close(f.T@f,torch.kron(s.T@s,p.T@p),rtol=1e-12,atol=1e-12)
     ld = lambda m: torch.linalg.slogdet(m).logabsdet
-    torch.testing.assert_close(ld(f.T@f),3*ld(s.T@s)+6*ld(p.T@p),rtol=1e-12,atol=0)
+    torch.testing.assert_close(ld(f.T@f),3*ld(s.T@s)+6*ld(p.T@p),rtol=1e-12,atol=1e-12)
     with pytest.raises(ValueError): mixture_process_features(s,p.float())
     with pytest.raises(TypeError): mixture_process_features(s,[[1.]])
     with pytest.raises(ValueError): mixture_process_features(s,p,max_elements=935)

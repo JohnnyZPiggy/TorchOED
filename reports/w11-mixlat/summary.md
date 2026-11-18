@@ -22,4 +22,4 @@ Pinned SAE `4129001fffcb336f5203e4b0d6765d7a0ea3150c`: `python3 <pinned>/colab_c
 First allocation failed before R (new command TIMEOUT, ALLOCATION_FAILED, 177.2412s); authorized single retry PASS (85.6978s). Both confirmed cleanup, assignments 0→0 and credits 50.87→50.87. Preflight local missing-repo/CRLF-path failures were corrected before allocation; final and retry preflights PASS. No third attempt.
 Observed Tesla T4, torch 2.14.1+cu130; R ran on CPU with CUDA hidden. Stop PASS, authenticated cleanup confirms zero sessions and unchanged credit; see cleanup.json. Source/status verified in downloaded artifact.
 Downloaded r-heldout.json SHA256 fdd73d1c21acc4f451072331fb1a534952455579abb259adfca14379cf977449.
-Only the archive install expression changed; existing driver branches, R cases and checker remain byte-unchanged. No matrix edit, held-out input, timing or optimum claim. Six report files; one net driver line.
+Only the archive install expression changed; existing driver branches, R cases and checker remain byte-unchanged. No matrix edit, held-out input, timing or optimum claim. Five report files; one net driver line.

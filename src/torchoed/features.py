@@ -84,6 +84,19 @@ def scheffe_features(X: torch.Tensor, model: str = "quadratic", *, max_elements:
     return torch.stack(columns, dim=1)
 
 
+def mixture_process_features(S: torch.Tensor, P: torch.Tensor, *, max_elements: int = 1_000_000) -> torch.Tensor:
+    """Cross mixture and process features, process row fastest; preserves autograd."""
+    for X in (S, P):
+        if not isinstance(X, torch.Tensor) or not X.is_floating_point():
+            raise TypeError("S and P must be floating tensors")
+        if X.ndim != 2 or min(X.shape) < 1:
+            raise ValueError("S and P must be nonempty 2-D tensors")
+    if S.dtype != P.dtype or S.device != P.device:
+        raise ValueError("S and P must have the same dtype and device")
+    budget((S.shape[0]*P.shape[0], S.shape[1]*P.shape[1]), max_elements)
+    return torch.kron(S.contiguous(), P.contiguous())
+
+
 def effects_coding(codes: torch.Tensor, levels: int) -> torch.Tensor:
     integer(levels, 'levels', 2)
     if codes.dtype != torch.int64 or bool(((codes<0)|(codes>=levels)).any()):

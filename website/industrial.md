@@ -101,6 +101,19 @@ assert C.shape == (7, 3)
 assert V.shape == (13, 3)  # six vertices, six edge means, one overall mean
 ```
 
+Cross mixture and process features with `mixture_process_features`; decode selected IDs by quotient and remainder:
+
+```python
+import torch
+from torchoed import mixture_vertices, scheffe_features, ff2n, polynomial_features, mixture_process_features, optimal_design
+X = mixture_vertices([.2,.1,.1], [.6,.5,.6], face_dims=(1,2))
+Z = ff2n(2)
+F = mixture_process_features(scheffe_features(X), polynomial_features(Z,1))
+r = optimal_design(F, 24, generator=torch.Generator().manual_seed(0))
+mixture_runs, process_runs = X[r["ids"] // len(Z)], Z[r["ids"] % len(Z)]
+assert r["certificate"] == "LOCAL_2_NUMERICAL" and 0 < r["efficiency_lower_bound"] <= 1+1e-12
+```
+
 ## Plackett–Burman
 
 Choose a multiple of four from 4 to 48. For fewer factors, take the leading columns. This example screens six factors in 12 runs.

@@ -111,3 +111,33 @@ def test_scheffe_exhaustive_optima(n, fixed):
         ids = result['ids'].tolist()
         assert len(ids) == len(set(ids)) == n
         assert set(fixed) <= set(ids)
+
+
+@pytest.mark.parametrize("q,model,P,n,fixed,values", [
+    (3,"linear",[[1.,-1],[1,1]],7,[],[96,17/6,139/216]),
+    (3,"linear",[[1.,-1],[1,1]],8,[],[144,8/3,451/756]),
+    (3,"linear",[[1.,-1],[1,1]],8,[12,13],[1024/9,11/4,17/28]),
+    (2,"quadratic",[[1.,-1],[1,0],[1,1]],7,[],[3/8,70/3,7/9])])
+def test_mixture_process_optima(q, model, P, n, fixed, values):
+    from torchoed import mixture_process_features
+    f = mixture_process_features(scheffe_features(simplex_centroid(q),model),torch.tensor(P,dtype=torch.float64))
+    for c, value in zip(('D','A','I'), values):
+        r = optimal_design(f,n,criterion=c,fixed_ids=fixed,restarts=20,generator=torch.Generator().manual_seed(0))
+        assert r['objective'] == pytest.approx(math.log(value) if c=='D' else -value,rel=1e-9)
+        assert r['efficiency_lower_bound'] <= 1+1e-12
+        assert set(fixed) <= set(r['ids'].tolist())
+        assert len(set(r['ids'].tolist())) == n
+
+
+def test_mixture_process_rows_information_and_boundary():
+    from torchoed import mixture_process_features, ff2n
+    s = scheffe_features(mixture_vertices([.2,.1,.1],[.6,.5,.6],face_dims=(1,2)))
+    p = polynomial_features(ff2n(2),1); f = mixture_process_features(s,p)
+    assert f.shape == (52,18)
+    assert all(torch.equal(f[i*4+j],torch.kron(s[i],p[j])) for i in range(13) for j in range(4))
+    torch.testing.assert_close(f.T@f,torch.kron(s.T@s,p.T@p),rtol=1e-12,atol=1e-12)
+    ld = lambda m: torch.linalg.slogdet(m).logabsdet
+    torch.testing.assert_close(ld(f.T@f),3*ld(s.T@s)+6*ld(p.T@p),rtol=1e-12,atol=1e-12)
+    with pytest.raises(ValueError): mixture_process_features(s,p.float())
+    with pytest.raises(TypeError): mixture_process_features(s,[[1.]])
+    with pytest.raises(ValueError): mixture_process_features(s,p,max_elements=935)

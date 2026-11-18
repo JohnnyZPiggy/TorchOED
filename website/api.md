@@ -68,6 +68,10 @@ Draw exactly n points using native CPU Sobol generation followed by the requeste
 
 Return linear, quadratic or special-cubic Scheffé columns: components, then pair products, then triple products, each lexicographically ordered. No intercept or squares. Preserves dtype, device and autograd; accepts finite floating 2-D tensors with at least two columns. Rows need not sum to one. See [mixture guide](industrial.md#mixture-designs).
 
+`mixture_process_features(S, P, *, max_elements=1_000_000) -> Tensor`
+
+Kronecker crossing of nonempty floating 2-D features with matching dtype/device; process row varies fastest. Preserves dtype, device and autograd; checks the output element budget. See [mixture guide](industrial.md#mixture-designs).
+
 `polynomial_features(C: torch.Tensor, degree: int = 2, include_bias: bool = True, *, max_elements: int = 1_000_000) -> torch.Tensor`
 
 Build bias, linear, square and pair-product columns for degree one or two while preserving autograd.

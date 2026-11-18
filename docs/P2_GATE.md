@@ -695,3 +695,24 @@ Covariate-aware `design_diagnostics` and power (D2 part 4), covariates with bloc
 ## 67. Not in this section
 
 Alias-aware criteria (Jones–Nachtsheim alias trace with a D-efficiency floor; D3, part 4), E, c, G or V terms in the compound, compound criteria with blocks, whole plots or covariates, user-supplied reference efficiencies, region-integrated I moments, GPU.
+
+## 68. Covariate-aware diagnostics (W11 D2, part 4)
+
+**Chief Architect · 2026-11-18 · Week 11 goal D2.** Status: `P2_D2D_MATH_FROZEN` once the independent fresh-context review verdict is recorded in its dispatch Issue and this section is committed byte-identically. Notation and model of §62: `y = β₀1 + Fₛθ + Zζ + ε`, `ε ~ (0, σ²I_n)`, `ids` in run order (row `i` of `Z` belongs to run `i`), `X = [1 Z]`, `Q = I − X(XᵀX)⁻¹Xᵀ`, `M_Z = FₛᵀQFₛ`, `X̃ = [1 Z Fₛ]`. `F` has no intercept column.
+
+1. **Covariance and residual degrees of freedom (PROVED).** If `X̃` has full column rank `1 + c + p`, the OLS estimate of `θ` has covariance `σ² M_Z⁻¹` (the `θ` block of `(X̃ᵀX̃)⁻¹`, §62.1), and the residual degrees of freedom are `ν = n − 1 − c − p`. Float64 check (Architect): 200 random instances, `θ` block of `(X̃ᵀX̃)⁻¹` against `M_Z⁻¹` to 6e-15, and `tr(I − X̃X̃⁺) = ν` in every case.
+2. **Correlation and VIF (decision).** `C = M_Z` over all `p` columns of `F` (a column constant over `ids` makes `M_Z` singular because `Q1 = 0`, so the existing non-constant-column restriction removes nothing when `M_Z ≻ 0`); `correlation = D^{−1/2} C D^{−1/2}` with `D = diag C`; `vif = diag(correlation⁻¹)`. Because `M_Z = RᵀR` with `R = QFₛ` and `Q1 = 0`, this is the correlation matrix of the covariate-adjusted, centered factor columns.
+3. **Scaled prediction variance (decision).** For region rows `g(x)` (default: the rows of `F`) with mean `ḡ`, `spv(x) = n · (g(x) − ḡ)ᵀ M_Z⁻¹ (g(x) − ḡ)`, which is `n/σ²` times the variance of the estimated factor contrast `(g(x) − ḡ)ᵀθ̂`. It does not depend on `β₀` or `ζ`, and it depends on `Z` only through `M_Z` (that is, through the column span of `[1 Z]`), as the I criterion of §62.5. `fds` is `spv` sorted ascending.
+4. **Power (PROVED from item 1).** With unit error variance and effect vector `δ`, the two-sided t-test for `θ_j` has noncentrality `λ_j = δ_j² / (M_Z⁻¹)_jj` and `ν` degrees of freedom. The effect-group F-test for a coefficient group `g` has `λ_g = δ_gᵀ [(M_Z⁻¹)_gg]⁻¹ δ_g` and degrees of freedom `(|g|, ν)`; for `|g| = 1` it is the t-test (§56). Power requires `ν ≥ 1`.
+5. **Blocks reduction (PROVED by §62.2).** Let the blocks be contiguous with sizes `N₁…N_g`, `g ≥ 2` (so `c = g − 1 ≥ 1`), all `N_b ≥ 1`, and let `Z` be the 0/1 indicators of blocks `2…g`. Then `M_Z = M_B` and `ν = n − g − p`, which are the `blocks=` information and residual degrees of freedom. Hence `columns`, `correlation`, `vif`, `spv`, `fds`, `power`, `df`, `group_power` and `group_df` equal those of `design_diagnostics(F, ids, blocks=[N₁, …, N_g], …)`.
+6. **Complexity (target).** `O(n²(1 + c) + np² + |region| p²)`: one projector `Q` (or thin QR of `X`), one Cholesky of `M_Z`, one triangular solve for the region rows.
+
+## 69. API decision: `design_diagnostics(F, ids, *, covariates=…)`
+
+- `covariates` is `None` (default: results byte-identical to `main`) or a 2-D tensor of shape `(len(ids), c)`, `c ≥ 1`, with `F`'s dtype and device, finite entries and `[1 Z]` of full column rank (the §63 Cholesky check with the §8 pivot floor). Otherwise `ValueError`. `covariates` together with `blocks`, `whole_plots` or `alias` raises `ValueError`. If `M_Z` is singular (some combination of `F` columns over `ids` lies in the span of `[1 Z]`), the existing Cholesky of `M` raises; there is no extra check (Simplicity Contract).
+- Result: the structured keys (`columns`, `correlation`, `vif`, `spv`, `fds`), with `effect` also `power` and `df` (all entries `ν`), and with `groups` also `group_power` and `group_df`. If `effect` is given and `ν < 1`, `ValueError` (the existing structured message).
+- The covariate path reuses the structured branch of `design_diagnostics` with `M = C = M_Z`, the centered region and a constant `df`; no second diagnostics function.
+
+## 70. Not in this section
+
+Covariates with blocks or whole plots, alias matrices with covariates, factor × covariate interactions, hard-to-change covariates, prediction variance at new covariate values, GPU.

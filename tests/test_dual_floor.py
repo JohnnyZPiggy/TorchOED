@@ -157,3 +157,42 @@ def test_compound_weight_one_and_boundary():
     assert r['objective'] == pytest.approx((torch.linalg.slogdet(M/6).logabsdet/6).item(),rel=1e-12)
     for weights, options in [({'X':1},{}),({'D':-1},{}),({'D':0},{}),({'D':1},{'blocks':[3,3]})]:
         with pytest.raises(ValueError): optimal_design(F,6,criterion=weights,**options)
+
+
+@pytest.mark.parametrize('case,weight,det,trace', [('a',0,1024,3/2),('a',.1,768,1/3),('b',.25,80,32/25),('b',1,20,8/25)])
+def test_alias_search_oracles(case, weight, det, trace):
+    X = (full_factorial([2]*3).double()*2-1 if case=='a' else full_factorial([3,3]).double()-1)
+    F = polynomial_features(X,1); n = 6 if case=='a' else 5; p = F.shape[1]
+    G = (torch.stack([X[:,0]*X[:,1],X[:,0]*X[:,2],X[:,1]*X[:,2]],1) if case=='a' else
+         torch.stack([X[:,0]*X[:,1],X[:,0]**2,X[:,1]**2],1))
+    def objective(ids):
+        S=F[list(ids)]; M=S.T@S
+        return torch.linalg.slogdet(M/n).logabsdet/p-weight*torch.linalg.solve(M,S.T@G[list(ids)]).square().sum()
+    for fixed in ([],[4]) if case=='b' and weight==.25 else ([],):
+        r=optimal_design(F,n,alias=G,alias_weight=weight,fixed_ids=fixed,restarts=20,generator=torch.Generator().manual_seed(0))
+        M=F[r['ids']].T@F[r['ids']]
+        assert r['objective']==pytest.approx((torch.log(F.new_tensor(det/n**p))/p-weight*trace).item(),rel=1e-9)
+        assert torch.linalg.det(M).item()==pytest.approx(det,rel=1e-9)
+        assert r['alias_trace']==pytest.approx(trace,rel=1e-9)
+        assert r['ids'].tolist()==sorted(set(r['ids'].tolist()))
+        assert set(fixed)<=set(r['ids'].tolist()) and r['efficiency_lower_bound']<=1+1e-12
+        if fixed:
+            completions=[fixed+list(s) for s in combinations([i for i in range(len(F)) if i not in fixed],n-len(fixed))]
+            values=[objective(s).item() for s in completions if torch.linalg.eigvalsh(F[s].T@F[s])[0]>1e-12]
+            assert r['objective']==pytest.approx(max(values),rel=1e-9)
+
+
+def test_alias_local_certificate_and_boundary():
+    X=full_factorial([3,3]).double()-1; F=polynomial_features(X,1)
+    G=torch.stack([X[:,0]*X[:,1],X[:,0]**2,X[:,1]**2],1)
+    r=optimal_design(F,5,alias=G,alias_weight=.25,restarts=1,generator=torch.Generator().manual_seed(0))
+    assert r['alias_trace']==pytest.approx(design_diagnostics(F,r['ids'],alias=G)['alias'].square().sum().item(),rel=1e-12)
+    if r['certificate']=='LOCAL_ALIAS_EXCHANGE':
+        for i in range(5):
+            for j in set(range(len(F)))-set(r['ids'].tolist()):
+                ids=r['ids'].clone(); ids[i]=j; S=F[ids]; M=S.T@S
+                if torch.linalg.eigvalsh(M)[0]<=1e-12: continue
+                value=torch.linalg.slogdet(M/5).logabsdet/3-.25*torch.linalg.solve(M,S.T@G[ids]).square().sum()
+                assert value.item()<=r['objective']+1e-12*abs(r['objective'])
+    for options in ({'alias':G[:-1]}, {'alias_weight':-1}, {'criterion':'A'}, {'criterion':{'D':1}}, {'blocks':[3,3]}):
+        with pytest.raises(ValueError): optimal_design(F,6,**({'alias':G}|options))

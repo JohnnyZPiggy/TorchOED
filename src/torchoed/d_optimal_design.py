@@ -761,7 +761,7 @@ def _covariate_design(F, n, Z, criterion, fixed_ids, restarts, generator, max_it
                           {"covariates": Z}, "LOCAL_COVARIATE_EXCHANGE", G=centered, criterion=criterion, B=B)
 
 
-def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, max_elements):
+def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, max_elements, alias=None, alias_weight=1.0):
     m, p = F.shape
     if F.dtype != torch.float64 or F.device.type != "cpu" or type(n) is not int or not m >= n >= p:
         raise ValueError("compound search requires CPU float64 features and m >= n >= p")
@@ -770,10 +770,18 @@ def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, ma
     active = {k: v for k, v in weights.items() if v}
     moments = {k: torch.eye(p, dtype=F.dtype) if k == "A" else F.T@F/m
                for k in active if k != "D"}
+    cross = None
+    def information(ids):
+        nonlocal cross
+        X = F[ids]
+        # The value hook follows information() for each proposed design.
+        if alias is not None: cross = X.T@alias[ids]
+        return X.T@X, None
     def value(M, L):
-        return sum(v * (torch.linalg.slogdet(M/n).logabsdet/p if k == "D" else
+        penalty = alias_weight*torch.cholesky_solve(cross, L).square().sum() if alias is not None else 0
+        return (sum(v * (torch.linalg.slogdet(M/n).logabsdet/p if k == "D" else
                    -(n*torch.trace(torch.cholesky_solve(moments[k], L))).log())
-                   for k, v in active.items()).item()
+                   for k, v in active.items()) - penalty).item()
     def moves(ids, _, L):
         Z = torch.linalg.solve_triangular(L, F.T, upper=False)
         G = Z[:, ids].T@Z; diagonal = Z.square().sum(0)
@@ -781,22 +789,39 @@ def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, ma
         a, b, c = diagonal[incoming], G[:, incoming], diagonal[ids, None]
         ratio = (1+a)*(1-c)+b.square()
         gains = weights.get("D", 0)/p*ratio.clamp_min(0).log()
-        Y = torch.linalg.solve_triangular(L.T, Z, upper=True) if moments else None
+        Y = torch.linalg.solve_triangular(L.T, Z, upper=True) if moments or alias is not None else None
         for k, C in moments.items():
             Q = Y[:, ids].T@C@Y; d = (Y*(C@Y)).sum(0)
             t = torch.trace(torch.cholesky_solve(C, L))
             after = t-((1-c)*d[incoming]+2*b*Q[:, incoming]-(1+a)*d[ids, None])/ratio
             gains = gains-active[k]*(after/t).log()
+        if alias is not None:
+            A = torch.cholesky_solve(F[ids].T@alias[ids], L)
+            E = alias-F@A; AE = A@E.T
+            S = Y[:, ids].T@AE; sd = (Y*AE).sum(0)
+            gamma = Y[:, ids].T@Y; gd = Y.square().sum(0)
+            H = E[ids]@E.T; hd = E.square().sum(1)
+            j, k, l = (1-c)/ratio, b/ratio, -(1+a)/ratio
+            h0, h1, h2 = hd[incoming], H[:, incoming], hd[ids, None]
+            delta = 2*(j*sd[incoming]+k*(S[:, incoming]+(Y[:, incoming].T@AE[:, ids]).T)+l*sd[ids, None])
+            delta += gd[incoming]*(j*j*h0+2*j*k*h1+k*k*h2)
+            delta += 2*gamma[:, incoming]*(j*k*h0+(j*l+k*k)*h1+k*l*h2)
+            delta += gd[ids, None]*(k*k*h0+2*k*l*h1+l*l*h2)
+            gains = gains-alias_weight*delta
         gains = gains.masked_fill((ratio <= 0) | torch.isin(ids, fixed)[:, None], -torch.inf)
         for flat in gains.flatten().argsort(descending=True).tolist():
             i, j = divmod(flat, len(incoming))
             if not gains[i, j] > 0: break
             trial = ids.clone(); trial[i] = incoming[j]
             yield trial
-    return _plot_restarts([n], restarts,
+    result = _plot_restarts([n], restarts,
         lambda: torch.cat((fixed, pool[torch.randperm(len(pool), generator=generator)[:n-len(fixed)]])),
-        lambda ids: (F[ids].T@F[ids], None), moves, max_iter, {}, "LOCAL_COMPOUND_EXCHANGE",
-        G=F, criterion=weights, value=value)
+        information, moves, max_iter, {}, "LOCAL_ALIAS_EXCHANGE" if alias is not None else "LOCAL_COMPOUND_EXCHANGE",
+        G=F, criterion="D" if alias is not None else weights, value=value)
+    if alias is not None:
+        X = F[result["ids"]]
+        result["alias_trace"] = torch.linalg.solve(X.T@X, X.T@alias[result["ids"]]).square().sum().item()
+    return result
 
 
 def _blocked_design(F, n, blocks, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
@@ -1045,7 +1070,8 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
                    max_iter: int = 100, max_elements: int = 1_000_000, blocks: list[int] | tuple[int, ...] | None = None,
                    whole_plots: list[int] | tuple[int, ...] | None = None,
                    hard: torch.Tensor | None = None, eta: int | float = 1.0,
-                   covariates: torch.Tensor | None = None) -> dict[str, object]:
+                   covariates: torch.Tensor | None = None, alias: torch.Tensor | None = None,
+                   alias_weight: float = 1.0) -> dict[str, object]:
     """D/A/I VND restarts with criterion-specific efficiency floor.
 
     Set blocks to fixed block sizes for CPU float64 D/A/I search without an intercept.
@@ -1053,6 +1079,16 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
     Set covariates to fixed per-run columns; ids keep run order and covariates never move.
     For structured designs, fixed_ids fill the leading positions, block by block.
     """
+    if alias is not None:
+        from fractions import Fraction
+        if (not isinstance(alias, torch.Tensor) or alias.ndim != 2 or alias.shape[0] != F.shape[0]
+                or alias.dtype != F.dtype or alias.device != F.device or not torch.isfinite(alias).all()
+                or not isinstance(alias_weight, (int, float, Fraction)) or not 0 <= alias_weight < float("inf")):
+            raise ValueError("alias requires finite matching candidate rows and a finite nonnegative weight")
+        if (not isinstance(criterion, str) or criterion != "D" or blocks is not None
+                or whole_plots is not None or covariates is not None or hard is not None):
+            raise ValueError("alias requires an unstructured string D criterion")
+        return _compound_design(F, n, {"D": 1.}, fixed_ids, restarts, generator, max_iter, max_elements, alias, alias_weight)
     if isinstance(criterion, dict):
         from fractions import Fraction
         if (not criterion or not criterion.keys() <= {"D", "A", "I"}

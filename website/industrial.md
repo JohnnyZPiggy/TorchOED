@@ -221,3 +221,19 @@ result = optimal_design(F, 6, criterion={"D": 0.5, "I": 0.5},
 print(result["objective"], result["efficiency_lower_bound"])
 assert result["efficiency_lower_bound"] <= 1 + 1e-12
 ```
+
+## Trade D-efficiency against aliasing
+
+Penalise bias from omitted interactions with an explicit weight. The reported floor bounds D-efficiency; the alias criterion has a local exchange certificate.
+
+```python
+import torch
+from torchoed import full_factorial, polynomial_features, optimal_design
+X = 2 * full_factorial([2, 2, 2]).double() - 1
+F = polynomial_features(X, 1)
+G = torch.stack([X[:, 0]*X[:, 1], X[:, 0]*X[:, 2], X[:, 1]*X[:, 2]], 1)
+for weight in (0., 0.1):
+    result = optimal_design(F, 6, alias=G, alias_weight=weight, restarts=20,
+                            generator=torch.Generator().manual_seed(0))
+    print(weight, result["alias_trace"], result["efficiency_lower_bound"])
+```

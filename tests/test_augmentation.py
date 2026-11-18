@@ -46,6 +46,6 @@ def test_fixed_positions_and_invalid_ids(monkeypatch):
     monkeypatch.setattr(module,'_linear_exchange',capture)
     result = optimal_design(fixture(),9,criterion='I',fixed_ids=[0,5,10],generator=torch.Generator().manual_seed(0))
     assert len(finals)==10 and all({0,5,10}<=set(ids) for ids in finals+result['starts'])
-    for fixed in ([0,0],[16],[-1],list(range(9))):
+    for fixed in ([0,0],[16],[-1],list(range(10))):
         with pytest.raises(ValueError):
             optimal_design(fixture(),9,criterion='I',fixed_ids=fixed)

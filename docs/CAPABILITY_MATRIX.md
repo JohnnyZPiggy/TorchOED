@@ -7,7 +7,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 |---|---|---|---|---|---|---|---|---|---|---|
 | `optimal_design` (plain exact) | ✅ D A I | ✅ | ✅ | ✅ KW dual floor | ✅ | ✅ CPU; GPU measured for D only (`w5-crossover`) | ✅ PyDOE, AlgDesign | ✅ | ✅ H1–H8 | done; A/I GPU timing → W23 |
 | `jacobian_features` + `next_batch` | ✅ D A I | ✅ | ✅ | ✅ linearized only | ✅ | ◐ CPU only measured | ❌ no published nonlinear design reproduced | ✅ | ✅ H9–H10 | W21 (published nonlinear examples) |
-| criterion functions | ◐ D A E c evaluated; G, V, I-as-function missing | N/A | N/A | N/A | N/A | ✅ | ✅ | ✅ | N/A | W11 |
+| criterion functions | ✅ D A E c G V I evaluated (§51, #290) | N/A | N/A | N/A | N/A | ✅ | ✅ | ✅ | N/A | W11 |
 
 ## P2 — industrial DOE (completion weeks 9–11)
 | Capability | Crit | Aug | Con | Cert | Diag | Dev | Ext | Docs | HO | Week |

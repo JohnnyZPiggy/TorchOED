@@ -1,44 +1,122 @@
 {
-  "status": "FAIL",
-  "error": "KERNEL_PROBE_FAILED",
-  "source_sha": "25856bda2583125b75334555cbf9b391470fd547",
-  "run_id": "w339-colab-20261118",
-  "created": true,
-  "cleanup_confirmed": true,
-  "commands": [
+  "attempts": [
     {
-      "operation": "usage",
-      "status": "PASS",
-      "exit_code": 0
+      "status": "FAIL",
+      "error": "KERNEL_PROBE_FAILED",
+      "source_sha": "25856bda2583125b75334555cbf9b391470fd547",
+      "run_id": "w339-colab-20261118",
+      "created": true,
+      "cleanup_confirmed": true,
+      "commands": [
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "new",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "exec",
+          "status": "TIMEOUT",
+          "exit_code": -1
+        },
+        {
+          "operation": "stop",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        }
+      ],
+      "device_requested": "T4",
+      "device_observed": null,
+      "assignments_before": 0,
+      "assignments_after": 0,
+      "balance_before": 50.51,
+      "balance_after": 50.5,
+      "artifact_sha256": {},
+      "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+      "total_seconds": 149.276046151
     },
     {
-      "operation": "new",
       "status": "PASS",
-      "exit_code": 0
-    },
-    {
-      "operation": "exec",
-      "status": "TIMEOUT",
-      "exit_code": -1
-    },
-    {
-      "operation": "stop",
-      "status": "PASS",
-      "exit_code": 0
-    },
-    {
-      "operation": "usage",
-      "status": "PASS",
-      "exit_code": 0
+      "error": null,
+      "source_sha": "25856bda2583125b75334555cbf9b391470fd547",
+      "run_id": "w339-colab-retry-20261118",
+      "created": true,
+      "cleanup_confirmed": true,
+      "commands": [
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "new",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "exec",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "exec",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "download",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "stop",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        }
+      ],
+      "device_requested": "T4",
+      "device_observed": {
+        "nvidia_smi": [
+          {
+            "name": "Tesla T4",
+            "memory_total_mib": 15360,
+            "driver_version": "580.82.07"
+          }
+        ],
+        "torch": {
+          "status": "AVAILABLE",
+          "version": "2.14.1+cu130",
+          "cuda": "13.0",
+          "name": "Tesla T4",
+          "capability": [
+            7,
+            5
+          ]
+        }
+      },
+      "assignments_before": 0,
+      "assignments_after": 0,
+      "balance_before": 50.5,
+      "balance_after": 50.28,
+      "artifact_sha256": {
+        "r-heldout.json": "cd0328231a35559e20e243b6414e9e07639c7e9713232e48972fad8b74015fdf"
+      },
+      "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+      "total_seconds": 790.965809691
     }
-  ],
-  "device_requested": "T4",
-  "device_observed": null,
-  "assignments_before": 0,
-  "assignments_after": 0,
-  "balance_before": 50.51,
-  "balance_after": 50.5,
-  "artifact_sha256": {},
-  "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
-  "total_seconds": 149.276046151
+  ]
 }

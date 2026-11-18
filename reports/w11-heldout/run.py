@@ -26,7 +26,7 @@ def combined_metric(s, blocks, plots):
     schur=s.mT@vi-s.mT@vb@torch.linalg.solve(b.mT@vb,b.mT@vi)
     ld=torch.linalg.slogdet(m).logabsdet; alt=torch.linalg.slogdet(schur).logabsdet
     return dict(D=(ld/6-ld.new_tensor(16.).log()).exp().item(), logdet=ld.item(), oracle='PASS' if torch.isclose(ld,alt,rtol=0,atol=1e-10) else 'FAIL')
-if '--score' not in sys.argv:
+def h24():
     lo=list(map(Q,['0.1','0.1','0.05'])); hi=list(map(Q,['0.5','0.7','0.6']))
     exact=set()
     for pair in itertools.combinations(range(3),2):
@@ -36,11 +36,20 @@ if '--score' not in sys.argv:
             for i,e in zip(pair,ends): row[i]=(lo,hi)[e][i]
             row[k]=1-sum(row)
             if all(l<=v<=h for l,v,h in zip(lo,row,hi)): exact.add(tuple(row))
+    v=mixture_vertices([0.1, 0.1, 0.05], [0.5, 0.7, 0.6])
+    rational=[tuple(Q(float(x)).limit_denominator(10**6) for x in row) for row in v]
+    ok=all(abs(float(q)-float(x))<=1e-12 for row,raw in zip(rational,v) for q,x in zip(row,raw))
+    ok=ok and all(sum(row)==1 and all(l<=x<=h for l,x,h in zip(lo,row,hi)) for row in rational)
+    ok=ok and set(rational)==exact and len(v)==len(exact)
+    ref=torch.tensor([[float(r[k]) for k in ('x1','x2','x3')] for r in read('H24.csv')],dtype=torch.float64)
+    return dict(call='mixture_vertices([0.1, 0.1, 0.05], [0.5, 0.7, 0.6])',rationalisation='Fraction(x).limit_denominator(10**6); error <= 1e-12; all rows, exact bounds/sum/set/count',vertices=v.tolist(),count=len(v),oracle='PASS' if ok else 'FAIL',exact_vertices=[[str(x) for x in row] for row in sorted(exact)],reference=dict(count=len(ref),delta=hausdorff(v,ref)))
+if '--h24' in sys.argv:
+    result=json.loads(p.joinpath('results.json').read_text())
+    result['H24']=h24()
+    p.joinpath('results.json').write_text(json.dumps(result,indent=2)+'\n')
+elif '--score' not in sys.argv:
+    result=dict(environment=dict(torch=torch.__version__,python=sys.version), H24=h24())
     x=torch.tensor([[float(r[k]) for k in ('x1','x2','x3')] for r in read('H25-candidates.csv')],dtype=torch.float64)
-    v=x[[tuple(Q(float(t)).limit_denominator(10**6) for t in row) in exact for row in x]]
-    rational={tuple(Q(float(x)).limit_denominator(10**6) for x in row) for row in v}
-    ok=rational==exact and all(sum(row)==1 and all(l<=x<=h for l,x,h in zip(lo,row,hi)) for row in rational)
-    result=dict(environment=dict(torch=torch.__version__,python=sys.version), H24=dict(vertices=v.tolist(),count=len(v),oracle='PASS' if ok else 'FAIL',exact_vertices=[[str(x) for x in row] for row in sorted(exact)]))
     f=scheffe_features(x); r=optimal_design(f,10,criterion="D",generator=torch.Generator().manual_seed(0))
     result['H25']=dict(candidate_count=len(x),ids=r['ids'].tolist(),floor=r['efficiency_lower_bound'],**mixture_metric(f[r['ids']]))
     p.joinpath('results.json').write_text(json.dumps(result,indent=2)+'\n')

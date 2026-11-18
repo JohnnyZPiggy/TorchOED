@@ -1,3 +1,22 @@
+if (identical(commandArgs(trailingOnly=TRUE), "K11")) {
+  library(skpr)
+  outdir <- "reports/w11-skpr"
+  capture.output(print(sessionInfo()), print(packageVersion("skpr")), print(args(skpr::gen_design)), print(formals(skpr::gen_design)$varianceratio), file=file.path(outdir,"sessionInfo.txt"))
+  stopifnot(getRversion() == "4.6.1", packageVersion("skpr") == "1.9.2")
+  record <- function(label, e) cat(label, conditionMessage(e), "\n", file=file.path(outdir,"calls.txt"), append=TRUE)
+  set.seed(20261120)
+  cand <- expand.grid(W = c(-1, 0, 1), X1 = c(-1, 1), X2 = c(-1, 1))
+  htc <- tryCatch(withCallingHandlers({
+    htc <- gen_design(unique(cand["W"]), model = ~W, trials = 6, blocksizes = 3, repeats = 10)
+    htc
+  }, warning=function(w) record("htc warning:",w)), error=function(e) { record("htc error:",e); NULL })
+  full <- tryCatch(withCallingHandlers({
+    full <- gen_design(cand, model = ~W + X1 + X2 + X1:X2, trials = 24, splitplotdesign = htc, blocksizes = 4, repeats = 10)
+    full
+  }, warning=function(w) record("full warning:",w)), error=function(e) { record("full error:",e); NULL })
+  if (!is.null(htc) && !is.null(full)) write.csv(data.frame(run=seq_len(nrow(full)), full[,c("W","X1","X2")], rowname=rownames(full)),file.path(outdir,"skpr.csv"),row.names=FALSE)
+  quit(save="no")
+}
 if (identical(commandArgs(trailingOnly=TRUE), "M11")) {
   outdir <- "reports/w11-mixref"
   capture.output(print(sessionInfo()), file=file.path(outdir,"sessionInfo.txt"))

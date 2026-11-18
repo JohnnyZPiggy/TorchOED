@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add alias-penalised D search, alias traces and a D-efficiency floor (#322).
+
 - Add covariate-adjusted design diagnostics, prediction variance and t/F power (#318).
 
 - Add compound D/A/I log-efficiency search with a dual efficiency floor (#314).

@@ -1054,11 +1054,10 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
     For structured designs, fixed_ids fill the leading positions, block by block.
     """
     if isinstance(criterion, dict):
-        import math
-        from numbers import Real
+        from fractions import Fraction
         if (not criterion or not criterion.keys() <= {"D", "A", "I"}
-                or any(not isinstance(v, Real) or not math.isfinite(v) or v < 0 for v in criterion.values())
-                or not 0 < sum(criterion.values()) < math.inf):
+                or any(not isinstance(v, (int, float, Fraction)) or not 0 <= v < float("inf") for v in criterion.values())
+                or not 0 < sum(criterion.values()) < float("inf")):
             raise ValueError("compound weights must be finite nonnegative D/A/I values with positive sum")
         if blocks is not None or whole_plots is not None or covariates is not None or hard is not None:
             raise ValueError("compound criteria require an unstructured design")

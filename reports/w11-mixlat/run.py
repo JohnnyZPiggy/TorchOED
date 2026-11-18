@@ -9,7 +9,7 @@ for case in ('L32','L33','L42','L43','C3','C4','C5'):
     q = int(case[1]); ours = simplex_lattice(q,int(case[2])) if case[0]=='L' else simplex_centroid(q)
     selected = [r for r in rows if r['case']==case]
     if not selected:
-        print(case,'NOT_RUN',(p/'sessionInfo.txt').read_text()); continue
+        print(case,'NOT_RUN',repr((p/'sessionInfo.txt').read_text(encoding='utf8'))); continue
     ref = torch.tensor([[float(r[f'x{i+1}']) for i in range(q)] for r in selected],dtype=torch.float64)
     def ordered(x):
         return x[sorted(range(len(x)),key=lambda i: tuple(round(v,9) for v in x[i].tolist()))]

@@ -41,10 +41,13 @@ if '--score' not in sys.argv:
     rational={tuple(Q(float(x)).limit_denominator(10**6) for x in row) for row in v}
     ok=rational==exact and all(sum(row)==1 and all(l<=x<=h for l,x,h in zip(lo,row,hi)) for row in rational)
     result=dict(environment=dict(torch=torch.__version__,python=sys.version), H24=dict(vertices=v.tolist(),count=len(v),oracle='PASS' if ok else 'FAIL',exact_vertices=[[str(x) for x in row] for row in sorted(exact)]))
-    # Candidates were frozen before the first local search; resume without repeating it.
-    result['H25']=dict(candidate_count=len(x),status='NOT_RUN')
-    result['H25']['error']='First search completed but all-fixed certificate raised ValueError: fixed_ids must be distinct candidate IDs with length < n; search outputs were not saved. No rerun.'
-    result['H26']=dict(status='NOT_RUN',error="ValueError: hard must be a length-m integer tensor on F's device; frozen hard=C[:,0] is float64. No changed-argument retry.")
+    f=scheffe_features(x); r=optimal_design(f,10,criterion="D",generator=torch.Generator().manual_seed(0))
+    result['H25']=dict(candidate_count=len(x),ids=r['ids'].tolist(),floor=r['efficiency_lower_bound'],**mixture_metric(f[r['ids']]))
+    p.joinpath('results.json').write_text(json.dumps(result,indent=2)+'\n')
+    c=(full_factorial([2,2,2]).double()*2-1).repeat(4,1); a,b,e=c.unbind(1); f=torch.stack((a,b,e,a*b,a*e,b*e),1)
+    r=optimal_design(f,16,blocks=[8,8],whole_plots=[2]*8,hard=c[:,0].long(),eta=1,generator=torch.Generator().manual_seed(0))
+    result['H26']=dict(ids=r['ids'].tolist(),floor=r['efficiency_lower_bound'],objective=r['objective'],**combined_metric(f[r['ids']],[0]*8+[1]*8,[i//2 for i in range(16)]))
+    result['H26']['objective_oracle']='PASS' if abs(result['H26']['D']-torch.tensor(r['objective'],dtype=torch.float64).exp().item())<1e-10 else 'FAIL'
     p.joinpath('results.json').write_text(json.dumps(result,indent=2)+'\n')
 else:
     result=json.loads(p.joinpath('results.json').read_text())
@@ -56,10 +59,12 @@ else:
         x=torch.tensor([[float(r[k]) for k in ('x1','x2','x3')] for r in read('H25-candidates.csv')],dtype=torch.float64); f=scheffe_features(x)
         ids=torch.tensor([int(r['candidate'])-1 for r in read('H25.csv')]); r=mixture_metric(f[ids])
         r['floor']='NOT_RUN: fixed_ids must be distinct candidate IDs with length < n'
-        r['delta']=None; result['H25']['reference']=r
+        r['delta']=r['D']-result['H25']['D']; result['H25']['reference']=r
     if (p/'H26.csv').exists():
         rows=read('H26.csv'); c=torch.tensor([[float(r[k]) for k in ('A','B','C')] for r in rows],dtype=torch.float64); a,b,e=c.unbind(1)
         labels=lambda key: [sorted(set(r[key] for r in rows)).index(r[key]) for r in rows]
         result['H26']['reference']=combined_metric(torch.stack((a,b,e,a*b,a*e,b*e),1),labels('block'),labels('plot'))
+    result['H26']['reference']['floor']='NOT_RUN: no public evaluation-only floor API (fixed_ids length < n)'
+    if 'D' in result['H26']['reference']: result['H26']['reference']['delta']=result['H26']['reference']['D']-result['H26']['D']
     p.joinpath('results.json').write_text(json.dumps(result,indent=2)+'\n')
 print(json.dumps(result,indent=2))

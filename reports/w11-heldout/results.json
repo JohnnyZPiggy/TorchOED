@@ -69,36 +69,51 @@
         "9/20",
         "1/20"
       ]
-    ],
-    "reference": {
-      "status": "NOT_RUN",
-      "error": "ALLOCATION_FAILED: new TIMEOUT; no R session or versions"
-    }
+    ]
   },
   "H25": {
     "candidate_count": 13,
-    "status": "NOT_RUN",
-    "error": "First search completed but all-fixed certificate raised ValueError: fixed_ids must be distinct candidate IDs with length < n; search outputs were not saved. No rerun.",
-    "reference": {
-      "status": "NOT_RUN",
-      "error": "ALLOCATION_FAILED: new TIMEOUT; no R session or versions"
-    },
-    "attempted_command": "optimal_design(scheffe_features(X), 10, criterion=\"D\", generator=torch.Generator().manual_seed(0)); then optimal_design(F, 10, fixed_ids=ids)[\"efficiency_lower_bound\"]"
+    "ids": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      12,
+      4,
+      9,
+      11
+    ],
+    "floor": 0.9139763584432278,
+    "D": 0.006961468621390328,
+    "rank": 6,
+    "oracle": "PASS"
   },
   "H26": {
-    "status": "NOT_RUN",
-    "error": "ValueError: hard must be a length-m integer tensor on F's device; frozen hard=C[:,0] is float64. No changed-argument retry.",
-    "reference": {
-      "status": "NOT_RUN",
-      "error": "ALLOCATION_FAILED: new TIMEOUT; no R session or versions"
-    },
-    "attempted_command": "optimal_design(F, 16, blocks=[8,8], whole_plots=[2]*8, hard=C[:,0], eta=1, generator=torch.Generator().manual_seed(0))"
-  },
-  "source_sha": "149a5f40a6f76f19aaa09275eaababdb67127f82",
-  "local_base_sha": "4aad71e39cc1ac2f37c924f763db229dc360a6dd",
-  "oracles": {
-    "H24": "PASS",
-    "H25": "NOT_RUN: outputs not retained after floor exception",
-    "H26": "NOT_RUN: search rejected frozen floating hard"
+    "ids": [
+      0,
+      27,
+      12,
+      14,
+      17,
+      18,
+      13,
+      23,
+      1,
+      2,
+      5,
+      30,
+      4,
+      15,
+      3,
+      24
+    ],
+    "floor": 0.6933612743506348,
+    "objective": 14.438307756102468,
+    "D": 0.6933612690681804,
+    "logdet": 14.438307756102468,
+    "oracle": "PASS",
+    "objective_oracle": "FAIL"
   }
 }

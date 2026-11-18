@@ -128,6 +128,14 @@ def test_covariate_diagnostics_blocks_reduction():
     for structure in ({'covariates': Z}, {'blocks': [4, 4]}):
         with pytest.raises(ValueError, match='degrees of freedom'):
             design_diagnostics(F, ids, effect=1.0, groups=[[0, 1, 2], [3]], **structure)
+    F = F[:, :4]
+    d = design_diagnostics(F, ids, covariates=Z, effect=1.0, groups=[[0, 1, 2], [3]])
+    blocked = design_diagnostics(F, ids, blocks=[4, 4], effect=1.0, groups=[[0, 1, 2], [3]])
+    for key in ('correlation', 'vif', 'spv', 'power', 'group_power'):
+        torch.testing.assert_close(d[key], blocked[key], rtol=0, atol=1e-12)
+    for key in ('df', 'group_df'):
+        assert torch.equal(d[key], blocked[key])
+        assert torch.equal(d[key], torch.full_like(d[key], 2))
 
 
 def test_covariate_diagnostics_dense_oracle():

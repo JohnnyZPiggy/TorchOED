@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Support nested whole plots in fixed blocks for D/A/I, augmentation and dual floors (#297).
+
 - Add standalone G, V and I criterion functions (#290).
 
 - Add `scheffe_features` and certified optimal mixture D/A/I designs on constrained candidates (#284).

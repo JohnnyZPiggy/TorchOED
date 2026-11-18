@@ -1,0 +1,131 @@
+{
+  "source_sha": "67c29a64ca898acdb606c69dff5d2b3a261dcaad",
+  "python": "3.14.6",
+  "torch": "2.15.0+cpu",
+  "device": "CPU",
+  "dtype": "float64",
+  "threads": 1,
+  "seed": 0,
+  "restarts": 10,
+  "chunk": 2048,
+  "tie_rtol": 1e-10,
+  "tie_atol": 1e-12,
+  "H27": {
+    "ids": [
+      2,
+      6,
+      9,
+      3,
+      11,
+      7,
+      8,
+      5,
+      0
+    ],
+    "objective": 5.375278407684165,
+    "metric": 0.2721655269759087,
+    "floor": 0.8164965804099369,
+    "det_M": 216.00000000000006,
+    "alias_trace": 0.0,
+    "dense_rescore": "PASS",
+    "reference": {
+      "ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "metric": 0.2721655269759087,
+      "det_M": 216.00000000000006,
+      "alias_trace": 0.0,
+      "tied_optima": 4
+    },
+    "delta": 0.0,
+    "match": "MATCH",
+    "visited": 293930,
+    "singular": 8164,
+    "reference_count": "PASS",
+    "wall_seconds": 1.1390313000010792
+  },
+  "H28": {
+    "ids": [
+      0,
+      6,
+      2,
+      8,
+      7,
+      1
+    ],
+    "objective": -0.6874999999999999,
+    "metric": 0.6874999999999999,
+    "floor": 0.7272726972060255,
+    "det_M": 85.33333333333337,
+    "alias_trace": 0.0,
+    "dense_rescore": "PASS",
+    "reference": {
+      "ids": [
+        0,
+        1,
+        2,
+        6,
+        7,
+        8
+      ],
+      "metric": 0.6874999999999999,
+      "det_M": 85.33333333333337,
+      "alias_trace": 0.0,
+      "tied_optima": 144
+    },
+    "delta": 0.0,
+    "match": "MATCH",
+    "visited": 60480,
+    "singular": 0,
+    "reference_count": "PASS",
+    "wall_seconds": 0.3457985000022745
+  },
+  "H29": {
+    "ids": [
+      0,
+      2,
+      6,
+      8,
+      18,
+      20,
+      24,
+      26
+    ],
+    "objective": 0.0,
+    "metric": 0.0,
+    "floor": 0.999999998966048,
+    "det_M": 4095.999999999997,
+    "alias_trace": 0.0,
+    "dense_rescore": "PASS",
+    "reference": {
+      "ids": [
+        0,
+        2,
+        6,
+        8,
+        18,
+        20,
+        24,
+        26
+      ],
+      "metric": 0.0,
+      "det_M": 4095.999999999997,
+      "alias_trace": 0.0,
+      "tied_optima": 1
+    },
+    "delta": 0.0,
+    "match": "MATCH",
+    "visited": 2220075,
+    "singular": 45,
+    "reference_count": "PASS",
+    "wall_seconds": 8.675750200000039
+  }
+}

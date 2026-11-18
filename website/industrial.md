@@ -54,20 +54,23 @@ assert math.isclose(result["objective"], logdet, rel_tol=1e-9)
 
 ## Mixture designs
 
-Call `simplex_lattice(q, m)` with positive integers for the component count and the number of subdivisions. For a Scheffé quadratic, keep the linear and pair-product columns and drop the pure squares. Omit the intercept because the proportions sum to one, so the intercept would be a linear combination of the component columns.
+Designs are without replacement; replicate a point (for example the centroid) by appending copies of its candidate row.
+
+Use `scheffe_features` to build canonical linear, quadratic or special-cubic columns without an intercept or pure squares. Since proportions sum to one, an intercept or squares would make the quadratic model rank-deficient. Pass the features to the existing search and certificate machinery:
 
 ```python
 import torch
-from torchoed import optimal_design, polynomial_features, simplex_lattice
+from torchoed import mixture_vertices, scheffe_features, optimal_design
 
-L = simplex_lattice(3, 3)
-terms = polynomial_features(L, 2, include_bias=False)
-F = terms[:, [0, 1, 2, 6, 7, 8]]  # x1, x2, x3, x1*x2, x1*x3, x2*x3
-ids = optimal_design(F, 8, generator=torch.Generator().manual_seed(0))["ids"]
-
-torch.testing.assert_close(L.sum(dim=1), L.new_ones(len(L)))
-assert L[ids].unique(dim=0).shape[0] == 8
+X = mixture_vertices([.2,.1,.1], [.6,.5,.6], face_dims=(1,2))
+F = scheffe_features(X)
+design = optimal_design(F, 10, criterion="D", generator=torch.Generator().manual_seed(0))
+runs = X[design["ids"]]
+assert runs.shape == (10,3)
+assert design["efficiency_lower_bound"] <= 1 + 1e-12
 ```
+
+D, A and I use the same engine and support `fixed_ids`. I uses the **candidate-average** moment `F.T @ F / len(F)`, not an integral over the mixture region.
 
 Use `simplex_centroid` for one equal-proportion point per nonempty subset, or `mixture_vertices` for box-constrained vertices and face centroids. Centroids average the face's extreme vertices. Decimal float bounds are interpreted exactly as typed; pass `"1/3"` or `Fraction(1, 3)` for an exact third, because the float `1/3` repeated three times is below one in this decimal convention.
 

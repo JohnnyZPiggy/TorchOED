@@ -1,8 +1,8 @@
 {
   "status": "PASS",
   "error": null,
-  "source_sha": "2926cf768b115ac426209bc0fb57abe1cf3657ff",
-  "run_id": "w287-colab-20261117",
+  "source_sha": "1b7d0a9f6acafd3a0686932e1e8ed3821e1e6f7a",
+  "run_id": "w289-colab-20261118",
   "created": true,
   "cleanup_confirmed": true,
   "commands": [
@@ -67,8 +67,8 @@
   "balance_before": 51.08,
   "balance_after": 51.08,
   "artifact_sha256": {
-    "r-heldout.json": "5fd5b4989096dd533d0655bfbb9219710b161363305939900f914554affd4700"
+    "r-heldout.json": "eb59bed14ddf725f4bf923e61a283205f8eb7934cc11ed5bbb8b5bc07893fe37"
   },
   "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
-  "total_seconds": 48.171390073
+  "total_seconds": 75.52156143399999
 }

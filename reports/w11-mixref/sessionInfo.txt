@@ -22,4 +22,14 @@ attached base packages:
 
 loaded via a namespace (and not attached):
 [1] compiler_4.6.1
+[1] ‘1.2.7.1’
+function (nfac = 3, uc = c(0, 0), lc = c(0, 0), nlc = 0, lb = c(0, 
+    0), ub = c(0, 0), coef, ndm = 0, plot = TRUE, cornerlabs = c("x1", 
+    "x2", "x3"), axislabs = c("x1", "x2", "x3"), pseudo = TRUE) 
+NULL
 [1] ‘1.2.1.2’
+function (frml, data = sys.frame(sys.parent()), nTrials, center = FALSE, 
+    approximate = FALSE, criterion = "D", evaluateI = FALSE, 
+    space = NULL, augment = FALSE, rows = NULL, nullify = 0, 
+    maxIteration = 100, nRepeats = 5, DFrac = 1, CFrac = 1, args = FALSE) 
+NULL

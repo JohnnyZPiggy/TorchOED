@@ -1,0 +1,71 @@
+name: R oracle (manual)
+on:
+  workflow_dispatch:
+    inputs:
+      script:
+        description: R script under tools/ or reports/ (outputs use R_ORACLE_OUT)
+        required: true
+        type: string
+      args:
+        description: Script arguments (shell-style quoting, no shell evaluation)
+        default: ""
+        type: string
+permissions:
+  contents: read
+jobs:
+  oracle:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.5.2"
+          use-public-rspm: true
+      - run: sudo apt-get update && sudo apt-get install -y libgmp-dev libglpk-dev
+      - name: Install frozen oracle packages
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          pins <- read.table("tools/r_packages.txt", col.names=c("package", "version"))
+          for (i in seq_len(nrow(pins))) {
+            remotes::install_version(pins$package[i], version=pins$version[i], upgrade="never")
+            stopifnot(as.character(packageVersion(pins$package[i])) == pins$version[i])
+          }
+      - name: Run reference and record runtime
+        env:
+          ORACLE_SCRIPT: ${{ inputs.script }}
+          ORACLE_ARGS: ${{ inputs.args }}
+          R_ORACLE_OUT: ${{ runner.temp }}/r-oracle
+        shell: python {0}
+        run: |
+          import os, shlex, subprocess, time
+          from pathlib import Path
+          root = Path.cwd().resolve()
+          script = (root / os.environ["ORACLE_SCRIPT"]).resolve()
+          if not any(script.is_relative_to(root / folder) for folder in ("tools", "reports")):
+              raise ValueError("script must be under tools/ or reports/")
+          out = Path(os.environ["R_ORACLE_OUT"])
+          out.mkdir()
+          start = time.monotonic()
+          result = subprocess.run(["Rscript", str(script), *shlex.split(os.environ["ORACLE_ARGS"])])
+          os.environ["ORACLE_WALL_SECONDS"] = str(time.monotonic() - start)
+          subprocess.run(["Rscript", "-e", '''
+          out <- Sys.getenv("R_ORACLE_OUT")
+          capture.output(print(sessionInfo()), file=file.path(out, "sessionInfo.txt"))
+          packages <- installed.packages()[, c("Package", "Version"), drop=FALSE]
+          jsonlite::write_json(list(run_id=Sys.getenv("GITHUB_RUN_ID"),
+            source_sha=Sys.getenv("GITHUB_SHA"), R_version=R.version.string,
+            packages=as.list(setNames(packages[, "Version"], packages[, "Package"])),
+            wall_seconds=as.numeric(Sys.getenv("ORACLE_WALL_SECONDS"))),
+            file.path(out, "runtime.json"), auto_unbox=TRUE, pretty=TRUE)
+          '''], check=True)
+          raise SystemExit(result.returncode)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r-oracle-${{ github.run_id }}
+          path: ${{ runner.temp }}/r-oracle/
+          if-no-files-found: error

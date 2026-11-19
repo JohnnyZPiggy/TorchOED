@@ -14,7 +14,7 @@ result = json.loads((root/'results.json').read_text()) if saved else dict(
     python=platform.python_version(), torch=torch.__version__, device='CPU', dtype='float64',
     threads=1, seed=0, restarts=10, H30_mapping='8*i+k', H32_mapping='3*i+k')
 checks = {}
-original = {k:result[k] for k in ('H30','H31','H32')} if saved else None
+original = json.loads(json.dumps({k:result[k] for k in ('H30','H31','H32')})) if saved else None
 error = 'Error: as.character(packageVersion(pins$package[i])) == pins$version[i] is not TRUE'
 
 def trace(rows):

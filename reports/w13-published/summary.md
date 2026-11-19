@@ -13,4 +13,4 @@ The four verbatim calls and parameters are frozen in read-only `../w12-published
 
 Published-example matches **8 -> 11** (three new MATCH, one NO MATCH, zero NR). Target >=12 is not reached by these four examples. Xvert returns coordinates at approximately single precision, as in w11-mixref; tolerance remains 1e-12.
 `score.py` copies the frozen W12 ordered/hausdorff/orth scorers, applies each metric to both designs, and reports Xvert vertices and edge centroids separately. A local repeat reproduces results.json byte-for-byte. Scientific comparisons: 3 MATCH, 1 NO MATCH; the edge comparison is not counted as another published example.
-Reproduce from repo root: `PYTHONPATH=src python reports/w13-published/score.py`. No src/tests/docs/website/pyproject changes. Ten report files; R/Python total 50 lines (S budget). No second dispatch, other examples, held-out cases or GPU run.
+Reproduce from repo root: `PYTHONPATH=src python reports/w13-published/score.py`. No src/tests/docs/website/pyproject changes. Ten report files; R/Python total 49 lines (S budget). No second dispatch, other examples, held-out cases or GPU run.

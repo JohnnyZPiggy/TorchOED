@@ -1,0 +1,28 @@
+{
+  "attempt_source_sha": "0476099dcae5519438d45d97ede27c8bd9f5c600",
+  "corrected_driver_source_sha": "cd0e0868c2a975a5ebdc7d548ecec7f438cdcbcb",
+  "controller_pin": "4129001fffcb336f5203e4b0d6765d7a0ea3150c",
+  "status": "BLOCKED",
+  "reason": "Premature controller start before local validation result; interrupted after allocation. No downloaded scientific artifact or observed device.",
+  "preflight": {
+    "status": "PREFLIGHT_PASS",
+    "error": null,
+    "source_sha": "0476099dcae5519438d45d97ede27c8bd9f5c600",
+    "run_id": "w362-preflight",
+    "created": false,
+    "cleanup_confirmed": false,
+    "commands": [],
+    "device_requested": "T4",
+    "device_observed": null,
+    "assignments_before": null,
+    "assignments_after": null,
+    "balance_before": null,
+    "balance_after": null,
+    "artifact_sha256": {},
+    "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+    "total_seconds": 13.853801434000001
+  },
+  "requested_device": "T4",
+  "device_observed": null,
+  "command": "python3 colab_control.py --repo-path linux-repo --source-sha 0476099dcae5519438d45d97ede27c8bd9f5c600 --run-id w362-colab-20261119 --out colab --cli colab --device T4 --temp-root temp --driver tools/w12_gpu_driver.py --artifacts tools/w12_gpu_artifacts.json --task-seconds 2400 --allocation-seconds 2100 --kernel-timeout 300 --work-timeout 1500 --cleanup-seconds 180"
+}

@@ -880,3 +880,13 @@ Public function in `torchoed.sampling`, exported from `torchoed`. Inputs are val
 ## 91. Not in this section
 
 Ward hierarchical clustering (JMP's exact clustering; k-means is the batched torch substitute), the JMP "centroid" choice, categorical factors beyond `disallowed`, nonlinear constraints, overflow guards for large `k`, support points (`support::sp` is an external reference only), GPU timing claims.
+
+## 92. Strict improvement in floating point (amends (83.5) and (86.4), all three `lhs` search modes)
+
+Let `f` be the minimised search sum of the current design (`Σ D_ij^{−p/2}`, `Σ exp(−L_ij)` or `CD2²`; all are `> 0`) and `Δ` the batched float64 change of a swap from (83.2) / (86.3).
+
+- **(92.1) OBSERVED (exact zero moves exist).** Some swaps change the design but leave the objective exactly unchanged. Architect check: on 30 random 8 × 3 midpoint LHS, 10 uniform searches revisited a design (2-cycles); every accepted move in a cycle had computed `Δ ≈ −1e-17` to `−3e-17` and exact `Fraction` `ΔCD2² = 0`. The test `f + Δ < f` accepts such a move whenever `|Δ|` exceeds half an ulp of `f`, so the move and its reverse can both be accepted and the search never stops. The independent review also found exact zero moves for maximin and MaxPro (n 3–7, k 2–3), so the rule applies to all three modes.
+- **(92.2) Rule.** A swap is improving only if `Δ < −τ f` with `τ = 1e-12`. The best (most negative `Δ`) improving swap over all columns is applied, ties as (83.5); the search stops when no swap is improving or `max_iter` swaps are applied. Everything else in (83.5) / (86.4) is unchanged.
+- **(92.3) PROVED (termination).** With exact `Δ`, every applied swap strictly decreases `f`; the set of designs is finite, so no design repeats and the search stops. The float64 search terminates whenever the (92.4) error bound holds (`|computed Δ − exact Δ| < τ f`), and always within `max_iter` swaps.
+- **(92.4) OBSERVED (float64 separation).** Computed `Δ` differs from the exact change by at most about `5e-14 f` in Architect checks (relative error of (86.3) up to 4.7e-14 for a 9 × 3 design, §86.3), far below `τ f`; the smallest accepted genuine improvement over 200 uniform restarts (n 6–30, k 2–5) was `2.3e-5 f`, and the independent review found no nonzero exact swap change below `6.6e-6 f` (all swaps of 300 designs, n 4–10, k 2–4). So `τ` rejects rounding noise and no genuine improvement seen in practice. The CD2² error comes from cancellation and scales like `eps (13/12)^k`, not like `f`, so the margin narrows for large `n`, `k`; this is not a proof for all `n`, `k`.
+- **(92.5) Oracle.** The default 8 × 3 uniform call of the #404 freeze terminates; every accepted swap has an exact `Fraction` decrease `> 0`.

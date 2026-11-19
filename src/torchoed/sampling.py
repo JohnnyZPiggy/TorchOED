@@ -143,7 +143,7 @@ def _lhs_search(x, cache, swap_deltas, transform, max_iter, score_cache=None):
         for column in range(k):
             changes, (a, b), rows = swap_deltas(x, cache, column)
             value, index = changes.min(0)
-            if score + value < score and (best is None or value < best[0]):
+            if value < -1e-12 * score and (best is None or value < best[0]):
                 best = value, column, a[index], b[index], rows[0][index], rows[1][index]
         if best is None:
             break

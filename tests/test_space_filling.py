@@ -91,6 +91,17 @@ def test_cd2_swap_delta_oracle():
             torch.testing.assert_close(_cd2_squared(x, cache) + changes[i], _cd2_squared(y, _cd2_kernel(y)), rtol=1e-12, atol=0)
 
 
+def test_uniform_default_exact_local_optimum():
+    x = lhs(8, 3, mode="uniform", generator=torch.Generator().manual_seed(0))
+    exact = [[Q(float(v)) for v in row] for row in x]
+    score = fraction_cd2(exact)
+    for column in range(3):
+        for a, b in itertools.combinations(range(8), 2):
+            y = [row.copy() for row in exact]
+            y[a][column], y[b][column] = y[b][column], y[a][column]
+            assert fraction_cd2(y) >= score
+
+
 def test_exhaustive_uniform():
     levels = [Q(2*r+1, 12) for r in range(6)]
     optimum = min(fraction_cd2(list(zip(levels, p))) for p in itertools.permutations(levels))

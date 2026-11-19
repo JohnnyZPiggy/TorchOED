@@ -24,5 +24,5 @@ if '--score' not in sys.argv:
 result=json.loads(path.read_text()); assert result['oracle']==dict(visited=1716,distinct_pairs=19,front={'1024,3/2':12,'768,1/3':4}); assert math.isclose(score(result['TorchOED']['rows'])['Psi'],result['TorchOED']['objective'],rel_tol=1e-10); result['tests']=dict(exhaustive_oracle='PASS',dense_rescore='PASS')
 if (p:=path.with_name('skpr.csv')).exists():
     raw=list(csv.DictReader(p.open())); rows=[[float(r[k]) for k in ('x1','x2','x3')] for r in raw]; assert len(rows)==6 and all(v in (-1,1) for row in rows for v in row); result['skpr']=score(rows)
-else: result['skpr']=dict(verdict='NOT_RUN',error=path.with_name('sessionInfo.txt').read_text() if path.with_name('sessionInfo.txt').exists() else 'Colab pending')
+else: result['skpr']=dict(verdict='NOT_RUN',rows=None,det_M=None,alias_trace=None,D_efficiency=None,Psi=None,on_front=None,error=path.with_name('sessionInfo.txt').read_text(encoding='utf-8').splitlines()[-1] if path.with_name('sessionInfo.txt').exists() else 'Colab pending')
 path.write_text(json.dumps(result,indent=2)+'\n'); print('2 PASS, 0 FAIL',result)

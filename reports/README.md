@@ -63,5 +63,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w11-aliasext](w11-aliasext/) | W11 alias Ext (#342): shared dense metric vs exact 1,716-multiset oracle | MATCH: skpr 1.9.2 and TorchOED both match exhaustive (det M, alias trace) = (768, 1/3); corrected aliaspower=2 (#349) |
 | [w12-structgpu](w12-structgpu/) | #362 | BLOCKED: authorized replacement allocation TIMEOUT, cleanup confirmed; six local CPU cases PASS; Colab CPU/GPU NOT_RUN |
 | [r-oracle-probe](r-oracle-probe/) | Manual GitHub Actions R oracle; R 4.5.2, rsm 2.10.6; [run 44500473486](https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44500473486); Refs #372 | PASS: all 3 CCD/BBD CSVs byte-identical |
-
 | [G0 Colab Pro probe](g0-probe/summary.md) | #385 | BLOCKED: H100 and one A100 fallback ALLOCATION_FAILED; CPU/CUDA NOT_RUN; cleanup PASS, 0 CU |

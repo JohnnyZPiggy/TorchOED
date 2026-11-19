@@ -11,9 +11,9 @@
     "shared_metric": "logdet(F.T @ F)",
     "existing_scorer": "Dense D/A/I as tools/bench_heldout.py; D normalization in tools/r_probe_rescore.py",
     "torchoed_call": "X = read_csv(input_file); F = polynomial_features(X, degree=2); optimal_design(F, 14, criterion='D')",
-    "verdict": "NR",
+    "verdict": "MATCH",
     "prior_report": null,
-    "notes": "Reference and TorchOED not run in #353; pending batched E1b."
+    "notes": "Measured in #361; shared metric in results.json."
   },
   {
     "id": "alg-a",
@@ -27,9 +27,9 @@
     "shared_metric": "trace(inverse(F.T @ F))",
     "existing_scorer": "Dense D/A/I as tools/bench_heldout.py; D normalization in tools/r_probe_rescore.py",
     "torchoed_call": "X = read_csv(input_file); F = polynomial_features(X, degree=2); optimal_design(F, 14, criterion='A')",
-    "verdict": "NR",
+    "verdict": "NO MATCH",
     "prior_report": null,
-    "notes": "Reference and TorchOED not run in #353; pending batched E1b."
+    "notes": "Measured in #361; shared metric in results.json."
   },
   {
     "id": "alg-i",
@@ -43,9 +43,9 @@
     "shared_metric": "trace(inverse(F.T @ F) @ (F.T @ F / len(F)))",
     "existing_scorer": "Dense D/A/I as tools/bench_heldout.py; D normalization in tools/r_probe_rescore.py",
     "torchoed_call": "X = read_csv(input_file); F = polynomial_features(X, degree=2); optimal_design(F, 14, criterion='I')",
-    "verdict": "NR",
+    "verdict": "MATCH",
     "prior_report": null,
-    "notes": "Reference and TorchOED not run in #353; pending batched E1b."
+    "notes": "Measured in #361; shared metric in results.json."
   },
   {
     "id": "mix-sld32",
@@ -125,7 +125,7 @@
     "torchoed_call": "simplex_centroid(12)",
     "verdict": "NR",
     "prior_report": null,
-    "notes": "Reference and TorchOED not run in #353; pending batched E1b."
+    "notes": "mix-scd12: there is no package called â€˜mixexpâ€™"
   },
   {
     "id": "mix-xvert",
@@ -141,7 +141,7 @@
     "torchoed_call": "mixture_vertices([0, .10, .05], [.8, .95, .50], face_dims=(1,)); compare vertices separately",
     "verdict": "NR",
     "prior_report": null,
-    "notes": "Reference and TorchOED not run in #353; pending batched E1b."
+    "notes": "mix-xvert: there is no package called â€˜mixexpâ€™"
   },
   {
     "id": "fr-pb8",
@@ -157,7 +157,7 @@
     "torchoed_call": "plackett_burman(8)",
     "verdict": "NR",
     "prior_report": null,
-    "notes": "Reference and TorchOED not run in #353; pending batched E1b."
+    "notes": "fr-pb8: there is no package called â€˜FrF2â€™"
   },
   {
     "id": "fr-pb40",
@@ -173,7 +173,7 @@
     "torchoed_call": "plackett_burman(40)",
     "verdict": "NR",
     "prior_report": null,
-    "notes": "Reference and TorchOED not run in #353; pending batched E1b."
+    "notes": "fr-pb40: there is no package called â€˜FrF2â€™"
   },
   {
     "id": "rsm-ccd3-inscribed",
@@ -187,9 +187,9 @@
     "shared_metric": "dense D: logdet(F.T @ F) on coded full quadratic; row count",
     "existing_scorer": "Dense D: tools/r_probe_rescore.py (coded quadratic features)",
     "torchoed_call": "central_composite(3, center=(4, 6), alpha=\"rotatable\") / (8 ** .25); polynomial_features(X, degree=2)",
-    "verdict": "NR",
+    "verdict": "MATCH",
     "prior_report": null,
-    "notes": "Reference and TorchOED not run in #353; pending batched E1b."
+    "notes": "Measured in #361; shared metric in results.json."
   },
   {
     "id": "skpr-splitplot",

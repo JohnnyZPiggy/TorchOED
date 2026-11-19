@@ -2,7 +2,7 @@
 
 Base `85e4aa765b370b479265bd70fa0db949c627b29d`. No R, Colab, TorchOED search or held-out run in this task.
 
-**Published-example MATCH count: 1 → 5**, by source citation only: existing w8-skpr plus four existing w11-mixlat cases. Eight additional examples are frozen and **NR (not run)**, across AlgDesign, mixexp, FrF2 and rsm; no result is predicted. Thirteen indexed examples including the existing skpr case; the target remains 8 measured matches.
+**Published-example MATCH count: 5 → 8 / 13** (#361, MATCH + TorchOED better from results.json): 3 new MATCH, 1 NO MATCH, 4 NR, plus 5 reused MATCH. One CPU-R Colab session; R 4.6.1 / AlgDesign 1.2.1.2 / rsm 2.10.6. mixexp and FrF2 unavailable; no retry. Both TorchOED oracles PASS. Cleanup confirmed zero active sessions (49.80 → 49.76 units). The final formals capture aborted on missing mixexp; verbatim call/setup errors remain in runtime.json/sessionInfo.txt.
 
 ## Prior report audit
 
@@ -59,19 +59,19 @@ Each external-reference summary is listed below, including superseded benchmark 
 
 | ID | Source | Shared metric | Status |
 |---|---|---|---|
-| alg-d | [AlgDesign 1.2.1.2](https://github.com/cran/AlgDesign/blob/1.2.1.2/man/Federov.Rd#L127-L131) | logdet(F.T @ F) | NR; pending E1b |
-| alg-a | [AlgDesign 1.2.1.2](https://github.com/cran/AlgDesign/blob/1.2.1.2/man/Federov.Rd#L127-L131) | trace(inverse(F.T @ F)) | NR; pending E1b |
-| alg-i | [AlgDesign 1.2.1.2](https://github.com/cran/AlgDesign/blob/1.2.1.2/man/Federov.Rd#L127-L131) | trace(inverse(F.T @ F) @ (F.T @ F / len(F))) | NR; pending E1b |
+| alg-d | [AlgDesign 1.2.1.2](https://github.com/cran/AlgDesign/blob/1.2.1.2/man/Federov.Rd#L127-L131) | logdet(F.T @ F) | MATCH; see results.json |
+| alg-a | [AlgDesign 1.2.1.2](https://github.com/cran/AlgDesign/blob/1.2.1.2/man/Federov.Rd#L127-L131) | trace(inverse(F.T @ F)) | NO MATCH; see results.json |
+| alg-i | [AlgDesign 1.2.1.2](https://github.com/cran/AlgDesign/blob/1.2.1.2/man/Federov.Rd#L127-L131) | trace(inverse(F.T @ F) @ (F.T @ F / len(F))) | MATCH; see results.json |
 | mix-sld32 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SLD.Rd#L30-L30) | sorted row multiset max_abs <= 1e-12; row sums | MATCH; max_abs 0, [existing result](../w11-mixlat/summary.md) |
 | mix-sld43 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SLD.Rd#L32-L32) | sorted row multiset max_abs <= 1e-12; row sums | MATCH; max_abs 0, [existing result](../w11-mixlat/summary.md) |
 | mix-scd3 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SCD.Rd#L29-L29) | sorted row multiset max_abs <= 1e-12; row sums | MATCH; max_abs 0, [existing result](../w11-mixlat/summary.md) |
 | mix-scd5 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SCD.Rd#L31-L31) | sorted row multiset max_abs <= 1e-12; row sums | MATCH; max_abs 0, [existing result](../w11-mixlat/summary.md) |
-| mix-scd12 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SCD.Rd#L33-L33) | sorted row multiset max_abs <= 1e-12; row sums | NR; pending E1b |
-| mix-xvert | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/Xvert.Rd#L39-L40) | Hausdorff on dimen=0 vertex sets; vertex count | NR; pending E1b |
-| fr-pb8 | [FrF2 2.3-5](https://github.com/cran/FrF2/blob/2.3-5/man/pb.Rd#L210-L210) | X.T @ X = nruns * I after mapping factor low/high levels to -1/+1 | NR; pending E1b |
-| fr-pb40 | [FrF2 2.3-5](https://github.com/cran/FrF2/blob/2.3-5/man/pb.Rd#L211-L211) | X.T @ X = nruns * I after mapping factor low/high levels to -1/+1 | NR; pending E1b |
-| rsm-ccd3-inscribed | [rsm 2.10.6](https://github.com/cran/rsm/blob/2.10.6/man/ccd.Rd#L120-L123) | dense D: logdet(F.T @ F) on coded full quadratic; row count | NR; pending E1b |
+| mix-scd12 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SCD.Rd#L33-L33) | sorted row multiset max_abs <= 1e-12; row sums | NR; mix-scd12: there is no package called â€˜mixexpâ€™ |
+| mix-xvert | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/Xvert.Rd#L39-L40) | Hausdorff on dimen=0 vertex sets; vertex count | NR; mix-xvert: there is no package called â€˜mixexpâ€™ |
+| fr-pb8 | [FrF2 2.3-5](https://github.com/cran/FrF2/blob/2.3-5/man/pb.Rd#L210-L210) | X.T @ X = nruns * I after mapping factor low/high levels to -1/+1 | NR; fr-pb8: there is no package called â€˜FrF2â€™ |
+| fr-pb40 | [FrF2 2.3-5](https://github.com/cran/FrF2/blob/2.3-5/man/pb.Rd#L211-L211) | X.T @ X = nruns * I after mapping factor low/high levels to -1/+1 | NR; fr-pb40: there is no package called â€˜FrF2â€™ |
+| rsm-ccd3-inscribed | [rsm 2.10.6](https://github.com/cran/rsm/blob/2.10.6/man/ccd.Rd#L120-L123) | dense D: logdet(F.T @ F) on coded full quadratic; row count | MATCH; see results.json |
 
 | skpr-splitplot | [skpr 1.9.2](https://github.com/cran/skpr/blob/1.9.2/man/gen_design.Rd#L217-L230) | dense GLS logdet | MATCH; both 13.513636250491656, delta 0 ([w8-skpr](../w8-skpr/summary.md)) |
 
-Eight unrun calls: alg-d, alg-a, alg-i, mix-scd12, mix-xvert, fr-pb8, fr-pb40, rsm-ccd3-inscribed. Existing mixexp calls use the same inputs and metric as w11-mixlat (4 MATCH, no rerun). Environment unchanged; no scientific timing or broader parity claim. No reference error exists for unrun calls; NR is not an error result.
+New results: alg-d MATCH; alg-a NO MATCH (2.4240924092409237 vs reference 2.3, lower is better); alg-i MATCH; rsm-ccd3-inscribed MATCH. mix-scd12, mix-xvert, fr-pb8 and fr-pb40 NR (packages unavailable). Existing five MATCH results reused without rerun. No broader parity claim.

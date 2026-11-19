@@ -16,7 +16,7 @@ for device in (('cpu','cuda') if remote else ('cpu',)):
     C = torch.cartesian_prod(*[torch.tensor([-1.,0.,1.],dtype=torch.float64,device=device)]*4)
     F = polynomial_features(C,degree=2)
     # hard convention: tests/test_blocked_design.py::test_split_plot_matches_frozen_exhaustive_optimum
-    cases = [('B4',F[:,1:],dict(blocks=[8]*3)),('S4',F,dict(whole_plots=[4]*6,hard=C[:,0],eta=1.0))]
+    cases = [('B4',F[:,1:],dict(blocks=[8]*3)),('S4',F,dict(whole_plots=[4]*6,hard=C[:,0].long(),eta=1.0))]
     def call(features,options,criterion):
         return optimal_design(features,24,criterion=criterion,generator=torch.Generator(device).manual_seed(0),**options)
     try:

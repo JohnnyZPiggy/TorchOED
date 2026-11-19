@@ -2,7 +2,7 @@
 
 **SAE V3.3 Chief Architect + Scientific Mentor · 2026-10-29.** Status: **ARCHITECTURE_ONLY / ENGINEER_NOT_AUTHORIZED / CPU_ORACLES_SPECIFIED_NOT_RUN**. Baseline main `eba94865cd0bb82fd15e6d606976bcee1094750f`; M0/M1/M2-A merged. E0 PR #3 remains independent and unmerged. No M3 Engineer Issue, PR, CLAIM or implementation is authorized by this document.
 
-Read together with [Scientific Mentor Research §§11–14](SCIENTIFIC_MENTOR_RESEARCH.md), [M1/M2 Numerical Contract](M1_M2_NUMERICAL_CONTRACT.md), [M2 API](M2_API.md), and [Release Roadmap](RELEASE_ROADMAP.md). Reuse the frozen SAE V3.3 pin in `sae.yaml`.
+Read together with [Scientific Mentor Research §§11–14](SCIENTIFIC_MENTOR_RESEARCH.md), [M1/M2 Numerical Contract](M1_M2_NUMERICAL_CONTRACT.md), [M2 API](MILESTONE_API_HISTORY.md), and [Release Roadmap](RELEASE_ROADMAP.md). Reuse the frozen SAE V3.3 pin in `sae.yaml`.
 
 ## 1. First slice: one bounded 1-swap exact D search
 

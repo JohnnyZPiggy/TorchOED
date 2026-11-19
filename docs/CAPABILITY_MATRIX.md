@@ -106,4 +106,4 @@ Listed for Scientist decision; listing is not a deferral approval. Open cells ne
 | constrained mixtures | Con | Non-box regions | Only box bounds, vertices and face centroids (#281) | Scientist deferral requested |
 
 ## Known documentation debt (week 12 consolidation)
-`website/api.md` lists `optimal_design` without `blocks`, `whole_plots`, `hard`, `eta`; `docs/ALGORITHM_COVERAGE.md` still marks `optimal_design` PLANNED; older milestone docs (`docs/M1_API.md` … `docs/M3C_API.md`) should be merged or archived.
+Documentation debt is closed by #363 and #365.

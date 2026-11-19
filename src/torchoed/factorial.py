@@ -7,7 +7,7 @@ from ._validation import budget, floating, integer
 
 
 def full_factorial(levels: list[int] | tuple[int, ...], *, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
-    """Integer index grid; last factor varies fastest. See docs/M1_API.md."""
+    """Integer index grid; last factor varies fastest. See docs/MILESTONE_API_HISTORY.md."""
     if not isinstance(levels, (tuple, list)) or not levels:
         raise ValueError("levels must be a nonempty tuple/list of positive Python ints")
     rows = 1

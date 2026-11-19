@@ -57651,7 +57651,7 @@
       "sum_error": 2.220446049250313e-16
     },
     "verdict": "NR",
-    "notes": "mix-scd12: there is no package called \u00e2\u20ac\u02dcmixexp\u00e2\u20ac\u2122"
+    "notes": "mix-scd12: there is no package called \u2018mixexp\u2019"
   },
   "mix-xvert": {
     "rows": [
@@ -57684,7 +57684,7 @@
     "reference": null,
     "torchoed": 5,
     "verdict": "NR",
-    "notes": "mix-xvert: there is no package called \u00e2\u20ac\u02dcmixexp\u00e2\u20ac\u2122",
+    "notes": "mix-xvert: there is no package called \u2018mixexp\u2019",
     "oracle": "PASS"
   },
   "fr-pb8": {
@@ -57771,7 +57771,7 @@
       "gram_error": 0.0
     },
     "verdict": "NR",
-    "notes": "fr-pb8: there is no package called \u00e2\u20ac\u02dcFrF2\u00e2\u20ac\u2122"
+    "notes": "fr-pb8: there is no package called \u2018FrF2\u2019"
   },
   "fr-pb40": {
     "rows": [
@@ -59425,7 +59425,7 @@
       "gram_error": 0.0
     },
     "verdict": "NR",
-    "notes": "fr-pb40: there is no package called \u00e2\u20ac\u02dcFrF2\u00e2\u20ac\u2122"
+    "notes": "fr-pb40: there is no package called \u2018FrF2\u2019"
   },
   "rsm-ccd3-inscribed": {
     "rows": [

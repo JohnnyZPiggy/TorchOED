@@ -125,7 +125,7 @@
     "torchoed_call": "simplex_centroid(12)",
     "verdict": "NR",
     "prior_report": null,
-    "notes": "mix-scd12: there is no package called â€˜mixexpâ€™"
+    "notes": "mix-scd12: there is no package called ‘mixexp’"
   },
   {
     "id": "mix-xvert",
@@ -141,7 +141,7 @@
     "torchoed_call": "mixture_vertices([0, .10, .05], [.8, .95, .50], face_dims=(1,)); compare vertices separately",
     "verdict": "NR",
     "prior_report": null,
-    "notes": "mix-xvert: there is no package called â€˜mixexpâ€™"
+    "notes": "mix-xvert: there is no package called ‘mixexp’"
   },
   {
     "id": "fr-pb8",
@@ -157,7 +157,7 @@
     "torchoed_call": "plackett_burman(8)",
     "verdict": "NR",
     "prior_report": null,
-    "notes": "fr-pb8: there is no package called â€˜FrF2â€™"
+    "notes": "fr-pb8: there is no package called ‘FrF2’"
   },
   {
     "id": "fr-pb40",
@@ -173,7 +173,7 @@
     "torchoed_call": "plackett_burman(40)",
     "verdict": "NR",
     "prior_report": null,
-    "notes": "fr-pb40: there is no package called â€˜FrF2â€™"
+    "notes": "fr-pb40: there is no package called ‘FrF2’"
   },
   {
     "id": "rsm-ccd3-inscribed",

@@ -18,10 +18,10 @@ def metric(x,criterion,candidates=None):
     return (inv.trace() if criterion=='A' else (inv@(candidates.mT@candidates/len(candidates))).trace()).item()
 def ordered(x):
     return x[sorted(range(len(x)),key=lambda i: tuple(round(v,9) for v in x[i].tolist()))]
-examples=json.loads((p/'examples.json').read_text())
-previous=json.loads((p/'results.json').read_text()) if (p/'results.json').exists() else {}
+examples=json.loads((p/'examples.json').read_text(encoding='utf-8'))
+previous=json.loads((p/'results.json').read_text(encoding='utf-8')) if (p/'results.json').exists() else {}
 raw=list(csv.DictReader((p/'reference.csv').open())) if (p/'reference.csv').exists() else []
-session=(p/'sessionInfo.txt').read_text() if (p/'sessionInfo.txt').exists() else 'Reference not run'
+session=(p/'sessionInfo.txt').read_text(encoding='utf-8') if (p/'sessionInfo.txt').exists() else 'Reference not run'
 results={}
 for e in examples:
     key=e['id']
@@ -73,7 +73,7 @@ for e in examples:
         if ref is not None:
             b=metric(ref,'D'); row.update(reference=dict(count=len(ref),logdet=b),verdict='MATCH' if len(ours)==len(ref)==24 and abs(a-b)<=1e-10*abs(b) else 'NO MATCH')
     results[key]=row
-(p/'results.json').write_text(json.dumps(results,indent=2,allow_nan=False)+'\n')
+(p/'results.json').write_text(json.dumps(results,indent=2,allow_nan=False)+'\n',encoding='utf-8')
 for key,row in results.items(): print(key,row['reference'],row['torchoed'],row['verdict'],row.get('oracle',''))
 assert all(row.get('oracle','PASS')=='PASS' for row in results.values())
 print('2 oracle PASS; 0 FAIL; published matches =',sum(r['verdict'] in ('MATCH','TorchOED better') for r in results.values()))

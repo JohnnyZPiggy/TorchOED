@@ -56,7 +56,11 @@ Box-constrained simplex vertices in exact lexicographic order, then vertex-mean 
 
 `lhs(n_samples: int, n_factors: int, *, generator: torch.Generator | None = None, device: torch.device | str | None = None, dtype: torch.dtype = torch.float64, mode: str = "random", restarts: int = 10, max_iter: int | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 
-Draw a random jittered Latin hypercube (default), or use `mode="maximin"` (Morris–Mitchell φ₁₅) or `mode="maxpro"` (Joseph–Gul–Ba ψ) for midpoint designs. Optimised modes evaluate every within-column swap in batches and take the best improving swap. `restarts=10` chooses the best of independent random starts; `max_iter=None` runs each to convergence. The supplied generator controls all starts; dtype and device are retained. These modes use the box only, with no fixed runs or dual certificate.
+Draw a random jittered Latin hypercube (default), or use `mode="maximin"` (Morris–Mitchell φ₁₅) `mode="maxpro"` (Joseph–Gul–Ba ψ), or `mode="uniform"` (centred L2 discrepancy CD2) for midpoint designs. Optimised modes evaluate every within-column swap in batches and take the best improving swap. `restarts=10` chooses the best of independent random starts; `max_iter=None` runs each to convergence. The supplied generator controls all starts; dtype and device are retained. These modes use the box only, with no fixed runs or dual certificate.
+
+`space_filling_diagnostics(X: torch.Tensor, *, p: float = 15) -> dict[str, torch.Tensor]`
+
+For a floating 2-D design with n ≥ 2 rows in [0, 1]^k, returns `min_distance`, Morris–Mitchell `phi_p`, Joseph–Gul–Ba `maxpro` and centred L2 discrepancy `cd2` as scalar tensors in the input dtype and device. Shared coordinates give infinite MaxPro. Dense cost is O(n² k); see P2 gate §86–87.
 
 `sobol(n: int, d: int, *, scramble: bool = False, seed: int | None = None, skip: int = 0, balance: str = "exact", dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 

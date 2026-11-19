@@ -4,6 +4,18 @@ root = pathlib.Path('/content/torchoed-r-heldout'); sha = os.environ['SAE_CANDID
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 installed = shutil.which('Rscript') is None
+out = root/'reports/w12-published'
+if (out/'run.py').exists():
+    data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)', device_observed=json.loads(os.environ['SAE_DEVICE_OBSERVED']))
+    cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    if installed: subprocess.run(['apt-get','install','-y','r-base-core'],env=cpu_env,check=True,capture_output=True,text=True)
+    setup = subprocess.run(['Rscript','-e','install.packages(c("AlgDesign","FrF2","rsm","lattice"),repos="https://cloud.r-project.org"); dest<-tempfile(fileext=".tar.gz"); download.file("https://cran.r-project.org/src/contrib/Archive/mixexp/mixexp_1.2.7.1.tar.gz",dest); install.packages(dest,repos=NULL,type="source")'],env=cpu_env,capture_output=True,text=True)
+    data['installation'] = dict(returncode=setup.returncode,stdout=setup.stdout,stderr=setup.stderr)
+    call = subprocess.run(['Rscript','tools/r_heldout.R','P12'],cwd=root,env=cpu_env,capture_output=True,text=True)
+    data['call'] = dict(returncode=call.returncode,stdout=call.stdout,stderr=call.stderr)
+    for name in ('sessionInfo.txt','reference.csv'):
+        if (out/name).exists(): data[name] = (out/name).read_text()
+    pathlib.Path('/content/r-heldout.json').write_text(json.dumps(data,allow_nan=False)+'\n'); sys.exit()
 out = root/'reports/w11-aliasext'
 if (out/'run.py').exists():
     data = dict(status='PASS', source_sha=sha, device_used='CPU (CUDA hidden from R)', device_observed=json.loads(os.environ['SAE_DEVICE_OBSERVED']))

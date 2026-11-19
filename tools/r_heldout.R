@@ -1,3 +1,35 @@
+if (identical(commandArgs(trailingOnly=TRUE), "P12")) {
+  outdir <- "reports/w12-published"; session <- file.path(outdir,"sessionInfo.txt")
+  capture.output(print(sessionInfo()), file=session)
+  stopifnot(getRversion() == "4.6.1")
+  all <- list()
+  calls <- list(list(id="alg-d",pkg="AlgDesign",version="1.2.1.2",call="desD<-optFederov(~quad(A,B,C),dat,nTrials=14,eval=TRUE)"),
+list(id="alg-a",pkg="AlgDesign",version="1.2.1.2",call="desA<-optFederov(~quad(.),dat,nTrials=14,eval=TRUE,crit=\"A\")"),
+list(id="alg-i",pkg="AlgDesign",version="1.2.1.2",call="desI<-optFederov(~quad(.),dat,nTrials=14,eval=TRUE,crit=\"I\")"),
+list(id="mix-scd12",pkg="mixexp",version="1.2.7.1",call="des<-SCD(12)"),
+list(id="mix-xvert",pkg="mixexp",version="1.2.7.1",call="des<-Xvert(3,uc=c(.8,.95,.50),lc=c(0,.10,.05),ndm=1,plot=FALSE)"),
+list(id="fr-pb8",pkg="FrF2",version="2.3-5",call="pb(8,default.levels=c(\"current\",\"new\"))"),
+list(id="fr-pb40",pkg="FrF2",version="2.3-5",call="test <- pb(40)"),
+list(id="rsm-ccd3-inscribed",pkg="rsm",version="2.10.6",call="SOdes2 <- ccd (3, n0 = c(4,6), alpha = \"rotatable\", inscribed = TRUE, coding = list (\n                x1 ~ (Temp - 150)/10, x2 ~ (Pres - 50)/5, x3 ~ Feedrate - 4))"))
+  for (item in calls) tryCatch({
+    observed <- as.character(packageVersion(item$pkg))
+    cat(item$id, "version", observed, "\n", file=session, append=TRUE)
+    if (packageVersion(item$pkg) != item$version) stop(paste("version mismatch:", observed))
+    library(item$pkg, character.only=TRUE)
+    if (item$pkg == "AlgDesign") dat<-gen.factorial(levels=3,nVars=3,varNames=c("A","B","C"))
+    set.seed(20261119)
+    x <- eval(parse(text=item$call))
+    if (item$pkg == "AlgDesign") x <- x$design[,c("A","B","C")]
+    if (item$pkg == "mixexp") x <- if (item$id == "mix-xvert") x[,c("x1","x2","x3","dimen")] else x[,1:12]
+    if (item$pkg == "FrF2") x <- as.data.frame(lapply(x, function(v) as.integer(v)*2-3))
+    if (item$pkg == "rsm") x <- as.data.frame(x)[,c("x1","x2","x3")]
+    x <- as.matrix(x)
+    all[[item$id]] <- data.frame(id=item$id, row=rep(seq_len(nrow(x)),ncol(x)), col=rep(colnames(x),each=nrow(x)), value=sprintf("%.17g",as.numeric(x)))
+  }, error=function(e) cat(item$id, ": ", conditionMessage(e), "\n", file=session, append=TRUE, sep=""))
+  if (length(all)) write.csv(do.call(rbind,all),file.path(outdir,"reference.csv"),row.names=FALSE)
+  capture.output(print(sessionInfo()), lapply(list(AlgDesign::optFederov,mixexp::SCD,mixexp::Xvert,FrF2::pb,rsm::ccd), formals), file=session, append=TRUE)
+  quit(save="no")
+}
 if (identical(commandArgs(trailingOnly=TRUE), "AL11")) {
   library(skpr); outdir <- "reports/w11-aliasext"
   capture.output(print(sessionInfo()), print(packageVersion("skpr")), print(args(skpr::gen_design)), file=file.path(outdir,"sessionInfo.txt"))

@@ -19,14 +19,14 @@
 
 </div>
 
-TorchOED chooses which experiments to run. It covers classical and industrial design of experiments — D-, A- and I-optimal designs, blocking, split-plot, mixtures, screening and response-surface designs, power and diagnostics — in one tensor API, and it plugs into any PyTorch model.
+TorchOED chooses which experiments to run. It covers classical and industrial design of experiments — D-, A- and I-optimal designs, blocking, split-plot, mixtures, screening and response-surface designs, space-filling designs, power and diagnostics — in one tensor API, and it plugs into any PyTorch model.
 
 ## Why TorchOED
 
 | | |
 |---|---|
 | 🎓 **Certified designs** | Every optimal design comes with a **proved lower bound on its efficiency** (equivalence-theorem duality): you know how far it can be from the best possible design. You can also certify a design produced elsewhere. |
-| 🏭 **Industrial DOE, in Python** | Blocking, split-plot / hard-to-change factors, mixtures and mixture-process designs, covariates, fractional factorials with aliasing, Plackett–Burman, central composite, Box–Behnken, definitive screening, power analysis and design diagnostics. |
+| 🏭 **Industrial DOE, in Python** | Blocking, split-plot / hard-to-change factors, mixtures and mixture-process designs, covariates, fractional factorials with aliasing, Plackett–Burman, central composite, Box–Behnken, definitive screening, space-filling Latin hypercubes (maximin, MaxPro, uniform) and fast flexible filling on constrained regions, power analysis and design diagnostics. |
 | 🔥 **Any PyTorch model** | `jacobian_features(model, X)` turns a nonlinear model or a neural network into a locally optimal design through autograd; `next_batch` proposes the next experiments in an ask/tell loop. |
 | ⚡ **GPU scale** | The exchange search runs on GPU: on 10⁵ candidates in 5 factors it finished in about 3 minutes while PyDOE timed out (see [Benchmarks](#benchmarks)). |
 

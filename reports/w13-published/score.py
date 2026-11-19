@@ -22,4 +22,4 @@ for key in ('mix-scd12','mix-xvert','fr-pb8','fr-pb40'):
     else:
         ours=plackett_burman(int(key[5:])); a,b=orth(ours),orth(ref); row.update(torchoed=a,reference=b,verdict='MATCH' if a['shape']==b['shape'] and a['gram_error']==b['gram_error']==0 else 'NO MATCH')
 output=dict(runtime=json.loads((p/'runtime.json').read_text()),scorer_source='w12-published/run.py: ordered, hausdorff, orth (copied); Xvert dimen=1 reported separately',before=8,after=8+sum(r['verdict']=='MATCH' for r in results.values()),rows=results)
-(p/'results.json').write_text(json.dumps(output,indent=2,allow_nan=False)+'\n',encoding='utf-8'); print(json.dumps(output['rows'],indent=2)); print('published matches:',output['before'],'->',output['after'])
+(p/'results.json').write_text(json.dumps(output,indent=2,allow_nan=False)+'\n',encoding='utf-8',newline='\n'); print(json.dumps(output['rows'],indent=2)); print('published matches:',output['before'],'->',output['after'])

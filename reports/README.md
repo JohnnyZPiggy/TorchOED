@@ -4,10 +4,10 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 
 | Directory | Measurement / producing PR | Status |
 |---|---|---|
-| [w12-heldout](w12-heldout/) | current (W12 held-out H30â€“H32; no tuning) | H30 MATCH Fraction exhaustive; H31/H32 R NOT_RUN (workflow version assertion); 3 local oracles PASS; #368 BLOCKED |
+| [w12-heldout](w12-heldout/) | current (W12 held-out H30–H32; no tuning) | H30 MATCH Fraction exhaustive; H31/H32 R NOT_RUN (workflow version assertion); 3 local oracles PASS; #368 BLOCKED |
 | [w12-published](w12-published/) | W12 published-example source index and frozen inputs (#353) | 8/13 published MATCH; 1 NO MATCH; 4 NR (missing packages); two TorchOED oracles PASS; one Colab session cleaned up (#361) |
-| [w11-heldout2](w11-heldout2/) | current (W11 frozen H27â€“H29; #336) | mixture-process D, covariates A and alias Î¨ MATCH exhaustive references; Î” = 0, counts and dense re-scores 6 PASS; no tuning |
-| [w11-heldout](w11-heldout/) | current (W11 held-out H24â€“H26; no tuning) | H24 frozen call 6 vertices, unfiltered Fraction PASS, Hausdorff 7.15e-8; H25 AlgDesign D MATCH, reference floor 0.9139763584432251 (two evaluation checks PASS, #334); H26 skpr NOT_RUN (errors); five original oracles PASS, cleanup confirmed |
+| [w11-heldout2](w11-heldout2/) | current (W11 frozen H27–H29; #336) | mixture-process D, covariates A and alias Ψ MATCH exhaustive references; Δ = 0, counts and dense re-scores 6 PASS; no tuning |
+| [w11-heldout](w11-heldout/) | current (W11 held-out H24–H26; no tuning) | H24 frozen call 6 vertices, unfiltered Fraction PASS, Hausdorff 7.15e-8; H25 AlgDesign D MATCH, reference floor 0.9139763584432251 (two evaluation checks PASS, #334); H26 skpr NOT_RUN (errors); five original oracles PASS, cleanup confirmed |
 | [b0](b0/) | Initial fixed CPU D comparison against PyDOE 1.6.0; [#42](https://github.com/JohnnyZPiggy/TorchOED/pull/42) | superseded by b1 |
 | [b1](b1/) | G-based score-first / verify-top exchange; [#46](https://github.com/JohnnyZPiggy/TorchOED/pull/46) | superseded by b2 |
 | [b2](b2/) | D-efficiency lower bounds and CPU comparison; [#53](https://github.com/JohnnyZPiggy/TorchOED/pull/53) | superseded by b3 |
@@ -48,20 +48,20 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w159](w159/) | Base A/I screened/kept/gathered counts and per-kernel cProfile, seed0 on four slow cases; Refs #159 | candidate (evidence only; source `0213928`) |
 | [w162](w162/) | Empty screened-tile skip, exact outputs and gather calls; [#164](https://github.com/JohnnyZPiggy/TorchOED/pull/164) | candidate (paired D timing8/8 pass; measured head `33de5a9`) |
 | [w163](w163/) | A/I:D at1M/4M/16M workspace, exact outputs, gather counts and peak RSS; Refs #163 | candidate (evidence only; default unchanged) |
-| [w165](w165/) | Six random500 D/A/I non-Nâ‚‚ profiles, disjoint accounting, calls and floor iterations; Refs #165 | candidate (evidence only; source `6b4854f`) |
+| [w165](w165/) | Six random500 D/A/I non-N₂ profiles, disjoint accounting, calls and floor iterations; Refs #165 | candidate (evidence only; source `6b4854f`) |
 | [w171](w171/) | A/I exponent-1 dual floor and 1e-3 stop; [#172](https://github.com/JohnnyZPiggy/TorchOED/pull/172) | candidate; D timing8/8, exact outputs, C1 5/8 |
 | [w168](w168/) | Final W4 C1 paired benchmark against `39b8c56`; Refs #168 | current (final W4 C1 result); 5/8, exact outputs pass |
-| [w174](w174/) | Nine remaining-gap D/A/I profiles, exact outputs, disjoint accounting and dominant Nâ‚‚; Refs #174 | candidate (evidence only) |
+| [w174](w174/) | Nine remaining-gap D/A/I profiles, exact outputs, disjoint accounting and dominant N₂; Refs #174 | candidate (evidence only) |
 | [w4-heldout](w4-heldout/) | Final W4 H1-H8 TorchOED-only rerun, frozen references reused; Refs #176 | current (W4 held-out record; no tuning) |
 | [w5-crossover](w5-crossover/) | W5 fixed CPU/GPU/PyDOE scale crossover, Refs #185 / #189 | run 1 inconclusive; [run 2](w5-crossover/run2-summary.md) recorded as-is |
 | [w5-heldout](w5-heldout/) | Frozen H9 D/I and H10 D/A CPU record; Refs #187 | current (W5 held-out H9/H10; no tuning) |
-| [w6-heldout](w6-heldout/) | Frozen H11 blocking, H12 screening and H13 diagnostics; Refs #199 | current (W6 held-out H11â€“H13; no tuning) |
-| [w7-heldout](w7-heldout/) | Frozen H14 split-plot D, H15 mixture and H16 power; Refs #209 | current (W7 held-out H14â€“H16; no tuning) |
-| [w9-heldout](w9-heldout/) | Frozen H19â€“H20 scored by shared dense metrics; Refs #239 | current (W9 held-out H19â€“H20; no tuning) |
-| [w10-heldout](w10-heldout/) | Frozen H21â€“H23 and shared WLP/response-surface metrics; Refs #271 | current (W10 held-out H21â€“H23; no tuning) |
+| [w6-heldout](w6-heldout/) | Frozen H11 blocking, H12 screening and H13 diagnostics; Refs #199 | current (W6 held-out H11–H13; no tuning) |
+| [w7-heldout](w7-heldout/) | Frozen H14 split-plot D, H15 mixture and H16 power; Refs #209 | current (W7 held-out H14–H16; no tuning) |
+| [w9-heldout](w9-heldout/) | Frozen H19–H20 scored by shared dense metrics; Refs #239 | current (W9 held-out H19–H20; no tuning) |
+| [w10-heldout](w10-heldout/) | Frozen H21–H23 and shared WLP/response-surface metrics; Refs #271 | current (W10 held-out H21–H23; no tuning) |
 | [w11-covext](w11-covext/) | W11 covariates Ext (#339): TorchOED MATCH exhaustive 2048/25; skpr NOT_RUN (`undefined columns selected`), R 4.6.1 / skpr 1.9.2 recorded on authorized retry; both cleanups confirmed. | current (W11 covariates Ext; reference NOT_RUN) |
 | [w11-aliasext](w11-aliasext/) | W11 alias Ext (#342): shared dense metric vs exact 1,716-multiset oracle | MATCH: skpr 1.9.2 and TorchOED both match exhaustive (det M, alias trace) = (768, 1/3); corrected aliaspower=2 (#349) |
 | [w12-structgpu](w12-structgpu/) | #362 | BLOCKED: authorized replacement allocation TIMEOUT, cleanup confirmed; six local CPU cases PASS; Colab CPU/GPU NOT_RUN |
 | [r-oracle-probe](r-oracle-probe/) | Manual GitHub Actions R oracle; R 4.5.2, rsm 2.10.6; [run 44500473486](https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44500473486); Refs #372 | PASS: all 3 CCD/BBD CSVs byte-identical |
 | [G0 Colab Pro probe](g0-probe/summary.md) | #385 | BLOCKED: retry L4 transport PASS; science import pydoe ERROR; cpu/cuda NOT_RUN; cleanup PASS |
-| [w13-published](w13-published/) | #392: four NR examples rerun on R 4.5.2; three MATCH, Xvert NO MATCH; published matches 8 -> 11 |
+| [w13-published](w13-published/) | #392: four NR examples rerun on R 4.5.2 | Three MATCH, Xvert NO MATCH; published matches 8 -> 11 |

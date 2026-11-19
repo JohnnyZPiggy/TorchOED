@@ -4,12 +4,12 @@
 
 **Optimal experimental design in PyTorch — with a certificate on every design.**
 
-[[CI](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml/badge.svg)](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml)
-[[Docs](https://img.shields.io/badge/docs-online-blue)](https://johnnyzpiggy.github.io/TorchOED/)
-[[TestPyPI](https://img.shields.io/badge/TestPyPI-0.8.0-orange)](https://test.pypi.org/project/torchoed/)
-[Python](https://img.shields.io/badge/python-%E2%89%A53.11-blue)
-[PyTorch](https://img.shields.io/badge/PyTorch-%E2%89%A52.2-ee4c2c)
-[[License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![CI](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml/badge.svg)](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-online-blue)](https://johnnyzpiggy.github.io/TorchOED/)
+[![TestPyPI](https://img.shields.io/badge/TestPyPI-0.8.0-orange)](https://test.pypi.org/project/torchoed/)
+![Python](https://img.shields.io/badge/python-%E2%89%A53.11-blue)
+![PyTorch](https://img.shields.io/badge/PyTorch-%E2%89%A52.2-ee4c2c)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 [Documentation](https://johnnyzpiggy.github.io/TorchOED/) ·
 [Industrial guide](https://johnnyzpiggy.github.io/TorchOED/industrial/) ·

@@ -2,7 +2,7 @@
 
 **Optimal experimental design in PyTorch — with a certificate on every design.**
 
-TorchOED chooses which experiments to run: D-, A- and I-optimal designs, blocking, split-plot, mixtures, screening and response-surface designs, power and diagnostics, in one tensor API that also accepts any PyTorch model. Every optimal design carries a proved lower bound on its efficiency.
+TorchOED chooses which experiments to run: D-, A- and I-optimal designs, blocking, split-plot, mixtures, screening and response-surface designs, space-filling designs, power and diagnostics, in one tensor API that also accepts any PyTorch model. Every optimal design carries a proved lower bound on its efficiency.
 
 !!! info "Status"
     Version 0.8.0 is a pre-release on [TestPyPI](https://test.pypi.org/project/torchoed/); the API may still change before 1.0. Python 3.11 or newer and torch 2.2 or newer are required.
@@ -34,4 +34,4 @@ print(result["ids"].tolist(), result["objective"], result["efficiency_lower_boun
 
 `ids` indexes rows of F; `objective` is the maximized log determinant for D. The efficiency field is a certified lower bound, not achieved efficiency or a global-optimality certificate. Search uses seeded feasible restarts; recreate the generator to repeat a call.
 
-Read [criteria](criteria.md), [augmentation and constraints](augmentation.md), the [PyDOE comparison](pydoe.md), and the [API reference](api.md).
+Read [criteria](criteria.md), [augmentation and constraints](augmentation.md), [space-filling designs](space_filling.md), the [PyDOE comparison](pydoe.md), and the [API reference](api.md).

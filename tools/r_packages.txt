@@ -4,3 +4,4 @@ estimability 1.5.1
 rsm 2.10.6
 FrF2 2.3-5
 AlgDesign 1.2.1.2
+mixexp 1.2.7.1

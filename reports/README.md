@@ -64,3 +64,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w12-structgpu](w12-structgpu/) | #362 | BLOCKED: authorized replacement allocation TIMEOUT, cleanup confirmed; six local CPU cases PASS; Colab CPU/GPU NOT_RUN |
 | [r-oracle-probe](r-oracle-probe/) | Manual GitHub Actions R oracle; R 4.5.2, rsm 2.10.6; [run 44500473486](https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44500473486); Refs #372 | PASS: all 3 CCD/BBD CSVs byte-identical |
 | [G0 Colab Pro probe](g0-probe/summary.md) | #385 | BLOCKED: retry L4 transport PASS; science import pydoe ERROR; cpu/cuda NOT_RUN; cleanup PASS |
+| [w13-published](w13-published/) | #392: four NR examples rerun on R 4.5.2 | Three MATCH, Xvert NO MATCH; published matches 8 -> 11 |

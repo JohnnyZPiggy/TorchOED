@@ -1,0 +1,145 @@
+{
+  "runtime": {
+    "run_id": "44613389076",
+    "source_sha": "fd9c53f8089f4a9b2f8f62068b5f88235140a43e",
+    "R_version": "R version 4.5.2 (2025-10-31)",
+    "packages": {
+      "AlgDesign": "1.2.1.2",
+      "cli": "3.6.6",
+      "colorspace": "2.1-4",
+      "combinat": "0.0-9",
+      "conf.design": "2.0.0",
+      "cpp11": "0.5.5",
+      "daewr": "1.2-11",
+      "DoE.base": "1.2-5",
+      "estimability": "1.5.1",
+      "FrF2": "2.3-5",
+      "glue": "1.8.1",
+      "gmp": "0.7-5.1",
+      "igraph": "2.3.4",
+      "jsonlite": "2.0.0",
+      "lifecycle": "1.0.5",
+      "lmtest": "0.9-40",
+      "magrittr": "2.0.5",
+      "mixexp": "1.2.7.1",
+      "numbers": "0.9-2",
+      "partitions": "1.11-1",
+      "pkgconfig": "2.0.3",
+      "polynom": "1.4-1",
+      "rbibutils": "2.4.1",
+      "Rdpack": "2.6.6",
+      "remotes": "2.5.0",
+      "rlang": "1.3.0",
+      "rsm": "2.10.6",
+      "scatterplot3d": "0.3-45",
+      "sets": "1.0-25",
+      "sfsmisc": "1.1-26",
+      "stringi": "1.8.9",
+      "vcd": "1.4-14",
+      "vctrs": "0.7.3",
+      "zoo": "1.9-1",
+      "base": "4.5.2",
+      "boot": "1.3-32",
+      "class": "7.3-23",
+      "cluster": "2.1.8.1",
+      "codetools": "0.2-20",
+      "compiler": "4.5.2",
+      "datasets": "4.5.2",
+      "foreign": "0.8-90",
+      "graphics": "4.5.2",
+      "grDevices": "4.5.2",
+      "grid": "4.5.2",
+      "KernSmooth": "2.23-26",
+      "lattice": "0.22-7",
+      "MASS": "7.3-65",
+      "Matrix": "1.7-4",
+      "methods": "4.5.2",
+      "mgcv": "1.9-3",
+      "nlme": "3.1-168",
+      "nnet": "7.3-20",
+      "parallel": "4.5.2",
+      "rpart": "4.1.24",
+      "spatial": "7.3-18",
+      "splines": "4.5.2",
+      "stats": "4.5.2",
+      "stats4": "4.5.2",
+      "survival": "3.8-3",
+      "tcltk": "4.5.2",
+      "tools": "4.5.2",
+      "utils": "4.5.2"
+    },
+    "wall_seconds": 0.7141
+  },
+  "scorer_source": "w12-published/run.py: ordered, hausdorff, orth (copied); Xvert dimen=1 reported separately",
+  "before": 8,
+  "after": 11,
+  "rows": {
+    "mix-scd12": {
+      "torchoed_shape": [
+        4095,
+        12
+      ],
+      "reference_shape": [
+        4095,
+        12
+      ],
+      "max_abs": 3.3306690738754696e-16,
+      "sum_errors": [
+        2.220446049250313e-16,
+        1.9984014443252818e-15
+      ],
+      "verdict": "MATCH"
+    },
+    "mix-xvert": {
+      "parts": {
+        "0": {
+          "torchoed_count": 5,
+          "reference_count": 5,
+          "hausdorff": 2.9802321999117254e-08,
+          "verdict": "NO MATCH"
+        },
+        "1": {
+          "torchoed_count": 5,
+          "reference_count": 5,
+          "hausdorff": 2.3841858043383013e-08,
+          "verdict": "NO MATCH"
+        }
+      },
+      "verdict": "NO MATCH"
+    },
+    "fr-pb8": {
+      "torchoed": {
+        "shape": [
+          8,
+          7
+        ],
+        "gram_error": 0.0
+      },
+      "reference": {
+        "shape": [
+          8,
+          7
+        ],
+        "gram_error": 0.0
+      },
+      "verdict": "MATCH"
+    },
+    "fr-pb40": {
+      "torchoed": {
+        "shape": [
+          40,
+          39
+        ],
+        "gram_error": 0.0
+      },
+      "reference": {
+        "shape": [
+          40,
+          39
+        ],
+        "gram_error": 0.0
+      },
+      "verdict": "MATCH"
+    }
+  }
+}

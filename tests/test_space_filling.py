@@ -96,3 +96,54 @@ def test_exhaustive_uniform():
     optimum = min(fraction_cd2(list(zip(levels, p))) for p in itertools.permutations(levels))
     x = lhs(6, 2, mode="uniform", generator=torch.Generator().manual_seed(0))
     torch.testing.assert_close(space_filling_diagnostics(x)["cd2"].square(), torch.tensor(float(optimum), dtype=torch.float64), rtol=1e-12, atol=0)
+
+
+from torchoed import fast_flexible_filling, feasible_candidates, sobol
+from torchoed.sampling import _kmeans, _maxpro_exchange
+import pytest
+
+
+def filling_setup():
+    A = torch.tensor([[1., 1.]], dtype=torch.float64)
+    b = torch.tensor([1.], dtype=torch.float64)
+    S = sobol(256, 2, scramble=True, seed=0)
+    F = S[feasible_candidates(S, A=A, b=b)]
+    assign, centroids, clustered = _kmeans(F, 6, 100)
+    chosen, exchanged = _maxpro_exchange(F, assign, centroids, 100)
+    return A, b, S, F, assign, centroids, chosen, clustered, exchanged
+
+
+def test_filling_lloyd_and_exchange_oracles():
+    _, _, S, F, assign, centroids, chosen, clustered, exchanged = filling_setup()
+    assert clustered and exchanged
+    assert all(len(S[:, c].unique()) == 256 for c in range(2))
+    distances = torch.cdist(F, centroids)
+    torch.testing.assert_close(distances[torch.arange(len(F)), assign], distances.min(1).values,
+                               rtol=0, atol=1e-12)
+    X = F[chosen]
+    # Public MaxPro is (Q / number_of_pairs) ** (1/k).
+    Q = space_filling_diagnostics(X)["maxpro"].pow(2) * 15
+    for c in range(6):
+        torch.testing.assert_close(centroids[c], F[assign == c].mean(0), rtol=0, atol=1e-12)
+        for member in F[assign == c]:
+            Y = X.clone()
+            Y[c] = member
+            replacement = space_filling_diagnostics(Y)["maxpro"].pow(2) * 15
+            assert replacement >= Q * (1 - 1e-12)
+
+
+def test_filling_public_feasibility():
+    A, b, S, F, _, _, chosen, _, _ = filling_setup()
+    X = fast_flexible_filling(6, 2, A=A, b=b, n_candidates=256, seed=0)
+    assert (X @ A.T <= b).all()
+    assert (X[:, None] == S).all(-1).any(-1).all()
+    assert len(X.unique(dim=0)) == 6
+    torch.testing.assert_close(X, F[chosen], rtol=0, atol=0)
+
+
+def test_filling_errors():
+    with pytest.raises(ValueError, match="power of two"):
+        fast_flexible_filling(6, 2, n_candidates=100)
+    with pytest.raises(ValueError, match="too few feasible"):
+        fast_flexible_filling(6, 2, A=torch.tensor([[1., 1.]], dtype=torch.float64),
+                              b=torch.tensor([-1.], dtype=torch.float64), n_candidates=256)

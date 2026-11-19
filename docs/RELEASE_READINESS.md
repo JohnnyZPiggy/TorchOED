@@ -31,7 +31,7 @@ to the single M5-A Draft PR's ENGINEER_HANDOFF.
 
 ## Current TestPyPI rehearsal: 0.8.0
 
-[Issue #356](https://github.com/JohnnyZPiggy/TorchOED/issues/356) tracks the 0.8.0 version and CHANGELOG (#358), annotated tag, one TestPyPI workflow and clean-install quick-start plus industrial-guide smoke. Publication and smoke completion remain pending the Issue follow-up; this page makes no success claim. The API remains experimental. [Published-example evidence](../reports/w12-published/summary.md) is recorded separately. Real PyPI remains Scientist-gated under the checklist below.
+[Issue #356](https://github.com/JohnnyZPiggy/TorchOED/issues/356) tracks the 0.8.0 version and CHANGELOG (#358), annotated tag, one TestPyPI workflow and clean-install quick-start plus industrial-guide smoke. Tag `v0.8.0` is on `ab325d2`; [TestPyPI run 44453644945](https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44453644945) succeeded, and the clean-venv install of `torchoed==0.8.0` passed (37 exports, quick start, 15 industrial-guide blocks), as recorded in [Issue #356](https://github.com/JohnnyZPiggy/TorchOED/issues/356). The API remains experimental. [Published-example evidence](../reports/w12-published/summary.md) is recorded separately. Real PyPI remains Scientist-gated under the checklist below.
 
 ## Real PyPI checklist (Scientist)
 

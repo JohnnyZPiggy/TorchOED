@@ -14,6 +14,8 @@ result = json.loads((root/'results.json').read_text()) if saved else dict(
     python=platform.python_version(), torch=torch.__version__, device='CPU', dtype='float64',
     threads=1, seed=0, restarts=10, H30_mapping='8*i+k', H32_mapping='3*i+k')
 checks = {}
+original = json.dumps({k:result[k] for k in ('H30','H31','H32')},sort_keys=True) if saved else None
+error = 'Error: as.character(packageVersion(pins$package[i])) == pins$version[i] is not TRUE'
 
 def trace(rows):
     p = len(rows[0])
@@ -79,7 +81,7 @@ if (root/'H31.csv').exists():
     assert len(rows) == 28 and all(len(r) == 27 for r in rows)
     rpb = pb_metric(torch.tensor([[int(v) for v in r] for r in rows]),'H31_reference')
     row.update(reference=rpb,verdict='MATCH' if tpb == rpb and tpb['orthogonal'] else 'NO MATCH')
-else: row.update(reference='NOT_RUN: see workflow log',verdict='NOT_RUN')
+else: row.update(reference='NOT_RUN: '+error,verdict='NOT_RUN')
 
 with (root/'H32-candidates.csv').open() as f: grid = list(csv.reader(f))[1:]
 X = torch.tensor([[float(v) for v in r] for r in grid],dtype=torch.float64)
@@ -109,8 +111,16 @@ if (root/'H32.csv').exists():
     row['reference_ids'] = refids
     row['delta'] = row['torch']['value']-row['reference']['value']
     row['verdict'] = 'MATCH' if math.isclose(row['delta'],0,abs_tol=1e-10) else 'NO MATCH'
-else: row.update(reference='NOT_RUN: see workflow log',verdict='NOT_RUN')
+else: row.update(reference='NOT_RUN: '+error,verdict='NOT_RUN')
+result['R_workflow'] = dict(run_id=44518822770, conclusion='failure',
+    url='https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44518822770',
+    source_sha='949bae4ae9070e6c663c178151d076b17dd5c4b0', error=error,
+    artifact='NOT_RUN: reference/runtime step skipped; no artifact produced',
+    versions='NOT_RUN: sessionInfo.txt and runtime.json were not produced')
 result['checks'] = {k:'PASS' if v else 'FAIL' for k,v in checks.items()}
+assert result['H30']['visited'] == 3003
+if '--score' in sys.argv:
+    assert original == json.dumps({k:result[k] for k in ('H30','H31','H32')},sort_keys=True)
 if '--score' not in sys.argv: (root/'results.json').write_text(json.dumps(result,indent=2)+'\n')
 print(json.dumps(result,indent=2))
 assert all(checks.values())

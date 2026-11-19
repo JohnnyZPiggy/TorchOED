@@ -4,7 +4,7 @@
 
 **Status: MATHEMATICAL_DESIGN_ONLY / CPU_ORACLES_SPECIFIED_NOT_EXECUTED / ENGINEER_NOT_DISPATCHED.** Baseline `main=573ab0d60bcf1a5cd61bbdb2c43a08b07e47444f`, with M3-A exact-ID Fedorov CPU merged via PR #10. E0 Draft PR #3 remains independent. This document creates no Engineer Issue, CLAIM, PR, production implementation, Actions or GPU workload.
 
-Sources of existing mathematics: [Scientific Mentor Research §§11–14](SCIENTIFIC_MENTOR_RESEARCH.md) (especially four-point trap and 2k×2k determinant lemma), [M3-A gate](M3_FEDOROV_EXCHANGE_GATE.md), [M3 API](M3_API.md), [M1/M2 numerical contract](M1_M2_NUMERICAL_CONTRACT.md), and frozen PyDOE source comparisons recorded by Mentor. `sae.yaml` pins SAE V3.3. **Do not conflate algorithms sharing the names Modified Fedorov or DETMAX across implementations.**
+Sources of existing mathematics: [Scientific Mentor Research §§11–14](SCIENTIFIC_MENTOR_RESEARCH.md) (especially four-point trap and 2k×2k determinant lemma), [M3-A gate](M3_FEDOROV_EXCHANGE_GATE.md), [M3 API](MILESTONE_API_HISTORY.md), [M1/M2 numerical contract](M1_M2_NUMERICAL_CONTRACT.md), and frozen PyDOE source comparisons recorded by Mentor. `sae.yaml` pins SAE V3.3. **Do not conflate algorithms sharing the names Modified Fedorov or DETMAX across implementations.**
 
 ## 1. Model, identities and target
 

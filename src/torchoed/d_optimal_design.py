@@ -94,7 +94,7 @@ def _dual_floor(F, M, n, criterion, current):
 @torch.no_grad()
 def d_optimal_design(F: torch.Tensor, n: int, *, fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None, max_iter: int = 100,
                      tile_size: int = 64, max_elements: int = 1_000_000) -> dict[str, object]:
-    """Return the best restarted k2_exchange run; see docs/M3C_API.md."""
+    """Return the best restarted k2_exchange run; see docs/MILESTONE_API_HISTORY.md."""
     return _exact_design(F, n, "D", fixed_ids, restarts, generator, max_iter, max_elements, tile_size)
 
 

@@ -66,8 +66,8 @@
 ## [0.6.0] — 2026-11-06
 
 ### Added
-- D/A/I one-/two-swap VND with criterion-specific floors (#92, #108; [API](docs/M3C_API.md)).
-- Fixed-run augmentation (#98; [API](docs/M3C_API.md)) and candidate constraints/effects coding (#94; [API](docs/M1_API.md)).
+- D/A/I one-/two-swap VND with criterion-specific floors (#92, #108; [API](docs/MILESTONE_API_HISTORY.md)).
+- Fixed-run augmentation (#98; [API](docs/MILESTONE_API_HISTORY.md)) and candidate constraints/effects coding (#94; [API](docs/MILESTONE_API_HISTORY.md)).
 - Typed public API and shipped `py.typed` (#100).
 - Public documentation site with executed examples (#104; [quick start](https://johnnyzpiggy.github.io/TorchOED/)).
 - macOS and minimum-torch CI (#96), sdist checks and TestPyPI publishing workflow (#106).
@@ -100,25 +100,25 @@
 ### Added
 
 #### M1 — constructors and features
-- `full_factorial`: enumerate factorial level indices ([API](docs/M1_API.md)).
-- `ff2n`: construct signed two-level factorial corners ([API](docs/M1_API.md)).
-- `lhs`: generate Latin hypercube samples ([API](docs/M1_API.md)).
-- `sobol`: generate Sobol sequence samples ([API](docs/M1_API.md)).
-- `polynomial_features`: expand factors into a polynomial model matrix ([API](docs/M1_API.md)).
+- `full_factorial`: enumerate factorial level indices ([API](docs/MILESTONE_API_HISTORY.md)).
+- `ff2n`: construct signed two-level factorial corners ([API](docs/MILESTONE_API_HISTORY.md)).
+- `lhs`: generate Latin hypercube samples ([API](docs/MILESTONE_API_HISTORY.md)).
+- `sobol`: generate Sobol sequence samples ([API](docs/MILESTONE_API_HISTORY.md)).
+- `polynomial_features`: expand factors into a polynomial model matrix ([API](docs/MILESTONE_API_HISTORY.md)).
 
 #### M2 — information and criteria
-- `exact_information`: form the information matrix for exact observation IDs ([API](docs/M2_API.md)).
-- `weighted_information`: form probability-weighted information ([API](docs/M2_API.md)).
-- `d_optimality`: score numerical SPD information by log determinant ([API](docs/M2_API.md)).
-- `a_optimality`: score numerical SPD information by negative inverse trace ([API](docs/M2_API.md)).
-- `e_optimality`: score numerical PSD information by its minimum eigenvalue ([API](docs/M2_API.md)).
-- `c_optimality`: score a contrast by negative variance on SPD information ([API](docs/M2B_API.md)).
+- `exact_information`: form the information matrix for exact observation IDs ([API](docs/MILESTONE_API_HISTORY.md)).
+- `weighted_information`: form probability-weighted information ([API](docs/MILESTONE_API_HISTORY.md)).
+- `d_optimality`: score numerical SPD information by log determinant ([API](docs/MILESTONE_API_HISTORY.md)).
+- `a_optimality`: score numerical SPD information by negative inverse trace ([API](docs/MILESTONE_API_HISTORY.md)).
+- `e_optimality`: score numerical PSD information by its minimum eigenvalue ([API](docs/MILESTONE_API_HISTORY.md)).
+- `c_optimality`: score a contrast by negative variance on SPD information ([API](docs/MILESTONE_API_HISTORY.md)).
 
 #### M3 — search and scoring
-- `fedorov_exchange`: improve provided IDs with deterministic one-swaps ([API](docs/M3_API.md)).
-- `score_two_swaps`: score and verify every legal simultaneous two-swap ([API](docs/M3B1_API.md)).
-- `k2_exchange`: run deterministic one-/two-swap VND from provided IDs ([API](docs/M3B2_API.md)).
-- `d_optimal_design`: select the best seeded feasible-start VND restart ([API](docs/M3C_API.md)).
+- `fedorov_exchange`: improve provided IDs with deterministic one-swaps ([API](docs/MILESTONE_API_HISTORY.md)).
+- `score_two_swaps`: score and verify every legal simultaneous two-swap ([API](docs/MILESTONE_API_HISTORY.md)).
+- `k2_exchange`: run deterministic one-/two-swap VND from provided IDs ([API](docs/MILESTONE_API_HISTORY.md)).
+- `d_optimal_design`: select the best seeded feasible-start VND restart ([API](docs/MILESTONE_API_HISTORY.md)).
 
 ### Known limitations
 - M3 search and scoring require CPU float64 inputs.

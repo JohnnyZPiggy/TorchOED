@@ -156,7 +156,7 @@ def _two_candidates(Z, current, incoming, Gss, Gsn, width, capacity, tolerance, 
 @torch.no_grad()
 def k2_exchange(F: torch.Tensor, ids: torch.Tensor, *, max_iter: int = 100, tile_size: int = 64, max_elements: int = 1_000_000,
                 _free_positions: torch.Tensor | None = None) -> dict[str, object]:
-    """Stream G-based ratios, verify at most eight per phase; see M3B2_API.md."""
+    """Stream G-based ratios, verify at most eight per phase; see MILESTONE_API_HISTORY.md."""
     integer(max_iter, 'max_iter', 0)
     integer(tile_size, 'tile_size')
     M = exact_information(F, ids, max_elements=max_elements)

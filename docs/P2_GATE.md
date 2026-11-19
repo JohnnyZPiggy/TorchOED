@@ -831,3 +831,29 @@ Independent math review (Architect loop, fresh reviewer, 2026-11-19): PASS — 3
 ## 85. Not in this section
 
 Uniform designs and CD2 (W13 F2), constrained regions (W13 F3), sliced or nested LHS, simulated annealing, GPU timing claims.
+
+## 86. Space-filling diagnostics and uniform Latin hypercubes by CD2 (W13 F2)
+
+For a design `X` with `n ≥ 2` rows in `[0, 1]^k`, let `z_il = |x_il − 1/2|`, `d_ij` the Euclidean distance of rows `i ≠ j`, `h(x) = 1 + z/2 − z²/2` and `g(x, y) = 1 + |x − 1/2|/2 + |y − 1/2|/2 − |x − y|/2` (scalars, per coordinate).
+
+- **(86.1) Diagnostics (definitions).** `min_distance = min_{i<j} d_ij`; `phi_p = (Σ_{i<j} d_ij^{−p})^{1/p}` with `p = 15` (Morris–Mitchell, as §83.3); `maxpro = (C(n,2)⁻¹ Σ_{i<j} Π_l (x_il − x_jl)^{−2})^{1/k}` (Joseph–Gul–Ba, as §83.3; `+inf` when two rows share a coordinate); `cd2 = sqrt(CD2²)` with Hickernell's centred L2 discrepancy
+  `CD2² = (13/12)^k − (2/n) Σ_i P_i + n⁻² Σ_i Σ_j K_ij`, `P_i = Π_l h(x_il)`, `K_ij = Π_l g(x_il, x_jl)`.
+  OBSERVED (exact): on 60 random midpoint LHS (n ≤ 6, k ≤ 3) this formula equals, in exact `Fraction`, the defining sum over non-empty coordinate subsets `u` of `∫_{[0,1]^u} disc_u²` (box from each point to its nearest cube vertex, integrals done piecewise exactly); one centre point in 1-D gives 1/12 and the 1-D midpoint design gives 1/(12n²), n = 1 … 8.
+- **(86.2) PROVED (positivity).** On `[0, 1]`, `z ≤ 1/2` gives `h ≥ 1`, and `|x − y| ≤ |x − 1/2| + |y − 1/2|` gives `g ≥ 1`; so every `P_i`, `K_ij` is positive and the ratios below are defined.
+- **(86.3) PROVED (swap update).** Swapping rows `a ≠ b` in column `l` of a Latin hypercube changes only `P_a, P_b` and the entries of rows/columns `a, b` of `K`:
+  `P'_a = P_a h(x_bl)/h(x_al)`, `P'_b = P_b h(x_al)/h(x_bl)`;
+  for `j ∉ {a, b}`: `K'_aj = K_aj g(x_bl, x_jl)/g(x_al, x_jl)`, `K'_bj = K_bj g(x_al, x_jl)/g(x_bl, x_jl)` (and `K` stays symmetric);
+  `K'_aa = K_aa (1 + z_bl)/(1 + z_al)`, `K'_bb = K_bb (1 + z_al)/(1 + z_bl)` (since `g(x, x) = 1 + |x − 1/2|`); `K'_ab = K_ab` (`g` is symmetric).
+  Hence `ΔCD2² = −(2/n)(ΔP_a + ΔP_b) + n⁻² (2 Σ_{j∉{a,b}} (ΔK_aj + ΔK_bj) + ΔK_aa + ΔK_bb)`, `O(n)` per swap and `O(n³)` for all `C(n,2)` swaps of one column in one batched evaluation, as §83.4. Architect check: float64, 9 × 3 midpoint LHS, all 108 swaps, max relative error vs dense recompute 4.7e-14.
+- **(86.4) Search.** `lhs(..., mode="uniform")` minimises `CD2²` by exactly the §83.5 steepest-descent swap search (same restarts, `max_iter`, tie rule) with (86.3) as the cached update. Minimising `CD2²` and `cd2` is the same order.
+- **(86.5) Oracles.** Batched swap deltas equal a dense recompute (float64, 1e-12 relative). `CD2²` of a midpoint design has rational coordinates, so an exact `Fraction` evaluation of (86.1) is the oracle for `cd2` and for exhaustive optima on small `n`.
+
+Independent math review (Architect loop, fresh reviewer, 2026-11-19): PASS — exact `Fraction`, 240 random midpoint LHS (n 3–8, k 1–4), all 8,758 swaps checked against exact recompute for every equation of (86.3); (86.1) checked against the definition as stated. The reviewer noted that (86.1)–(86.3) hold for any design in `[0, 1]^k`; only `maxpro` finiteness needs the Latin property.
+
+## 87. API decision: `space_filling_diagnostics(X, *, p=15) -> dict`
+
+Public function in `torchoed.sampling`, exported from `torchoed`. Returns `{"min_distance", "phi_p", "maxpro", "cd2"}` as 0-d tensors in `X`'s dtype and device, computed densely (`O(n² k)`). Validates only what the existing `lhs` validation helpers already offer for a floating 2-D tensor. `lhs(mode="uniform")` returns midpoint designs like the other optimised modes; `mode="random"` stays bit-identical.
+
+## 88. Not in this section
+
+Wrap-around or mixture discrepancies, star discrepancy, non-midpoint (continuous) optimisation, constrained regions (W13 F3), GPU timing claims.

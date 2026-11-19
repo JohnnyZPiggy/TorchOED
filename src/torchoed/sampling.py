@@ -5,13 +5,13 @@ from ._validation import budget, floating, integer
 
 def lhs(n_samples: int, n_factors: int, *, generator: torch.Generator | None = None, device: torch.device | str | None = None,
         dtype: torch.dtype = torch.float64, mode: str = "random", restarts: int = 10, max_iter: int | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
-    """Random jittered LHS or midpoint maximin / MaxPro LHS by column swaps."""
+    """Random jittered LHS or midpoint maximin / MaxPro / uniform LHS by column swaps."""
     n = integer(n_samples, "n_samples")
     k = integer(n_factors, "n_factors")
     floating(dtype)
     budget((n, k), max_elements)
-    if mode not in ("random", "maximin", "maxpro"):
-        raise ValueError("mode must be random, maximin or maxpro")
+    if mode not in ("random", "maximin", "maxpro", "uniform"):
+        raise ValueError("mode must be random, maximin, maxpro or uniform")
     if n > (2**22 if dtype == torch.float32 else 2**51):
         raise ValueError("strata exceed safe floating-point resolution")
     target = torch.device("cpu" if device is None else device)
@@ -26,6 +26,13 @@ def lhs(n_samples: int, n_factors: int, *, generator: torch.Generator | None = N
         for _ in range(restarts):
             x = torch.stack([(torch.randperm(n, generator=generator, device=target).to(dtype) + 0.5) / n
                              for _ in range(k)], dim=1)
+            if mode == "uniform":
+                cache = _cd2_kernel(x)
+                x, score = _lhs_search(x, cache, _cd2_swap_deltas, None, max_iter,
+                                       lambda c: _cd2_squared(x, c))
+                if best is None or score < best_score:
+                    best, best_score = x, score
+                continue
             squared = (x[:, None] - x[None, :]).square()
             squared.diagonal(dim1=0, dim2=1).fill_(1)
             cache = squared.sum(-1) if mode == "maximin" else squared.log().sum(-1)
@@ -66,11 +73,13 @@ def _lhs_swap_deltas(x, cache, column, mode, transform):
     return torch.where(affected, change, 0).sum(-1), (a, b), (new_a, new_b)
 
 
-def _lhs_search(x, cache, swap_deltas, transform, max_iter):
+def _lhs_search(x, cache, swap_deltas, transform, max_iter, score_cache=None):
     """Steepest column-swap descent; the objective supplies batched deltas."""
     n, k = x.shape
     upper = torch.triu_indices(n, n, 1, device=x.device)
-    score = transform(cache[upper[0], upper[1]]).sum()
+    if score_cache is None:
+        score_cache = lambda c: transform(c[upper[0], upper[1]]).sum()
+    score = score_cache(cache)
     iteration = 0
     while n > 1 and (max_iter is None or iteration < max_iter):
         best = None
@@ -85,9 +94,60 @@ def _lhs_search(x, cache, swap_deltas, transform, max_iter):
         x[a, column], x[b, column] = x[b, column].clone(), x[a, column].clone()
         cache[a], cache[b] = row_a, row_b
         cache[:, a], cache[:, b] = row_a, row_b
-        score = transform(cache[upper[0], upper[1]]).sum()
+        score = score_cache(cache)
         iteration += 1
     return x, score
+
+
+def _cd2_kernel(x):
+    z = (x - 0.5).abs()
+    return (1 + (z[:, None] + z[None, :] - (x[:, None] - x[None, :]).abs()) / 2).prod(-1)
+
+
+def _cd2_squared(x, kernel=None):
+    z = (x - 0.5).abs()
+    if kernel is None:
+        terms = (z[:, None] + z[None, :] - (x[:, None] - x[None, :]).abs()) / 2
+        pair_mean = terms.log1p().sum(-1).expm1().mean()
+    else:
+        pair_mean = (kernel - 1).mean()
+    return ((x.new_tensor(1 / 12).log1p() * x.shape[1]).expm1()
+            - 2 * (z / 2 - z.square() / 2).log1p().sum(-1).expm1().mean() + pair_mean)
+
+
+def _cd2_swap_deltas(x, cache, column):
+    n = len(x)
+    a, b = torch.triu_indices(n, n, 1, device=x.device)
+    v = x[:, column]
+    z = (v - 0.5).abs()
+    g = 1 + (z[:, None] + z[None, :] - (v[:, None] - v[None, :]).abs()) / 2
+    new_a, new_b = cache[a] * g[b] / g[a], cache[b] * g[a] / g[b]
+    j = torch.arange(n, device=x.device)
+    mask_a, mask_b = j == a[:, None], j == b[:, None]
+    diag_a = cache[a, a] * (1 + z[b]) / (1 + z[a])
+    diag_b = cache[b, b] * (1 + z[a]) / (1 + z[b])
+    new_a = torch.where(mask_a, diag_a[:, None], torch.where(mask_b, cache[a, b, None], new_a))
+    new_b = torch.where(mask_b, diag_b[:, None], torch.where(mask_a, cache[a, b, None], new_b))
+    h = 1 + z / 2 - z.square() / 2
+    zz = (x - 0.5).abs()
+    products = (1 + zz / 2 - zz.square() / 2).prod(-1)
+    dp = products[a] * (h[b] / h[a] - 1) + products[b] * (h[a] / h[b] - 1)
+    off = ~(mask_a | mask_b)
+    dk = 2 * torch.where(off, new_a - cache[a] + new_b - cache[b], 0).sum(-1)
+    dk = dk + diag_a - cache[a, a] + diag_b - cache[b, b]
+    return -2 * dp / n + dk / n**2, (a, b), (new_a, new_b)
+
+
+def space_filling_diagnostics(X: torch.Tensor, *, p: float = 15) -> dict[str, torch.Tensor]:
+    """Distance, Morris–Mitchell, MaxPro and centred L2 discrepancy on a box."""
+    floating(X.dtype)
+    n, k = X.shape
+    a, b = torch.triu_indices(n, n, 1, device=X.device)
+    squared = (X[a] - X[b]).square()
+    distance = squared.sum(-1).sqrt()
+    return {"min_distance": distance.min(), "phi_p": distance.pow(-p).sum().pow(1 / p),
+            "maxpro": squared.prod(-1).reciprocal().mean().pow(1 / k),
+            "cd2": _cd2_squared(X).clamp_min(0).sqrt()}
 
 
 def sobol(n: int, d: int, *, scramble: bool = False, seed: int | None = None, skip: int = 0, balance: str = "exact",

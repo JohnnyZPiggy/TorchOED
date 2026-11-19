@@ -18,3 +18,23 @@ The existing `--call` implements objective, KW floor and refined floor oracles; 
 Required tests: 0 PASS, 0 FAIL, 1 NOT_RUN; CPU/CUDA logdet agreement at 1e-9 relative NOT_RUN. No quality or timing claim.
 Both cleanup readbacks PASS: stop exit 0, usage exit 0, assignments 0 → 0; fresh usage confirms zero assignments and zero rate.
 Next: Architect ruling on allocation/fallback; no further session authorized by this task.
+
+## Retry — 2026-11-19 approximately 21:00 Europe/Zurich — science BLOCKED
+
+Source `3f0c6fd6a8ce7a561f7c18363e19f32a7505c072`; same pinned controller and committed `tools/g0_probe_driver.py` / manifest. Preflight PASS. Original records above are unchanged.
+
+- 2026-11-19T19:56:50Z: H100, controller `FAIL`, error `ALLOCATION_FAILED`, 25.946238784s; cleanup confirmed, assignments 0 → 0; CU 149.35 → 149.35.
+- 2026-11-19T19:57:18Z: A100, controller `FAIL`, error `ALLOCATION_FAILED`, 57.508000605s; cleanup confirmed, assignments 0 → 0; CU 149.35 → 149.35.
+- 2026-11-19T19:58:16Z: L4, controller `PASS`, error `None`, 48.106131453s; cleanup confirmed, assignments 0 → 0; CU 149.35 → 149.35.
+
+Observed NVIDIA L4, 23034 MiB, driver 580.82.07; torch 2.14.1+cu130, CUDA 13.0, capability 8.9.
+Transport PASS; scientific status ERROR. CUDA warm-up, CPU call and CUDA call each exited 1 before measurements: `python -B tools/bench_crossover.py --call 3 1000 {cuda,cpu,cuda}` imports `bench_b0.py`, whose line 18 imports unavailable `pydoe`. Exact error: `ModuleNotFoundError: No module named 'pydoe'`. No dependency installed; no driver/source change or second successful session.
+
+| k | m | method | seconds | logdet | KW / returned floor |
+|---|---|---|---|---|---|
+| 3 | 1000 | cpu | NOT_RUN | NOT_RUN | NOT_RUN |
+| 3 | 1000 | cuda | NOT_RUN | NOT_RUN | NOT_RUN |
+
+Required scientific oracles: 0 PASS, 0 FAIL, 1 NOT_RUN (calls failed before numerical checks); logdet agreement NOT_RUN. Local evidence checks: 6 PASS, 0 FAIL (cleanup, order, artifact error, empty rows, original-record preservation, final usage).
+Final usage readback: assignments 0, rate 0.00/hr, balance 149.35 CU. Displayed delta 0.00 CU (provider precision), below 5 CU cap. Downloaded artifact SHA-256 and byte size are in results.json.
+Next: Architect ruling on the import/adapter scope before any new science session; retries stopped after successful L4 allocation. No performance or pipeline-proven claim.

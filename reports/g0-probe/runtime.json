@@ -9,5 +9,34 @@
   "balance_before": 149.35,
   "balance_after": 149.35,
   "rate_before_per_hour": 0,
-  "rate_after_per_hour": 0
+  "rate_after_per_hour": 0,
+  "retry_windows": [
+  {
+    "window": "2026-11-19 ~21:00 Europe/Zurich",
+    "device_observed": {
+      "nvidia_smi": [
+        {
+          "name": "NVIDIA L4",
+          "memory_total_mib": 23034,
+          "driver_version": "580.82.07"
+        }
+      ],
+      "torch": {
+        "status": "AVAILABLE",
+        "version": "2.14.1+cu130",
+        "cuda": "13.0",
+        "name": "NVIDIA L4",
+        "capability": [
+          8,
+          9
+        ]
+      }
+    },
+    "balance_before": 149.35,
+    "balance_after": 149.35,
+    "rate_before_per_hour": 0,
+    "rate_after_per_hour": 0,
+    "scientific_status": "ERROR"
+  }
+]
 }

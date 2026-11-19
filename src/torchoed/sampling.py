@@ -1,5 +1,3 @@
-import math
-
 import torch
 
 from ._validation import budget, floating, integer
@@ -113,7 +111,7 @@ def _cd2_squared(x, kernel=None):
         pair_mean = terms.log1p().sum(-1).expm1().mean()
     else:
         pair_mean = (kernel - 1).mean()
-    return (math.expm1(x.shape[1] * math.log1p(1 / 12))
+    return ((x.new_tensor(1 / 12).log1p() * x.shape[1]).expm1()
             - 2 * (z / 2 - z.square() / 2).log1p().sum(-1).expm1().mean() + pair_mean)
 
 

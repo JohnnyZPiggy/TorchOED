@@ -30,5 +30,5 @@ for (pkg in c("lhs","MaxPro","DiceDesign")) {
   examples[[pkg]] <- list(rd_file=rdfile,rd2ex_line=first,rd2ex=code,call=call,design=design,metrics=metrics(design))
 }
 result <- list(run_id=Sys.getenv("GITHUB_RUN_ID"),source_sha=Sys.getenv("GITHUB_SHA"),R_version=R.version.string,versions=lapply(c("lhs","MaxPro","DiceDesign"),function(p) as.character(packageVersion(p))),diagnostics=rows,quality=list(maximin=a,maxpro=b),examples=examples)
-# One raw output file includes full-precision data and the actual sessionInfo text.
+# Full-precision data; workflow records sessionInfo separately in the artifact.
 writeLines(jsonlite::toJSON(result,auto_unbox=TRUE,digits=17),file.path(out,"raw.json"))

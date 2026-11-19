@@ -1,0 +1,202 @@
+{
+  "run_id": "44641039986",
+  "source_sha": "69e888a5ce6d8a4dee44da0cb8ffca29961f8891",
+  "R_version": "R version 4.5.2 (2025-10-31)",
+  "versions": {
+    "lhs": "1.3.0",
+    "MaxPro": "4.1.2",
+    "DiceDesign": "1.10"
+  },
+  "cd2_power_mapping": 1,
+  "maxpro_power_mapping": 1,
+  "diagnostics": {
+    "random": {
+      "torchoed": {
+        "min_distance": 0.18284996138519527,
+        "phi_p": 5.514047300391056,
+        "maxpro": 51.116869739765846,
+        "cd2": 0.16005827264845782
+      },
+      "reference": {
+        "min_distance": 0.18284996138519527,
+        "phi_p": 5.514047300391056,
+        "cd2": 0.16005827264845662,
+        "maxpro": 51.11686973976585
+      },
+      "checks": {
+        "min_distance": true,
+        "phi_p": true,
+        "cd2": true,
+        "maxpro": true
+      },
+      "verdict": "MATCH"
+    },
+    "maximin": {
+      "torchoed": {
+        "min_distance": 0.5303300858899106,
+        "phi_p": 2.0732525070396077,
+        "maxpro": 14.524754245284052,
+        "cd2": 0.11205166926448379
+      },
+      "reference": {
+        "min_distance": 0.5303300858899106,
+        "phi_p": 2.0732525070396077,
+        "cd2": 0.11205166926448255,
+        "maxpro": 14.524754245284047
+      },
+      "checks": {
+        "min_distance": true,
+        "phi_p": true,
+        "cd2": true,
+        "maxpro": true
+      },
+      "verdict": "MATCH"
+    },
+    "maxpro": {
+      "torchoed": {
+        "min_distance": 0.46770717334674267,
+        "phi_p": 2.290234884217492,
+        "maxpro": 12.246017233073282,
+        "cd2": 0.10784761724067414
+      },
+      "reference": {
+        "min_distance": 0.46770717334674267,
+        "phi_p": 2.290234884217492,
+        "cd2": 0.10784761724067285,
+        "maxpro": 12.24601723307328
+      },
+      "checks": {
+        "min_distance": true,
+        "phi_p": true,
+        "cd2": true,
+        "maxpro": true
+      },
+      "verdict": "MATCH"
+    },
+    "uniform": {
+      "torchoed": {
+        "min_distance": 0.5153882032022076,
+        "phi_p": 2.1927278372700814,
+        "maxpro": 11.119922570622206,
+        "cd2": 0.10247091891757507
+      },
+      "reference": {
+        "min_distance": 0.5153882032022076,
+        "phi_p": 2.1927278372700814,
+        "cd2": 0.1024709189175737,
+        "maxpro": 11.119922570622206
+      },
+      "checks": {
+        "min_distance": true,
+        "phi_p": true,
+        "cd2": true,
+        "maxpro": true
+      },
+      "verdict": "MATCH"
+    }
+  },
+  "quality": {
+    "maximin": {
+      "torchoed": {
+        "min_distance": 0.5303300858899106,
+        "phi_p": 2.0732525070396077,
+        "maxpro": 14.524754245284052,
+        "cd2": 0.11205166926448379
+      },
+      "reference": {
+        "min_distance": 0.30618621784789724,
+        "phi_p": 3.277905052016956,
+        "maxpro": 17.610927145560243,
+        "cd2": 0.1298290216721342
+      },
+      "delta": -1.2046525449773484,
+      "verdict": "MATCH or TorchOED better"
+    },
+    "maxpro": {
+      "torchoed": {
+        "min_distance": 0.46770717334674267,
+        "phi_p": 2.290234884217492,
+        "maxpro": 12.246017233073282,
+        "cd2": 0.10784761724067414
+      },
+      "reference": {
+        "min_distance": 0.5153882032022076,
+        "phi_p": 2.1927278372700814,
+        "maxpro": 11.119922570622206,
+        "cd2": 0.10247091891757507
+      },
+      "delta": 1.1260946624510755,
+      "verdict": "NO MATCH"
+    }
+  },
+  "examples": {
+    "lhs": {
+      "torchoed": {
+        "min_distance": 0.6123724356957945,
+        "phi_p": 1.6452337368527556,
+        "maxpro": 7.5282882310482275,
+        "cd2": 0.1986846301657172
+      },
+      "reference": {
+        "min_distance": 0.4330127018922193,
+        "phi_p": 2.310300628135955,
+        "maxpro": 9.985163182958008,
+        "cd2": 0.21381400092288258
+      },
+      "delta": -0.6650668912831994,
+      "verdict": "MATCH or TorchOED better",
+      "rd_file": "maximinLHS.Rd",
+      "rd_source_line": 74,
+      "rd2ex_line": 9,
+      "call": "A1 <- maximinLHS(4, 3, dup=2)",
+      "shape": [
+        4,
+        3
+      ]
+    },
+    "MaxPro": {
+      "torchoed": {
+        "min_distance": 0.5099019513592785,
+        "phi_p": 2.1375494478828427,
+        "maxpro": 13.227729408335211,
+        "cd2": 0.12833755482300946
+      },
+      "reference": {
+        "min_distance": 0.5099019513592784,
+        "phi_p": 2.0464010376667208,
+        "maxpro": 13.43815350925327,
+        "cd2": 0.13034519940987116
+      },
+      "delta": -0.2104241009180594,
+      "verdict": "MATCH or TorchOED better",
+      "rd_file": "MaxProLHD.Rd",
+      "rd_source_line": 65,
+      "rd2ex_line": 10,
+      "call": "obj<-MaxProLHD(n = 10, p = 4) ",
+      "shape": [
+        10,
+        4
+      ]
+    },
+    "DiceDesign": {
+      "torchoed": {
+        "min_distance": 0.015423414121837111,
+        "phi_p": 64.83721927393827,
+        "maxpro": 2344.4846246710163,
+        "cd2": 0.1479244295131235
+      },
+      "reference_cd2": 0.14792442951311552,
+      "verdict": "MATCH",
+      "rd_file": "discrepancyCriteria.Rd",
+      "rd_source_line": 68,
+      "rd2ex_line": 11,
+      "call": "discrepancyCriteria(X)",
+      "shape": [
+        40,
+        2
+      ]
+    }
+  },
+  "before": 11,
+  "after": 14
+}

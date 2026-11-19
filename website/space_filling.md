@@ -37,3 +37,25 @@ for mode in ("maximin", "maxpro"):
 ```
 
 Each restart starts from a random midpoint LHS. The search evaluates within-column swaps in batches and takes the best strictly improving swap. `restarts` chooses the best result across starts; `max_iter=None` continues until no swap improves. The generator controls the starts. This is local descent, with no general global-optimum guarantee.
+
+## Uniform designs and diagnostics
+
+`mode="uniform"` minimises CD2² by the same column-swap descent on midpoint Latin hypercubes on the box only. CD2 is the square root of Hickernell's centred L2 discrepancy expression; see [gate §86–88](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/P2_GATE.md#86-space-filling-diagnostics-and-uniform-latin-hypercubes-by-cd2-w13-f2).
+
+`space_filling_diagnostics` returns four 0-d tensors in the design's dtype and device:
+
+- `min_distance`: the minimum Euclidean distance between rows.
+- `phi_p`: Morris–Mitchell φ_p, with p = 15 by default.
+- `maxpro`: Joseph–Gul–Ba ψ; `+inf` when two rows share a coordinate.
+- `cd2`: CD2, the square root of the centred L2 discrepancy expression.
+
+```python
+import torch
+from torchoed import lhs, space_filling_diagnostics
+
+for m in ("random", "maximin", "maxpro", "uniform"):
+    design = lhs(8, 3, mode=m, restarts=2, max_iter=20,
+                 generator=torch.Generator().manual_seed(0))
+    print(m, {key: round(value.item(), 4)
+              for key, value in space_filling_diagnostics(design).items()})
+```

@@ -245,3 +245,9 @@ for weight in (0., 0.1):
                             generator=torch.Generator().manual_seed(0))
     print(weight, result["alias_trace"], result["efficiency_lower_bound"])
 ```
+
+## Published reference examples
+
+A published example is a call printed in a reference package's help page or vignette at a recorded version, with its inputs frozen as repository data and re-scored by one shared TorchOED metric.
+The [published-example index](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w12-published/summary.md) records 8 of 13 MATCH, 1 NO MATCH and 4 NR (packages unavailable in the run).
+On the AlgDesign `Federov.Rd` example with the A criterion, TorchOED's trace is 2.4240924092409237 and AlgDesign's is 2.3 (lower is better).

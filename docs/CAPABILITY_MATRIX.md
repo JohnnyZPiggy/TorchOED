@@ -29,6 +29,10 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 ## P2.5 — analysis and TorchOED Studio (weeks 17–19, Scientist 2026-11-17)
 | Capability | Status | Week |
 |---|---|---|
+| Mentor landscape review of statistics packages to reuse (CPU: statsmodels; GPU candidates named by the Scientist: PyStatistics, statgpu, Aurora-GLM) — existence, licence, maintenance, validation vs R | ❌ | W16 (consolidation) |
+| optional adapters to the chosen packages behind extras (never core dependencies) | ❌ | W17 |
+| bootstrap intervals and batched fits for closed-loop rounds (GPU where measured faster) | ❌ | W18 |
+| out of scope by decision: GP surrogates (BoTorch/Ax), general GLMM, survival analysis | N/A | — |
 | least-squares fit: coefficients, SEs, effect tests (t, F by term), lack of fit, residual diagnostics | ❌ | W17 |
 | REML / mixed-model fit for blocked and split-plot designs (whole-plot vs subplot error) | ❌ | W17–W18 |
 | prediction profiler data (prediction ± interval at a point, effect traces) | ❌ | W18 |

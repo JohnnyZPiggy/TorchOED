@@ -43,6 +43,7 @@ nav:
   - Augmentation and constraints: augmentation.md
   - PyTorch model → experiments: closed_loop.md
   - Industrial designs: industrial.md
+  - Space filling: space_filling.md
   - PyDOE comparison: pydoe.md
   - Benchmarks and validation: benchmarks.md
   - API reference: api.md

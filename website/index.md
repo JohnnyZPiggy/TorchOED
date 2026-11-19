@@ -1,8 +1,19 @@
 # TorchOED
 
-Beta 0.5.0 provides PyTorch-native exact experimental design on CPU float64 model matrices. Python 3.11 or newer and torch 2.2 or newer are required; the API is experimental.
+**Optimal experimental design in PyTorch — with a certificate on every design.**
 
-## Install from source
+TorchOED chooses which experiments to run: D-, A- and I-optimal designs, blocking, split-plot, mixtures, screening and response-surface designs, power and diagnostics, in one tensor API that also accepts any PyTorch model. Every optimal design carries a proved lower bound on its efficiency.
+
+!!! info "Status"
+    Version 0.8.0 is a pre-release on [TestPyPI](https://test.pypi.org/project/torchoed/); the API may still change before 1.0. Python 3.11 or newer and torch 2.2 or newer are required.
+
+## Install
+
+```sh
+pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple torchoed==0.8.0
+```
+
+or from source:
 
 ```sh
 git clone https://github.com/JohnnyZPiggy/TorchOED.git

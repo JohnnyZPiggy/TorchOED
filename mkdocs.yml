@@ -1,8 +1,42 @@
 site_name: TorchOED
+site_description: Optimal experimental design in PyTorch, with a certificate on every design.
 site_url: https://johnnyzpiggy.github.io/TorchOED/
+repo_url: https://github.com/JohnnyZPiggy/TorchOED
+repo_name: JohnnyZPiggy/TorchOED
 docs_dir: website
 site_dir: _site
-theme: mkdocs
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep orange
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep orange
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+  icon:
+    repo: fontawesome/brands/github
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
 nav:
   - Quick start: index.md
   - Criteria: criteria.md

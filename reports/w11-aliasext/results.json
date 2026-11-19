@@ -69,13 +69,43 @@
     "dense_rescore": "PASS"
   },
   "skpr": {
-    "verdict": "NOT_RUN",
-    "rows": null,
-    "det_M": null,
-    "alias_trace": null,
-    "D_efficiency": null,
-    "Psi": null,
-    "on_front": null,
-    "error": "unused argument (aliasmodel = ~(x1 + x2 + x3)^2) "
+    "rows": [
+      [
+        1.0,
+        -1.0,
+        -1.0
+      ],
+      [
+        -1.0,
+        1.0,
+        1.0
+      ],
+      [
+        1.0,
+        1.0,
+        -1.0
+      ],
+      [
+        -1.0,
+        -1.0,
+        -1.0
+      ],
+      [
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        -1.0,
+        -1.0,
+        1.0
+      ]
+    ],
+    "det_M": 768.0,
+    "alias_trace": 0.3333333333333333,
+    "D_efficiency": 0.9306048591020996,
+    "Psi": -0.2974787026078036,
+    "on_front": true,
+    "verdict": "MATCH"
   }
 }

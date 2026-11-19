@@ -39,4 +39,3 @@ function (candidateset, model, trials, splitplotdesign = NULL,
     add_blocking_columns = FALSE, randomized = TRUE, advancedoptions = NULL, 
     timer = NULL) 
 NULL
-unused argument (aliasmodel = ~(x1 + x2 + x3)^2) 

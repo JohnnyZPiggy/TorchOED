@@ -4,7 +4,7 @@ if (identical(commandArgs(trailingOnly=TRUE), "AL11")) {
   stopifnot(getRversion() == "4.6.1", packageVersion("skpr") == "1.9.2")
   record <- function(e) cat(conditionMessage(e), "\n", file=file.path(outdir,"sessionInfo.txt"), append=TRUE)
   set.seed(20261119); cand <- expand.grid(x1=c(-1,1), x2=c(-1,1), x3=c(-1,1))
-  design <- tryCatch(withCallingHandlers(gen_design(cand, model=~x1+x2+x3, trials=6, optimality="Alias", aliasmodel=~(x1+x2+x3)^2, minDopt=0.8, repeats=20), warning=record), error=function(e) { record(e); NULL })
+  design <- tryCatch(withCallingHandlers(gen_design(cand, model=~x1+x2+x3, trials=6, optimality="Alias", aliaspower=2, minDopt=0.8, repeats=20), warning=record), error=function(e) { record(e); NULL })
   if (!is.null(design)) write.csv(data.frame(run=seq_len(nrow(design)), lapply(design[,c("x1","x2","x3")], function(x) sprintf("%.17g",x)), rowname=rownames(design)), file.path(outdir,"skpr.csv"), row.names=FALSE)
   quit(save="no")
 }

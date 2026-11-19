@@ -2,8 +2,8 @@
   "controller": {
     "status": "PASS",
     "error": null,
-    "source_sha": "818807ec9e22d16dc9d90a606ae9b431b6248952",
-    "run_id": "w342-colab-20261119",
+    "source_sha": "2ca8cd57da1a24aff69bc0608d423210ac0319f2",
+    "run_id": "w349-colab-20261119",
     "created": true,
     "cleanup_confirmed": true,
     "commands": [
@@ -65,13 +65,13 @@
     },
     "assignments_before": 0,
     "assignments_after": 0,
-    "balance_before": 50.28,
-    "balance_after": 50.15,
+    "balance_before": 50.06,
+    "balance_after": 49.9,
     "artifact_sha256": {
-      "r-heldout.json": "c0068cbb4c23a51bf05443404f841c7f6a68ba53f1b00b49e680c92ac11dc883"
+      "r-heldout.json": "f88b8d0ebc6cb603f437889e8ca793f2359e4ce96537fbff9089f5e6da44b362"
     },
     "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
-    "total_seconds": 777.8271831210001
+    "total_seconds": 859.642315266
   },
   "call": {
     "returncode": 0,
@@ -81,7 +81,7 @@
   "installation_returncode": 0,
   "device_used": "CPU (CUDA hidden from R)",
   "artifact": {
-    "sha256": "c0068cbb4c23a51bf05443404f841c7f6a68ba53f1b00b49e680c92ac11dc883",
-    "bytes": 13505074
+    "sha256": "f88b8d0ebc6cb603f437889e8ca793f2359e4ce96537fbff9089f5e6da44b362",
+    "bytes": 13505240
   }
 }

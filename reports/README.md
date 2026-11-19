@@ -4,6 +4,7 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 
 | Directory | Measurement / producing PR | Status |
 |---|---|---|
+| [w12-published](w12-published/) | W12 published-example source index and frozen inputs (#353) | 5 existing published MATCH cases cited; 8 new examples frozen across 4 packages, NR pending batched reference run |
 | [w11-heldout2](w11-heldout2/) | current (W11 frozen H27–H29; #336) | mixture-process D, covariates A and alias Ψ MATCH exhaustive references; Δ = 0, counts and dense re-scores 6 PASS; no tuning |
 | [w11-heldout](w11-heldout/) | current (W11 held-out H24–H26; no tuning) | H24 frozen call 6 vertices, unfiltered Fraction PASS, Hausdorff 7.15e-8; H25 AlgDesign D MATCH, reference floor 0.9139763584432251 (two evaluation checks PASS, #334); H26 skpr NOT_RUN (errors); five original oracles PASS, cleanup confirmed |
 | [b0](b0/) | Initial fixed CPU D comparison against PyDOE 1.6.0; [#42](https://github.com/JohnnyZPiggy/TorchOED/pull/42) | superseded by b1 |

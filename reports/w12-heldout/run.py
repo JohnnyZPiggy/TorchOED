@@ -117,6 +117,14 @@ result['R_workflow'] = dict(run_id=44518822770, conclusion='failure',
     source_sha='949bae4ae9070e6c663c178151d076b17dd5c4b0', error=error,
     artifact='NOT_RUN: reference/runtime step skipped; no artifact produced',
     versions='NOT_RUN: sessionInfo.txt and runtime.json were not produced')
+if (root/'runtime.json').exists():
+    runtime = json.loads((root/'runtime.json').read_text())
+    result['R_workflow_failure'] = result['R_workflow']
+    result['R_workflow'] = dict(run_id=int(runtime['run_id']),
+        url='https://github.com/JohnnyZPiggy/TorchOED/actions/runs/'+runtime['run_id'],
+        source_sha=runtime['source_sha'], R_version=runtime['R_version'],
+        versions={p:runtime['packages'][p] for p in ('FrF2','DoE.base','AlgDesign')},
+        wall_seconds=runtime['wall_seconds'])
 result['checks'] = {k:'PASS' if v else 'FAIL' for k,v in checks.items()}
 assert result['H30']['visited'] == 3003
 if '--score' in sys.argv:

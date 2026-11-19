@@ -52,8 +52,15 @@
       },
       "triples": 2925
     },
-    "reference": "NOT_RUN: Error: as.character(packageVersion(pins$package[i])) == pins$version[i] is not TRUE",
-    "verdict": "NOT_RUN"
+    "reference": {
+      "orthogonal": true,
+      "J3": {
+        "4": 2574,
+        "12": 351
+      },
+      "triples": 2925
+    },
+    "verdict": "MATCH"
   },
   "H32": {
     "ids": [
@@ -75,15 +82,48 @@
       "value": 3.5728152202037835
     },
     "torch_floor": 0.9140932828990237,
-    "reference": "NOT_RUN: Error: as.character(packageVersion(pins$package[i])) == pins$version[i] is not TRUE",
-    "verdict": "NOT_RUN"
+    "reference": {
+      "logdet": 7.639642287858012,
+      "value": 3.5725288795676673
+    },
+    "verdict": "NO MATCH",
+    "reference_floor": 0.9140053724066399,
+    "reference_ids": [
+      3,
+      9,
+      18,
+      24,
+      0,
+      6,
+      15,
+      21,
+      1,
+      7,
+      12,
+      19
+    ],
+    "delta": 0.0002863406361162113
   },
   "checks": {
     "H30": "PASS",
     "H31_torch": "PASS",
-    "H32_torch": "PASS"
+    "H31_reference": "PASS",
+    "H32_torch": "PASS",
+    "H32_reference": "PASS"
   },
   "R_workflow": {
+    "run_id": 44536661878,
+    "url": "https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44536661878",
+    "source_sha": "4b5324bdfa43c2630c00cd4993e71bd73759be61",
+    "R_version": "R version 4.5.2 (2025-10-31)",
+    "versions": {
+      "FrF2": "2.3-5",
+      "DoE.base": "1.2-5",
+      "AlgDesign": "1.2.1.2"
+    },
+    "wall_seconds": 0.5854
+  },
+  "R_workflow_failure": {
     "run_id": 44518822770,
     "conclusion": "failure",
     "url": "https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44518822770",

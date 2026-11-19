@@ -14,7 +14,7 @@ result = json.loads((root/'results.json').read_text()) if saved else dict(
     python=platform.python_version(), torch=torch.__version__, device='CPU', dtype='float64',
     threads=1, seed=0, restarts=10, H30_mapping='8*i+k', H32_mapping='3*i+k')
 checks = {}
-original = json.dumps({k:result[k] for k in ('H30','H31','H32')},sort_keys=True) if saved else None
+original = {k:result[k] for k in ('H30','H31','H32')} if saved else None
 error = 'Error: as.character(packageVersion(pins$package[i])) == pins$version[i] is not TRUE'
 
 def trace(rows):
@@ -120,7 +120,7 @@ result['R_workflow'] = dict(run_id=44518822770, conclusion='failure',
 result['checks'] = {k:'PASS' if v else 'FAIL' for k,v in checks.items()}
 assert result['H30']['visited'] == 3003
 if '--score' in sys.argv:
-    assert original == json.dumps({k:result[k] for k in ('H30','H31','H32')},sort_keys=True)
+    assert original == json.loads(json.dumps({k:result[k] for k in ('H30','H31','H32')}))
 if '--score' not in sys.argv: (root/'results.json').write_text(json.dumps(result,indent=2)+'\n')
 print(json.dumps(result,indent=2))
 assert all(checks.values())

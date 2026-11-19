@@ -39,9 +39,10 @@ def _maxpro_exchange(F, assign, centroids, max_iter):
     return chosen, False
 
 
-def fast_flexible_filling(n: int, k: int, *, A=None, b=None, disallowed=(),
+def fast_flexible_filling(n: int, k: int, *, A: torch.Tensor | None = None, b: torch.Tensor | None = None,
+                          disallowed: list[dict[int, float]] | tuple[dict[int, float], ...] = (),
                           n_candidates: int = 2**14, seed: int = 0, max_iter: int = 100,
-                          dtype: torch.dtype = torch.float64, device=None) -> torch.Tensor:
+                          dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor:
     """Feasible Sobol points, Lloyd clusters and cluster-wise MaxPro descent."""
     integer(n, "n")
     integer(k, "k")

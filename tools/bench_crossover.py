@@ -37,7 +37,7 @@ def call(k, m, method):
         result = b.optimal_design(F, n, criterion='D', restarts=1, generator=torch.Generator().manual_seed(0), max_elements=MAX_ELEMENTS)
         ids = result['ids'].tolist()
     else:
-        result = b.pydoe.optimal_design(C.numpy(), n, degree=2, criterion='D', method=method)
+        result = importlib.import_module('pydoe').optimal_design(C.numpy(), n, degree=2, criterion='D', method=method)
     if method == 'cuda':
         torch.cuda.synchronize()
     seconds = time.perf_counter()-begin

@@ -15,7 +15,6 @@ import sys
 import time
 
 import numpy as np
-import pydoe
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,6 +44,7 @@ def score_design(F, row, exact_F):
 
 
 def main():
+    import pydoe
     torch.set_num_threads(1)
     wheel = Path(sys.argv[1]).read_bytes()
     digest = hashlib.sha256(wheel).hexdigest()

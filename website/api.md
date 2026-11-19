@@ -62,6 +62,10 @@ Draw a random jittered Latin hypercube (default), or use `mode="maximin"` (Morri
 
 For a floating 2-D design with n ≥ 2 rows in [0, 1]^k, returns `min_distance`, Morris–Mitchell `phi_p`, Joseph–Gul–Ba `maxpro` and centred L2 discrepancy `cd2` as scalar tensors in the input dtype and device. Shared coordinates give infinite MaxPro. Dense cost is O(n² k); see P2 gate §86–87.
 
+`fast_flexible_filling(n: int, k: int, *, A=None, b=None, disallowed=(), n_candidates=2**14, seed=0, max_iter=100, dtype=torch.float64, device=None) -> torch.Tensor`
+
+Select n feasible scrambled-Sobol candidates on [0, 1]^k using batched Lloyd k-means and cluster-wise MaxPro exchange. Linear constraints `A x ≤ b` and `disallowed` use `feasible_candidates`. Candidate count must be a power of two. Raises `ValueError` for too few feasible candidates or an empty final cluster. Returns points in cluster order on the requested dtype/device; each loop stops on convergence or `max_iter`. No fixed runs, dual bound or GPU timing claim; see P2 gate §89–91.
+
 `sobol(n: int, d: int, *, scramble: bool = False, seed: int | None = None, skip: int = 0, balance: str = "exact", dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 
 Draw exactly n points using native CPU Sobol generation followed by the requested device transfer.

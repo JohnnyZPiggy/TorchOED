@@ -1,6 +1,63 @@
 import torch
 
 from ._validation import budget, floating, integer
+from .features import feasible_candidates
+
+
+def _kmeans(F, n, max_iter):
+    centroids = F[:n].clone()
+    previous = None
+    for _ in range(max_iter):
+        assign = torch.cdist(F, centroids).argmin(1)
+        counts = torch.bincount(assign, minlength=n)
+        sums = torch.zeros_like(centroids).index_add_(0, assign, F)
+        centroids = torch.where(counts[:, None] > 0, sums / counts.clamp_min(1)[:, None], centroids)
+        if previous is not None and torch.equal(assign, previous):
+            return assign, centroids, True
+        previous = assign
+    return assign, centroids, False
+
+
+def _maxpro_exchange(F, assign, centroids, max_iter):
+    members = [torch.where(assign == c)[0] for c in range(len(centroids))]
+    if any(len(m) == 0 for m in members):
+        raise ValueError("fewer than n non-empty clusters")
+    chosen = torch.stack([m[(F[m] - centroids[c]).square().sum(-1).argmin()]
+                          for c, m in enumerate(members)])
+    for _ in range(max_iter):
+        changed = False
+        for c, m in enumerate(members):
+            others = chosen[torch.arange(len(chosen), device=F.device) != c]
+            terms = (F[m, None] - F[others]).square().prod(-1).reciprocal()
+            old = (F[chosen[c]] - F[others]).square().prod(-1).reciprocal()
+            delta, index = (terms - old).sum(-1).min(0)
+            if delta < 0:
+                chosen[c] = m[index]
+                changed = True
+        if not changed:
+            return chosen, True
+    return chosen, False
+
+
+def fast_flexible_filling(n: int, k: int, *, A: torch.Tensor | None = None, b: torch.Tensor | None = None,
+                          disallowed: list[dict[int, float]] | tuple[dict[int, float], ...] = (),
+                          n_candidates: int = 2**14, seed: int = 0, max_iter: int = 100,
+                          dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> torch.Tensor:
+    """Feasible Sobol points, Lloyd clusters and cluster-wise MaxPro descent."""
+    integer(n, "n")
+    integer(k, "k")
+    integer(n_candidates, "n_candidates")
+    integer(seed, "seed", 0)
+    integer(max_iter, "max_iter")
+    if n_candidates & (n_candidates - 1):
+        raise ValueError("n_candidates must be a power of two")
+    S = sobol(n_candidates, k, scramble=True, seed=seed, dtype=dtype, device=device)
+    F = S[feasible_candidates(S, A=A, b=b, disallowed=disallowed)]
+    if len(F) < n:
+        raise ValueError("too few feasible candidates for n runs")
+    assign, centroids, _ = _kmeans(F, n, max_iter)
+    chosen, _ = _maxpro_exchange(F, assign, centroids, max_iter)
+    return F[chosen]
 
 
 def lhs(n_samples: int, n_factors: int, *, generator: torch.Generator | None = None, device: torch.device | str | None = None,

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add constrained `fast_flexible_filling` with Sobol candidates, Lloyd clusters and MaxPro point choice.
+
 - Add uniform (CD2) Latin hypercubes and shared `space_filling_diagnostics`.
 
 - Add midpoint maximin and MaxPro `lhs` modes with batched column swaps, restarts and optional iteration limit.

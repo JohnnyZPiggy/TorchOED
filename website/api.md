@@ -54,9 +54,9 @@ Box-constrained simplex vertices in exact lexicographic order, then vertex-mean 
 
 `simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 
-`lhs(n_samples: int, n_factors: int, *, generator: torch.Generator | None = None, device: torch.device | str | None = None, dtype: torch.dtype = torch.float64, mode: str = "random", max_elements: int = 1_000_000) -> torch.Tensor`
+`lhs(n_samples: int, n_factors: int, *, generator: torch.Generator | None = None, device: torch.device | str | None = None, dtype: torch.dtype = torch.float64, mode: str = "random", restarts: int = 10, max_iter: int | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 
-Draw a random Latin hypercube with one sample in each marginal stratum.
+Draw a random jittered Latin hypercube (default), or use `mode="maximin"` (Morris–Mitchell φ₁₅) or `mode="maxpro"` (Joseph–Gul–Ba ψ) for midpoint designs. Optimised modes evaluate every within-column swap in batches and take the best improving swap. `restarts=10` chooses the best of independent random starts; `max_iter=None` runs each to convergence. The supplied generator controls all starts; dtype and device are retained. These modes use the box only, with no fixed runs or dual certificate.
 
 `sobol(n: int, d: int, *, scramble: bool = False, seed: int | None = None, skip: int = 0, balance: str = "exact", dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 

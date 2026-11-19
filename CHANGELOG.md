@@ -1,30 +1,24 @@
 # Changelog
 
 ## Unreleased
+
+## [0.8.0] — 2026-11-19
+
+### Added
+
 - Evaluate a given design with `fixed_ids` of length `n` (§80, #332).
 - Add uncentred VIFs for mixture and mixture-process diagnostics via `centered=False` (#327).
-
 - Add diagnostics and containment-df t/F power for whole plots nested in fixed blocks (#325).
 - Add alias-penalised D search, alias traces and a D-efficiency floor (#322).
-
 - Add covariate-adjusted design diagnostics, prediction variance and t/F power (#318).
-
 - Add compound D/A/I log-efficiency search with a dual efficiency floor (#314).
-
 - Add fixed per-run covariates to certified D/A/I search, preserving run order (#310).
-
 - Add `mixture_process_features` for certified mixture-process D/A/I designs (#306).
-
 - Add effect-group F-test power to `design_diagnostics(groups=...)` (#302).
-
 - Support nested whole plots in fixed blocks for D/A/I, augmentation and dual floors (#297).
-
 - Add standalone G, V and I criterion functions (#290).
-
 - Add `scheffe_features` and certified optimal mixture D/A/I designs on constrained candidates (#284).
-
 - Add `simplex_centroid` and exact box-constrained `mixture_vertices` with face centroids (#281).
-
 - Add `central_composite` and `box_behnken` for coded quadratic response-surface designs (#258).
 - Extend `box_behnken` to 6 and 7 factors using frozen rsm designs (#262).
 - Add `plackett_burman` for balanced two-level screening designs with 4 to 48 runs in multiples of four (#255).
@@ -33,6 +27,14 @@
 - `fractional_factorial_generators` looks up generators by factor and run count from the frozen FrF2 catalogue.
 - `fold_over` reverses all factors or a single factor in the added runs.
 - `word_length_pattern` computes the generalized word-length pattern for two-level designs, and `design_diagnostics(..., alias=…)` reports omitted-term aliasing for unstructured designs.
+
+### Known limitations
+
+- CPU float64 only for numerical acceptance. The API is experimental.
+- Non-box mixture regions are not supported.
+- Split-split-plot and GLM power are not built.
+- Published-example matches: in progress (Week 12 consolidation).
+- Real PyPI publication requires the Scientist.
 
 ## [0.7.0] — 2026-11-16
 

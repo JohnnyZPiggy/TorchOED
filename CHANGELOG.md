@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix the `lhs` swap search so `mode="uniform"` always terminates: a swap must lower the objective by more than `1e-12` times its current value (P2 gate §92, #411).
+
 - Add constrained `fast_flexible_filling` with Sobol candidates, Lloyd clusters and MaxPro point choice.
 
 - Add uniform (CD2) Latin hypercubes and shared `space_filling_diagnostics`.

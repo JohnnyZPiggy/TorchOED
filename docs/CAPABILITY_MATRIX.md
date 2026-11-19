@@ -100,8 +100,8 @@ Listed for Scientist decision; listing is not a deferral approval. Open cells ne
 
 | P2 row | Column | Missing | Why | Proposed close |
 |---|---|---|---|---|
-| blocking | Dev | Measured GPU D/A/I vs same-host CPU | CPU float64 only measured (#228) | W12 evidence task |
-| split-plot | Dev | Measured GPU D/A/I vs same-host CPU | CPU float64 only measured (#232) | W12 evidence task |
+| blocking | Dev | Measured GPU D/A/I vs same-host CPU | CPU float64 only measured (#228); W12 T4 allocation timed out twice (#362) | One T4 retry after #368; else Scientist deferral |
+| split-plot | Dev | Measured GPU D/A/I vs same-host CPU | CPU float64 only measured (#232); W12 T4 allocation timed out twice (#362) | One T4 retry after #368; else Scientist deferral |
 | definitive screening | Ext | daewr k = 7 shape match | daewr 15 × 7 vs TorchOED 17 × 7 (#309, [w10-dsd](../reports/w10-dsd/)); k = 21, 22 impossible | Scientist deferral requested |
 | constrained mixtures | Con | Non-box regions | Only box bounds, vertices and face centroids (#281) | Scientist deferral requested |
 

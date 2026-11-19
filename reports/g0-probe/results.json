@@ -1,0 +1,112 @@
+{
+  "status": "BLOCKED",
+  "source_sha": "d5e594ce9f33d24f73e60edb8fe31d5f1699b237",
+  "attempts": [
+    {
+      "status": "FAIL",
+      "error": "ALLOCATION_FAILED",
+      "source_sha": "d5e594ce9f33d24f73e60edb8fe31d5f1699b237",
+      "run_id": "g0-385-h100",
+      "created": false,
+      "cleanup_confirmed": true,
+      "commands": [
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "new",
+          "status": "FAIL",
+          "exit_code": 1
+        },
+        {
+          "operation": "stop",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        }
+      ],
+      "device_requested": "H100",
+      "device_observed": null,
+      "assignments_before": 0,
+      "assignments_after": 0,
+      "balance_before": 149.35,
+      "balance_after": 149.35,
+      "artifact_sha256": {},
+      "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+      "total_seconds": 20.359704687999994
+    },
+    {
+      "status": "FAIL",
+      "error": "ALLOCATION_FAILED",
+      "source_sha": "d5e594ce9f33d24f73e60edb8fe31d5f1699b237",
+      "run_id": "g0-385-a100",
+      "created": false,
+      "cleanup_confirmed": true,
+      "commands": [
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "new",
+          "status": "FAIL",
+          "exit_code": 1
+        },
+        {
+          "operation": "stop",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        }
+      ],
+      "device_requested": "A100",
+      "device_observed": null,
+      "assignments_before": 0,
+      "assignments_after": 0,
+      "balance_before": 149.35,
+      "balance_after": 149.35,
+      "artifact_sha256": {},
+      "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+      "total_seconds": 55.199863051999984
+    }
+  ],
+  "rows": [
+    {
+      "k": 3,
+      "m": 1000,
+      "method": "cpu",
+      "status": "NOT_RUN",
+      "seconds": null,
+      "logdet": null,
+      "floor": null,
+      "oracles": "NOT_RUN"
+    },
+    {
+      "k": 3,
+      "m": 1000,
+      "method": "cuda",
+      "status": "NOT_RUN",
+      "seconds": null,
+      "logdet": null,
+      "floor": null,
+      "oracles": "NOT_RUN"
+    }
+  ],
+  "logdet_agreement": "NOT_RUN",
+  "required_tests": {
+    "PASS": 0,
+    "FAIL": 0,
+    "NOT_RUN": 1
+  }
+}

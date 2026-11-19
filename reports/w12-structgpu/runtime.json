@@ -24,5 +24,66 @@
   },
   "requested_device": "T4",
   "device_observed": null,
-  "command": "python3 colab_control.py --repo-path linux-repo --source-sha 0476099dcae5519438d45d97ede27c8bd9f5c600 --run-id w362-colab-20261119 --out colab --cli colab --device T4 --temp-root temp --driver tools/w12_gpu_driver.py --artifacts tools/w12_gpu_artifacts.json --task-seconds 2400 --allocation-seconds 2100 --kernel-timeout 300 --work-timeout 1500 --cleanup-seconds 180"
+  "command": "python3 colab_control.py --repo-path linux-repo --source-sha 0476099dcae5519438d45d97ede27c8bd9f5c600 --run-id w362-colab-20261119 --out colab --cli colab --device T4 --temp-root temp --driver tools/w12_gpu_driver.py --artifacts tools/w12_gpu_artifacts.json --task-seconds 2400 --allocation-seconds 2100 --kernel-timeout 300 --work-timeout 1500 --cleanup-seconds 180",
+  "replacement": {
+    "controller_log": {
+      "status": "FAIL",
+      "error": "ALLOCATION_FAILED",
+      "source_sha": "6ee0a2967818a2d774898d0c28e2a79a7307b000",
+      "run_id": "w362-replacement-20261119",
+      "created": false,
+      "cleanup_confirmed": true,
+      "commands": [
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "new",
+          "status": "TIMEOUT",
+          "exit_code": -1
+        },
+        {
+          "operation": "stop",
+          "status": "PASS",
+          "exit_code": 0
+        },
+        {
+          "operation": "usage",
+          "status": "PASS",
+          "exit_code": 0
+        }
+      ],
+      "device_requested": "T4",
+      "device_observed": null,
+      "assignments_before": 0,
+      "assignments_after": 0,
+      "balance_before": 49.76,
+      "balance_after": 49.76,
+      "artifact_sha256": {},
+      "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+      "total_seconds": 137.917016521
+    },
+    "preflight": {
+      "status": "PREFLIGHT_PASS",
+      "error": null,
+      "source_sha": "6ee0a2967818a2d774898d0c28e2a79a7307b000",
+      "run_id": "w362-replacement-preflight",
+      "created": false,
+      "cleanup_confirmed": false,
+      "commands": [],
+      "device_requested": "T4",
+      "device_observed": null,
+      "assignments_before": null,
+      "assignments_after": null,
+      "balance_before": null,
+      "balance_after": null,
+      "artifact_sha256": {},
+      "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+      "total_seconds": 13.503937623999999
+    },
+    "local_validation": "6/6 PASS at exact authorized SHA; output inspected before allocation",
+    "command": "set -eu\nexport PATH=/home/zhangru/.local/bin:$PATH\ns=/mnt/d/sae-scratch/.sae-362-20261119\nsha=6ee0a2967818a2d774898d0c28e2a79a7307b000\ncontroller=/mnt/d/sae-scratch/.sae-271-20261117/controller/colab_control.py\nmkdir -p \"$s/temp\"\ngit -C \"$s/linux-repo\" fetch origin\ngit -C \"$s/linux-repo\" checkout --detach \"$sha\"\nsha=$(git -C \"$s/linux-repo\" rev-parse HEAD)\npython3 \"$controller\" --repo-path \"$s/linux-repo\" --source-sha \"$sha\" --run-id w362-replacement-preflight --out \"$s/replacement-preflight\" --cli colab --device T4 --temp-root \"$s/temp\" --driver tools/w12_gpu_driver.py --artifacts tools/w12_gpu_artifacts.json --preflight-only\ncolab usage | tee \"$s/replacement-usage-before.txt\"\ngrep -q 'Active assignments: 0' \"$s/replacement-usage-before.txt\"\nstatus=0\npython3 \"$controller\" --repo-path \"$s/linux-repo\" --source-sha \"$sha\" --run-id w362-replacement-20261119 --out \"$s/replacement-colab\" --cli colab --device T4 --temp-root \"$s/temp\" --driver tools/w12_gpu_driver.py --artifacts tools/w12_gpu_artifacts.json --task-seconds 2400 --allocation-seconds 2100 --kernel-timeout 300 --work-timeout 1500 --cleanup-seconds 180 || status=$?\ncolab usage | tee \"$s/replacement-usage-after.txt\"\nexit \"$status\""
+  }
 }

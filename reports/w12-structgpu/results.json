@@ -1,5 +1,5 @@
 {
-  "source_sha": "cd0e0868c2a975a5ebdc7d548ecec7f438cdcbcb",
+  "source_sha": "6ee0a2967818a2d774898d0c28e2a79a7307b000",
   "status": "BLOCKED",
   "environment": {
     "torch": "2.15.0+cpu",
@@ -14,7 +14,7 @@
       "criterion": "D",
       "device": "cpu",
       "status": "PASS",
-      "seconds_per_restart": 0.1392580600004294,
+      "seconds_per_restart": 0.12262179999961517,
       "objective": 32.95803107277601,
       "floor": 0.8910042544570046,
       "ids": [
@@ -51,7 +51,7 @@
       "criterion": "A",
       "device": "cpu",
       "status": "PASS",
-      "seconds_per_restart": 0.21935935000001336,
+      "seconds_per_restart": 0.19710550000017973,
       "objective": -1.6387385605965425,
       "floor": 0.930435359688778,
       "ids": [
@@ -88,7 +88,7 @@
       "criterion": "I",
       "device": "cpu",
       "status": "PASS",
-      "seconds_per_restart": 0.2087047300003178,
+      "seconds_per_restart": 0.1915285999995831,
       "objective": -0.5895762572514831,
       "floor": 0.8836851617191598,
       "ids": [
@@ -125,7 +125,7 @@
       "criterion": "D",
       "device": "cpu",
       "status": "PASS",
-      "seconds_per_restart": 0.28974453999981054,
+      "seconds_per_restart": 0.2563787599996431,
       "objective": 31.02750714031874,
       "floor": 0.6747751931300998,
       "ids": [
@@ -162,7 +162,7 @@
       "criterion": "A",
       "device": "cpu",
       "status": "PASS",
-      "seconds_per_restart": 0.25416236000019127,
+      "seconds_per_restart": 0.21977416000008815,
       "objective": -3.592435785724454,
       "floor": 0.5082189996903211,
       "ids": [
@@ -199,7 +199,7 @@
       "criterion": "I",
       "device": "cpu",
       "status": "PASS",
-      "seconds_per_restart": 0.2409156499998062,
+      "seconds_per_restart": 0.21577596999995877,
       "objective": -1.1799983713055593,
       "floor": 0.4979594918513877,
       "ids": [
@@ -236,7 +236,7 @@
       "criterion": "D",
       "device": "cuda",
       "status": "NOT_RUN",
-      "reason": "Controller interrupted after allocation due to local hard-label adapter error; session released before science results. No replacement session permitted without Architect ruling.",
+      "reason": "Replacement pinned-controller session: ALLOCATION_FAILED; new TIMEOUT (exit_code -1); no artifact or observed device. No third session per Architect ruling.",
       "ids_equal": null,
       "quality_equal": null
     },
@@ -245,7 +245,7 @@
       "criterion": "A",
       "device": "cuda",
       "status": "NOT_RUN",
-      "reason": "Controller interrupted after allocation due to local hard-label adapter error; session released before science results. No replacement session permitted without Architect ruling.",
+      "reason": "Replacement pinned-controller session: ALLOCATION_FAILED; new TIMEOUT (exit_code -1); no artifact or observed device. No third session per Architect ruling.",
       "ids_equal": null,
       "quality_equal": null
     },
@@ -254,7 +254,7 @@
       "criterion": "I",
       "device": "cuda",
       "status": "NOT_RUN",
-      "reason": "Controller interrupted after allocation due to local hard-label adapter error; session released before science results. No replacement session permitted without Architect ruling.",
+      "reason": "Replacement pinned-controller session: ALLOCATION_FAILED; new TIMEOUT (exit_code -1); no artifact or observed device. No third session per Architect ruling.",
       "ids_equal": null,
       "quality_equal": null
     },
@@ -263,7 +263,7 @@
       "criterion": "D",
       "device": "cuda",
       "status": "NOT_RUN",
-      "reason": "Controller interrupted after allocation due to local hard-label adapter error; session released before science results. No replacement session permitted without Architect ruling.",
+      "reason": "Replacement pinned-controller session: ALLOCATION_FAILED; new TIMEOUT (exit_code -1); no artifact or observed device. No third session per Architect ruling.",
       "ids_equal": null,
       "quality_equal": null
     },
@@ -272,7 +272,7 @@
       "criterion": "A",
       "device": "cuda",
       "status": "NOT_RUN",
-      "reason": "Controller interrupted after allocation due to local hard-label adapter error; session released before science results. No replacement session permitted without Architect ruling.",
+      "reason": "Replacement pinned-controller session: ALLOCATION_FAILED; new TIMEOUT (exit_code -1); no artifact or observed device. No third session per Architect ruling.",
       "ids_equal": null,
       "quality_equal": null
     },
@@ -281,7 +281,7 @@
       "criterion": "I",
       "device": "cuda",
       "status": "NOT_RUN",
-      "reason": "Controller interrupted after allocation due to local hard-label adapter error; session released before science results. No replacement session permitted without Architect ruling.",
+      "reason": "Replacement pinned-controller session: ALLOCATION_FAILED; new TIMEOUT (exit_code -1); no artifact or observed device. No third session per Architect ruling.",
       "ids_equal": null,
       "quality_equal": null
     }
@@ -292,5 +292,7 @@
       "status": "PASS"
     }
   ],
-  "scientific_status": "BLOCKED"
+  "scientific_status": "BLOCKED",
+  "cpu_location": "local only; Colab allocation failed",
+  "local_to_colab_cpu": "NOT_RUN"
 }

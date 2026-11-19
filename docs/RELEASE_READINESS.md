@@ -29,6 +29,10 @@ to the single M5-A Draft PR's ENGINEER_HANDOFF.
 
 [M5-A bounded validation handoff](../reports/m5a/ENGINEER_HANDOFF.md).
 
+## Current TestPyPI rehearsal: 0.8.0
+
+[Issue #356](https://github.com/JohnnyZPiggy/TorchOED/issues/356) tracks the 0.8.0 version and CHANGELOG (#358), annotated tag, one TestPyPI workflow and clean-install quick-start plus industrial-guide smoke. Publication and smoke completion remain pending the Issue follow-up; this page makes no success claim. The API remains experimental. [Published-example evidence](../reports/w12-published/summary.md) is recorded separately. Real PyPI remains Scientist-gated under the checklist below.
+
 ## Real PyPI checklist (Scientist)
 
 1. Register a pending trusted publisher on pypi.org for project `torchoed`, owner `JohnnyZPiggy`, repository `TorchOED`; choose and record the workflow filename and environment name.

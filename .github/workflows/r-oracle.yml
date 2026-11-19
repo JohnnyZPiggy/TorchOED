@@ -32,7 +32,7 @@ jobs:
           pins <- read.table("tools/r_packages.txt", col.names=c("package", "version"))
           for (i in seq_len(nrow(pins))) {
             remotes::install_version(pins$package[i], version=pins$version[i], upgrade="never")
-            stopifnot(as.character(packageVersion(pins$package[i])) == pins$version[i])
+            stopifnot(packageVersion(pins$package[i]) == package_version(pins$version[i]))
           }
       - name: Run reference and record runtime
         env:

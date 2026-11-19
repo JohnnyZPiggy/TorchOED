@@ -59,3 +59,20 @@ for m in ("random", "maximin", "maxpro", "uniform"):
     print(m, {key: round(value.item(), 4)
               for key, value in space_filling_diagnostics(design).items()})
 ```
+
+## Fast flexible filling on constrained regions
+
+The first `n_candidates` (a power of two) scrambled-Sobol points are filtered by `feasible_candidates` (`A x ≤ b`, `disallowed`). Lloyd k-means groups them into `n` clusters, starting from the first `n` feasible points. Cluster-wise MaxPro exchange chooses one point per cluster. Every returned row is a feasible Sobol candidate.
+
+The constructor raises for too few feasible candidates or an empty final cluster. K-means replaces JMP's Ward clustering; nonlinear constraints are not supported. See [gate §89–91](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/P2_GATE.md#89-fast-flexible-filling-on-constrained-regions-w13-f3).
+
+```python
+import torch
+from torchoed import fast_flexible_filling, space_filling_diagnostics
+
+A = torch.tensor([[1., 1.]], dtype=torch.float64)
+b = torch.tensor([1.], dtype=torch.float64)
+X = fast_flexible_filling(10, 2, A=A, b=b, n_candidates=1024, seed=0)
+print(bool((X @ A.T <= b).all()))
+print({key: round(value.item(), 4) for key, value in space_filling_diagnostics(X).items()})
+```

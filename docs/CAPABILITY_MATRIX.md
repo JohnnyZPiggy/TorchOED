@@ -26,8 +26,8 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | power | ✅ per-coefficient t-test and effect-group F-test (§56, #302), OLS, σ = 1 | N/A | N/A | N/A | ✅ blocked + split-plot power (#234); effect-group F-test (§56, #302) | ✅ | ✅ SciPy (H16) | ✅ | ✅ H16 | **W9** (structured), W11 (F-test) |
 | space filling: random LHS, Sobol | N/A | N/A | N/A | N/A | N/A | ✅ | ✅ | ✅ | N/A | done |
 | space filling: maximin / MaxPro LHS | ✅ φ₁₅, ψ (#387) | N/A no fixed runs in an LHS | N/A box only; constrained → F3 | N/A no dual bound for LHS criteria | ✅ `space_filling_diagnostics` (#391) | ◐ CPU only | ❌ R evidence task | ✅ API (#387) + guide (#394) | ❌ H33/H34 at week end | W13 |
-| space filling: uniform designs and diagnostics | ✅ CD2 (#391) | N/A no fixed runs in an LHS | N/A box only; constrained → F3 | N/A no dual bound for CD2 | ✅ `space_filling_diagnostics` (#391) | ◐ CPU only | ❌ R evidence task | ✅ API (#391) | ❌ H35 at week end | W13 |
-| space filling: fast flexible filling (constrained) | ✅ MaxPro point choice (§89.4) | N/A, no fixed runs (§91) | ✅ `A x ≤ b` + `disallowed` via `feasible_candidates` | N/A, no dual bound | ✅ `space_filling_diagnostics` | ◐ CPU only | ❌ R `support::sp` evidence task | ✅ API | ❌ next week's held-out | W13 |
+| space filling: uniform designs and diagnostics | ✅ CD2 (#391) | N/A no fixed runs in an LHS | N/A box only; constrained → F3 | N/A no dual bound for CD2 | ✅ `space_filling_diagnostics` (#391) | ◐ CPU only | ❌ R evidence task | ✅ API (#391) + guide (#398) | ❌ H35 at week end | W13 |
+| space filling: fast flexible filling (constrained) | ✅ MaxPro point choice (§89.4) | N/A, no fixed runs (§91) | ✅ `A x ≤ b` + `disallowed` via `feasible_candidates` | N/A, no dual bound | ✅ `space_filling_diagnostics` | ◐ CPU only | ❌ R `support::sp` evidence task | ✅ API (#395) + guide (#403) | ❌ next week's held-out | W13 |
 
 ## P2.5 — analysis and TorchOED Studio (weeks 17–19, Scientist 2026-11-17)
 | Capability | Status | Week |
@@ -84,7 +84,7 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | Central composite (incl. blocked), Box–Behnken | Response Surface | `rsm` | ✅ CCD incl. blocks and BBD k = 3–7 (#258, #262); rsm 7/7 MATCH | — | W10 |
 | Mixture: simplex lattice / centroid, extreme vertices, ABCD, constrained, mixture-process | Mixture Design | `mixexp` | ◐ lattice (#321), centroid and box vertices (#281), Scheffé D/A/I (#284), mixture-process (#306), uncentred diagnostics (#327); non-box / ABCD regions missing; [w11-mixai](../reports/w11-mixai/), [w11-mixproc](../reports/w11-mixproc/) | optimal mixture with certificate | W11; non-box deferral requested |
 | Covariates (incl. hard-to-change covariates) | Custom Design | AlgDesign (fixed rows) | ◐ fixed per-run D/A/I (#310) and adjusted diagnostics/power (#318); hard-to-change covariates missing; skpr NR, exact MATCH (#344, [w11-covext](../reports/w11-covext/)) | — | W11; hard-to-change → W15 |
-| Space filling: LHS (maximin), MaxPro, uniform, sphere packing, fast flexible filling (constrained) | Space Filling Design | `lhs`, `MaxPro`, `DiceDesign`, `SLHD` | ◐ random LHS, Sobol only | GPU-scale distance search | W13 |
+| Space filling: LHS (maximin), MaxPro, uniform, sphere packing, fast flexible filling (constrained) | Space Filling Design | `lhs`, `MaxPro`, `DiceDesign`, `SLHD` | ◐ maximin / MaxPro LHS (#387), uniform CD2 + diagnostics (#391), constrained fast flexible filling (#395); R Ext pending; sphere packing beyond maximin out of scope W13 | GPU-scale distance search | W13 |
 | Orthogonal arrays, Taguchi arrays, covering arrays | Taguchi Arrays, Covering Arrays | DoE.base `oa.design` | ❌ | — | W15 |
 | Nonlinear design (local, Bayesian) | Nonlinear Design | ICAOD, acebayes | ◐ local via `jacobian_features` | autograd; NN models; GPU prior MC | W21–W22 |
 | Minimax / robust designs | — | ICAOD | ❌ | certificate; links to robust optimisation | W23 |

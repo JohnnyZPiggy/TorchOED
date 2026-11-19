@@ -15,7 +15,7 @@ Where both finished, TorchOED's design was as good or better (higher log-determi
 
 ## Published examples
 
-8 of 13 published examples match or are beaten on the shared metric (target ≥ 8 for the P2 exit).
+11 of 13 published examples match or are beaten on the shared metric (P2 exit target ≥ 8 met; week 13 target ≥ 12).
 
 | ID | Package and source | Shared metric | Verdict |
 |---|---|---|---|
@@ -26,14 +26,14 @@ Where both finished, TorchOED's design was as good or better (higher log-determi
 | mix-sld43 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SLD.Rd#L32-L32) | sorted row multiset max_abs <= 1e-12; row sums | MATCH; max_abs 0, [existing result](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w11-mixlat/summary.md) |
 | mix-scd3 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SCD.Rd#L29-L29) | sorted row multiset max_abs <= 1e-12; row sums | MATCH; max_abs 0, [existing result](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w11-mixlat/summary.md) |
 | mix-scd5 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SCD.Rd#L31-L31) | sorted row multiset max_abs <= 1e-12; row sums | MATCH; max_abs 0, [existing result](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w11-mixlat/summary.md) |
-| mix-scd12 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SCD.Rd#L33-L33) | sorted row multiset max_abs <= 1e-12; row sums | NR; mix-scd12: there is no package called ‘mixexp’ |
-| mix-xvert | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/Xvert.Rd#L39-L40) | Hausdorff on dimen=0 vertex sets; vertex count | NR; mix-xvert: there is no package called ‘mixexp’ |
-| fr-pb8 | [FrF2 2.3-5](https://github.com/cran/FrF2/blob/2.3-5/man/pb.Rd#L210-L210) | X.T @ X = nruns * I after mapping factor low/high levels to -1/+1 | NR; fr-pb8: there is no package called ‘FrF2’ |
-| fr-pb40 | [FrF2 2.3-5](https://github.com/cran/FrF2/blob/2.3-5/man/pb.Rd#L211-L211) | X.T @ X = nruns * I after mapping factor low/high levels to -1/+1 | NR; fr-pb40: there is no package called ‘FrF2’ |
+| mix-scd12 | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/SCD.Rd#L33-L33) | sorted row multiset max_abs <= 1e-12; row sums | MATCH; max_abs 3.3e-16, [w13-published](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-published/summary.md) |
+| mix-xvert | [mixexp 1.2.7.1](https://github.com/cran/mixexp/blob/1.2.7.1/man/Xvert.Rd#L39-L40) | Hausdorff on dimen=0 vertex sets; vertex count | NO MATCH; Hausdorff 3.0e-8 > 1e-12 (R returns float32-rounded vertices), [w13-published](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-published/summary.md) |
+| fr-pb8 | [FrF2 2.3-5](https://github.com/cran/FrF2/blob/2.3-5/man/pb.Rd#L210-L210) | X.T @ X = nruns * I after mapping factor low/high levels to -1/+1 | MATCH; Gram error 0, [w13-published](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-published/summary.md) |
+| fr-pb40 | [FrF2 2.3-5](https://github.com/cran/FrF2/blob/2.3-5/man/pb.Rd#L211-L211) | X.T @ X = nruns * I after mapping factor low/high levels to -1/+1 | MATCH; Gram error 0, [w13-published](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-published/summary.md) |
 | rsm-ccd3-inscribed | [rsm 2.10.6](https://github.com/cran/rsm/blob/2.10.6/man/ccd.Rd#L120-L123) | dense D: logdet(F.T @ F) on coded full quadratic; row count | MATCH; see results.json |
 | skpr-splitplot | [skpr 1.9.2](https://github.com/cran/skpr/blob/1.9.2/man/gen_design.Rd#L217-L230) | dense GLS logdet | MATCH; both 13.513636250491656, delta 0 ([w8-skpr](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w8-skpr/summary.md)) |
 
-New results: alg-d MATCH; alg-a NO MATCH (2.4240924092409237 vs reference 2.3, lower is better); alg-i MATCH; rsm-ccd3-inscribed MATCH. mix-scd12, mix-xvert, fr-pb8 and fr-pb40 NR (packages unavailable). Existing five MATCH results reused without rerun. No broader parity claim.
+New results: alg-d MATCH; alg-a NO MATCH (2.4240924092409237 vs reference 2.3, lower is better); alg-i MATCH; rsm-ccd3-inscribed MATCH. mix-scd12, fr-pb8 and fr-pb40 MATCH and mix-xvert NO MATCH on the R oracle workflow (R 4.5.2, mixexp 1.2.7.1, FrF2 2.3-5, run 44613389076). Existing five MATCH results reused without rerun. No broader parity claim.
 
 ## Against R and held-out cases
 

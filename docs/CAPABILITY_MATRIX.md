@@ -64,19 +64,19 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | Blocking, fixed and random blocks | Custom Design | AlgDesign `optBlock`, skpr | ✅ D A I (#228); Cert ✅ (#236); Aug ✅ (#238) | certificate | W9 |
 | Split-plot, hard-to-change factors | Custom Design | skpr `gen_design` | ✅ D A I (#232); Cert ✅ (#236); Aug ✅ (#238) | certificate; GPU | W9 |
 | Split-split-plot, strip-plot (very-hard-to-change) | Custom Design | skpr | ❌ | — | W15 |
-| Evaluate Design: power, prediction variance, FDS, correlation map, efficiencies | Evaluate Design | skpr `eval_design`, `Vdgraph` | ◐ unstructured only (W9-B4) | — | W9 |
-| Alias matrix, alias-optimal and compound criteria | Custom Design | FrF2 alias tools | ◐ unstructured alias matrix ([#244](https://github.com/JohnnyZPiggy/TorchOED/issues/244)); alias-optimal and compound criteria open | — | W10–W11 |
+| Evaluate Design: power, prediction variance, FDS, correlation map, efficiencies | Evaluate Design | skpr `eval_design`, `Vdgraph` | ✅ plain and structured SPV/VIF/power (#234, #318, #325); given-design evaluation (#332); G/V/I criteria (#290) | — | W9–W11 |
+| Alias matrix, alias-optimal and compound criteria | Custom Design | FrF2 alias tools | ✅ alias matrix (#244), compound D/A/I (#314), alias-penalised D (#322); skpr MATCH (#351, [w11-aliasext](../reports/w11-aliasext/)) | — | W10–W11 |
 | Power by simulation for GLMs (logistic, Poisson) | Sample Size Explorers | skpr `eval_design_mc` | ❌ | GPU Monte Carlo | W15 |
 | Sample size explorer (power vs n) | Sample Size Explorers | `pwr`, skpr | ◐ power at fixed n | batched over n | W15 |
 | Compare Designs (side-by-side efficiencies, power, FDS) | Compare Designs | — | ❌ | — | W15 |
 | "If Possible" terms, Bayesian D/I (DuMouchel–Jones) | Custom Design | — | ❌ | certificate | W14 |
-| Definitive screening | Definitive Screening | `daewr` DSD | ◐ k 3–20, 23–30 (#248); daewr k = 6 MATCH, k = 7 shape differs (#309) | exact orthogonality proof | W10 |
-| Fractional factorial by generators / resolution, minimum aberration, blocked FF, fold-over | Screening | FrF2, DoE.base | ◐ generators, fold-over and WLP ([#244](https://github.com/JohnnyZPiggy/TorchOED/issues/244)); ✅ `(k, runs)` from FrF2 catalogue, 22/22 (#251) | — | W10 (MA, blocked FF → W15) |
-| Plackett–Burman | Screening | FrF2 `pb` | ◐ N ≡ 0 mod 4, 4–48 (#255); FrF2 `pb` 3/3 matched (#261) | — | W10 |
+| Definitive screening | Definitive Screening | `daewr` DSD | ◐ k 3–20, 23–30 (#248); k = 21, 22 impossible; daewr k = 6 MATCH, k = 7 shape differs (#309, [w10-dsd](../reports/w10-dsd/)) | exact orthogonality proof | W10; Ext deferral requested |
+| Fractional factorial by generators / resolution, minimum aberration, blocked FF, fold-over | Screening | FrF2, DoE.base | ◐ generators, fold-over, WLP and alias matrix (#244); FrF2 catalogue 22/22 MATCH (#251, #257); minimum aberration and blocked FF missing | — | W10; MA, blocked FF → W15 |
+| Plackett–Burman | Screening | FrF2 `pb` | ✅ N ≡ 0 mod 4, 4–48 (#255); FrF2 pb 3/3 exact (#261); partial aliasing (#269) | — | W10 |
 | Group-orthogonal supersaturated designs | Screening | — | ❌ | — | backlog |
-| Central composite (incl. blocked), Box–Behnken | Response Surface | `rsm` | ◐ CCD rotatable/orthogonal/faces/numeric α with cube + axial blocks; BBD k = 3–7 (#258, #262) | — | W10 |
-| Mixture: simplex lattice / centroid, extreme vertices, ABCD, constrained, mixture-process | Mixture Design | `mixexp` | ◐ simplex lattice only | optimal mixture with certificate | W11 |
-| Covariates (incl. hard-to-change covariates) | Custom Design | AlgDesign (fixed rows) | ❌ | — | W11 |
+| Central composite (incl. blocked), Box–Behnken | Response Surface | `rsm` | ✅ CCD incl. blocks and BBD k = 3–7 (#258, #262); rsm 7/7 MATCH | — | W10 |
+| Mixture: simplex lattice / centroid, extreme vertices, ABCD, constrained, mixture-process | Mixture Design | `mixexp` | ◐ lattice (#321), centroid and box vertices (#281), Scheffé D/A/I (#284), mixture-process (#306), uncentred diagnostics (#327); non-box / ABCD regions missing; [w11-mixai](../reports/w11-mixai/), [w11-mixproc](../reports/w11-mixproc/) | optimal mixture with certificate | W11; non-box deferral requested |
+| Covariates (incl. hard-to-change covariates) | Custom Design | AlgDesign (fixed rows) | ◐ fixed per-run D/A/I (#310) and adjusted diagnostics/power (#318); hard-to-change covariates missing; skpr NR, exact MATCH (#344, [w11-covext](../reports/w11-covext/)) | — | W11; hard-to-change → W15 |
 | Space filling: LHS (maximin), MaxPro, uniform, sphere packing, fast flexible filling (constrained) | Space Filling Design | `lhs`, `MaxPro`, `DiceDesign`, `SLHD` | ◐ random LHS, Sobol only | GPU-scale distance search | W13 |
 | Orthogonal arrays, Taguchi arrays, covering arrays | Taguchi Arrays, Covering Arrays | DoE.base `oa.design` | ❌ | — | W15 |
 | Nonlinear design (local, Bayesian) | Nonlinear Design | ICAOD, acebayes | ◐ local via `jacobian_features` | autograd; NN models; GPU prior MC | W21–W22 |
@@ -93,6 +93,17 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | Measurement systems analysis (MSA) designs | MSA Design | — | ❌ | — | backlog |
 
 Weeks 12, 16, 20, 24 and 28 are consolidation weeks (refresh this matrix, published-example matches, release).
+
+## P2 exit: open cells
+
+Listed for Scientist decision; listing is not a deferral approval. Open cells neither completed nor listed: 0 (4 listed).
+
+| P2 row | Column | Missing | Why | Proposed close |
+|---|---|---|---|---|
+| blocking | Dev | Measured GPU D/A/I vs same-host CPU | CPU float64 only measured (#228) | W12 evidence task |
+| split-plot | Dev | Measured GPU D/A/I vs same-host CPU | CPU float64 only measured (#232) | W12 evidence task |
+| definitive screening | Ext | daewr k = 7 shape match | daewr 15 × 7 vs TorchOED 17 × 7 (#309, [w10-dsd](../reports/w10-dsd/)); k = 21, 22 impossible | Scientist deferral requested |
+| constrained mixtures | Con | Non-box regions | Only box bounds, vertices and face centroids (#281) | Scientist deferral requested |
 
 ## Known documentation debt (week 12 consolidation)
 `website/api.md` lists `optimal_design` without `blocks`, `whole_plots`, `hard`, `eta`; `docs/ALGORITHM_COVERAGE.md` still marks `optimal_design` PLANNED; older milestone docs (`docs/M1_API.md` … `docs/M3C_API.md`) should be merged or archived.

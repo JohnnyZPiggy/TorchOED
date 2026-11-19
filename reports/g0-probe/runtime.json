@@ -1,0 +1,13 @@
+{
+  "status": "NOT_RUN",
+  "reason": "ALLOCATION_FAILED for H100 and A100",
+  "gpu": null,
+  "memory": null,
+  "driver": null,
+  "cuda": null,
+  "torch": null,
+  "balance_before": 149.35,
+  "balance_after": 149.35,
+  "rate_before_per_hour": 0,
+  "rate_after_per_hour": 0
+}

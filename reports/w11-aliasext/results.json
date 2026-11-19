@@ -1,0 +1,81 @@
+{
+  "source_sha": "1b67717f5665bf85b29e5c20847bf8190fa0ee32",
+  "python": "3.14.6",
+  "torch": "2.15.0+cpu",
+  "device": "CPU",
+  "dtype": "float64",
+  "threads": 1,
+  "seed": 0,
+  "restarts": 10,
+  "TorchOED": {
+    "rows": [
+      [
+        -1.0,
+        -1.0,
+        1.0
+      ],
+      [
+        -1.0,
+        -1.0,
+        -1.0
+      ],
+      [
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      [
+        1.0,
+        1.0,
+        -1.0
+      ],
+      [
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        1.0,
+        -1.0,
+        1.0
+      ]
+    ],
+    "det_M": 768.0,
+    "alias_trace": 0.3333333333333333,
+    "D_efficiency": 0.9306048591020996,
+    "Psi": -0.2974787026078036,
+    "on_front": true,
+    "verdict": "MATCH",
+    "ids": [
+      1,
+      8,
+      18,
+      22,
+      23,
+      29
+    ],
+    "objective": -0.29747870260780374
+  },
+  "oracle": {
+    "visited": 1716,
+    "distinct_pairs": 19,
+    "front": {
+      "1024,3/2": 12,
+      "768,1/3": 4
+    }
+  },
+  "tests": {
+    "exhaustive_oracle": "PASS",
+    "dense_rescore": "PASS"
+  },
+  "skpr": {
+    "verdict": "NOT_RUN",
+    "rows": null,
+    "det_M": null,
+    "alias_trace": null,
+    "D_efficiency": null,
+    "Psi": null,
+    "on_front": null,
+    "error": "unused argument (aliasmodel = ~(x1 + x2 + x3)^2) "
+  }
+}

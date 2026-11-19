@@ -60,3 +60,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w10-heldout](w10-heldout/) | Frozen H21–H23 and shared WLP/response-surface metrics; Refs #271 | current (W10 held-out H21–H23; no tuning) |
 | [w11-covext](w11-covext/) | W11 covariates Ext (#339): TorchOED MATCH exhaustive 2048/25; skpr NOT_RUN (`undefined columns selected`), R 4.6.1 / skpr 1.9.2 recorded on authorized retry; both cleanups confirmed. | current (W11 covariates Ext; reference NOT_RUN) |
 | [w11-aliasext](w11-aliasext/) | W11 alias Ext (#342): shared dense metric vs exact 1,716-multiset oracle | MATCH: skpr 1.9.2 and TorchOED both match exhaustive (det M, alias trace) = (768, 1/3); corrected aliaspower=2 (#349) |
+| [w12-structgpu](w12-structgpu/) | #362 | BLOCKED: authorized replacement allocation TIMEOUT, cleanup confirmed; six local CPU cases PASS; Colab CPU/GPU NOT_RUN |

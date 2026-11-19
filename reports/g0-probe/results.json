@@ -108,5 +108,230 @@
     "PASS": 0,
     "FAIL": 0,
     "NOT_RUN": 1
+  },
+  "retry_windows": [
+  {
+    "window": "2026-11-19 ~21:00 Europe/Zurich",
+    "source_sha": "3f0c6fd6a8ce7a561f7c18363e19f32a7505c072",
+    "status": "BLOCKED",
+    "attempts": [
+      {
+        "start_utc": "2026-11-19T19:56:50Z",
+        "controller": {
+          "status": "FAIL",
+          "error": "ALLOCATION_FAILED",
+          "source_sha": "3f0c6fd6a8ce7a561f7c18363e19f32a7505c072",
+          "run_id": "g0-385-2100-h100",
+          "created": false,
+          "cleanup_confirmed": true,
+          "commands": [
+            {
+              "operation": "usage",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "new",
+              "status": "FAIL",
+              "exit_code": 1
+            },
+            {
+              "operation": "stop",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "usage",
+              "status": "PASS",
+              "exit_code": 0
+            }
+          ],
+          "device_requested": "H100",
+          "device_observed": null,
+          "assignments_before": 0,
+          "assignments_after": 0,
+          "balance_before": 149.35,
+          "balance_after": 149.35,
+          "artifact_sha256": {},
+          "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+          "total_seconds": 25.946238784
+        }
+      },
+      {
+        "start_utc": "2026-11-19T19:57:18Z",
+        "controller": {
+          "status": "FAIL",
+          "error": "ALLOCATION_FAILED",
+          "source_sha": "3f0c6fd6a8ce7a561f7c18363e19f32a7505c072",
+          "run_id": "g0-385-2100-a100",
+          "created": false,
+          "cleanup_confirmed": true,
+          "commands": [
+            {
+              "operation": "usage",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "new",
+              "status": "FAIL",
+              "exit_code": 1
+            },
+            {
+              "operation": "stop",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "usage",
+              "status": "PASS",
+              "exit_code": 0
+            }
+          ],
+          "device_requested": "A100",
+          "device_observed": null,
+          "assignments_before": 0,
+          "assignments_after": 0,
+          "balance_before": 149.35,
+          "balance_after": 149.35,
+          "artifact_sha256": {},
+          "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+          "total_seconds": 57.508000605
+        }
+      },
+      {
+        "start_utc": "2026-11-19T19:58:16Z",
+        "controller": {
+          "status": "PASS",
+          "error": null,
+          "source_sha": "3f0c6fd6a8ce7a561f7c18363e19f32a7505c072",
+          "run_id": "g0-385-2100-l4",
+          "created": true,
+          "cleanup_confirmed": true,
+          "commands": [
+            {
+              "operation": "usage",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "new",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "exec",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "exec",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "download",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "stop",
+              "status": "PASS",
+              "exit_code": 0
+            },
+            {
+              "operation": "usage",
+              "status": "PASS",
+              "exit_code": 0
+            }
+          ],
+          "device_requested": "L4",
+          "device_observed": {
+            "nvidia_smi": [
+              {
+                "name": "NVIDIA L4",
+                "memory_total_mib": 23034,
+                "driver_version": "580.82.07"
+              }
+            ],
+            "torch": {
+              "status": "AVAILABLE",
+              "version": "2.14.1+cu130",
+              "cuda": "13.0",
+              "name": "NVIDIA L4",
+              "capability": [
+                8,
+                9
+              ]
+            }
+          },
+          "assignments_before": 0,
+          "assignments_after": 0,
+          "balance_before": 149.35,
+          "balance_after": 149.35,
+          "artifact_sha256": {
+            "g0-probe.json": "5d847207182616f3580f2df80bdf09ac7703e25f1bb63bd60ee1d70862f836e8"
+          },
+          "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+          "total_seconds": 48.106131453
+        }
+      }
+    ],
+    "science": {
+      "source_sha": "3f0c6fd6a8ce7a561f7c18363e19f32a7505c072",
+      "status": "PASS",
+      "rows": [],
+      "calls": [
+        {
+          "method": "cuda",
+          "warmup": true,
+          "exit_code": 1,
+          "stderr": "Traceback (most recent call last):\n  File \"/content/torchoed-g0/tools/bench_crossover.py\", line 14, in <module>\n    import bench_b0 as b\n  File \"/content/torchoed-g0/tools/bench_b0.py\", line 18, in <module>\n    import pydoe\nModuleNotFoundError: No module named 'pydoe'\n"
+        },
+        {
+          "method": "cpu",
+          "warmup": false,
+          "exit_code": 1,
+          "stderr": "Traceback (most recent call last):\n  File \"/content/torchoed-g0/tools/bench_crossover.py\", line 14, in <module>\n    import bench_b0 as b\n  File \"/content/torchoed-g0/tools/bench_b0.py\", line 18, in <module>\n    import pydoe\nModuleNotFoundError: No module named 'pydoe'\n"
+        },
+        {
+          "method": "cuda",
+          "warmup": false,
+          "exit_code": 1,
+          "stderr": "Traceback (most recent call last):\n  File \"/content/torchoed-g0/tools/bench_crossover.py\", line 14, in <module>\n    import bench_b0 as b\n  File \"/content/torchoed-g0/tools/bench_b0.py\", line 18, in <module>\n    import pydoe\nModuleNotFoundError: No module named 'pydoe'\n"
+        }
+      ],
+      "device_observed": {
+        "nvidia_smi": [
+          {
+            "name": "NVIDIA L4",
+            "memory_total_mib": 23034,
+            "driver_version": "580.82.07"
+          }
+        ],
+        "torch": {
+          "status": "AVAILABLE",
+          "version": "2.14.1+cu130",
+          "cuda": "13.0",
+          "name": "NVIDIA L4",
+          "capability": [
+            8,
+            9
+          ]
+        }
+      },
+      "scientific_status": "ERROR"
+    },
+    "artifact": {
+      "sha256": "5d847207182616f3580f2df80bdf09ac7703e25f1bb63bd60ee1d70862f836e8",
+      "size_bytes": 1404
+    },
+    "required_tests": {
+      "PASS": 0,
+      "FAIL": 0,
+      "NOT_RUN": 1
+    },
+    "logdet_agreement": "NOT_RUN"
   }
+]
 }

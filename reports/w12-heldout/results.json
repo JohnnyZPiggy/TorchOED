@@ -1,0 +1,135 @@
+{
+  "source_sha": "949bae4ae9070e6c663c178151d076b17dd5c4b0",
+  "python": "3.14.6",
+  "torch": "2.15.0+cpu",
+  "device": "CPU",
+  "dtype": "float64",
+  "threads": 1,
+  "seed": 0,
+  "restarts": 10,
+  "H30_mapping": "8*i+k",
+  "H32_mapping": "3*i+k",
+  "H30": {
+    "ids": [
+      6,
+      48,
+      13,
+      20,
+      24,
+      32,
+      40,
+      54
+    ],
+    "reference_multisets": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6
+      ]
+    ],
+    "visited": 3003,
+    "singular": 2996,
+    "torch_exact": "1797/2",
+    "reference_exact": "1797/2",
+    "torch_value": 898.5,
+    "reference_value": 898.5,
+    "delta": 0.0,
+    "verdict": "MATCH",
+    "torch_floor": 0.6162551440329218,
+    "reference_floor": 0.6162551440329218
+  },
+  "H31": {
+    "torch": {
+      "orthogonal": true,
+      "J3": {
+        "4": 2574,
+        "12": 351
+      },
+      "triples": 2925
+    },
+    "reference": {
+      "orthogonal": true,
+      "J3": {
+        "4": 2574,
+        "12": 351
+      },
+      "triples": 2925
+    },
+    "verdict": "MATCH"
+  },
+  "H32": {
+    "ids": [
+      6,
+      10,
+      21,
+      26,
+      4,
+      17,
+      19,
+      24,
+      0,
+      7,
+      13,
+      18
+    ],
+    "torch": {
+      "logdet": 7.640123172695363,
+      "value": 3.5728152202037835
+    },
+    "torch_floor": 0.9140932828990237,
+    "reference": {
+      "logdet": 7.639642287858012,
+      "value": 3.5725288795676673
+    },
+    "verdict": "NO MATCH",
+    "reference_floor": 0.9140053724066399,
+    "reference_ids": [
+      3,
+      9,
+      18,
+      24,
+      0,
+      6,
+      15,
+      21,
+      1,
+      7,
+      12,
+      19
+    ],
+    "delta": 0.0002863406361162113
+  },
+  "checks": {
+    "H30": "PASS",
+    "H31_torch": "PASS",
+    "H31_reference": "PASS",
+    "H32_torch": "PASS",
+    "H32_reference": "PASS"
+  },
+  "R_workflow": {
+    "run_id": 44536661878,
+    "url": "https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44536661878",
+    "source_sha": "4b5324bdfa43c2630c00cd4993e71bd73759be61",
+    "R_version": "R version 4.5.2 (2025-10-31)",
+    "versions": {
+      "FrF2": "2.3-5",
+      "DoE.base": "1.2-5",
+      "AlgDesign": "1.2.1.2"
+    },
+    "wall_seconds": 0.5854
+  },
+  "R_workflow_failure": {
+    "run_id": 44518822770,
+    "conclusion": "failure",
+    "url": "https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44518822770",
+    "source_sha": "949bae4ae9070e6c663c178151d076b17dd5c4b0",
+    "error": "Error: as.character(packageVersion(pins$package[i])) == pins$version[i] is not TRUE",
+    "artifact": "NOT_RUN: reference/runtime step skipped; no artifact produced",
+    "versions": "NOT_RUN: sessionInfo.txt and runtime.json were not produced"
+  }
+}

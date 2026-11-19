@@ -810,3 +810,24 @@ Pseudo-component or L-pseudo-component transforms, Cox-direction or Piepel-direc
 ## 82. Not in this section
 
 A separate public certificate function, designs with repeated candidate rows, changes to any floor's formula or iteration limits, GPU.
+
+## 83. Space-filling Latin hypercubes: maximin and MaxPro by batched column swaps (W13 F1)
+
+Design `X` is an `n × k` Latin hypercube on midpoint levels: every column is a permutation of `(r + 1/2)/n`, `r = 0 … n − 1`. For rows `i ≠ j` let `S_ijl = (x_il − x_jl)²`, `D_ij = Σ_l S_ijl` and `L_ij = Σ_l log S_ijl`.
+
+- **(83.1) PROVED.** `S_ijl > 0` for all `i ≠ j` and every `l`, because each column is a permutation; hence `L_ij` is finite.
+- **(83.2) PROVED (swap update).** Swapping the entries of rows `a` and `b` in column `l` keeps the Latin property. For `j ∉ {a, b}`: `D'_aj = D_aj − (x_al − x_jl)² + (x_bl − x_jl)²`, `D'_bj = D_bj − (x_bl − x_jl)² + (x_al − x_jl)²`, and the same with `log` for `L`. `D'_ab = D_ab`, `L'_ab = L_ab`; all other entries are unchanged.
+- **(83.3) Objectives (minimised).** `maximin`: Morris–Mitchell `φ_p(X) = (Σ_{i<j} D_ij^{−p/2})^{1/p}` with `p = 15`. `maxpro`: Joseph–Gul–Ba `ψ(X) = (C(n,2)⁻¹ Σ_{i<j} exp(−L_ij))^{1/k}`. PROVED: for `p > 0` and `k ≥ 1`, minimising `Σ D_ij^{−p/2}` (resp. `Σ exp(−L_ij)`) orders designs exactly as `φ_p` (resp. `ψ`), so the search uses the sums.
+- **(83.4) PROVED (cost).** With `D` (or `L`) cached, one swap changes `2(n − 2)` entries, so its objective change costs `O(n)`; all `C(n, 2)` swaps of one column cost `O(n³)` in one batched tensor evaluation, versus `O(n² k)` per swap from scratch.
+- **(83.5) Search.** Per restart: one random midpoint LHS from the supplied generator; then repeat steepest descent — evaluate all swaps of all columns, apply the best strictly improving one, update `D`/`L` by (83.2) — until no swap improves or `max_iter` swaps are applied. Restarts run independently; the lowest objective wins (first on ties).
+- **(83.6) Oracles.** Batched swap deltas equal a dense recompute (float64, 1e-12 relative). Exhaustive enumeration over all permutations of columns 2…k on small `n` gives the exact optimum.
+
+Independent math review (Architect loop, fresh reviewer, 2026-11-19): PASS — 300 exact `Fraction` cases, n 4–8, k 2–4; the reviewer asked that (83.3) state `p > 0`, which it does.
+
+## 84. API decision: `lhs(n, k, *, mode="random" | "maximin" | "maxpro", restarts=10, max_iter=None, generator=None, …)`
+
+`mode="random"` is unchanged and bit-identical for every seed. The new modes return midpoint designs (no jitter) as a tensor like `"random"`. `max_iter=None` means no swap limit beyond convergence. No new public function.
+
+## 85. Not in this section
+
+Uniform designs and CD2 (W13 F2), constrained regions (W13 F3), sliced or nested LHS, simulated annealing, GPU timing claims.

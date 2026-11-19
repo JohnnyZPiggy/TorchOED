@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add midpoint maximin and MaxPro `lhs` modes with batched column swaps, restarts and optional iteration limit.
+
 Docs: add benchmarks and validation page.
 Docs: new README and Material-themed documentation site.
 

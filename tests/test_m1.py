@@ -111,7 +111,7 @@ def test_L4_invalid():
     for n, k in ((0, 2), (-1, 2), (2, 0), (True, 2), (2.5, 2)):
         with pytest.raises(ValueError):
             lhs(n, k)
-    for mode in ('maximin', 'centered', 'OA', 'sliced'):
+    for mode in ('centered', 'OA', 'sliced'):
         with pytest.raises(ValueError):
             lhs(5, 3, mode=mode)
     with pytest.raises(TypeError):

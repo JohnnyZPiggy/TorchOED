@@ -1,68 +1,116 @@
+<div align="center">
+
 # TorchOED
 
-[![CPU CI](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml/badge.svg)](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml)
+**Optimal experimental design in PyTorch — with a certificate on every design.**
 
-Beta 0.5.0, experimental API. PyTorch-native design of experiments with
-`d_optimal_design` as the one-call entry point from model features to a design.
-CPU acceptance only, not a stable API or general PyDOE replacement.
-Python >=3.11; runtime dependency: torch>=2.2 only.
-Tested on Linux, Windows and macOS; minimum tested PyTorch: 2.2.0.
-[Documentation](https://johnnyzpiggy.github.io/TorchOED/).
+[![CI](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml/badge.svg)](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-online-blue)](https://johnnyzpiggy.github.io/TorchOED/)
+[![TestPyPI](https://img.shields.io/badge/TestPyPI-0.8.0-orange)](https://test.pypi.org/project/torchoed/)
+![Python](https://img.shields.io/badge/python-%E2%89%A53.11-blue)
+![PyTorch](https://img.shields.io/badge/PyTorch-%E2%89%A52.2-ee4c2c)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-```powershell
-python -m pip install -e .
-python examples/cpu_quickstart.py
+[Documentation](https://johnnyzpiggy.github.io/TorchOED/) ·
+[Industrial guide](https://johnnyzpiggy.github.io/TorchOED/industrial/) ·
+[Coming from PyDOE](https://johnnyzpiggy.github.io/TorchOED/pydoe/) ·
+[Capability matrix](docs/CAPABILITY_MATRIX.md) ·
+[Roadmap](docs/VISION.md)
+
+</div>
+
+TorchOED chooses which experiments to run. It covers classical and industrial design of experiments — D-, A- and I-optimal designs, blocking, split-plot, mixtures, screening and response-surface designs, power and diagnostics — in one tensor API, and it plugs into any PyTorch model.
+
+## Why TorchOED
+
+| | |
+|---|---|
+| 🎓 **Certified designs** | Every optimal design comes with a **proved lower bound on its efficiency** (equivalence-theorem duality): you know how far it can be from the best possible design. You can also certify a design produced elsewhere. |
+| 🏭 **Industrial DOE, in Python** | Blocking, split-plot / hard-to-change factors, mixtures and mixture-process designs, covariates, fractional factorials with aliasing, Plackett–Burman, central composite, Box–Behnken, definitive screening, power analysis and design diagnostics. |
+| 🔥 **Any PyTorch model** | `jacobian_features(model, X)` turns a nonlinear model or a neural network into a locally optimal design through autograd; `next_batch` proposes the next experiments in an ask/tell loop. |
+| ⚡ **GPU scale** | The exchange search runs on GPU: on 10⁵ candidates in 5 factors it finished in about 3 minutes while PyDOE timed out (see [Benchmarks](#benchmarks)). |
+
+Runtime dependency: `torch>=2.2` only. Python ≥ 3.11. Tested on Linux, Windows and macOS.
+
+## Install
+
+```sh
+# Pre-release from TestPyPI
+pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple torchoed==0.8.0
+
+# or from source
+git clone https://github.com/JohnnyZPiggy/TorchOED.git
+pip install -e TorchOED
 ```
+
+## Quick start
+
+A D-optimal 7-run design for a full quadratic model in two factors, with its efficiency certificate:
 
 ```python
 import torch
-from torchoed import d_optimal_design
-F = torch.tensor([[1., -1.], [1., 0.], [1., 1.], [1., 2.]], dtype=torch.float64)
-result = d_optimal_design(F, 2, generator=torch.Generator().manual_seed(0))
-print(result["ids"].tolist(), result["objective"], result["stop_reason"])
+from torchoed import full_factorial, polynomial_features, optimal_design
+
+C = full_factorial((3, 3)).double() - 1          # 3×3 grid of candidate settings
+F = polynomial_features(C, 2)                     # full quadratic model
+result = optimal_design(F, 7, criterion="D",
+                        generator=torch.Generator().manual_seed(0))
+print(result["ids"].tolist())                     # chosen candidate rows
+print(result["efficiency_lower_bound"])           # proved lower bound on D-efficiency
 ```
 
-See [API contract](docs/MILESTONE_API_HISTORY.md), [91-export coverage](docs/ALGORITHM_COVERAGE.md), [M1 evidence](reports/m1/ENGINEER_HANDOFF.md), and [SAE entrypoint](.sae/README.md).
+Switch `criterion` to `"A"` or `"I"`, add `fixed_ids=` to augment runs you have already done, or restrict the candidates with `feasible_candidates` for constraints.
 
-Historical M0 evidence remains under reports/m0 at its original tested commit; its hashes describe that historical snapshot, not current M1 sources. Runtime dependency is torch only; PyDOE is not installed or called by the M1 package/tests.
-
-M2-A: see [API and numerical boundaries](docs/MILESTONE_API_HISTORY.md) and [acceptance evidence](reports/m2a/ENGINEER_HANDOFF.md).
+### Blocks and split-plots
 
 ```python
 import torch
-from torchoed import exact_information, d_optimality
-F = torch.tensor([[1.,-1.],[1.,0.],[1.,1.]], dtype=torch.float64)
-M = exact_information(F, torch.tensor([0,2]))  # diag(2,2), raw event count
-score = d_optimality(M)  # log(4), maximize; singular inputs raise
+from torchoed import full_factorial, optimal_design, polynomial_features
+
+C = full_factorial((3, 3)).double() - 1
+F = polynomial_features(C, 2, include_bias=False)   # blocks absorb the intercept
+result = optimal_design(F, 8, blocks=[4, 4],         # two days of four runs
+                        generator=torch.Generator().manual_seed(0))
+print(result["ids"].tolist())
 ```
 
-M2-B adds `c_optimality(M, c)`; see [API and SPD-only boundaries](docs/MILESTONE_API_HISTORY.md) and [acceptance evidence](reports/m2b/ENGINEER_HANDOFF.md).
+Split-plot designs use `whole_plots=`, `hard=` and `eta=`; see the [industrial guide](https://johnnyzpiggy.github.io/TorchOED/industrial/) for split-plot, mixture, screening and power examples.
 
-M3-A adds `fedorov_exchange(F, ids)` for provided-initial-ID CPUfloat64 best-improvement 1-swap search. [API/error/certificate policy](docs/MILESTONE_API_HISTORY.md), [CPU evidence](reports/m3a/ENGINEER_HANDOFF.md). Numerical 1-swap stopping is not global optimality or a rigorous certificate. No initializer, repeats or GPU acceptance.
+## What's inside
 
-M3-B1 adds `score_two_swaps(F, ids)` for all legal simultaneous k=2 exchange scores and validity diagnostics. It does not select/apply a swap or search. [API/schema](docs/MILESTONE_API_HISTORY.md), [CPU exact-oracle evidence](reports/m3b1/ENGINEER_HANDOFF.md).
+| Area | Functions |
+|---|---|
+| Optimal designs | `optimal_design` (D, A, I, compound and alias-penalised; blocks, whole plots, covariates, augmentation), `next_batch` |
+| Classical constructors | `full_factorial`, `ff2n`, `fractional_factorial`, `fold_over`, `plackett_burman`, `central_composite`, `box_behnken`, `definitive_screening`, `lhs`, `sobol` |
+| Mixtures | `simplex_lattice`, `simplex_centroid`, `mixture_vertices`, `scheffe_features`, `mixture_process_features` |
+| Models and features | `polynomial_features`, `effects_coding`, `feasible_candidates`, `jacobian_features` |
+| Evaluation | `design_diagnostics` (correlation, VIF, prediction variance, power), `word_length_pattern`, D/A/E/c/G/V/I criteria |
 
-M3-B2 adds `k2_exchange(F, ids)` for deterministic CPU float64 1-/2-swap VND; see [API and numerical locality policy](docs/MILESTONE_API_HISTORY.md).
+The live status of every capability — criteria, augmentation, certificates, diagnostics, GPU and external references — is tracked in the [capability matrix](docs/CAPABILITY_MATRIX.md).
 
-M3-C adds `d_optimal_design(F, n)` for seeded feasible starts and D-optimal VND restarts; see [API and reproducibility](docs/MILESTONE_API_HISTORY.md).
+## Benchmarks
 
-Both M3 APIs require finite CPU float64 model features, unique CPU int64 IDs
-and an initially numerically SPD Gram matrix. Check two-swap statuses before
-using gains: invalid/inconclusive rows carry undefined NaN gain sentinels.
-Integer factorial indices must be explicitly converted/coded before features.
-Degree-2 features on two-level corners can be rank deficient; D/A criteria
-reject numerical singularity rather than adding a ridge. E accepts numerical
-PSD matrices. See contracts for batch, normalization and dtype policies.
-`max_elements` is not a bound on native backend peak memory.
+**Scale vs PyDOE 1.6.0** (D-optimal, full quadratic, random candidates; one Colab host with a Tesla T4; seconds per restart; [full report](reports/w5-crossover/run2-summary.md)):
 
-The [tiny runnable CPU example](examples/cpu_quickstart.py) uses existing APIs
-only. Installation is from this source checkout, not a published release;
-build requirements include setuptools >=77. If build requirements are already
-installed, `--no-build-isolation` can be added. The recorded full regression
-result is 65 passing Windows CPU tests at the source SHA in M3-B1 evidence;
-historical manifests describe their own snapshots, not later documentation.
+| factors | candidates | PyDOE (fastest of 3) | TorchOED CPU | TorchOED GPU |
+|---|---|---|---|---|
+| 3 | 10³ | 4.5 s | **0.7 s** | 1.0 s |
+| 5 | 10³ | 7.3 s | **0.8 s** | 1.7 s |
+| 5 | 10⁴ | 199 s | 41 s | **9.2 s** |
+| 5 | 10⁵ | timeout (> 30 min) | timeout | **188 s** |
 
-No verified CUDA/TPU support, acceleration claim, full PyDOE parity,
-Modified Fedorov or DETMAX.
-M5-A improves usability only. See [release readiness](docs/RELEASE_READINESS.md)
-and the [MIT license](LICENSE).
+Where both finished, TorchOED's design was as good or better (higher log-determinant) in 4 of 5 cells; at 3 factors and 10⁵ candidates it was 0.02 lower than PyDOE's `fedorov` (21.75 vs 21.77), reported as measured. Each TorchOED design also carries a certified efficiency floor of about 0.97.
+
+**Against R** (re-scored with one shared metric): FrF2 fractional-factorial catalogue 22/22 and Plackett–Burman 3/3 identical; all rsm central-composite and Box–Behnken references matched; a blocked response-surface case reached a higher D-criterion than AlgDesign `optBlock` (log det 18.03 vs 16.78); the skpr split-plot documentation example matched exactly. Every external run records its exact R and package versions; references that could not be run are reported as such. See [`reports/`](reports/README.md).
+
+## How it is built
+
+TorchOED is developed by one PhD researcher with an AI agent team: an architect agent writes the mathematical gate documents and reviews every pull request at an exact commit, and an engineer agent implements, tests and benchmarks. Every merge needs green CI on Linux, Windows and macOS; every new identity is checked against exact rational or exhaustive oracles; frozen held-out cases are run once a week and reported as-is. The process and its records are public in the Issues and pull requests.
+
+## Status and roadmap
+
+Pre-1.0 (0.8.0 on TestPyPI): the API may still change. Next: space-filling designs, Bayesian I/D designs, power by simulation for GLMs, then analysis (least squares and REML) with a lightweight TorchOED Studio app, Bayesian and minimax designs on GPU, and 1.0 on PyPI. See the [roadmap](docs/VISION.md).
+
+## License
+
+[MIT](LICENSE)

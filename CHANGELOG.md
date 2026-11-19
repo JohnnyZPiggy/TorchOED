@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+Docs: new README and Material-themed documentation site.
+
 ## [0.8.0] — 2026-11-19
 
 ### Added

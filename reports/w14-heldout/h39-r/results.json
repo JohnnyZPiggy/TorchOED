@@ -1,0 +1,16 @@
+{
+  "torchoed": {
+    "min_distance": 0.3132072073220248,
+    "maxpro": 23.66830193247027
+  },
+  "reference": {
+    "maxpro": 161.16186182546042,
+    "min_distance": 0.30874959963088977
+  },
+  "verdict": "MATCH or TorchOED better",
+  "delta": -137.49355989299016,
+  "run_id": "44730389070",
+  "source_sha": "2bc5f5907806a0e1c743dcc88326bafeaa664c4d",
+  "R_version": "R version 4.5.2 (2025-10-31)",
+  "support": "0.1.7"
+}

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Support fixed-run augmentation for split-split-plot and strip-plot D/A/I designs (#488).
+
 - Add strip-plot GLS diagnostics and crossed containment power (§117–§118).
 
 - Add nested split-split-plot GLS diagnostics and containment power (§114–§115).

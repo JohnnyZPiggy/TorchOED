@@ -1,0 +1,374 @@
+{
+  "run_id": "44748014062",
+  "source_sha": "eeab2fc114ebcc5331c9deffbb5f868ec1136ce5",
+  "R": "R version 4.5.2 (2025-10-31)",
+  "skpr": "1.9.2",
+  "cases": {
+    "G1": {
+      "status": "RECORDED",
+      "call": "eval_design_mc(design, model, alpha = 0.05, nsim = 10000, glmfamily = \"binomial\", \n    anticoef = c(0, 0.5, 1, 0), firth = FALSE, parallel = FALSE)",
+      "nsim": 10000,
+      "power": [
+        {
+          "parameter": "(Intercept)",
+          "type": "effect.power.mc",
+          "power": 0.0363
+        },
+        {
+          "parameter": "X1",
+          "type": "effect.power.mc",
+          "power": 0.1769
+        },
+        {
+          "parameter": "X2",
+          "type": "effect.power.mc",
+          "power": 0.693
+        },
+        {
+          "parameter": "X3",
+          "type": "effect.power.mc",
+          "power": 0.0382
+        },
+        {
+          "parameter": "(Intercept)",
+          "type": "parameter.power.mc",
+          "power": 0.0363,
+          "MC_SE": 0.0018703558484951465,
+          "asymptotic_approximation": 0.050000000000000044
+        },
+        {
+          "parameter": "X1",
+          "type": "parameter.power.mc",
+          "power": 0.1769,
+          "MC_SE": 0.003815840536500445,
+          "asymptotic_approximation": 0.22687552991466892
+        },
+        {
+          "parameter": "X2",
+          "type": "parameter.power.mc",
+          "power": 0.693,
+          "MC_SE": 0.004612493902434994,
+          "asymptotic_approximation": 0.6759967430983156
+        },
+        {
+          "parameter": "X3",
+          "type": "parameter.power.mc",
+          "power": 0.0382,
+          "MC_SE": 0.0019167879381924333,
+          "asymptotic_approximation": 0.050000000000000044
+        }
+      ],
+      "attribute_names": [
+        "names",
+        "class",
+        "row.names",
+        "model_matrix",
+        "anticoef",
+        "z.matrix.list",
+        "correlation.matrix",
+        "variance.matrix",
+        "I",
+        "D",
+        "generating_model",
+        "runmatrix",
+        "estimates",
+        "pvals",
+        "effect_pvals",
+        "stderrors",
+        "fisheriterations",
+        "alpha",
+        "blocking",
+        "varianceratios",
+        "contrast_string",
+        "parameter_analysis_method_string",
+        "effect_analysis_method_string",
+        "model_matrix_cor"
+      ],
+      "attributes": {
+        "anticoef": [
+          0,
+          0.5,
+          1,
+          0
+        ],
+        "alpha": 0.05
+      },
+      "parameter_power": [
+        {
+          "parameter": "(Intercept)",
+          "type": "parameter.power.mc",
+          "power": 0.0363,
+          "MC_SE": 0.0018703558484951465,
+          "asymptotic_approximation": 0.050000000000000044
+        },
+        {
+          "parameter": "X1",
+          "type": "parameter.power.mc",
+          "power": 0.1769,
+          "MC_SE": 0.003815840536500445,
+          "asymptotic_approximation": 0.22687552991466892
+        },
+        {
+          "parameter": "X2",
+          "type": "parameter.power.mc",
+          "power": 0.693,
+          "MC_SE": 0.004612493902434994,
+          "asymptotic_approximation": 0.6759967430983156
+        },
+        {
+          "parameter": "X3",
+          "type": "parameter.power.mc",
+          "power": 0.0382,
+          "MC_SE": 0.0019167879381924333,
+          "asymptotic_approximation": 0.050000000000000044
+        }
+      ]
+    },
+    "G2": {
+      "status": "RECORDED",
+      "call": "eval_design_mc(design, model, alpha = 0.05, nsim = 10000, glmfamily = \"poisson\", \n    anticoef = c(1, 0.25, 0.5, 0), firth = FALSE, parallel = FALSE)",
+      "nsim": 10000,
+      "power": [
+        {
+          "parameter": "(Intercept)",
+          "type": "effect.power.mc",
+          "power": 0.9925
+        },
+        {
+          "parameter": "X1",
+          "type": "effect.power.mc",
+          "power": 0.4019
+        },
+        {
+          "parameter": "X2",
+          "type": "effect.power.mc",
+          "power": 0.9172
+        },
+        {
+          "parameter": "X3",
+          "type": "effect.power.mc",
+          "power": 0.045
+        },
+        {
+          "parameter": "(Intercept)",
+          "type": "parameter.power.mc",
+          "power": 0.9925,
+          "MC_SE": 0.0008627716963368671,
+          "asymptotic_approximation": 0.9999863414668161
+        },
+        {
+          "parameter": "X1",
+          "type": "parameter.power.mc",
+          "power": 0.4019,
+          "MC_SE": 0.004902819494943701,
+          "asymptotic_approximation": 0.40680850089095927
+        },
+        {
+          "parameter": "X2",
+          "type": "parameter.power.mc",
+          "power": 0.9172,
+          "MC_SE": 0.002755796799475607,
+          "asymptotic_approximation": 0.8836962447616046
+        },
+        {
+          "parameter": "X3",
+          "type": "parameter.power.mc",
+          "power": 0.045,
+          "MC_SE": 0.002073041244162788,
+          "asymptotic_approximation": 0.050000000000000044
+        }
+      ],
+      "attribute_names": [
+        "names",
+        "class",
+        "row.names",
+        "model_matrix",
+        "anticoef",
+        "z.matrix.list",
+        "correlation.matrix",
+        "variance.matrix",
+        "I",
+        "D",
+        "generating_model",
+        "runmatrix",
+        "estimates",
+        "pvals",
+        "effect_pvals",
+        "stderrors",
+        "fisheriterations",
+        "alpha",
+        "blocking",
+        "varianceratios",
+        "contrast_string",
+        "parameter_analysis_method_string",
+        "effect_analysis_method_string",
+        "model_matrix_cor"
+      ],
+      "attributes": {
+        "anticoef": [
+          1,
+          0.25,
+          0.5,
+          0
+        ],
+        "alpha": 0.05
+      },
+      "parameter_power": [
+        {
+          "parameter": "(Intercept)",
+          "type": "parameter.power.mc",
+          "power": 0.9925,
+          "MC_SE": 0.0008627716963368671,
+          "asymptotic_approximation": 0.9999863414668161
+        },
+        {
+          "parameter": "X1",
+          "type": "parameter.power.mc",
+          "power": 0.4019,
+          "MC_SE": 0.004902819494943701,
+          "asymptotic_approximation": 0.40680850089095927
+        },
+        {
+          "parameter": "X2",
+          "type": "parameter.power.mc",
+          "power": 0.9172,
+          "MC_SE": 0.002755796799475607,
+          "asymptotic_approximation": 0.8836962447616046
+        },
+        {
+          "parameter": "X3",
+          "type": "parameter.power.mc",
+          "power": 0.045,
+          "MC_SE": 0.002073041244162788,
+          "asymptotic_approximation": 0.050000000000000044
+        }
+      ]
+    },
+    "G3": {
+      "status": "RECORDED",
+      "call": "eval_design_mc(design, model, alpha = 0.05, nsim = 10000, glmfamily = \"binomial\", \n    anticoef = c(0.5, 1, 0.5, 0.25), firth = FALSE, parallel = FALSE)",
+      "nsim": 10000,
+      "power": [
+        {
+          "parameter": "(Intercept)",
+          "type": "effect.power.mc",
+          "power": 0.0167
+        },
+        {
+          "parameter": "X1",
+          "type": "effect.power.mc",
+          "power": 0.1227
+        },
+        {
+          "parameter": "X2",
+          "type": "effect.power.mc",
+          "power": 0.0185
+        },
+        {
+          "parameter": "X1:X2",
+          "type": "effect.power.mc",
+          "power": 0.0052
+        },
+        {
+          "parameter": "(Intercept)",
+          "type": "parameter.power.mc",
+          "power": 0.0167,
+          "MC_SE": 0.0012814487894566838,
+          "asymptotic_approximation": 0.16593136845172624
+        },
+        {
+          "parameter": "X1",
+          "type": "parameter.power.mc",
+          "power": 0.1227,
+          "MC_SE": 0.0032809253267942567,
+          "asymptotic_approximation": 0.5024921631885342
+        },
+        {
+          "parameter": "X2",
+          "type": "parameter.power.mc",
+          "power": 0.0185,
+          "MC_SE": 0.0013475069573104252,
+          "asymptotic_approximation": 0.16593136845172624
+        },
+        {
+          "parameter": "X1:X2",
+          "type": "parameter.power.mc",
+          "power": 0.0052,
+          "MC_SE": 0.0007192329247191065,
+          "asymptotic_approximation": 0.07810591553029234
+        }
+      ],
+      "attribute_names": [
+        "names",
+        "class",
+        "row.names",
+        "model_matrix",
+        "anticoef",
+        "z.matrix.list",
+        "correlation.matrix",
+        "variance.matrix",
+        "I",
+        "D",
+        "generating_model",
+        "runmatrix",
+        "estimates",
+        "pvals",
+        "effect_pvals",
+        "stderrors",
+        "fisheriterations",
+        "alpha",
+        "blocking",
+        "varianceratios",
+        "contrast_string",
+        "parameter_analysis_method_string",
+        "effect_analysis_method_string",
+        "model_matrix_cor"
+      ],
+      "attributes": {
+        "anticoef": [
+          0.5,
+          1,
+          0.5,
+          0.25
+        ],
+        "alpha": 0.05
+      },
+      "parameter_power": [
+        {
+          "parameter": "(Intercept)",
+          "type": "parameter.power.mc",
+          "power": 0.0167,
+          "MC_SE": 0.0012814487894566838,
+          "asymptotic_approximation": 0.16593136845172624
+        },
+        {
+          "parameter": "X1",
+          "type": "parameter.power.mc",
+          "power": 0.1227,
+          "MC_SE": 0.0032809253267942567,
+          "asymptotic_approximation": 0.5024921631885342
+        },
+        {
+          "parameter": "X2",
+          "type": "parameter.power.mc",
+          "power": 0.0185,
+          "MC_SE": 0.0013475069573104252,
+          "asymptotic_approximation": 0.16593136845172624
+        },
+        {
+          "parameter": "X1:X2",
+          "type": "parameter.power.mc",
+          "power": 0.0052,
+          "MC_SE": 0.0007192329247191065,
+          "asymptotic_approximation": 0.07810591553029234
+        }
+      ]
+    },
+    "RD1": {
+      "status": "NOT_RUN",
+      "error": "should not be called with handlers on the stack",
+      "expression_not_executed": "eval_design_mc(designbinom, ~a + b, alpha = 0.2, nsim = 100, effectsize = c(0.7, 0.9),\n              glmfamily = \"binomial\")",
+      "expression_source": "https://github.com/cran/skpr/blob/699cf957261814894e3e7f59918a777661f6bf2f/man/eval_design_mc.Rd"
+    }
+  }
+}

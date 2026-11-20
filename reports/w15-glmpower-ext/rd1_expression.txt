@@ -1,0 +1,2 @@
+eval_design_mc(designbinom, ~a + b, alpha = 0.2, nsim = 100, effectsize = c(0.7, 0.9),
+              glmfamily = "binomial")

@@ -1082,6 +1082,9 @@ def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, genera
         subplot_hard = (subplot_hard.to(torch.int64) ^ -(1 << 63)
                         if subplot_hard.dtype == getattr(torch, "uint64", None) else subplot_hard.to(torch.int64))
         groups = torch.arange(n).split(subplots)
+        fixed_subs = fixed.tensor_split(torch.tensor(subplots).cumsum(0)[:-1]) if n_fixed else ()
+        if any(subplot_hard[prefix].unique().numel() > 1 for prefix in fixed_subs):
+            raise ValueError("fixed_ids within a subplot must share one subplot_hard label")
         whole = torch.repeat_interleave(torch.arange(len(sizes)), torch.tensor(sizes))
         owner = torch.tensor([whole[g[0]] for g in groups])
         c = eta_sub / (1 + eta_sub * F.new_tensor(subplots))
@@ -1092,16 +1095,21 @@ def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, genera
             return _nested_information(F, ids, groups, owner, a, c, d)
         def draw():
             ids, used = [], torch.zeros(m, dtype=torch.bool)
+            if n_fixed: used[fixed] = True
             for k in range(len(sizes)):
-                h = labels[torch.randint(len(labels), (1,), generator=generator).item()]
+                h = hard[fixed_plots[k][0]] if n_fixed and len(fixed_plots[k]) else labels[torch.randint(len(labels), (1,), generator=generator).item()]
                 U = subplot_hard[hard == h].unique()
                 for j in (owner == k).nonzero().flatten().tolist():
-                    u = U[torch.randint(len(U), (1,), generator=generator).item()]
+                    prefix = fixed_subs[j] if n_fixed else torch.empty(0, dtype=torch.long)
+                    if len(prefix) == subplots[j]:
+                        ids.append(prefix); continue
+                    u = subplot_hard[prefix[0]] if len(prefix) else U[torch.randint(len(U), (1,), generator=generator).item()]
                     pool = ((hard == h) & (subplot_hard == u) & ~used).nonzero().flatten()
-                    if len(pool) < subplots[j]: return None
-                    chosen = pool[torch.randperm(len(pool), generator=generator)[:subplots[j]]]
+                    count = subplots[j] - len(prefix)
+                    if len(pool) < count: return None
+                    chosen = pool[torch.randperm(len(pool), generator=generator)[:count]]
                     used[chosen] = True
-                    ids.append(chosen)
+                    ids.append(torch.cat((prefix, chosen)))
             return torch.cat(ids)
         def state(ids, summaries, L):
             sums, totals = summaries
@@ -1123,18 +1131,20 @@ def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, genera
             cached = state(ids, summaries, L)
             for j, g in enumerate(groups):
                 pool = (unused & (hard == hard[ids[g[0]]]) & (subplot_hard == subplot_hard[ids[g[0]]])).nonzero().flatten()
-                for pos in g.tolist():
+                for pos in g[g >= n_fixed].tolist():
                     gains, ratios = scores(ids, cached, pos, pool, j)
                     for candidate in pool[(ratios > 0) & (gains > 0) if B is not None else ratios > 0].tolist():
                         trial = ids.clone(); trial[pos] = candidate
                         yield trial
             proposals = []
             for j, g in enumerate(groups):
+                if g[0] < n_fixed: continue
                 h, u = hard[ids[g[0]]], subplot_hard[ids[g[0]]]
                 for label in subplot_hard[hard == h].unique():
                     pool = unused & (hard == h) & (subplot_hard == label)
                     if label != u and pool.sum() >= len(g): proposals.append((g, h, label))
             for k, g in enumerate(torch.arange(n).split(sizes)):
+                if g[0] < n_fixed: continue
                 for label in labels:
                     if label != hard[ids[g[0]]]: proposals.append((g, label, None))
             for group, h, u in proposals:
@@ -1198,7 +1208,7 @@ def _strip_information(F, ids, strip, ar, ac, b):
     return rows.T@rows-ar*(R.T@R)-ac*(C.T@C)+b*torch.outer(T, T), (R, C, T)
 
 
-def _strip_design(F, n, strip, hard, col_hard, eta_row, eta_col, criterion, restarts, generator, max_iter, max_elements):
+def _strip_design(F, n, strip, hard, col_hard, eta_row, eta_col, criterion, restarts, generator, max_iter, max_elements, fixed_ids=None):
     _features(F, max_elements)
     m, p = F.shape
     if (F.dtype != torch.float64 or F.device.type != "cpu" or type(n) is not int
@@ -1217,6 +1227,12 @@ def _strip_design(F, n, strip, hard, col_hard, eta_row, eta_col, criterion, rest
     hard, col_hard = [x.to(torch.int64) ^ -(1 << 63) if x.dtype == getattr(torch, "uint64", None)
                       else x.to(torch.int64) for x in (hard, col_hard)]
     r, c = strip
+    fixed, _ = (None, None) if fixed_ids is None else _fixed_pool(fixed_ids, m, n)
+    n_fixed = 0 if fixed is None else len(fixed)
+    grid = torch.arange(n).reshape(r, c)
+    for groups, labels in ((grid, hard), (grid.T, col_hard)):
+        if n_fixed and any(labels[fixed[g[g < n_fixed]]].unique().numel() > 1 for g in groups):
+            raise ValueError("fixed_ids within a strip unit must share one label")
     H, G = hard.unique(), col_hard.unique()
     ar, ac = eta_row/(1+eta_row*c), eta_col/(1+eta_col*r)
     b = (1-1/(1+eta_row*c)-1/(1+eta_col*r)+1/(1+eta_row*c+eta_col*r))/n
@@ -1225,11 +1241,14 @@ def _strip_design(F, n, strip, hard, col_hard, eta_row, eta_col, criterion, rest
     def information(ids):
         return _strip_information(F, ids, strip, ar, ac, b)
     def draw():
-        hs = [H[torch.randint(len(H), (1,), generator=generator).item()] for _ in range(r)]
-        gs = [G[torch.randint(len(G), (1,), generator=generator).item()] for _ in range(c)]
+        hs = [hard[fixed[i*c]] if i*c < n_fixed else H[torch.randint(len(H), (1,), generator=generator).item()] for i in range(r)]
+        gs = [col_hard[fixed[j]] if j < n_fixed else G[torch.randint(len(G), (1,), generator=generator).item()] for j in range(c)]
         ids, used = [], torch.zeros(m, dtype=torch.bool)
+        if n_fixed: used[fixed] = True
         for h in hs:
             for g in gs:
+                if len(ids) < n_fixed:
+                    ids.append(fixed[len(ids)]); continue
                 pool = ((hard == h) & (col_hard == g) & ~used).nonzero().flatten()
                 if not len(pool): return None
                 chosen = pool[torch.randint(len(pool), (1,), generator=generator).item()]
@@ -1252,7 +1271,7 @@ def _strip_design(F, n, strip, hard, col_hard, eta_row, eta_col, criterion, rest
     def moves(ids, summaries, L):
         unused = torch.ones(m, dtype=torch.bool); unused[ids] = False
         cached = state(ids, summaries, L)
-        for pos in range(n):
+        for pos in range(n_fixed, n):
             pool = (unused & (hard == hard[ids[pos]]) & (col_hard == col_hard[ids[pos]])).nonzero().flatten()
             gains, ratios = scores(ids, cached, pos, pool)
             for candidate in pool[(ratios > 0) & (gains > 0) if B is not None else ratios > 0].tolist():
@@ -1261,6 +1280,7 @@ def _strip_design(F, n, strip, hard, col_hard, eta_row, eta_col, criterion, rest
         grid = torch.arange(n).reshape(r, c)
         for groups, labels, values in ((grid, hard, H), (grid.T, col_hard, G)):
             for group in groups:
+                if (group < n_fixed).any(): continue
                 for label in values:
                     if label == labels[ids[group[0]]]: continue
                     trial, factor, current = ids.clone(), L, summaries
@@ -1307,14 +1327,14 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
         if (strip is None or row_hard is None or col_hard is None
                 or not isinstance(criterion, str) or criterion not in ("D", "A", "I")
                 or any(x is not None for x in (whole_plots, hard, subplots, subplot_hard, blocks,
-                                               fixed_ids, covariates, alias, if_possible, models))):
+                                               covariates, alias, if_possible, models))):
             raise ValueError("strip, row_hard, col_hard require D/A/I without other structures")
         return _strip_design(F, n, strip, row_hard, col_hard, eta_row, eta_col,
-                             criterion, restarts, generator, max_iter, max_elements)
+                             criterion, restarts, generator, max_iter, max_elements, fixed_ids)
     if subplots is not None or subplot_hard is not None:
         if (subplots is None or subplot_hard is None or whole_plots is None or hard is None
                 or not isinstance(criterion, str) or criterion not in ("D", "A", "I")
-                or any(v is not None for v in (blocks, fixed_ids, covariates, alias, if_possible, models))):
+                or any(v is not None for v in (blocks, covariates, alias, if_possible, models))):
             raise ValueError("subplots requires whole_plots/hard and subplot_hard, D/A/I, without other structures")
     if models is not None:
         _features(F, max_elements)

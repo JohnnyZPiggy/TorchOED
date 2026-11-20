@@ -108,6 +108,33 @@ torch.testing.assert_close(torch.linalg.det(X.T@torch.linalg.inv(V)@X),
                            F.new_tensor(1280/63), rtol=1e-9, atol=0)
 ```
 
+## Strip-plot designs
+
+Use `strip=(r, c)` with `r*c = n` for a grid in row-major run order: `row_hard` labels stay constant along each row and `col_hard` labels down each column, with variance ratios `eta_row` and `eta_col`.
+The search supports D, A and I on CPU float64 and returns `LOCAL_STRIP_PLOT_EXCHANGE` with a conservative `efficiency_lower_bound` against the OLS approximate optimum.
+Strip plots cannot be combined with `whole_plots`, `subplots`, `blocks`, `fixed_ids`, `covariates`, `alias`, `if_possible`, `models` or compound criteria.
+
+```python
+import torch
+from torchoed import optimal_design
+
+C = torch.cartesian_prod(torch.tensor([-1., 1.]), torch.tensor([-1., 1.]),
+                         torch.tensor([-1., 0., 1.])).double()
+F = torch.cat((torch.ones(12, 1), C, C[:, 2:]**2), 1)
+result = optimal_design(F, 6, strip=(2, 3), row_hard=C[:, 0].long(),
+                        col_hard=C[:, 1].long(), eta_row=1, eta_col=1,
+                        criterion="D", generator=torch.Generator().manual_seed(0))
+ids = result["ids"]
+assert ids.unique().numel() == 6
+assert all(C[g, 0].unique().numel() == 1 for g in ids.reshape(2, 3))
+assert all(C[g, 1].unique().numel() == 1 for g in ids.reshape(2, 3).T)
+Zr = torch.eye(2, dtype=torch.float64).repeat_interleave(3, dim=0)
+Zc = torch.eye(3, dtype=torch.float64).repeat(2, 1)
+V = torch.eye(6, dtype=torch.float64) + Zr@Zr.T + Zc@Zc.T
+X = F[ids]
+assert abs(torch.linalg.det(X.T@torch.linalg.solve(V, X)).item()/(80/9)-1) < 1e-9
+```
+
 ## Mixture designs
 
 Designs are without replacement; replicate a point (for example the centroid) by appending copies of its candidate row.

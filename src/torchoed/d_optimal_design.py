@@ -1071,7 +1071,8 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
                    whole_plots: list[int] | tuple[int, ...] | None = None,
                    hard: torch.Tensor | None = None, eta: int | float = 1.0,
                    covariates: torch.Tensor | None = None, alias: torch.Tensor | None = None,
-                   alias_weight: float = 1.0) -> dict[str, object]:
+                   alias_weight: float = 1.0, if_possible: list[int] | None = None,
+                   tau: float = 1.0) -> dict[str, object]:
     """D/A/I VND restarts with criterion-specific efficiency floor.
 
     Set blocks to fixed block sizes for CPU float64 D/A/I search without an intercept.
@@ -1079,6 +1080,12 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
     Set covariates to fixed per-run columns; ids keep run order and covariates never move.
     For structured designs, fixed_ids fill the leading positions, block by block.
     """
+    if if_possible is not None:
+        if (not isinstance(criterion, str) or criterion not in ("D", "I")
+                or any(v is not None for v in (blocks, whole_plots, hard, covariates, alias))):
+            raise ValueError("if_possible requires unstructured string D or I")
+        return _bayesian_design(F, n, if_possible, tau, criterion, fixed_ids,
+                                restarts, generator, max_iter, max_elements)
     if alias is not None:
         from fractions import Fraction
         if (not isinstance(alias, torch.Tensor) or alias.ndim != 2 or alias.shape[0] != F.shape[0]
@@ -1182,3 +1189,58 @@ def next_batch(F: torch.Tensor, run_ids: list[int] | tuple[int, ...] | torch.Ten
     ids = optimal_design(F, len(run_ids)+k, criterion=criterion, fixed_ids=run_ids if len(run_ids) else None,
                          restarts=restarts, generator=generator, **kwargs)["ids"]
     return ids[~torch.isin(ids, torch.as_tensor(run_ids, dtype=torch.int64))].sort().values
+
+
+def _bayesian_design(F, n, potential, tau, criterion, fixed_ids, restarts, generator, max_iter, max_elements):
+    if not isinstance(F, torch.Tensor) or F.ndim != 2 or F.dtype != torch.float64 or F.device.type != "cpu":
+        raise ValueError("if_possible requires CPU float64 features")
+    _features(F, max_elements)
+    m, p = F.shape
+    if (not isinstance(potential, list) or not 1 <= len(potential) < p
+            or any(type(j) is not int or not 0 <= j < p for j in potential)
+            or len(set(potential)) != len(potential)):
+        raise ValueError("if_possible must list distinct column indices, with 1 <= len < p")
+    if not isinstance(tau, (int, float)) or not 0 < tau < float("inf"):
+        raise ValueError("tau must be finite and positive")
+    primary = [j for j in range(p) if j not in potential]
+    if type(n) is not int or not m >= n >= len(primary):
+        raise ValueError("n must satisfy m >= n >= number of primary columns")
+    P, Q = F[:, primary], F[:, potential]
+    if torch.linalg.matrix_rank(P) < len(primary):
+        raise ValueError("primary columns must have full rank")
+    residual = Q - P @ torch.linalg.lstsq(P, Q).solution
+    span = residual.amax(0) - residual.amin(0)
+    if (span <= 1e-10 * Q.abs().amax(0).clamp_min(1)).any():
+        raise ValueError("potential column is in the span of the primary columns")
+    scaled = F.clone()
+    scaled[:, potential] = 2 * residual / span
+    pseudo = F.new_zeros((len(potential), p))
+    pseudo[torch.arange(len(potential)), potential] = 1 / tau
+    augmented = torch.cat((scaled, pseudo))
+    fixed = [] if fixed_ids is None else _fixed_pool(fixed_ids, m, n)[0].tolist()
+    fixed += list(range(m, len(augmented)))
+    W = scaled.T @ scaled / m
+    # Whitening the I moment makes the existing A exchange exactly tr(A^-1 W).
+    search = augmented if criterion == "D" else torch.linalg.solve_triangular(
+        torch.linalg.cholesky(W), augmented.T, upper=False).T
+    result = _exact_design(search, n + len(potential), "D" if criterion == "D" else "A",
+                           fixed, restarts, generator, max_iter, max_elements, 64)
+    ids = result["ids"][result["ids"] < m].sort().values
+    X = scaled[ids]
+    M = X.T @ X
+    A = M + pseudo.T @ pseudo
+    inverse = torch.linalg.inv(A)
+    if criterion == "D":
+        objective = torch.linalg.slogdet(A).logabsdet.item()
+        gap = n * (scaled * (scaled @ inverse)).sum(1).max() - torch.trace(inverse @ M)
+        floor = torch.exp(-gap.clamp_min(0) / p).item()
+        result.update(d_efficiency_lower_bound=floor, efficiency_gap_bound=gap.item())
+    else:
+        objective = torch.trace(inverse @ W).item()
+        H = inverse @ W @ inverse
+        lower = objective - n * (scaled * (scaled @ H)).sum(1).max() + torch.trace(H @ M)
+        floor = (lower.clamp_min(0) / objective).item()
+    # Starts contain public real ids; restart scores retain the maximisation convention.
+    result["starts"] = [[j for j in start if j < m] for start in result["starts"]]
+    return dict(result, ids=ids, objective=objective, efficiency_lower_bound=floor,
+                criterion=criterion, scaled_features=scaled)

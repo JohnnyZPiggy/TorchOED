@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 
 root = Path(__file__).resolve().parent
-raw = json.loads((root / "skpr.json").read_text())
-runtime = json.loads((root / "runtime.json").read_text())
+raw = json.loads((root / "skpr.json").read_text(encoding="utf-8"))
+runtime = json.loads((root / "runtime.json").read_text(encoding="utf-8"))
 assert raw["status"] == "NOT_RUN"
 result = dict(case="RD1", verdict="NOT_RUN", run_id=runtime["run_id"],
               source_sha=runtime["source_sha"], R_version=runtime["R_version"],

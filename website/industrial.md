@@ -250,6 +250,37 @@ A = design_diagnostics(F, torch.arange(len(X)), alias=G)["alias"]
 torch.testing.assert_close(A[4, 0], X.new_tensor(1.0))
 ```
 
+## Minimum aberration and blocked fractions
+
+`minimum_aberration(k, runs, blocks=...)` returns the first lexicographically minimum word-length pattern over all regular fractions, using exact branch and bound; with blocks, all main effects and two-factor interactions must remain unconfounded with blocks.
+The result keys are `design`, `generators`, `wlp`, `block`, `block_generators` and `block_confounded`.
+Covered sizes are `runs` in {8, 16, 32, 64} with `log2(runs) ≤ k ≤ 7, 15, 14, 12` respectively; blocked designs cap `k` at 11 and support 2, 4 or 8 blocks (8 only for at most 32 runs), per P2 gate §108.9; infeasible sizes raise `ValueError`.
+
+```python
+from itertools import combinations
+import torch
+from torchoed import minimum_aberration
+
+r = minimum_aberration(6, 16, blocks=2)
+assert r["wlp"].tolist() == [0, 0, 0, 3, 0, 0]
+X, block = r["design"], r["block"]
+assert block.unique(return_counts=True)[1].tolist() == [8, 8]
+for order in (1, 2):
+    for term in combinations(range(6), order):
+        effect = X[:, list(term)].prod(1)
+        assert any(effect[block == b].unique().numel() == 2 for b in block.unique())
+for term in r["block_confounded"]:
+    assert len(term) == 3
+    effect = X[:, list(term)].prod(1)
+    assert all(effect[block == b].unique().numel() == 1 for b in block.unique())
+try:
+    minimum_aberration(5, 16, blocks=4)
+except ValueError:
+    pass
+else:
+    raise AssertionError("infeasible blocked fraction accepted")
+```
+
 ## Diagnostics and power
 
 Pass your features and selected IDs to `design_diagnostics` for variance inflation factors (VIFs) and the sorted scaled prediction variances used for the fraction-of-design-space curve. Set `effect` to a scalar or a tensor of per-coefficient effects to get power for two-sided t-tests at `alpha` (0.001 to 0.5), assuming residual standard deviation σ = 1 and more runs than coefficients (n > p).

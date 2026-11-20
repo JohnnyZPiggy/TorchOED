@@ -303,6 +303,26 @@ print("Power:", power.tolist())
 assert ((alpha <= power) & (power <= 1)).all()
 ```
 
+## Power by simulation for logistic and Poisson models
+
+`glm_power` estimates Monte Carlo Wald power with batched R-style IRLS using `glm.fit` defaults (P2 gate §111–§113).
+Every simulation counts in the denominator; non-converged fits reject nothing, and `separated` is a reporting heuristic.
+Results include `power`, `mc_se`, `group_power`, `group_mc_se`, `nonconverged` and `separated`.
+This logistic example checks case B against its exact enumeration values within four Monte Carlo standard errors.
+
+```python
+import torch
+from torchoed import glm_power
+
+X = torch.tensor([[1, -1, -1], [1, 1, -1], [1, -1, 1], [1, 1, 1]], dtype=torch.float64).repeat(4, 1)
+beta = X.new_tensor([0, 1, 0.5])
+r = glm_power(X, beta, "binomial", nsim=4000, groups=[[1, 2]],
+              generator=torch.Generator().manual_seed(0))
+assert abs(r["power"][1] - 0.108394) <= 4*r["mc_se"][1] + 1e-6
+assert abs(r["group_power"][0] - 0.020456) <= 4*r["group_mc_se"][0] + 1e-6
+print(r["power"], r["mc_se"], r["nonconverged"], r["separated"])
+```
+
 ## Compound D/I compromise
 
 Trade estimation and prediction using normalised nonnegative weights; the floor is relative to the compound optimum, not either single-criterion optimum.

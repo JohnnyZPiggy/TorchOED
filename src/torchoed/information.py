@@ -272,3 +272,53 @@ def design_diagnostics(
             if df is not None:
                 result["group_df"] = ids.new_tensor(group_df)
     return result
+
+
+def compare_designs(
+    F: torch.Tensor, designs: list[torch.Tensor | int], *, region: torch.Tensor | None = None,
+    effect: float | torch.Tensor = 1.0, alpha: float = 0.05,
+    quantiles: tuple[float, ...] = (0.0, 0.25, 0.5, 0.75, 1.0), criterion: str = "D",
+    generator: torch.Generator | None = None,
+) -> dict[str, object]:
+    """Compare total-information D/A/I/G efficiencies, power and unscaled FDS.
+
+    Integer entries request optimal designs in order, sharing the generator.
+    The first design is the reference; efficiencies above one are better.
+    """
+    from .d_optimal_design import optimal_design
+
+    if (type(designs) is not list or len(designs) < 2
+            or any(type(d) is not int and not (isinstance(d, torch.Tensor)
+                   and d.ndim == 1 and d.dtype == torch.int64) for d in designs)):
+        raise ValueError("designs must be a list of at least two int64 ID tensors or Python ints")
+    _features(F, 1_000_000)
+    if F.ndim != 2:
+        raise ValueError("compare_designs requires unstructured 2-D features")
+    F = F.to(torch.float64)
+    R = F if region is None else region.to(dtype=F.dtype, device=F.device)
+    if R.ndim != 2 or R.shape[1] != F.shape[1] or not torch.isfinite(R).all() or not (R != 0).any():
+        raise ValueError("region must be finite, match feature columns and contain a nonzero row")
+    q = torch.as_tensor(quantiles, dtype=F.dtype, device=F.device)
+    ids, sizes, power, fds, percentiles, metrics = [], [], [], [], [], []
+    for entry in designs:
+        selected = (optimal_design(F, entry, criterion=criterion, generator=generator)["ids"]
+                    if type(entry) is int else entry)
+        X = _exact_rows(F, selected, allow_repeats=True)
+        n = len(selected)
+        # Local event IDs preserve repeated candidate rows without changing diagnostics.
+        diag = design_diagnostics(X, torch.arange(n, device=F.device), region=R,
+                                  effect=effect, alpha=alpha)
+        L = torch.linalg.cholesky(X.mT @ X)
+        v = diag["spv"] / n
+        metrics.append(torch.stack((2 * L.diagonal().log().sum(),
+                                    torch.cholesky_inverse(L).diagonal().sum(), v.mean(), v.max())))
+        ids.append(selected)
+        sizes.append(n)
+        power.append(diag["power"])
+        fds.append(v.sort().values)
+        percentiles.append(torch.quantile(v, q))
+    values = torch.stack(metrics)
+    efficiency = {"D": ((values[:, 0] - values[0, 0]) / F.shape[1]).exp()}
+    efficiency.update({name: values[0, j] / values[:, j] for j, name in enumerate(("A", "I", "G"), 1)})
+    return dict(ids=ids, n=sizes, efficiency=efficiency, power=torch.stack(power),
+                fds_quantiles=torch.stack(percentiles), fds=fds)

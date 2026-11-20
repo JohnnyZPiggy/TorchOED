@@ -178,6 +178,10 @@ Inputs match batches exactly: SPD `M`, candidate rows `F`, symmetric PSD moment 
 
 ## Exchange and restarted design
 
+`compare_designs(F, designs, *, region=None, effect=1.0, alpha=0.05, quantiles=(0.0, 0.25, 0.5, 0.75, 1.0), criterion="D", generator=None)`
+
+Compare at least two unstructured designs (1-D int64 candidate IDs, repeats allowed) or Python integer run sizes, generated sequentially with `optimal_design` and one shared generator. Returns `ids`, run counts `n`, relative total-information D/A/I/G `efficiency` tensors (first design is 1; higher is better), per-coefficient `power`, `fds_quantiles` and sorted unscaled prediction-variance `fds` curves over `region` (default F). CPU float64; each design needs n > p, and the region must contain a nonzero row. Structured, Bayesian and model-robust comparisons are outside this API (P2 gate §99–§101).
+
 `fedorov_exchange(F: torch.Tensor, ids: torch.Tensor, *, max_iter: int = 100, tile_size: int = 64, allow_repeats: bool = False, max_elements: int = 1_000_000) -> dict[str, object]`
 
 Run directly verified one-row D exchanges from supplied IDs.

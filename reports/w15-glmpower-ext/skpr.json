@@ -1,0 +1,162 @@
+{
+  "G1": {
+    "status": "RECORDED",
+    "call": "eval_design_mc(design, model, alpha = 0.05, nsim = 10000, glmfamily = \"binomial\", \n    anticoef = c(0, 0.5, 1, 0), firth = FALSE, parallel = FALSE)",
+    "nsim": 10000,
+    "power": [
+      {
+        "parameter": "(Intercept)",
+        "type": "effect.power.mc",
+        "power": 0.036299999999999999
+      },
+      {
+        "parameter": "X1",
+        "type": "effect.power.mc",
+        "power": 0.1769
+      },
+      {
+        "parameter": "X2",
+        "type": "effect.power.mc",
+        "power": 0.69299999999999995
+      },
+      {
+        "parameter": "X3",
+        "type": "effect.power.mc",
+        "power": 0.038199999999999998
+      },
+      {
+        "parameter": "(Intercept)",
+        "type": "parameter.power.mc",
+        "power": 0.036299999999999999
+      },
+      {
+        "parameter": "X1",
+        "type": "parameter.power.mc",
+        "power": 0.1769
+      },
+      {
+        "parameter": "X2",
+        "type": "parameter.power.mc",
+        "power": 0.69299999999999995
+      },
+      {
+        "parameter": "X3",
+        "type": "parameter.power.mc",
+        "power": 0.038199999999999998
+      }
+    ],
+    "attribute_names": ["names", "class", "row.names", "model_matrix", "anticoef", "z.matrix.list", "correlation.matrix", "variance.matrix", "I", "D", "generating_model", "runmatrix", "estimates", "pvals", "effect_pvals", "stderrors", "fisheriterations", "alpha", "blocking", "varianceratios", "contrast_string", "parameter_analysis_method_string", "effect_analysis_method_string", "model_matrix_cor"],
+    "attributes": {
+      "anticoef": [0, 0.5, 1, 0],
+      "alpha": 0.050000000000000003
+    }
+  },
+  "G2": {
+    "status": "RECORDED",
+    "call": "eval_design_mc(design, model, alpha = 0.05, nsim = 10000, glmfamily = \"poisson\", \n    anticoef = c(1, 0.25, 0.5, 0), firth = FALSE, parallel = FALSE)",
+    "nsim": 10000,
+    "power": [
+      {
+        "parameter": "(Intercept)",
+        "type": "effect.power.mc",
+        "power": 0.99250000000000005
+      },
+      {
+        "parameter": "X1",
+        "type": "effect.power.mc",
+        "power": 0.40189999999999998
+      },
+      {
+        "parameter": "X2",
+        "type": "effect.power.mc",
+        "power": 0.91720000000000002
+      },
+      {
+        "parameter": "X3",
+        "type": "effect.power.mc",
+        "power": 0.044999999999999998
+      },
+      {
+        "parameter": "(Intercept)",
+        "type": "parameter.power.mc",
+        "power": 0.99250000000000005
+      },
+      {
+        "parameter": "X1",
+        "type": "parameter.power.mc",
+        "power": 0.40189999999999998
+      },
+      {
+        "parameter": "X2",
+        "type": "parameter.power.mc",
+        "power": 0.91720000000000002
+      },
+      {
+        "parameter": "X3",
+        "type": "parameter.power.mc",
+        "power": 0.044999999999999998
+      }
+    ],
+    "attribute_names": ["names", "class", "row.names", "model_matrix", "anticoef", "z.matrix.list", "correlation.matrix", "variance.matrix", "I", "D", "generating_model", "runmatrix", "estimates", "pvals", "effect_pvals", "stderrors", "fisheriterations", "alpha", "blocking", "varianceratios", "contrast_string", "parameter_analysis_method_string", "effect_analysis_method_string", "model_matrix_cor"],
+    "attributes": {
+      "anticoef": [1, 0.25, 0.5, 0],
+      "alpha": 0.050000000000000003
+    }
+  },
+  "G3": {
+    "status": "RECORDED",
+    "call": "eval_design_mc(design, model, alpha = 0.05, nsim = 10000, glmfamily = \"binomial\", \n    anticoef = c(0.5, 1, 0.5, 0.25), firth = FALSE, parallel = FALSE)",
+    "nsim": 10000,
+    "power": [
+      {
+        "parameter": "(Intercept)",
+        "type": "effect.power.mc",
+        "power": 0.0167
+      },
+      {
+        "parameter": "X1",
+        "type": "effect.power.mc",
+        "power": 0.1227
+      },
+      {
+        "parameter": "X2",
+        "type": "effect.power.mc",
+        "power": 0.018499999999999999
+      },
+      {
+        "parameter": "X1:X2",
+        "type": "effect.power.mc",
+        "power": 0.0051999999999999998
+      },
+      {
+        "parameter": "(Intercept)",
+        "type": "parameter.power.mc",
+        "power": 0.0167
+      },
+      {
+        "parameter": "X1",
+        "type": "parameter.power.mc",
+        "power": 0.1227
+      },
+      {
+        "parameter": "X2",
+        "type": "parameter.power.mc",
+        "power": 0.018499999999999999
+      },
+      {
+        "parameter": "X1:X2",
+        "type": "parameter.power.mc",
+        "power": 0.0051999999999999998
+      }
+    ],
+    "attribute_names": ["names", "class", "row.names", "model_matrix", "anticoef", "z.matrix.list", "correlation.matrix", "variance.matrix", "I", "D", "generating_model", "runmatrix", "estimates", "pvals", "effect_pvals", "stderrors", "fisheriterations", "alpha", "blocking", "varianceratios", "contrast_string", "parameter_analysis_method_string", "effect_analysis_method_string", "model_matrix_cor"],
+    "attributes": {
+      "anticoef": [0.5, 1, 0.5, 0.25],
+      "alpha": 0.050000000000000003
+    }
+  },
+  "RD1": {
+    "status": "NOT_RUN",
+    "error": "should not be called with handlers on the stack"
+  }
+}

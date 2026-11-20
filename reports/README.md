@@ -72,3 +72,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w13-heldout](w13-heldout/) | #426 | Frozen H33–H35: H33 MATCH, H34 MATCH or TorchOED better, H35 MATCH; exhaustive integer/Fraction references and R MaxPro 4.1-2 |
 | [w14-paper-ext](w14-paper-ext/) | #449: B1/B2 paper references | Both NR: full text not accessible verbatim; published count 16 unchanged |
 | [w14-heldout](w14-heldout/) | #452: frozen H36–H39; #458: H39 R completion | H36–H38 exhaustive MATCH; H39 TorchOED better, MaxPro 23.66830 vs R 161.16186 (R 4.5.2 / support 0.1.7, run 44730389070); [completion](w14-heldout/h39-r/), frozen TorchOED unchanged |
+| [w15-glmpower-ext](w15-glmpower-ext/) | #466: frozen skpr 1.9.2 GLM Monte Carlo power | G1–G3 recorded (skpr 1.9.2, R 4.5.2, run 44748014062) with MC SE and asymptotic Wald approximations (not verdicts); RD1 NOT_RUN (`should not be called with handlers on the stack`), Rd expression quoted from source only |

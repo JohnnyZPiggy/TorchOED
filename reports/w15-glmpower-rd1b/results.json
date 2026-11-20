@@ -1,0 +1,42 @@
+{
+  "case": "RD1b",
+  "run_id": "44814324521",
+  "source_sha": "42ea2ce78fa3ad15902f77387a578955475cbe82",
+  "R_version": "R version 4.5.2 (2025-10-31)",
+  "skpr_version": "1.9.2",
+  "mbest_version": "0.6.1",
+  "expression": "if(skpr:::run_documentation()) {\n#We can also use this method to evaluate designs that cannot be easily\n#evaluated using normal approximations. Here, we evaluate a design with a binomial response and see\n#whether we can detect the difference between each factor changing whether an event occurs\n#70% of the time or 90% of the time.\n\nfactorialbinom = expand.grid(a = c(-1, 1), b = c(-1, 1))\ndesignbinom = gen_design(factorialbinom, model = ~a + b, trials = 90, optimality = \"D\")\n\neval_design_mc(designbinom, ~a + b, alpha = 0.2, nsim = 100, effectsize = c(0.7, 0.9),\n              glmfamily = \"binomial\")\n}",
+  "parameter_analysis_method_string": "glm(..., family = \"binomial\")`",
+  "nsim_skpr": 100,
+  "verdict": "NO MATCH",
+  "comparisons": [
+    {
+      "parameter": "(Intercept)",
+      "skpr": 1,
+      "torchoed": 0.9928,
+      "combined_se": 0.0008454679177828089,
+      "z": 8.515994337054883,
+      "match": false
+    },
+    {
+      "parameter": "a",
+      "skpr": 0.9,
+      "torchoed": 0.8816,
+      "combined_se": 0.030173467550150743,
+      "z": 0.6098072742026645,
+      "match": true
+    },
+    {
+      "parameter": "b",
+      "skpr": 0.92,
+      "torchoed": 0.8747,
+      "combined_se": 0.027330568801252557,
+      "z": 1.6574847135242905,
+      "match": true
+    }
+  ],
+  "worst_z": 8.515994337054883,
+  "nsim_torchoed": 10000,
+  "nonconverged": 0,
+  "separated": 72
+}

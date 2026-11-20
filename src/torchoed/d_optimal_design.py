@@ -37,6 +37,26 @@ def _restarts(restarts, attempt):
 
 
 def _dual_floor(F, M, n, criterion, current):
+    if isinstance(criterion, tuple):
+        models, weights = criterion
+        def terms(matrix):
+            value, scores = 0., F.new_zeros(len(F))
+            for cols, weight in zip(models, weights):
+                X = F[:, cols]
+                Mk = matrix[cols][:, cols]
+                value += weight/len(cols)*torch.linalg.slogdet(Mk).logabsdet
+                scores += weight/len(cols)*(X*torch.linalg.solve(Mk, X.T).T).sum(1)
+            return value, scores
+        own, sensitivity = terms(M/n)
+        best = max(current, float(1/sensitivity.max()))
+        w = F.new_full((len(F),), 1/len(F))
+        for _ in range(1000):
+            value, scores = terms(F.T@(w[:, None]*F))
+            ratio = 1/scores.max()
+            best = max(best, float((own-value).exp()*ratio))
+            if ratio >= 1-1e-4: break
+            w = w*scores; w = w/w.sum()
+        return best
     if isinstance(criterion, dict):
         if len(active := {k: v for k, v in criterion.items() if v}) == 1:
             return _dual_floor(F, M, n, next(iter(active)), current)
@@ -761,7 +781,7 @@ def _covariate_design(F, n, Z, criterion, fixed_ids, restarts, generator, max_it
                           {"covariates": Z}, "LOCAL_COVARIATE_EXCHANGE", G=centered, criterion=criterion, B=B)
 
 
-def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, max_elements, alias=None, alias_weight=1.0):
+def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, max_elements, alias=None, alias_weight=1.0, models=None, model_weights=None):
     m, p = F.shape
     if F.dtype != torch.float64 or F.device.type != "cpu" or type(n) is not int or not m >= n >= p:
         raise ValueError("compound search requires CPU float64 features and m >= n >= p")
@@ -778,6 +798,9 @@ def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, ma
         if alias is not None: cross = X.T@alias[ids]
         return X.T@X, None
     def value(M, L):
+        if models is not None:
+            return sum(w/len(c)*torch.linalg.slogdet(M[c][:, c]/n).logabsdet
+                       for c, w in zip(models, model_weights)).item()
         penalty = alias_weight*torch.cholesky_solve(cross, L).square().sum() if alias is not None else 0
         return (sum(v * (torch.linalg.slogdet(M/n).logabsdet/p if k == "D" else
                    -(n*torch.trace(torch.cholesky_solve(moments[k], L))).log())
@@ -789,6 +812,14 @@ def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, ma
         a, b, c = diagonal[incoming], G[:, incoming], diagonal[ids, None]
         ratio = (1+a)*(1-c)+b.square()
         gains = weights.get("D", 0)/p*ratio.clamp_min(0).log()
+        if models is not None:
+            gains = torch.zeros_like(ratio)
+            for cols, weight in zip(models, model_weights):
+                X = F[:, cols]
+                Zk = torch.linalg.solve_triangular(torch.linalg.cholesky(X[ids].T@X[ids]), X.T, upper=False)
+                Gk = Zk[:, ids].T@Zk; dk = Zk.square().sum(0)
+                rk = (1+dk[incoming])*(1-dk[ids, None])+Gk[:, incoming].square()
+                gains += weight/len(cols)*rk.clamp_min(0).log()
         Y = torch.linalg.solve_triangular(L.T, Z, upper=True) if moments or alias is not None else None
         for k, C in moments.items():
             Q = Y[:, ids].T@C@Y; d = (Y*(C@Y)).sum(0)
@@ -816,8 +847,13 @@ def _compound_design(F, n, weights, fixed_ids, restarts, generator, max_iter, ma
             yield trial
     result = _plot_restarts([n], restarts,
         lambda: torch.cat((fixed, pool[torch.randperm(len(pool), generator=generator)[:n-len(fixed)]])),
-        information, moves, max_iter, {}, "LOCAL_ALIAS_EXCHANGE" if alias is not None else "LOCAL_COMPOUND_EXCHANGE",
-        G=F, criterion="D" if alias is not None else weights, value=value)
+        information, moves, max_iter, {}, "LOCAL_MODEL_ROBUST_EXCHANGE" if models is not None else
+        "LOCAL_ALIAS_EXCHANGE" if alias is not None else "LOCAL_COMPOUND_EXCHANGE",
+        G=F, criterion=(models, model_weights) if models is not None else "D" if alias is not None else weights, value=value)
+    if models is not None:
+        ids = result["ids"]
+        result["model_efficiency_lower_bounds"] = [
+            _dual_floor(F[:, c], F[ids][:, c].T@F[ids][:, c], n, "D", 0.) for c in models]
     if alias is not None:
         X = F[result["ids"]]
         result["alias_trace"] = torch.linalg.solve(X.T@X, X.T@alias[result["ids"]]).square().sum().item()
@@ -1072,7 +1108,8 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
                    hard: torch.Tensor | None = None, eta: int | float = 1.0,
                    covariates: torch.Tensor | None = None, alias: torch.Tensor | None = None,
                    alias_weight: float = 1.0, if_possible: list[int] | None = None,
-                   tau: float = 1.0) -> dict[str, object]:
+                   tau: float = 1.0, models: list[list[int]] | None = None,
+                   model_weights: list[float] | None = None) -> dict[str, object]:
     """D/A/I VND restarts with criterion-specific efficiency floor.
 
     Set blocks to fixed block sizes for CPU float64 D/A/I search without an intercept.
@@ -1080,6 +1117,28 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
     Set covariates to fixed per-run columns; ids keep run order and covariates never move.
     For structured designs, fixed_ids fill the leading positions, block by block.
     """
+    if models is not None:
+        _features(F, max_elements)
+        if F.ndim != 2:
+            raise ValueError("models requires a two-dimensional candidate matrix")
+        if (not isinstance(criterion, str) or criterion != "D" or
+                any(v is not None for v in (blocks, whole_plots, hard, covariates, alias, if_possible))):
+            raise ValueError("models requires unstructured string D without if_possible")
+        if (not isinstance(models, list) or not models or any(
+                not isinstance(c, list) or not c or any(type(i) is not int or not 0 <= i < F.shape[1] for i in c)
+                or len(set(c)) != len(c) for c in models)):
+            raise ValueError("models must list nonempty distinct column indices")
+        weights = [1.]*len(models) if model_weights is None else model_weights
+        if (not isinstance(weights, list) or len(weights) != len(models) or
+                any(not isinstance(w, (int, float)) or not 0 < w < float("inf") for w in weights)
+                or not sum(weights) < float("inf")):
+            raise ValueError("model_weights must be finite positive values, one per model")
+        weights = [w/sum(weights) for w in weights]
+        union = sorted(set(i for c in models for i in c))
+        remapped = [[union.index(i) for i in c] for c in models]
+        result = _compound_design(F[:, union], n, {}, fixed_ids, restarts, generator, max_iter,
+                                  max_elements, models=remapped, model_weights=weights)
+        return dict(result, criterion="D", models=models, model_weights=weights)
     if if_possible is not None:
         if (not isinstance(criterion, str) or criterion not in ("D", "I")
                 or any(v is not None for v in (blocks, whole_plots, hard, covariates, alias))):

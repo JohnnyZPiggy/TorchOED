@@ -1,0 +1,218 @@
+{
+  "D8": [
+    {
+      "parameter": "(Intercept)",
+      "type": "effect.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x1",
+      "type": "effect.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x2",
+      "type": "effect.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x3",
+      "type": "effect.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x1:x2",
+      "type": "effect.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x1:x3",
+      "type": "effect.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x2:x3",
+      "type": "effect.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "(Intercept)",
+      "type": "parameter.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x1",
+      "type": "parameter.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x2",
+      "type": "parameter.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x3",
+      "type": "parameter.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x1:x2",
+      "type": "parameter.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x1:x3",
+      "type": "parameter.power",
+      "power": 0.17570741130507028
+    },
+    {
+      "parameter": "x2:x3",
+      "type": "parameter.power",
+      "power": 0.17570741130507028
+    }
+  ],
+  "D12": [
+    {
+      "parameter": "(Intercept)",
+      "type": "effect.power",
+      "power": 0.78914616367360524
+    },
+    {
+      "parameter": "x1",
+      "type": "effect.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x2",
+      "type": "effect.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x3",
+      "type": "effect.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x1:x2",
+      "type": "effect.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x1:x3",
+      "type": "effect.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x2:x3",
+      "type": "effect.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "(Intercept)",
+      "type": "parameter.power",
+      "power": 0.78914616367360524
+    },
+    {
+      "parameter": "x1",
+      "type": "parameter.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x2",
+      "type": "parameter.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x3",
+      "type": "parameter.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x1:x2",
+      "type": "parameter.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x1:x3",
+      "type": "parameter.power",
+      "power": 0.62280267448113502
+    },
+    {
+      "parameter": "x2:x3",
+      "type": "parameter.power",
+      "power": 0.62280267448113502
+    }
+  ],
+  "D16": [
+    {
+      "parameter": "(Intercept)",
+      "type": "effect.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x1",
+      "type": "effect.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x2",
+      "type": "effect.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x3",
+      "type": "effect.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x1:x2",
+      "type": "effect.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x1:x3",
+      "type": "effect.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x2:x3",
+      "type": "effect.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "(Intercept)",
+      "type": "parameter.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x1",
+      "type": "parameter.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x2",
+      "type": "parameter.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x3",
+      "type": "parameter.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x1:x2",
+      "type": "parameter.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x1:x3",
+      "type": "parameter.power",
+      "power": 0.94371783263646869
+    },
+    {
+      "parameter": "x2:x3",
+      "type": "parameter.power",
+      "power": 0.94371783263646869
+    }
+  ]
+}

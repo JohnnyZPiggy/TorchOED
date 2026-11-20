@@ -333,5 +333,265 @@
     },
     "logdet_agreement": "NOT_RUN"
   }
-]
+],
+  "retry2": {
+  "window": "2026-11-20 02:00 Europe/Zurich",
+  "source_sha": "3602539451eb16fadf7df17114702111e8baca31",
+  "status": "PASS",
+  "attempts": [
+    {
+      "start_utc": "2026-11-20T01:00:21Z",
+      "controller": {
+        "status": "FAIL",
+        "error": "ALLOCATION_FAILED",
+        "source_sha": "3602539451eb16fadf7df17114702111e8baca31",
+        "run_id": "g0-385-retry2-h100",
+        "created": false,
+        "cleanup_confirmed": true,
+        "commands": [
+          {
+            "operation": "usage",
+            "status": "PASS",
+            "exit_code": 0
+          },
+          {
+            "operation": "new",
+            "status": "FAIL",
+            "exit_code": 1
+          },
+          {
+            "operation": "stop",
+            "status": "PASS",
+            "exit_code": 0
+          },
+          {
+            "operation": "usage",
+            "status": "PASS",
+            "exit_code": 0
+          }
+        ],
+        "device_requested": "H100",
+        "device_observed": null,
+        "assignments_before": 0,
+        "assignments_after": 0,
+        "balance_before": 149.35,
+        "balance_after": 149.35,
+        "artifact_sha256": {},
+        "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+        "total_seconds": 17.385575014
+      }
+    },
+    {
+      "start_utc": "2026-11-20T01:00:40Z",
+      "controller": {
+        "status": "PASS",
+        "error": null,
+        "source_sha": "3602539451eb16fadf7df17114702111e8baca31",
+        "run_id": "g0-385-retry2-a100",
+        "created": true,
+        "cleanup_confirmed": true,
+        "commands": [
+          {
+            "operation": "usage",
+            "status": "PASS",
+            "exit_code": 0
+          },
+          {
+            "operation": "new",
+            "status": "PASS",
+            "exit_code": 0
+          },
+          {
+            "operation": "exec",
+            "status": "PASS",
+            "exit_code": 0
+          },
+          {
+            "operation": "exec",
+            "status": "PASS",
+            "exit_code": 0
+          },
+          {
+            "operation": "download",
+            "status": "PASS",
+            "exit_code": 0
+          },
+          {
+            "operation": "stop",
+            "status": "PASS",
+            "exit_code": 0
+          },
+          {
+            "operation": "usage",
+            "status": "PASS",
+            "exit_code": 0
+          }
+        ],
+        "device_requested": "A100",
+        "device_observed": {
+          "nvidia_smi": [
+            {
+              "name": "NVIDIA A100-SXM4-40GB",
+              "memory_total_mib": 40960,
+              "driver_version": "580.82.07"
+            }
+          ],
+          "torch": {
+            "status": "AVAILABLE",
+            "version": "2.14.1+cu130",
+            "cuda": "13.0",
+            "name": "NVIDIA A100-SXM4-40GB",
+            "capability": [
+              8,
+              0
+            ]
+          }
+        },
+        "assignments_before": 0,
+        "assignments_after": 0,
+        "balance_before": 149.35,
+        "balance_after": 149.35,
+        "artifact_sha256": {
+          "g0-probe.json": "7fd2099b1c810928b4b88105b01d1f036c1169172b01a81985d3a0b08a6b624c"
+        },
+        "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+        "total_seconds": 54.583866271000005
+      }
+    }
+  ],
+  "science": {
+    "source_sha": "3602539451eb16fadf7df17114702111e8baca31",
+    "status": "PASS",
+    "rows": [
+      {
+        "k": 3,
+        "m": 1000,
+        "method": "cpu",
+        "seconds": 0.7006452809999928,
+        "ids": [
+          110,
+          973,
+          641,
+          117,
+          887,
+          134,
+          270,
+          612,
+          129,
+          302,
+          998,
+          283,
+          374,
+          488,
+          923,
+          525,
+          948,
+          88,
+          927,
+          738
+        ],
+        "repeats": 0,
+        "d_efficiency_lower_bound": 0.7894658458649016,
+        "logdet": 20.009800061023043,
+        "objective": 20.009800061023043,
+        "returned_floor": 0.9722818445351031,
+        "oracles": {
+          "objective": true,
+          "kw_floor": true,
+          "refined_floor": true
+        },
+        "status": "PASS"
+      },
+      {
+        "k": 3,
+        "m": 1000,
+        "method": "cuda",
+        "seconds": 0.98678165299998,
+        "ids": [
+          110,
+          973,
+          641,
+          117,
+          887,
+          134,
+          270,
+          612,
+          129,
+          302,
+          998,
+          283,
+          374,
+          488,
+          923,
+          525,
+          948,
+          88,
+          927,
+          738
+        ],
+        "repeats": 0,
+        "d_efficiency_lower_bound": 0.7894658458649016,
+        "logdet": 20.009800061023043,
+        "objective": 20.009800061023043,
+        "returned_floor": 0.9722818445351031,
+        "oracles": {
+          "objective": true,
+          "kw_floor": true,
+          "refined_floor": true
+        },
+        "status": "PASS"
+      }
+    ],
+    "calls": [
+      {
+        "method": "cuda",
+        "warmup": true,
+        "exit_code": 0,
+        "stderr": ""
+      },
+      {
+        "method": "cpu",
+        "warmup": false,
+        "exit_code": 0,
+        "stderr": ""
+      },
+      {
+        "method": "cuda",
+        "warmup": false,
+        "exit_code": 0,
+        "stderr": ""
+      }
+    ],
+    "device_observed": {
+      "nvidia_smi": [
+        {
+          "name": "NVIDIA A100-SXM4-40GB",
+          "memory_total_mib": 40960,
+          "driver_version": "580.82.07"
+        }
+      ],
+      "torch": {
+        "status": "AVAILABLE",
+        "version": "2.14.1+cu130",
+        "cuda": "13.0",
+        "name": "NVIDIA A100-SXM4-40GB",
+        "capability": [
+          8,
+          0
+        ]
+      }
+    },
+    "scientific_status": "PASS"
+  },
+  "artifact": {
+    "sha256": "7fd2099b1c810928b4b88105b01d1f036c1169172b01a81985d3a0b08a6b624c",
+    "size_bytes": 1449
+  },
+  "required_tests": {
+    "PASS": 7,
+    "FAIL": 0,
+    "NOT_RUN": 0
+  },
+  "logdet_agreement": true
+}
 }

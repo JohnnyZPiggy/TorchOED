@@ -1,7 +1,8 @@
 # Changelog
-- Added CPU float64 split-split-plot D/A/I search with nested labels and efficiency floors (#459).
 
 ## Unreleased
+
+- Add split-split-plot D/A/I designs via optimal_design(subplots=..., subplot_hard=..., eta_sub=...): closed-form nested GLS information, rank-2 within-subplot exchanges, subplot and whole-plot relabels, OLS dual efficiency floor (P2 gate §102–§103, #459).
 
 - Add compare_designs(F, designs, ...): relative total-information D/A/I/G efficiencies, per-coefficient power and fraction-of-design-space quantiles for two or more designs; integer entries are run sizes searched with optimal_design (sample-size explorer) (P2 gate §99–§101, #441).
 

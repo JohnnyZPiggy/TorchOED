@@ -274,8 +274,12 @@ def design_diagnostics(
     return result
 
 
-def compare_designs(F, designs, *, region=None, effect=1.0, alpha=0.05,
-                    quantiles=(0.0, 0.25, 0.5, 0.75, 1.0), criterion="D", generator=None):
+def compare_designs(
+    F: torch.Tensor, designs: list[torch.Tensor | int], *, region: torch.Tensor | None = None,
+    effect: float | torch.Tensor = 1.0, alpha: float = 0.05,
+    quantiles: tuple[float, ...] = (0.0, 0.25, 0.5, 0.75, 1.0), criterion: str = "D",
+    generator: torch.Generator | None = None,
+) -> dict[str, object]:
     """Compare total-information D/A/I/G efficiencies, power and unscaled FDS.
 
     Integer entries request optimal designs in order, sharing the generator.

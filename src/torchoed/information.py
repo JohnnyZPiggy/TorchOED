@@ -74,7 +74,7 @@ def weighted_information(F: torch.Tensor, w: torch.Tensor, *, max_elements: int 
 
 
 def _coefficient_power(noncentrality: torch.Tensor, df: int, alpha: float, r: int = 1) -> torch.Tensor:
-    # Central beta quantile via the b-recurrence in P2_GATE Â§11.
+    # Central beta quantile via the b-recurrence in P2_GATE §11.
     b = df / 2
     a0 = 0.5 if r % 2 else 1.0
     steps = torch.arange(0.5 if df % 2 else 1.0, b, device=noncentrality.device,
@@ -373,7 +373,7 @@ def glm_power(
     """Monte Carlo Wald power from batched float64 logistic or Poisson IRLS.
 
     Counts all simulations in the denominator; non-converged fits reject nothing.
-    Separation is a reporting heuristic. See P2_GATE Â§111 for the fit convention.
+    Separation is a reporting heuristic. See P2_GATE §111 for the fit convention.
     """
     if (not isinstance(X, torch.Tensor) or X.ndim != 2 or X.dtype != torch.float64
             or X.shape[0] < X.shape[1] or X.shape[1] < 1 or not torch.isfinite(X).all()

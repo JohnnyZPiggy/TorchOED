@@ -69,3 +69,5 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w13-fff-ext](w13-fff-ext/) | #409: R support 0.1.7 on 511 frozen feasible points | Diagnostics + energy per metric (TorchOED better on φ₁₅, ψ, CD2; R on min distance, energy); Rd normal example not comparable; published 14 → 14 |
 | [w13-sfgpu](w13-sfgpu/) | #422 | Same-host CPU / NVIDIA L4 space filling, 11 cells as-is; 22/22 validity PASS; cleanup confirmed |
 | [w13-heldout](w13-heldout/) | #426 | Frozen H33–H35: H33 MATCH, H34 MATCH or TorchOED better, H35 MATCH; exhaustive integer/Fraction references and R MaxPro 4.1-2 |
+| [w14-paper-ext](w14-paper-ext/) | #449: B1/B2 paper references | Both NR: full text not accessible verbatim; published count 16 unchanged |
+| [w14-heldout](w14-heldout/) | #452: frozen H36–H39 | H36–H38 exhaustive MATCH; H39 R NOT_RUN (missing CSV at dispatched SHA); TorchOED recorded as-is |

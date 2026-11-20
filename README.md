@@ -1,8 +1,8 @@
 <div align="center">
 
-# TorchOED
+<img src="website/assets/torchoed-banner.png" alt="TorchOED — Optimal Experimental Design in PyTorch" width="760">
 
-**Optimal experimental design in PyTorch — with a certificate on every design.**
+**With a certificate on every design.**
 
 [![CI](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml/badge.svg)](https://github.com/JohnnyZPiggy/TorchOED/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://johnnyzpiggy.github.io/TorchOED/)

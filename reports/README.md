@@ -66,5 +66,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [G0 Colab Pro probe](g0-probe/summary.md) | #385 | Retry2 PASS: numerical checks 7 PASS / 0 FAIL; cleanup PASS; previous failures preserved |
 | [w13-published](w13-published/) | #392: four NR examples rerun on R 4.5.2 | Three MATCH, Xvert NO MATCH; published matches 8 -> 11 |
 | [w13-spacefill-ext](w13-spacefill-ext/) | #404: R lhs 1.3.0 / MaxPro 4.1-2 / DiceDesign 1.10 | Diagnostics 16/16 MATCH; maximin better, MaxPro quality NO MATCH; Rd examples 3/3, published 11 → 14 |
-
-| [w13-fff-ext](w13-fff-ext/) | W13 F3 R support 0.1.7 on 511 frozen feasible points: diagnostics + energy recorded per metric; Rd normal example NOT_RUN / not comparable; published count 14 unchanged (#409). |
+| [w13-fff-ext](w13-fff-ext/) | #409: R support 0.1.7 on 511 frozen feasible points | Diagnostics + energy per metric (TorchOED better on φ₁₅, ψ, CD2; R on min distance, energy); Rd normal example not comparable; published 14 → 14 |

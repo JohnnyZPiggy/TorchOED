@@ -17,7 +17,7 @@ Where both finished, TorchOED's design was as good or better (higher log-determi
 
 ## Published examples
 
-14 of 16 published examples match or are beaten on the shared metric (P2 exit target ≥ 8 met; week 13 target ≥ 12 met).
+19 published examples match or are beaten on the shared metric (week 15 target ≥ 19 met). The table below lists the examples through week 13 and the week-15 GLM power examples; the week-16 consolidation refreshes the full table.
 
 | ID | Package and source | Shared metric | Verdict |
 |---|---|---|---|
@@ -37,6 +37,8 @@ Where both finished, TorchOED's design was as good or better (higher log-determi
 | lhs-maximin43 | [lhs 1.3.0](https://github.com/cran/lhs/blob/1.3.0/man/maximinLHS.Rd#L74-L74) | phi_15 on rank midpoints (lower is better) | TorchOED better; 1.6452337368527556 vs 2.310300628135955, [w13-spacefill-ext](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-spacefill-ext/summary.md) |
 | maxpro-104 | [MaxPro 4.1-2](https://github.com/cran/MaxPro/blob/4.1-2/man/MaxProLHD.Rd#L65-L65) | MaxPro psi on rank midpoints (lower is better) | TorchOED better; 13.227729408335211 vs 13.43815350925327, [w13-spacefill-ext](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-spacefill-ext/summary.md) |
 | dice-cd2-402 | [DiceDesign 1.10](https://github.com/cran/DiceDesign/blob/1.10/man/discrepancyCriteria.Rd#L68-L68) | CD2 of the R design, abs diff <= 1e-12 | MATCH; delta 8.0e-15, [w13-spacefill-ext](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-spacefill-ext/summary.md) |
+| skpr-glm-binomial-rd1b | [skpr 1.9.2](https://github.com/cran/skpr/blob/1.9.2/man/eval_design_mc.Rd#L270-L281) | per-coefficient Wald power, &#124;Δ&#124; ≤ 4 combined MC SE | NO MATCH; intercept z = 8.52 (skpr 1.00 with nsim 100), [w15-glmpower-rd1b](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w15-glmpower-rd1b/summary.md) |
+| skpr-glm-poisson-rd2b | [skpr 1.9.2](https://github.com/cran/skpr/blob/1.9.2/man/eval_design_mc.Rd#L282-L293) | per-coefficient Wald power, &#124;Δ&#124; ≤ 4 combined MC SE | MATCH; 3/3, worst z = 1.37, [w15-glmpower-rd2b](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w15-glmpower-rd2b/summary.md) |
 
 New results: alg-d MATCH; alg-a NO MATCH (2.4240924092409237 vs reference 2.3, lower is better); alg-i MATCH; rsm-ccd3-inscribed MATCH. mix-scd12, fr-pb8 and fr-pb40 MATCH and mix-xvert NO MATCH on the R oracle workflow (R 4.5.2, mixexp 1.2.7.1, FrF2 2.3-5, run 44613389076). Existing five MATCH results reused without rerun. No broader parity claim. lhs-maximin43 and maxpro-104 TorchOED better and dice-cd2-402 MATCH on R 4.5.2 (lhs 1.3.0, MaxPro 4.1-2, DiceDesign 1.10, run 44641039986).
 

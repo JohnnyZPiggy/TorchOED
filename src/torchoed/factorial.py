@@ -97,6 +97,79 @@ def fractional_factorial(
     return torch.cat((base, generated), dim=1)
 
 
+def minimum_aberration(k: int, runs: int, *, blocks: int = 1,
+                       dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> dict:
+    """First minimum-aberration regular fraction, optionally with unconfounded blocks (§108)."""
+    limits = {8: 7, 16: 15, 32: 14, 64: 12}
+    if (type(runs) is not int or runs not in limits or type(k) is not int
+            or type(blocks) is not int or blocks not in (1, 2, 4, 8)):
+        raise ValueError("covered sizes: runs 8/16/32/64, blocks 1/2/4/8; see §108.9")
+    m = runs.bit_length() - 1
+    if not m <= k <= (limits[runs] if blocks == 1 else min(11, limits[runs])) or (blocks == 8 and runs > 32):
+        raise ValueError("covered sizes: k from log2(runs) to 7/15/14/12 (blocked: at most 11); blocks=8 needs runs<=32")
+    floating(dtype)
+    p, b = k - m, blocks.bit_length() - 1
+    masks = [g for g in range(1, runs) if g.bit_count() >= 2]
+    incumbent = best = best_blocks = None
+
+    def find_blocks(vectors):
+        forbidden = set(vectors) | {a ^ c for a, c in combinations(vectors, 2)}
+
+        def extend(chosen, span):
+            if len(chosen) == b:
+                return chosen
+            for beta in range(chosen[-1] + 1 if chosen else 1, runs):
+                added = {s ^ beta for s in span}
+                if beta not in span and not added & forbidden:
+                    found = extend(chosen + [beta], span | added)
+                    if found is not None:
+                        return found
+            return None
+
+        return extend([], {0})
+
+    def search(chosen, start, subsets, pattern):
+        nonlocal incumbent, best, best_blocks
+        if len(chosen) == p:
+            B = find_blocks([1 << c for c in range(m)] + chosen) if b else []
+            if B is not None:
+                incumbent, best, best_blocks = pattern, chosen, B
+            return
+        for j in range(start, len(masks) - (p - len(chosen)) + 1):
+            g = masks[j]
+            added = [(x ^ g, size + 1) for x, size in subsets]
+            counts = list(pattern)
+            for x, size in added:
+                counts[x.bit_count() + size - 1] += 1
+            counts = tuple(counts)
+            if incumbent is None or counts < incumbent:
+                search(chosen + [g], j + 1, subsets + added, counts)
+
+    search([], 0, [(0, 0)], (0,) * k)
+    if best is None:
+        raise ValueError("no regular fraction with main effects and two-factor interactions unconfounded with blocks")
+    bits = lambda g: [c for c in range(m) if g & (1 << c)]
+    generators = [bits(g) for g in best]
+    X = fractional_factorial(m, generators, dtype=dtype, device=device) if p else ff2n(m, dtype=dtype, device=device)
+    block = torch.zeros(runs, dtype=torch.int64, device=device)
+    span = {0}
+    for t, beta in enumerate(best_blocks):
+        block += (X[:, bits(beta)].prod(1) == -1).long() * 2**t
+        span |= {s ^ beta for s in span}
+    vectors = [1 << c for c in range(m)] + best
+    confounded = [indices for r in range(1, 4) for indices in combinations(range(k), r)
+                  if _effect_mask(vectors, indices) in span - {0}]
+    return dict(design=X, generators=generators, wlp=word_length_pattern(X), block=block,
+                block_generators=[bits(g) for g in best_blocks], block_confounded=confounded)
+
+
+def _effect_mask(vectors, indices):
+    value = 0
+    for i in indices:
+        value ^= vectors[i]
+    return value
+
+
 def fold_over(X: torch.Tensor, factor: int | None = None) -> torch.Tensor:
     """Append rows with all factors reversed, or just the chosen factor."""
     if not isinstance(X, torch.Tensor) or X.ndim != 2 or not X.is_floating_point():

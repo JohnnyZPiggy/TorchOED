@@ -1,0 +1,13 @@
+{
+  "case": "RD1",
+  "verdict": "NOT_RUN",
+  "run_id": "44796491427",
+  "source_sha": "5544a20c9ac98b39789d6747d4ed891161749463",
+  "R_version": "R version 4.5.2 (2025-10-31)",
+  "skpr_version": "1.9.2",
+  "expression": "if(skpr:::run_documentation()) {\n#We can also use this method to evaluate designs that cannot be easily\n#evaluated using normal approximations. Here, we evaluate a design with a binomial response and see\n#whether we can detect the difference between each factor changing whether an event occurs\n#70% of the time or 90% of the time.\n\nfactorialbinom = expand.grid(a = c(-1, 1), b = c(-1, 1))\ndesignbinom = gen_design(factorialbinom, model = ~a + b, trials = 90, optimality = \"D\")\n\neval_design_mc(designbinom, ~a + b, alpha = 0.2, nsim = 100, effectsize = c(0.7, 0.9),\n              glmfamily = \"binomial\")\n}",
+  "error": "Using user-defined {future} plan() `plan(sequential)` instead of {skpr}'s default multicore plan (for this computer) of `plan(\"multicore\", workers = number_of_cores-1)`\nWarning: Caught FutureLaunchError. Canceling all iterations ...\nError: Caught an unexpected error of class FutureLaunchError when trying to launch future (\u2018doFuture2-1\u2019) on backend of class SequentialFutureBackend. The reason was: future::evalFuture() failed on ip-10-0-135-185 (pid 7896) at 2026-11-20T18:52:02. Using package 'future' v1.82.0. Possible other reasons: Failed to attach one or more packages: there is no package called \u2018mbest\u2019 [future <unnamed>; on 995ac12ece04506177294427bcb20892@ip-10-0-135-185<7896>] [future \u2018doFuture2-1\u2019 (995ac12ece04506177294427bcb20892-1); on 995ac12ece04506177294427bcb20892@ip-10-0-135-185<7896>]\nExecution halted",
+  "powers": null,
+  "combined_se": null,
+  "reason": "Child Rscript failed: missing mbest; no evaluated design or powers were exported. No second dispatch."
+}

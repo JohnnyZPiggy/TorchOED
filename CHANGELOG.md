@@ -8,7 +8,7 @@
 
 - Add nested split-split-plot GLS diagnostics and containment power (§114–§115).
 
-- Add `glm_power` for batched logistic and Poisson Monte Carlo Wald power.
+- Add `glm_power` for batched logistic and Poisson Monte Carlo Wald power (P2 gate §111–§112, #472).
 
 - Add exact minimum-aberration regular factorials and blocks unconfounded with main effects and two-factor interactions (#469).
 

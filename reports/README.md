@@ -74,3 +74,5 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w14-heldout](w14-heldout/) | #452: frozen H36–H39; #458: H39 R completion | H36–H38 exhaustive MATCH; H39 TorchOED better, MaxPro 23.66830 vs R 161.16186 (R 4.5.2 / support 0.1.7, run 44730389070); [completion](w14-heldout/h39-r/), frozen TorchOED unchanged |
 | [w15-glmpower-ext](w15-glmpower-ext/) | #466: frozen skpr 1.9.2 GLM Monte Carlo power | G1–G3 recorded (skpr 1.9.2, R 4.5.2, run 44748014062) with MC SE and asymptotic Wald approximations (not verdicts); RD1 NOT_RUN (`should not be called with handlers on the stack`), Rd expression quoted from source only |
 | [w15-skpr-ssp](w15-skpr-ssp/) | W15 nested split-plot skpr 1.9.2 | SS1 MATCH 1280/63, feasible with no repeated rows; SS2 published nested example MATCH shared GLS det 2072618.53036519, recorded variance ratios [1,1,1]. |
+
+| [w15-glmpower-rd1](w15-glmpower-rd1/summary.md) | W15 C3 published skpr eval_design_mc.Rd binomial example RD1: NOT_RUN, child Rscript missing mbest; single R run 44796491427, R 4.5.2 / skpr 1.9.2. |

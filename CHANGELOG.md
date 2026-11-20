@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add model-robust D designs via optimal_design(models=..., model_weights=...): weighted geometric mean of per-model D-efficiencies with robust and per-model dual efficiency floors (P2 gate §96–§98, #436).
+
 - Add "If Possible" terms: Bayesian D and I designs via optimal_design(if_possible=..., tau=...) with DuMouchel–Jones scaling and Bayesian dual efficiency floors (P2 gate §93–§95, #433).
 
 - Fix the `lhs` swap search so `mode="uniform"` always terminates: a swap must lower the objective by more than `1e-12` times its current value (P2 gate §92, #411).

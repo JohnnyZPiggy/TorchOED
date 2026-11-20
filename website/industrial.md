@@ -270,6 +270,27 @@ for criterion in ("D", "I"):
 
 Bayesian A, structured designs, non-diagonal priors and automatic selection of τ are not supported (P2 gate §95).
 
+## Model-robust D over a set of models
+
+Represent each competing model by a list of feature-column indices. The criterion is Σ_k (w_k/p_k) log det(M_k/n), the log of a weighted geometric mean of per-model D-efficiencies; weights are normalised and equal by default, and n must be at least the number of columns in the union. `efficiency_lower_bound` is the robust floor; `model_efficiency_lower_bounds` gives the individual D floors.
+
+```python
+import torch
+from torchoed import full_factorial, polynomial_features, optimal_design
+
+F = polynomial_features(full_factorial([3, 3]).double() - 1)
+# Columns: [1, x1, x2, x1², x2², x1x2]
+result = optimal_design(
+    F, 6, models=[[0, 1, 2], [0, 1, 2, 3, 4, 5]],
+    generator=torch.Generator().manual_seed(0),
+)
+print(result["ids"], result["objective"], result["efficiency_lower_bound"],
+      result["model_efficiency_lower_bounds"])
+```
+
+The objective is (1/6) log 140 + (1/12) log 256 − log 6 ≈ −0.506054278419874 (P2 gate §96.7, MR-b).
+A/I, n below the union column count, maximin criteria, model priors and structured designs are unsupported (§98).
+
 ## Published reference examples
 
 A published example is a call printed in a reference package's help page or vignette at a recorded version, with its inputs frozen as repository data and re-scored by one shared TorchOED metric.

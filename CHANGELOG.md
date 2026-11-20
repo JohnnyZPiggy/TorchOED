@@ -1,4 +1,5 @@
 # Changelog
+- Added CPU float64 split-split-plot D/A/I search with nested labels and efficiency floors (#459).
 
 ## Unreleased
 

@@ -16,6 +16,8 @@ a, b = metrics(X), metrics(R)
 winners = {k: "equal" if a[k] == b[k] else "TorchOED" if (a[k] > b[k] if k == "min_distance" else a[k] < b[k]) else "R" for k in a}
 assert (X[:, None] == F).all(-1).any(-1).all()
 assert torch.allclose(2 * torch.cdist(F,F).mean() - torch.cdist(F,F).mean(), torch.cdist(F,F).mean())
-result = dict(base_sha="879a7f23152b5711872bebf651b4d1765cd688ef",run_id=raw["run_id"],source_sha=raw["source_sha"],R_version=raw["R_version"],support=raw["support"],sample_rows=len(F),torchoed=a,reference=b,better=winners,reference_max_constraint_violation=(R.sum(1)-1).max().item(),example={k:v for k,v in raw["example"].items() if k not in ("design","rd2ex")},before=14,after=14)
+example = {k:v for k,v in raw["example"].items() if k not in ("design","rd2ex")}
+example.update(execution="NOT_RUN: Rd2ex dontrun lines retain ##D; eval parsed only comments and produced no design",rd_source_line=66)
+result = dict(base_sha="879a7f23152b5711872bebf651b4d1765cd688ef",run_id=raw["run_id"],source_sha=raw["source_sha"],R_version=raw["R_version"],support=raw["support"],sample_rows=len(F),torchoed=a,reference=b,better=winners,reference_max_constraint_violation=(R.sum(1)-1).max().item(),example=example,before=14,after=14)
 (p / "results.json").write_text(json.dumps(result,indent=2,allow_nan=False)+"\n",encoding="utf-8",newline="\n")
 print(json.dumps(result,indent=2))

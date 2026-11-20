@@ -1,0 +1,40 @@
+{
+  "base_sha": "879a7f23152b5711872bebf651b4d1765cd688ef",
+  "run_id": "44656949570",
+  "source_sha": "e4fad1e38ed6ff6a707abd95ea90ca2dccdffce4",
+  "R_version": "R version 4.5.2 (2025-10-31)",
+  "support": "0.1.7",
+  "sample_rows": 511,
+  "torchoed": {
+    "min_distance": 0.18386538194555926,
+    "phi_p": 5.523994155929388,
+    "maxpro": 26.20592530774234,
+    "cd2": 0.22953686789709923,
+    "energy": 0.4310371650458609
+  },
+  "reference": {
+    "min_distance": 0.18615522639545923,
+    "phi_p": 5.645961243284867,
+    "maxpro": 133.56149083468995,
+    "cd2": 0.2774727717629948,
+    "energy": 0.4232797029915171
+  },
+  "better": {
+    "min_distance": "R",
+    "phi_p": "TorchOED",
+    "maxpro": "TorchOED",
+    "cd2": "TorchOED",
+    "energy": "R"
+  },
+  "reference_max_constraint_violation": -0.05868936674633085,
+  "example": {
+    "rd_file": "sp.Rd",
+    "rd2ex_line": 15,
+    "call": "##D     D <- sp(n,p,dist.str=rep(\"normal\",p))",
+    "status": "not comparable: independent standard normal target is not a subset of [0,1]^2",
+    "execution": "NOT_RUN: Rd2ex dontrun lines retain ##D; eval parsed only comments and produced no design",
+    "rd_source_line": 66
+  },
+  "before": 14,
+  "after": 14
+}

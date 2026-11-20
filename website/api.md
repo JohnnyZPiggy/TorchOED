@@ -182,6 +182,9 @@ Inputs match batches exactly: SPD `M`, candidate rows `F`, symmetric PSD moment 
 
 ## Exchange and restarted design
 
+`glm_power(X, beta, family, *, alpha=0.05, nsim=1000, groups=None, generator=None, max_elements=10_000_000)` returns Monte Carlo Wald power and standard errors from batched float64 binomial or Poisson IRLS, with nonconverged and separated fit counts (P2 gate §111–§113).
+
+
 `compare_designs(F, designs, *, region=None, effect=1.0, alpha=0.05, quantiles=(0.0, 0.25, 0.5, 0.75, 1.0), criterion="D", generator=None)`
 
 Compare at least two unstructured designs (1-D int64 candidate IDs, repeats allowed) or Python integer run sizes, generated sequentially with `optimal_design` and one shared generator. Returns `ids`, run counts `n`, relative total-information D/A/I/G `efficiency` tensors (first design is 1; higher is better), per-coefficient `power`, `fds_quantiles` and sorted unscaled prediction-variance `fds` curves over `region` (default F). CPU float64; each design needs n > p, and the region must contain a nonzero row. Structured, Bayesian and model-robust comparisons are outside this API (P2 gate §99–§101).

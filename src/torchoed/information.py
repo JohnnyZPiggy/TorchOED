@@ -274,6 +274,107 @@ def design_diagnostics(
     return result
 
 
+def _glm_fit(X: torch.Tensor, Y: torch.Tensor, family: str) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Batched R-style IRLS, freezing each row at its first stopping event."""
+    eps = torch.finfo(X.dtype).eps
+    mu = (Y + 0.5) / 2 if family == "binomial" else Y + 0.1
+    eta = torch.logit(mu) if family == "binomial" else mu.log()
+    def deviance(m: torch.Tensor) -> torch.Tensor:
+        return (-2 * (torch.xlogy(Y, m) + torch.xlogy(1-Y, 1-m)).sum(1) if family == "binomial"
+                else 2 * (torch.xlogy(Y, Y/m) - Y + m).sum(1))
+    previous = deviance(mu)
+    active = torch.ones(len(Y), dtype=torch.bool, device=X.device)
+    converged = torch.zeros_like(active)
+    beta = X.new_zeros((len(Y), X.shape[1]))
+    covariance = torch.eye(X.shape[1], dtype=X.dtype, device=X.device).expand(len(Y), -1, -1).clone()
+    for _ in range(25):
+        if not active.any():
+            break
+        index = active.nonzero().flatten()
+        e, m, y = eta[index], mu[index], Y[index]
+        t = e.clamp(-30, 30).exp()
+        derivative = (torch.where(e.abs() > 30, eps, t/(1+t).square()) if family == "binomial"
+                      else e.exp().clamp_min(eps))
+        variance = m*(1-m) if family == "binomial" else m
+        weights = derivative.square()/variance
+        z = e + (y-m)/derivative
+        A = X.T @ (weights[:, :, None]*X)
+        L, info = torch.linalg.cholesky_ex(A)
+        good = info == 0
+        active[index[~good]] = False
+        index, L = index[good], L[good]
+        fitted = torch.cholesky_solve(((weights[good]*z[good]) @ X).unsqueeze(-1), L).squeeze(-1)
+        new_eta = fitted @ X.T
+        t = torch.where(new_eta < -30, eps, torch.where(new_eta > 30, 1/eps, new_eta.exp()))
+        new_mu = t/(1+t) if family == "binomial" else new_eta.exp().clamp_min(eps)
+        mu[index] = new_mu
+        D = deviance(mu)[index]
+        finite = torch.isfinite(fitted).all(1) & torch.isfinite(D)
+        done = finite & ((D-previous[index]).abs()/(D.abs()+0.1) < 1e-8)
+        beta[index], covariance[index], eta[index] = fitted, torch.cholesky_inverse(L), new_eta
+        converged[index] = done
+        active[index[done | ~finite]] = False
+        previous[index] = D
+    return beta, covariance, eta, converged
+
+
+def _glm_rejections(X: torch.Tensor, Y: torch.Tensor, family: str, alpha: float,
+                    groups: list[list[int]]) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    beta, covariance, eta, converged = _glm_fit(X, Y, family)
+    z = beta / covariance.diagonal(dim1=-2, dim2=-1).sqrt()
+    reject = (torch.erfc(z.abs()/2**0.5) < alpha) & converged[:, None]
+    group_reject = []
+    for g in groups:
+        if len(g) == 1:
+            group_reject.append(reject[:, g[0]])
+        else:
+            C = covariance[:, g][:, :, g]
+            # Failed rows reject nothing and need no covariance factorization.
+            C = torch.where(converged[:, None, None], C, torch.eye(len(g), device=X.device, dtype=X.dtype))
+            b = torch.where(converged[:, None], beta[:, g], 0)
+            W = (b * torch.cholesky_solve(b.unsqueeze(-1), torch.linalg.cholesky(C)).squeeze(-1)).sum(1)
+            group_reject.append((torch.special.gammaincc(X.new_tensor(len(g)/2), W/2) < alpha) & converged)
+    grouped = torch.stack(group_reject, 1) if groups else reject[:, :0]
+    separated = converged & (eta.abs().amax(1) > 10 if family == "binomial" else eta.amin(1) < -10)
+    return reject, grouped, converged, separated
+
+
+def glm_power(
+    X: torch.Tensor, beta: torch.Tensor, family: str, *, alpha: float = 0.05,
+    nsim: int = 1000, groups: list[list[int]] | None = None,
+    generator: torch.Generator | None = None, max_elements: int = 10_000_000,
+) -> dict[str, torch.Tensor | int | float | str]:
+    """Monte Carlo Wald power from batched float64 logistic or Poisson IRLS.
+
+    Counts all simulations in the denominator; non-converged fits reject nothing.
+    Separation is a reporting heuristic. See P2_GATE §111 for the fit convention.
+    """
+    if (not isinstance(X, torch.Tensor) or X.ndim != 2 or X.dtype != torch.float64
+            or X.shape[0] < X.shape[1] or X.shape[1] < 1 or not torch.isfinite(X).all()
+            or not isinstance(beta, torch.Tensor) or beta.shape != (X.shape[1],)
+            or beta.dtype != X.dtype or beta.device != X.device or not torch.isfinite(beta).all()
+            or family not in ("binomial", "poisson") or type(alpha) not in (int, float)
+            or not 0 < alpha < 1 or type(nsim) is not int or nsim < 1
+            or type(max_elements) is not int or nsim*(X.shape[0]+X.shape[1]**2) > max_elements
+            or (generator is not None and (not isinstance(generator, torch.Generator) or generator.device != X.device))):
+        raise ValueError("invalid GLM matrix, coefficients, family, simulation count, level, generator or workspace")
+    if groups is not None and (type(groups) is not list or any(type(g) is not list or not g
+            or any(type(j) is not int or not 0 <= j < X.shape[1] for j in g)
+            or len(set(g)) != len(g) for g in groups)):
+        raise ValueError("groups must contain non-empty lists of distinct column indices")
+    mean = (X @ beta).sigmoid() if family == "binomial" else (X @ beta).exp()
+    Y = (torch.bernoulli(mean.expand(nsim, -1), generator=generator) if family == "binomial"
+         else torch.poisson(mean.expand(nsim, -1), generator=generator))
+    reject, grouped, converged, separated = _glm_rejections(X, Y, family, alpha, groups or [])
+    power = reject.double().mean(0)
+    result: dict[str, torch.Tensor | int | float | str] = dict(power=power, mc_se=(power*(1-power)/nsim).sqrt(),
+        nonconverged=int((~converged).sum()), separated=int(separated.sum()), nsim=nsim, alpha=alpha, family=family)
+    if groups is not None:
+        gp = grouped.double().mean(0)
+        result.update(group_power=gp, group_mc_se=(gp*(1-gp)/nsim).sqrt())
+    return result
+
+
 def compare_designs(
     F: torch.Tensor, designs: list[torch.Tensor | int], *, region: torch.Tensor | None = None,
     effect: float | torch.Tensor = 1.0, alpha: float = 0.05,

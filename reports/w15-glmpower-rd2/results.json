@@ -1,0 +1,16 @@
+{
+  "case": "RD2",
+  "run_id": "44824241160",
+  "source_sha": "aa3785347a967120cdfd38e268642d735b75cb44",
+  "R_version": "R version 4.5.2 (2025-10-31)",
+  "skpr_version": "1.9.2",
+  "mbest_version": "0.6.1",
+  "expression": null,
+  "verdict": "NOT_RUN",
+  "error": "Fatal error: cannot open file '/home/runner/work/TorchOED/TorchOED/reports/w15-glmpower-rd2/skpr.R': No such file or directory",
+  "powers": null,
+  "combined_se": null,
+  "reason": "Engineer dispatch error: Windows python alias created no recipe; shell continued to dispatch base aa3785347a967120cdfd38e268642d735b75cb44 before the recipe commit. The preserved skpr.R was not executed; no second dispatch.",
+  "provenance": "Error transcribed verbatim from workflow 44824241160 step Run reference and record runtime; skpr.json is a local failure record, not an R artifact.",
+  "recipe_executed": false
+}

@@ -1,5 +1,7 @@
 # TorchOED
 
+![TorchOED](assets/torchoed-banner.png)
+
 **Optimal experimental design in PyTorch — with a certificate on every design.**
 
 TorchOED chooses which experiments to run: D-, A- and I-optimal designs, blocking, split-plot, mixtures, screening and response-surface designs, space-filling designs, power and diagnostics, in one tensor API that also accepts any PyTorch model. Every optimal design carries a proved lower bound on its efficiency.

@@ -291,6 +291,32 @@ print(result["ids"], result["objective"], result["efficiency_lower_bound"],
 The objective is (1/6) log 140 + (1/12) log 256 − log 6 ≈ −0.506054278419874 (P2 gate §96.7, MR-b).
 A/I, n below the union column count, maximin criteria, model priors and structured designs are unsupported (§98).
 
+## Compare Designs and the sample-size explorer
+
+Efficiencies are relative to the first design on total information, so different run counts compare directly and values above 1 are better; I uses the region's mean prediction variance and G its maximum. FDS quantiles use the unscaled variance v = spv/n. An integer entry requests a run size searched with `optimal_design`, in order with one shared generator.
+
+```python
+import torch
+from torchoed import full_factorial, compare_designs
+
+x = full_factorial([3, 3]).double() - 1
+F = torch.cat((torch.ones(9, 1), x), 1)
+result = compare_designs(F, [torch.tensor([0, 2, 6, 8]), torch.tensor([0, 2, 4, 6, 8])])
+print(result["efficiency"])
+print(result["fds_quantiles"])
+```
+
+For corners plus centre relative to corners: D = (5/4)^{1/3} ≈ 1.0772, A = 15/14, I = 35/32, G = 15/14. Quantile rows are [0.25, 0.5, 0.5, 0.75, 0.75] and [0.2, 0.45, 0.45, 0.7, 0.7].
+
+```python
+F2 = torch.cat((F, x.prod(1, keepdim=True)), 1)
+result = compare_designs(F2, [5, 7, 9], effect=1.0, generator=torch.Generator().manual_seed(0))
+print(result["n"])
+print(result["power"])
+```
+
+Structured, Bayesian and model-robust comparisons and cross-design GPU batching are not supported (P2 gate §101).
+
 ## Published reference examples
 
 A published example is a call printed in a reference package's help page or vignette at a recorded version, with its inputs frozen as repository data and re-scored by one shared TorchOED metric.

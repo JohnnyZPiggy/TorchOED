@@ -1,0 +1,99 @@
+{
+  "run_id": "44697685526",
+  "source_sha": "3cc00b81a2da8076d31578f9ddd8c623ac3b9f29",
+  "R_version": "R version 4.5.2 (2025-10-31)",
+  "skpr": "1.9.2",
+  "python": "3.14.6",
+  "torch": "2.14.1+cpu",
+  "tolerance": 1e-08,
+  "examples": [
+    {
+      "example": "simple",
+      "n": 11,
+      "comparisons": [
+        {
+          "term": "A",
+          "kind": "parameter",
+          "torch_power": 0.7991115959530777,
+          "R_power": 0.799111596407284,
+          "delta": -4.542063392065643e-10
+        },
+        {
+          "term": "B",
+          "kind": "parameter",
+          "torch_power": 0.7991115959530777,
+          "R_power": 0.7991115964072842,
+          "delta": -4.542065612511692e-10
+        },
+        {
+          "term": "C",
+          "kind": "parameter",
+          "torch_power": 0.7991115959530777,
+          "R_power": 0.7991115964072841,
+          "delta": -4.5420645022886674e-10
+        },
+        {
+          "term": "A",
+          "kind": "effect",
+          "torch_power": 0.7991115959530777,
+          "R_power": 0.799111596407284,
+          "delta": -4.542063392065643e-10
+        },
+        {
+          "term": "B",
+          "kind": "effect",
+          "torch_power": 0.7991115959530777,
+          "R_power": 0.7991115964072842,
+          "delta": -4.542065612511692e-10
+        },
+        {
+          "term": "C",
+          "kind": "effect",
+          "torch_power": 0.7991115959530777,
+          "R_power": 0.7991115964072841,
+          "delta": -4.5420645022886674e-10
+        }
+      ],
+      "max_abs_delta": 4.542065612511692e-10,
+      "verdict": "MATCH"
+    },
+    {
+      "example": "coffee",
+      "n": 29,
+      "comparisons": [
+        {
+          "term": "cost",
+          "kind": "parameter",
+          "torch_power": 0.999153040067109,
+          "R_power": 0.9991530401812234,
+          "delta": -1.1411438460839918e-10
+        },
+        {
+          "term": "cost",
+          "kind": "effect",
+          "torch_power": 0.999153040067109,
+          "R_power": 0.9991530401812234,
+          "delta": -1.1411438460839918e-10
+        },
+        {
+          "term": "size",
+          "kind": "effect",
+          "torch_power": 0.9522716560772518,
+          "R_power": 0.9522716562821621,
+          "delta": -2.0491031094138634e-10
+        },
+        {
+          "term": "type",
+          "kind": "effect",
+          "torch_power": 0.9907583827892357,
+          "R_power": 0.9907583831261554,
+          "delta": -3.3691971434990364e-10
+        }
+      ],
+      "max_abs_delta": 3.3691971434990364e-10,
+      "verdict": "MATCH"
+    }
+  ],
+  "published_count_before": 14,
+  "published_count_after": 16
+}

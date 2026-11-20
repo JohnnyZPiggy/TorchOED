@@ -1073,6 +1073,8 @@ def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, genera
     if any(hard[prefix].unique().numel() > 1 for prefix in fixed_plots):
         raise ValueError("fixed_ids within a whole plot must share one hard label")
     if subplots is not None:
+        if n_fixed == n:
+            raise ValueError("fixed_ids must have length < n")
         boundaries = torch.tensor(subplots).cumsum(0).tolist() if _valid_plot_sizes(subplots, n) else []
         if (not boundaries or any(b not in boundaries for b in torch.tensor(sizes).cumsum(0).tolist())
                 or not isinstance(subplot_hard, torch.Tensor) or subplot_hard.shape != (m,)
@@ -1230,6 +1232,8 @@ def _strip_design(F, n, strip, hard, col_hard, eta_row, eta_col, criterion, rest
     fixed, _ = (None, None) if fixed_ids is None else _fixed_pool(fixed_ids, m, n)
     n_fixed = 0 if fixed is None else len(fixed)
     grid = torch.arange(n).reshape(r, c)
+    if n_fixed == n:
+        raise ValueError("fixed_ids must have length < n")
     for groups, labels in ((grid, hard), (grid.T, col_hard)):
         if n_fixed and any(labels[fixed[g[g < n_fixed]]].unique().numel() > 1 for g in groups):
             raise ValueError("fixed_ids within a strip unit must share one label")

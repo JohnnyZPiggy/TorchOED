@@ -108,6 +108,33 @@ torch.testing.assert_close(torch.linalg.det(X.T@torch.linalg.inv(V)@X),
                            F.new_tensor(1280/63), rtol=1e-9, atol=0)
 ```
 
+## Strip-plot designs
+
+Use `strip=(r, c)` with `r*c = n` for a grid in row-major run order: `row_hard` labels stay constant along each row and `col_hard` labels down each column, with variance ratios `eta_row` and `eta_col`.
+The search supports D, A and I on CPU float64 and returns `LOCAL_STRIP_PLOT_EXCHANGE` with a conservative `efficiency_lower_bound` against the OLS approximate optimum.
+Strip plots cannot be combined with `whole_plots`, `subplots`, `blocks`, `fixed_ids`, `covariates`, `alias`, `if_possible`, `models` or compound criteria.
+
+```python
+import torch
+from torchoed import optimal_design
+
+C = torch.cartesian_prod(torch.tensor([-1., 1.]), torch.tensor([-1., 1.]),
+                         torch.tensor([-1., 0., 1.])).double()
+F = torch.cat((torch.ones(12, 1), C, C[:, 2:]**2), 1)
+result = optimal_design(F, 6, strip=(2, 3), row_hard=C[:, 0].long(),
+                        col_hard=C[:, 1].long(), eta_row=1, eta_col=1,
+                        criterion="D", generator=torch.Generator().manual_seed(0))
+ids = result["ids"]
+assert ids.unique().numel() == 6
+assert all(C[g, 0].unique().numel() == 1 for g in ids.reshape(2, 3))
+assert all(C[g, 1].unique().numel() == 1 for g in ids.reshape(2, 3).T)
+Zr = torch.eye(2, dtype=torch.float64).repeat_interleave(3, dim=0)
+Zc = torch.eye(3, dtype=torch.float64).repeat(2, 1)
+V = torch.eye(6, dtype=torch.float64) + Zr@Zr.T + Zc@Zc.T
+X = F[ids]
+assert abs(torch.linalg.det(X.T@torch.linalg.solve(V, X)).item()/(80/9)-1) < 1e-9
+```
+
 ## Mixture designs
 
 Designs are without replacement; replicate a point (for example the centroid) by appending copies of its candidate row.
@@ -221,6 +248,37 @@ F = torch.cat((X.new_ones((len(X), 1)), X), dim=1)
 G = X[:, [0]] * X[:, [1]]
 A = design_diagnostics(F, torch.arange(len(X)), alias=G)["alias"]
 torch.testing.assert_close(A[4, 0], X.new_tensor(1.0))
+```
+
+## Minimum aberration and blocked fractions
+
+`minimum_aberration(k, runs, blocks=...)` returns the first lexicographically minimum word-length pattern over all regular fractions, using exact branch and bound; with blocks, all main effects and two-factor interactions must remain unconfounded with blocks.
+The result keys are `design`, `generators`, `wlp`, `block`, `block_generators` and `block_confounded`.
+Covered sizes are `runs` in {8, 16, 32, 64} with `log2(runs) ≤ k ≤ 7, 15, 14, 12` respectively; blocked designs cap `k` at 11 and support 2, 4 or 8 blocks (8 only for at most 32 runs), per P2 gate §108.9; infeasible sizes raise `ValueError`.
+
+```python
+from itertools import combinations
+import torch
+from torchoed import minimum_aberration
+
+r = minimum_aberration(6, 16, blocks=2)
+assert r["wlp"].tolist() == [0, 0, 0, 3, 0, 0]
+X, block = r["design"], r["block"]
+assert block.unique(return_counts=True)[1].tolist() == [8, 8]
+for order in (1, 2):
+    for term in combinations(range(6), order):
+        effect = X[:, list(term)].prod(1)
+        assert any(effect[block == b].unique().numel() == 2 for b in block.unique())
+for term in r["block_confounded"]:
+    assert len(term) == 3
+    effect = X[:, list(term)].prod(1)
+    assert all(effect[block == b].unique().numel() == 1 for b in block.unique())
+try:
+    minimum_aberration(5, 16, blocks=4)
+except ValueError:
+    pass
+else:
+    raise AssertionError("infeasible blocked fraction accepted")
 ```
 
 ## Diagnostics and power

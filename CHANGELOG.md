@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add `glm_power` for batched logistic and Poisson Monte Carlo Wald power.
+
+- Add exact minimum-aberration regular factorials and blocks unconfounded with main effects and two-factor interactions (#469).
+
 - Add CPU float64 strip-plot D/A/I search with crossed row/column labels and a conservative OLS efficiency floor (#463).
 
 - Add split-split-plot D/A/I designs via optimal_design(subplots=..., subplot_hard=..., eta_sub=...): closed-form nested GLS information, rank-2 within-subplot exchanges, subplot and whole-plot relabels, OLS dual efficiency floor (P2 gate §102–§103, #459).

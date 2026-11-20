@@ -4,6 +4,10 @@ All 31 names are exported from `torchoed`; tensor shapes, numerical guards and r
 
 ## Candidate construction
 
+`minimum_aberration(k: int, runs: int, *, blocks: int = 1, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> dict`
+
+Return the first lexicographically minimum word-length pattern among regular fractions, optionally restricted to blocks unconfounded with main effects and two-factor interactions (§108–§109). Covered runs: 8/16/32/64, k up to 7/15/14/12; blocked k ≤ 11, blocks 2/4/8 (8 only for runs ≤ 32). Returns design, generators, wlp, block, block_generators and block_confounded (zero-based effect tuples up to order 3); infeasible or uncovered sizes raise ValueError.
+
 `full_factorial(levels: list[int] | tuple[int, ...], *, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 
 Return integer level-index rows, with the last factor varying fastest.
@@ -177,6 +181,9 @@ G and V return negative maximum and mean prediction variance; I returns `-tr(M^-
 Inputs match batches exactly: SPD `M`, candidate rows `F`, symmetric PSD moment `W`.
 
 ## Exchange and restarted design
+
+`glm_power(X, beta, family, *, alpha=0.05, nsim=1000, groups=None, generator=None, max_elements=10_000_000)` returns Monte Carlo Wald power and standard errors from batched float64 binomial or Poisson IRLS, with nonconverged and separated fit counts (P2 gate §111–§113).
+
 
 `compare_designs(F, designs, *, region=None, effect=1.0, alpha=0.05, quantiles=(0.0, 0.25, 0.5, 0.75, 1.0), criterion="D", generator=None)`
 

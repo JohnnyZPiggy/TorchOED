@@ -12,8 +12,9 @@ ss <- eval(calls[[3]])
 record <- function(d) list(rows = d, rownames = rownames(d),
   model = deparse(attr(d, "model")), varianceratio = 1)
 ss1 <- c(list(status = "RECORDED", calls = lapply(calls, deparse)), record(ss))
-rd <- tools::Rd2ex(tools::Rd_db("skpr")[["gen_design.Rd"]])
-exprs <- parse(text = rd)
+f <- tempfile(fileext = ".R")
+tools::Rd2ex(tools::Rd_db("skpr")[["gen_design.Rd"]], out = f)
+exprs <- parse(f)
 depths <- list()
 depth <- function(e) {
   if (is.symbol(e)) return(if (is.null(depths[[as.character(e)]])) 0 else depths[[as.character(e)]])
@@ -37,7 +38,7 @@ if (!is.null(target)) {
   last <- exprs[[target]]
   name <- if (as.character(last[[1]]) %in% c("<-", "=")) as.character(last[[2]]) else ".ss2"
   if (name == ".ss2") code[length(code)] <- paste(".ss2 <-", code[length(code)])
-  code <- c(code, sprintf('jsonlite::write_json(list(rows=%s, rownames=rownames(%s)), "%s", auto_unbox=TRUE)', name, name, file.path(out,"ss2.json")))
+  code <- c(code, sprintf('jsonlite::write_json(list(rows=%s, rownames=rownames(%s), attribute_names=names(attributes(%s)), varianceratios=attr(%s, "varianceratios")), "%s", auto_unbox=TRUE)', name, name, name, name, file.path(out,"ss2.json")))
   path <- file.path(out, "ss2-input.R"); writeLines(code, path)
   status <- system2("Rscript", path, stdout=file.path(tempdir(),"ss2.out"), stderr=file.path(tempdir(),"ss2.err"))
   ss2 <- if (status == 0) c(list(status="RECORDED", call=deparse(value)), jsonlite::read_json(file.path(out,"ss2.json"))) else list(status="NOT_RUN", error=paste(readLines(file.path(tempdir(),"ss2.err")),collapse="\n"))

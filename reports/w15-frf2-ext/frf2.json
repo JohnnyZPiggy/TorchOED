@@ -1,0 +1,89 @@
+{
+  "RD1_Rd_line": "FrF2(8,3,blocks=2)",
+  "cases": {
+    "MA1": {
+      "status": "RECORDED",
+      "call": "FrF2(nruns = 32, nfactors = 13, randomize = FALSE)",
+      "nfactors": 13,
+      "info": {
+        "type": "FrF2",
+        "aliased": {
+          "legend": ["A=A", "B=B", "C=C", "D=D", "E=E", "F=F", "G=G", "H=H", "J=J", "K=K", "L=L", "M=M", "N=N"],
+          "main": [],
+          "fi2": ["AB=CF=DG=EK=HJ=LM", "AC=BF=DH=EL=GJ=KM", "AD=BG=CH=EN=FJ", "AE=BK=CL=DN=FM", "AF=BC=DJ=EM=GH=KL", "AG=BD=CJ=FH=KN", "AH=BJ=CD=FG=LN", "AJ=BH=CG=DF=MN", "AK=BE=CM=FL=GN", "AL=BM=CE=FK=HN", "AM=BL=CK=EF=JN", "AN=DE=GK=HL=JM", "BN=DK=EG=HM=JL", "CN=DL=EH=GM=JK", "DM=EJ=FN=GL=HK"]
+        }
+      }
+    },
+    "MA2": {
+      "status": "RECORDED",
+      "call": "FrF2(nruns = 32, nfactors = 14, randomize = FALSE)",
+      "nfactors": 14,
+      "info": {
+        "type": "FrF2",
+        "aliased": {
+          "legend": ["A=A", "B=B", "C=C", "D=D", "E=E", "F=F", "G=G", "H=H", "J=J", "K=K", "L=L", "M=M", "N=N", "O=O"],
+          "main": [],
+          "fi2": ["AB=CF=DG=EK=HJ=LM=NO", "AC=BF=DH=EL=GJ=KM", "AD=BG=CH=EN=FJ=KO", "AE=BK=CL=DN=FM=GO", "AF=BC=DJ=EM=GH=KL", "AG=BD=CJ=EO=FH=KN", "AH=BJ=CD=FG=LN=MO", "AJ=BH=CG=DF=LO=MN", "AK=BE=CM=DO=FL=GN", "AL=BM=CE=FK=HN=JO", "AM=BL=CK=EF=HO=JN", "AN=BO=DE=GK=HL=JM", "AO=BN=DK=EG=HM=JL", "CN=DL=EH=FO=GM=JK", "CO=DM=EJ=FN=GL=HK"]
+        }
+      }
+    },
+    "MA3": {
+      "status": "RECORDED",
+      "call": "FrF2(nruns = 64, nfactors = 12, randomize = FALSE)",
+      "nfactors": 12,
+      "info": {
+        "type": "FrF2",
+        "aliased": {
+          "legend": ["A=A", "B=B", "C=C", "D=D", "E=E", "F=F", "G=G", "H=H", "J=J", "K=K", "L=L", "M=M"],
+          "main": [],
+          "fi2": ["AB=CG=DH", "AC=BG", "AD=BH", "AG=BC", "AH=BD", "CD=GH", "CH=DG", "EF=JK", "EJ=FK=LM", "EK=FJ", "EL=JM", "EM=JL", "FL=KM", "FM=KL"]
+        }
+      }
+    },
+    "BL1": {
+      "status": "RECORDED",
+      "call": "FrF2(nruns = 16, nfactors = 6, blocks = 2, randomize = FALSE)",
+      "nfactors": 6,
+      "info": {
+        "type": "FrF2.blocked",
+        "block.gen": 13,
+        "aliased": {
+          "legend": ["A=A", "B=B", "C=C", "D=D", "E=E", "F=F"],
+          "main": [],
+          "fi2": ["AB=CE=DF", "AC=BE", "AD=BF", "AE=BC", "AF=BD", "CD=EF", "CF=DE"]
+        }
+      }
+    },
+    "BL2": {
+      "status": "NOT_RUN",
+      "call": "FrF2(nruns = 16, nfactors = 5, blocks = 4, randomize = FALSE)",
+      "error": "no adequate blocked design found with 2fis unconfounded with blocks"
+    },
+    "BL3": {
+      "status": "RECORDED",
+      "call": "FrF2(nruns = 32, nfactors = 7, blocks = 4, randomize = FALSE)",
+      "nfactors": 7,
+      "info": {
+        "type": "FrF2.blocked",
+        "block.gen": [13, 19],
+        "aliased": {
+          "legend": ["A=A", "B=B", "C=C", "D=D", "E=E", "F=F", "G=G"],
+          "main": [],
+          "fi2": ["AB=CF=DG", "AC=BF", "AD=BG", "AF=BC", "AG=BD", "CD=FG", "CG=DF"]
+        }
+      }
+    },
+    "RD1": {
+      "status": "RECORDED",
+      "call": "FrF2(8, 3, blocks = 2, randomize = FALSE)",
+      "nfactors": 3,
+      "info": {
+        "type": "FrF2.blocked",
+        "block.gen": 7,
+        "aliased": {
+          "legend": ["A=A", "B=B", "C=C"]
+        }
+      }
+    }
+  }
+}

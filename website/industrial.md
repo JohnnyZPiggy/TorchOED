@@ -81,6 +81,33 @@ assert result["certificate"] == "LOCAL_SPLIT_PLOT_EXCHANGE"
 assert 0 < result["efficiency_lower_bound"] <= 1 + 1e-12
 ```
 
+## Split-split-plot designs
+
+Use `subplots` for subplot sizes nested within `whole_plots`, `subplot_hard` for one integer subplot-setting label per candidate, and `eta_sub` for the positive subplot-to-residual variance ratio. Subplot sizes sum to the run count and every whole-plot boundary must also be a subplot boundary; `hard` stays constant within each whole plot and `subplot_hard` within each subplot. D/A/I search requires CPU float64 and cannot combine with `blocks`, `fixed_ids`, `covariates`, `alias`, `if_possible` or `models` (P2 gate §102–§103). `LOCAL_SPLIT_SPLIT_PLOT_EXCHANGE` certifies local optimality under within-subplot exchanges and greedy subplot/whole-plot relabels; `efficiency_lower_bound` is a conservative floor against the OLS approximate optimum, not a global-optimum certificate.
+
+```python
+import torch
+from torchoed import optimal_design
+
+C = torch.cartesian_prod(torch.tensor([-1., 1.]), torch.tensor([-1., 1.]),
+                         torch.tensor([-1., 0., 1.])).double()
+F = torch.cat((torch.ones(12, 1), C, C[:, 2:]**2), 1)
+result = optimal_design(F, 8, whole_plots=[4, 4], hard=C[:, 0].long(),
+                        subplots=[2]*4, subplot_hard=C[:, 1].long(),
+                        eta=1, eta_sub=1, criterion="D",
+                        generator=torch.Generator().manual_seed(0))
+ids = result["ids"]
+assert ids.unique().numel() == 8
+assert all(C[g, 0].unique().numel() == 1 for g in ids.split(4))
+assert all(C[g, 1].unique().numel() == 1 for g in ids.split(2))
+Zw = torch.eye(2, dtype=torch.float64).repeat_interleave(4, dim=0)
+Zs = torch.eye(4, dtype=torch.float64).repeat_interleave(2, dim=0)
+V = torch.eye(8, dtype=torch.float64) + Zw@Zw.T + Zs@Zs.T
+X = F[ids]
+torch.testing.assert_close(torch.linalg.det(X.T@torch.linalg.inv(V)@X),
+                           F.new_tensor(1280/63), rtol=1e-9, atol=0)
+```
+
 ## Mixture designs
 
 Designs are without replacement; replicate a point (for example the centroid) by appending copies of its candidate row.

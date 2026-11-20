@@ -31,9 +31,9 @@ for name, ref in reference.items():
             p = row['power']; row['MC_SE'] = (p * (1 - p) / ref['nsim']) ** .5
             if name != 'RD1': row['asymptotic_approximation'] = power[j].item()
         case['parameter_power'] = rows
-        summary.append(name + ': ' + '; '.join(f"{r['parameter']} {r['power']:.6g} Â± {r['MC_SE']:.6g}" + (f" (asymptotic {r['asymptotic_approximation']:.6g})" if name != 'RD1' else '') for r in rows))
+        summary.append(name + ': ' + '; '.join(f"{r['parameter']} {r['power']:.6g} ± {r['MC_SE']:.6g}" + (f" (asymptotic {r['asymptotic_approximation']:.6g})" if name != 'RD1' else '') for r in rows))
     else:
-        summary.append(f"{name}: NOT_RUN â€” {ref['error']}")
+        summary.append(f"{name}: NOT_RUN — {ref['error']}")
     results['cases'][name] = case
 summary.append('RD1 expression verbatim (JSON string, newlines escaped): ' + json.dumps(reference['RD1'].get('call', reference['RD1']['expression_not_executed'])))
 (root / 'results.json').write_text(json.dumps(results, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')

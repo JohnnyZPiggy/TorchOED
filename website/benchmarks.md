@@ -15,7 +15,7 @@ Where both finished, TorchOED's design was as good or better (higher log-determi
 
 ## Published examples
 
-11 of 13 published examples match or are beaten on the shared metric (P2 exit target ≥ 8 met; week 13 target ≥ 12).
+14 of 16 published examples match or are beaten on the shared metric (P2 exit target ≥ 8 met; week 13 target ≥ 12 met).
 
 | ID | Package and source | Shared metric | Verdict |
 |---|---|---|---|
@@ -32,8 +32,11 @@ Where both finished, TorchOED's design was as good or better (higher log-determi
 | fr-pb40 | [FrF2 2.3-5](https://github.com/cran/FrF2/blob/2.3-5/man/pb.Rd#L211-L211) | X.T @ X = nruns * I after mapping factor low/high levels to -1/+1 | MATCH; Gram error 0, [w13-published](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-published/summary.md) |
 | rsm-ccd3-inscribed | [rsm 2.10.6](https://github.com/cran/rsm/blob/2.10.6/man/ccd.Rd#L120-L123) | dense D: logdet(F.T @ F) on coded full quadratic; row count | MATCH; see results.json |
 | skpr-splitplot | [skpr 1.9.2](https://github.com/cran/skpr/blob/1.9.2/man/gen_design.Rd#L217-L230) | dense GLS logdet | MATCH; both 13.513636250491656, delta 0 ([w8-skpr](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w8-skpr/summary.md)) |
+| lhs-maximin43 | [lhs 1.3.0](https://github.com/cran/lhs/blob/1.3.0/man/maximinLHS.Rd#L74-L74) | phi_15 on rank midpoints (lower is better) | TorchOED better; 1.6452337368527556 vs 2.310300628135955, [w13-spacefill-ext](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-spacefill-ext/summary.md) |
+| maxpro-104 | [MaxPro 4.1-2](https://github.com/cran/MaxPro/blob/4.1-2/man/MaxProLHD.Rd#L65-L65) | MaxPro psi on rank midpoints (lower is better) | TorchOED better; 13.227729408335211 vs 13.43815350925327, [w13-spacefill-ext](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-spacefill-ext/summary.md) |
+| dice-cd2-402 | [DiceDesign 1.10](https://github.com/cran/DiceDesign/blob/1.10/man/discrepancyCriteria.Rd#L68-L68) | CD2 of the R design, abs diff <= 1e-12 | MATCH; delta 8.0e-15, [w13-spacefill-ext](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-spacefill-ext/summary.md) |
 
-New results: alg-d MATCH; alg-a NO MATCH (2.4240924092409237 vs reference 2.3, lower is better); alg-i MATCH; rsm-ccd3-inscribed MATCH. mix-scd12, fr-pb8 and fr-pb40 MATCH and mix-xvert NO MATCH on the R oracle workflow (R 4.5.2, mixexp 1.2.7.1, FrF2 2.3-5, run 44613389076). Existing five MATCH results reused without rerun. No broader parity claim.
+New results: alg-d MATCH; alg-a NO MATCH (2.4240924092409237 vs reference 2.3, lower is better); alg-i MATCH; rsm-ccd3-inscribed MATCH. mix-scd12, fr-pb8 and fr-pb40 MATCH and mix-xvert NO MATCH on the R oracle workflow (R 4.5.2, mixexp 1.2.7.1, FrF2 2.3-5, run 44613389076). Existing five MATCH results reused without rerun. No broader parity claim. lhs-maximin43 and maxpro-104 TorchOED better and dice-cd2-402 MATCH on R 4.5.2 (lhs 1.3.0, MaxPro 4.1-2, DiceDesign 1.10, run 44641039986).
 
 ## Against R and held-out cases
 

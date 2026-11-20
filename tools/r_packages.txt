@@ -10,3 +10,4 @@ MaxPro 4.1-2
 DiceDesign 1.10
 support 0.1.7
 skpr 1.9.2
+mbest 0.6.1

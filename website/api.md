@@ -142,7 +142,7 @@ Form the chosen rows' Gram matrix, optionally normalized by the number of observ
 
 Form information from nonnegative candidate weights summing to one.
 
-`design_diagnostics(F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None, effect: float | torch.Tensor | None = None, alpha: float = 0.05, blocks: list[int] | tuple[int, ...] | None = None, whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0, subplots: list[int] | tuple[int, ...] | None = None, eta_sub: float = 1.0, covariates: torch.Tensor | None = None, alias: torch.Tensor | None = None, groups: list[list[int]] | None = None, centered: bool = True) -> dict[str, torch.Tensor | list[int]]` returns design-column correlations and VIFs, scaled prediction variances, and their sorted values for the fraction-of-design-space curve.
+`design_diagnostics(F: torch.Tensor, ids: torch.Tensor, *, region: torch.Tensor | None = None, effect: float | torch.Tensor | None = None, alpha: float = 0.05, blocks: list[int] | tuple[int, ...] | None = None, whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0, subplots: list[int] | tuple[int, ...] | None = None, eta_sub: float = 1.0, strip: tuple[int, int] | None = None, eta_row: float = 1.0, eta_col: float = 1.0, covariates: torch.Tensor | None = None, alias: torch.Tensor | None = None, groups: list[list[int]] | None = None, centered: bool = True) -> dict[str, torch.Tensor | list[int]]` returns design-column correlations and VIFs, scaled prediction variances, and their sorted values for the fraction-of-design-space curve.
 
 Pass `blocks` and `whole_plots` together when every block boundary is a plot boundary for `M_C` correlation/VIF, centered SPV/FDS and t/F power with approximate containment df `w - g - h` (whole plot) and `n - w - (p - h)` (subplot), requiring positive residual df for power (§74–§75).
 With `centered=False` (bool, unstructured only), all columns use uncentred Gram correlations and VIFs; SPV/FDS, power and alias outputs are unchanged. The default `True` retains centred diagnostics, undefined on Scheffé designs.
@@ -152,6 +152,8 @@ With `effect`, `groups=[[j, ...], ...]` adds effect-group F-test `group_power` i
 Pass omitted-term columns as `alias=G` to get `(F₁ᵀF₁)⁻¹F₁ᵀF₂` under the result key `"alias"`, with `F₁ = F[ids]` and `F₂ = G[ids]`. `G` must be two-dimensional and match the row count, dtype and device of `F`. The alias calculation requires an unstructured design with a full-rank fitted model.
 
 Pass fixed per-run `covariates=Z` (finite `(len(ids), c)` tensor, `c >= 1`, matching F dtype/device; `[1 Z]` full rank) for covariate-adjusted correlation/VIF, centered SPV/FDS and t/F power (§68–§69). The information is `M_Z = F[ids].T @ Q @ F[ids]`, eliminating `[1 Z]`; residual df is `n - 1 - c - p` and must be positive for power. Cannot combine with blocks, whole plots or alias. F has no intercept; singular information raises in Cholesky.
+
+Pass `strip=(r, c)` with positive `eta_row`, `eta_col` for crossed GLS diagnostics and row/column/cell containment power (exact in the balanced orthogonal case with an intercept, otherwise approximate; §117–§118); whole plots, subplots, blocks, covariates and alias are excluded.
 
 Pass nested `subplots` with `whole_plots` and positive `eta_sub` for GLS diagnostics and three-stratum containment power (§114–§115); blocks, covariates and alias are excluded.
 

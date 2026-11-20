@@ -1,0 +1,45 @@
+{
+  "case": "RD2b",
+  "run_id": "44831450343",
+  "source_sha": "b2a06f7c9cc6035470320e75935a817123b4b1d0",
+  "R_version": "R version 4.5.2 (2025-10-31)",
+  "skpr_version": "1.9.2",
+  "mbest_version": "0.6.1",
+  "expression": "if(skpr:::run_documentation()) {\n#We can also use this method to determine power for poisson response variables.\n#Generate the design:\n\nfactorialpois = expand.grid(a = as.numeric(c(-1, 0, 1)), b = c(-1, 0, 1))\ndesignpois = gen_design(factorialpois, ~a + b, trials = 70, optimality = \"D\")\n\n#Evaluate the power:\n\neval_design_mc(designpois, ~a + b, 0.05, nsim = 100, glmfamily = \"poisson\",\n               anticoef = log(c(0.2, 2, 2)))\n}",
+  "parameter_analysis_method_string": "`glm(..., family = \"poisson\")`",
+  "nsim_skpr": 100,
+  "verdict": "MATCH",
+  "comparisons": [
+    {
+      "parameter": "(Intercept)",
+      "skpr": 0.98,
+      "torchoed": 0.9771,
+      "combined_se": 0.014079686040533721,
+      "z": 0.20597050187420818,
+      "exact_two_sided_p": 1.0,
+      "match": true
+    },
+    {
+      "parameter": "a",
+      "skpr": 0.81,
+      "torchoed": 0.7958,
+      "combined_se": 0.03943666106556182,
+      "z": 0.3600710510555949,
+      "exact_two_sided_p": 0.8379237960466037,
+      "match": true
+    },
+    {
+      "parameter": "b",
+      "skpr": 0.85,
+      "torchoed": 0.8009,
+      "combined_se": 0.03592973586042625,
+      "z": 1.3665561080308355,
+      "exact_two_sided_p": 0.26632741964926593,
+      "match": true
+    }
+  ],
+  "worst_z": 1.3665561080308355,
+  "nsim_torchoed": 10000,
+  "nonconverged": 0,
+  "separated": 229
+}

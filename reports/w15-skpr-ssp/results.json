@@ -1,0 +1,30 @@
+{
+  "run_id": "44766437771",
+  "source_sha": "b4d60049f8ba09fa0e68ddab2d24c4530d25d234",
+  "R_version": "R version 4.5.2 (2025-10-31)",
+  "skpr": "1.9.2",
+  "SS1": {
+    "skpr_det": 20.317460317460327,
+    "torch_det": 20.31746031746032,
+    "exhaustive_optimum": 20.317460317460316,
+    "skpr_feasible_for_torchoed": true,
+    "skpr_repeated_rows": 0,
+    "torch_ids": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      9,
+      11
+    ],
+    "verdict": "MATCH"
+  },
+  "SS2": {
+    "status": "NOT_RUN",
+    "error": "no nested split-plot example in gen_design.Rd"
+  },
+  "SS2_verification": "Rd2ex printed examples to the run log but returned an empty output filename; detection parsed no expressions. Independently inspected frozen gen_design.Rd at cran/skpr tag 1.9.2: no nested split-plot example. No second dispatch.",
+  "SS2_source": "https://github.com/cran/skpr/blob/699cf957261814894e3e7f59918a777661f6bf2f/man/gen_design.Rd"
+}

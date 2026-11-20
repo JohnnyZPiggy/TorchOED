@@ -1,0 +1,83 @@
+{
+  "SS1": {
+    "status": "RECORDED",
+    "calls": [
+      "gen_design(cand, ~A, trials = 2)",
+      "gen_design(cand, ~A + B, trials = 4, splitplotdesign = wp, blocksizes = 2)",
+      ["gen_design(cand, ~A + B + x + I(x^2), trials = 8, splitplotdesign = sp, ", "    blocksizes = 2, add_blocking_columns = TRUE)"]
+    ],
+    "rows": [
+      {
+        "Block1": 1,
+        "Block2": 1,
+        "A": -1,
+        "B": -1,
+        "x": 0,
+        "_row": "1.1.1"
+      },
+      {
+        "Block1": 1,
+        "Block2": 1,
+        "A": -1,
+        "B": -1,
+        "x": 1,
+        "_row": "1.1.2"
+      },
+      {
+        "Block1": 1,
+        "Block2": 2,
+        "A": -1,
+        "B": 1,
+        "x": 0,
+        "_row": "1.2.3"
+      },
+      {
+        "Block1": 1,
+        "Block2": 2,
+        "A": -1,
+        "B": 1,
+        "x": -1,
+        "_row": "1.2.4"
+      },
+      {
+        "Block1": 2,
+        "Block2": 3,
+        "A": 1,
+        "B": -1,
+        "x": 0,
+        "_row": "2.3.5"
+      },
+      {
+        "Block1": 2,
+        "Block2": 3,
+        "A": 1,
+        "B": -1,
+        "x": -1,
+        "_row": "2.3.6"
+      },
+      {
+        "Block1": 2,
+        "Block2": 4,
+        "A": 1,
+        "B": 1,
+        "x": 1,
+        "_row": "2.4.7"
+      },
+      {
+        "Block1": 2,
+        "Block2": 4,
+        "A": 1,
+        "B": 1,
+        "x": -1,
+        "_row": "2.4.8"
+      }
+    ],
+    "rownames": ["1.1.1", "1.1.2", "1.2.3", "1.2.4", "2.3.5", "2.3.6", "2.4.7", "2.4.8"],
+    "model": "NULL",
+    "varianceratio": 1
+  },
+  "SS2": {
+    "status": "NOT_RUN",
+    "error": "no nested split-plot example in gen_design.Rd"
+  }
+}

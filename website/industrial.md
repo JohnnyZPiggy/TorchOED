@@ -65,7 +65,7 @@ logdet = torch.linalg.slogdet(selected.T @ torch.linalg.solve(V, selected)).loga
 assert math.isclose(result["objective"], logdet, rel_tol=1e-9)
 ```
 
-For blocks with whole plots, use block run counts and a model without an intercept. This is the frozen Â§53.8 (C-a) example; the floor is relative to the centered unstructured approximate optimum.
+For blocks with whole plots, use block run counts and a model without an intercept. This is the frozen §53.8 (C-a) example; the floor is relative to the centered unstructured approximate optimum.
 
 ```python
 import math
@@ -135,7 +135,7 @@ F = scheffe_features(simplex_centroid(3), model="quadratic")
 print(design_diagnostics(F, torch.arange(len(F)), centered=False)["vif"])
 ```
 
-## Plackettâ€“Burman
+## Plackett–Burman
 
 Choose a multiple of four from 4 to 48. For fewer factors, take the leading columns. This example screens six factors in 12 runs.
 
@@ -146,11 +146,11 @@ X = plackett_burman(12)[:, :6]
 assert X.shape == (12, 6)
 ```
 
-In the 12-run design, each main effect is partially aliased with every two-factor interaction that does not contain it, with coefficient Â±1/3 as reported by `design_diagnostics(..., alias=)`.
+In the 12-run design, each main effect is partially aliased with every two-factor interaction that does not contain it, with coefficient ±1/3 as reported by `design_diagnostics(..., alias=)`.
 
-## Central composite and Boxâ€“Behnken
+## Central composite and Box–Behnken
 
-Use a central composite design to fit a quadratic response surface. For blocked analysis, pass the cube and axial block sizes in row order. Boxâ€“Behnken designs use 3 to 7 factors.
+Use a central composite design to fit a quadratic response surface. For blocked analysis, pass the cube and axial block sizes in row order. Box–Behnken designs use 3 to 7 factors.
 
 ```python
 from torchoed import box_behnken, central_composite
@@ -163,7 +163,7 @@ assert X.shape == (sum(blocks), 2) and Y.shape == (15, 3)
 
 ## Definitive screening
 
-Pass a supported factor count to `definitive_screening(k)`: 3â€“20 or 23â€“30; `k = 21` and `22` raise because no conference matrix of order 22 exists. The returned design uses three levels (âˆ’1, 0, +1) and needs no search. Here six factors take 13 runs.
+Pass a supported factor count to `definitive_screening(k)`: 3–20 or 23–30; `k = 21` and `22` raise because no conference matrix of order 22 exists. The returned design uses three levels (−1, 0, +1) and needs no search. Here six factors take 13 runs.
 
 ```python
 import torch
@@ -198,7 +198,7 @@ torch.testing.assert_close(A[4, 0], X.new_tensor(1.0))
 
 ## Diagnostics and power
 
-Pass your features and selected IDs to `design_diagnostics` for variance inflation factors (VIFs) and the sorted scaled prediction variances used for the fraction-of-design-space curve. Set `effect` to a scalar or a tensor of per-coefficient effects to get power for two-sided t-tests at `alpha` (0.001 to 0.5), assuming residual standard deviation Ïƒ = 1 and more runs than coefficients (n > p).
+Pass your features and selected IDs to `design_diagnostics` for variance inflation factors (VIFs) and the sorted scaled prediction variances used for the fraction-of-design-space curve. Set `effect` to a scalar or a tensor of per-coefficient effects to get power for two-sided t-tests at `alpha` (0.001 to 0.5), assuming residual standard deviation σ = 1 and more runs than coefficients (n > p).
 
 ```python
 import torch

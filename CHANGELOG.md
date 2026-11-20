@@ -4,7 +4,7 @@
 
 - Add "If Possible" terms: Bayesian D and I designs via optimal_design(if_possible=..., tau=...) with DuMouchel–Jones scaling and Bayesian dual efficiency floors (P2 gate §93–§95, #433).
 
-- Fix the `lhs` swap search so `mode="uniform"` always terminates: a swap must lower the objective by more than `1e-12` times its current value (P2 gate Â§92, #411).
+- Fix the `lhs` swap search so `mode="uniform"` always terminates: a swap must lower the objective by more than `1e-12` times its current value (P2 gate §92, #411).
 
 - Add constrained `fast_flexible_filling` with Sobol candidates, Lloyd clusters and MaxPro point choice.
 
@@ -15,11 +15,11 @@
 Docs: add benchmarks and validation page.
 Docs: new README and Material-themed documentation site.
 
-## [0.8.0] â€” 2026-11-19
+## [0.8.0] — 2026-11-19
 
 ### Added
 
-- Evaluate a given design with `fixed_ids` of length `n` (Â§80, #332).
+- Evaluate a given design with `fixed_ids` of length `n` (§80, #332).
 - Add uncentred VIFs for mixture and mixture-process diagnostics via `centered=False` (#327).
 - Add diagnostics and containment-df t/F power for whole plots nested in fixed blocks (#325).
 - Add alias-penalised D search, alias traces and a D-efficiency floor (#322).
@@ -35,11 +35,11 @@ Docs: new README and Material-themed documentation site.
 - Add `central_composite` and `box_behnken` for coded quadratic response-surface designs (#258).
 - Extend `box_behnken` to 6 and 7 factors using frozen rsm designs (#262).
 - Add `plackett_burman` for balanced two-level screening designs with 4 to 48 runs in multiples of four (#255).
-- Extend `definitive_screening` to 3â€“20 and 23â€“30 factors using Paley and doubled-Paley conference matrices (#248).
+- Extend `definitive_screening` to 3–20 and 23–30 factors using Paley and doubled-Paley conference matrices (#248).
 - `fractional_factorial` constructs regular two-level designs from unsigned generators.
 - `fractional_factorial_generators` looks up generators by factor and run count from the frozen FrF2 catalogue.
 - `fold_over` reverses all factors or a single factor in the added runs.
-- `word_length_pattern` computes the generalized word-length pattern for two-level designs, and `design_diagnostics(..., alias=â€¦)` reports omitted-term aliasing for unstructured designs.
+- `word_length_pattern` computes the generalized word-length pattern for two-level designs, and `design_diagnostics(..., alias=…)` reports omitted-term aliasing for unstructured designs.
 
 ### Known limitations
 
@@ -49,13 +49,13 @@ Docs: new README and Material-themed documentation site.
 - Published-example matches: in progress (Week 12 consolidation).
 - Real PyPI publication requires the Scientist.
 
-## [0.7.0] â€” 2026-11-16
+## [0.7.0] — 2026-11-16
 
 ### Added
 
 - `jacobian_features` builds model Jacobians for design (#182, [API](website/api.md)).
 - `next_batch` and a simulated closed-loop example (#184, #186, [guide](website/closed_loop.md)).
-- `optimal_design(..., blocks=â€¦)` supports fixed block sizes (#195, [guide](website/industrial.md)).
+- `optimal_design(..., blocks=…)` supports fixed block sizes (#195, [guide](website/industrial.md)).
 - `definitive_screening` constructs definitive screening designs (#198, [API](website/api.md)).
 - `design_diagnostics` reports design correlations, VIFs and prediction variance (#200, [guide](website/industrial.md)).
 - Split-plot D design with `whole_plots=`, `hard=` and `eta=` (#205, [guide](website/industrial.md)).
@@ -66,17 +66,17 @@ Docs: new README and Material-themed documentation site.
 
 ### Changed
 
-- A/I two-swap screening and pruning (#134â€“#172).
-- Engine consolidation preserved outputs and reduced `src/` from 1914 to 1898 lines, missing the â‰¤ 1874 target (#218).
+- A/I two-swap screening and pruning (#134–#172).
+- Engine consolidation preserved outputs and reduced `src/` from 1914 to 1898 lines, missing the ≤ 1874 target (#218).
 
 ### Known limitations
 
 - CPU float64 only for numerical acceptance. The API is experimental.
 - Split-plot and blocks support D only.
-- Split-plot vs skpr: one published skpr 1.9.2 example compared (`gen_design` split-plot, 33 runs in 11 plots of 3, Î· = 1): equal dense GLS log-determinant 13.5136, Î” = 0 (#220, [report](reports/w8-skpr/summary.md)); no wider skpr or JMP parity is claimed.
+- Split-plot vs skpr: one published skpr 1.9.2 example compared (`gen_design` split-plot, 33 runs in 11 plots of 3, η = 1): equal dense GLS log-determinant 13.5136, Δ = 0 (#220, [report](reports/w8-skpr/summary.md)); no wider skpr or JMP parity is claimed.
 - Real PyPI publication requires the Scientist.
 
-## [0.6.0] â€” 2026-11-06
+## [0.6.0] — 2026-11-06
 
 ### Added
 - D/A/I one-/two-swap VND with criterion-specific floors (#92, #108; [API](docs/MILESTONE_API_HISTORY.md)).
@@ -94,32 +94,32 @@ Docs: new README and Material-themed documentation site.
 - P1 time target remains unmet on grid2 n=6/n=7 and grid3 n=10; ten TorchOED restarts are compared with single PyDOE calls.
 - H5-H8 are frozen; week-end held-out evaluation is pending. Real PyPI publication requires the Scientist.
 
-## [0.5.0] â€” 2026-10-31
+## [0.5.0] — 2026-10-31
 
 ### Added
 - Certified `d_efficiency_lower_bound` on search results and comparable benchmark designs.
 - Fixed CPU comparisons with PyDOE 1.6.0 and a consolidated [Beta report](reports/beta/summary.md).
 
 ### Changed
-- `k2_exchange` ranks two-swaps using G-based scores, exact verification of survivors, prefix pruning, and closed-form survivor scores (B1â€“B6).
-- The fixed random500 n=20 case takes 1.331 s (3.13Ã— sequential; the â‰¤3Ã— target is not met); G2 scale results are recorded in the Beta report.
+- `k2_exchange` ranks two-swaps using G-based scores, exact verification of survivors, prefix pruning, and closed-form survivor scores (B1–B6).
+- The fixed random500 n=20 case takes 1.331 s (3.13× sequential; the ≤3× target is not met); G2 scale results are recorded in the Beta report.
 
 ### Known limitations
 - CPU float64 only for M3 search; numerical local certificates and efficiency floors do not establish global optimality. No GPU or PyDOE parity claim.
 - Experimental API; compatibility is not guaranteed.
 
-## [0.1.0] â€” 2026-10-31
+## [0.1.0] — 2026-10-31
 
 ### Added
 
-#### M1 â€” constructors and features
+#### M1 — constructors and features
 - `full_factorial`: enumerate factorial level indices ([API](docs/MILESTONE_API_HISTORY.md)).
 - `ff2n`: construct signed two-level factorial corners ([API](docs/MILESTONE_API_HISTORY.md)).
 - `lhs`: generate Latin hypercube samples ([API](docs/MILESTONE_API_HISTORY.md)).
 - `sobol`: generate Sobol sequence samples ([API](docs/MILESTONE_API_HISTORY.md)).
 - `polynomial_features`: expand factors into a polynomial model matrix ([API](docs/MILESTONE_API_HISTORY.md)).
 
-#### M2 â€” information and criteria
+#### M2 — information and criteria
 - `exact_information`: form the information matrix for exact observation IDs ([API](docs/MILESTONE_API_HISTORY.md)).
 - `weighted_information`: form probability-weighted information ([API](docs/MILESTONE_API_HISTORY.md)).
 - `d_optimality`: score numerical SPD information by log determinant ([API](docs/MILESTONE_API_HISTORY.md)).
@@ -127,7 +127,7 @@ Docs: new README and Material-themed documentation site.
 - `e_optimality`: score numerical PSD information by its minimum eigenvalue ([API](docs/MILESTONE_API_HISTORY.md)).
 - `c_optimality`: score a contrast by negative variance on SPD information ([API](docs/MILESTONE_API_HISTORY.md)).
 
-#### M3 â€” search and scoring
+#### M3 — search and scoring
 - `fedorov_exchange`: improve provided IDs with deterministic one-swaps ([API](docs/MILESTONE_API_HISTORY.md)).
 - `score_two_swaps`: score and verify every legal simultaneous two-swap ([API](docs/MILESTONE_API_HISTORY.md)).
 - `k2_exchange`: run deterministic one-/two-swap VND from provided IDs ([API](docs/MILESTONE_API_HISTORY.md)).

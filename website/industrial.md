@@ -83,7 +83,7 @@ assert 0 < result["efficiency_lower_bound"] <= 1 + 1e-12
 
 ## Split-split-plot designs
 
-Use `subplots` for subplot sizes nested within `whole_plots`, `subplot_hard` for one integer subplot-setting label per candidate, and `eta_sub` for the positive subplot-to-residual variance ratio. Subplot sizes sum to the run count and every whole-plot boundary must also be a subplot boundary; `hard` stays constant within each whole plot and `subplot_hard` within each subplot. D/A/I search requires CPU float64 and cannot combine with `blocks`, `fixed_ids`, `covariates`, `alias`, `if_possible` or `models` (P2 gate §102–§103). `LOCAL_SPLIT_SPLIT_PLOT_EXCHANGE` certifies local optimality under within-subplot exchanges and greedy subplot/whole-plot relabels; `efficiency_lower_bound` is a conservative floor against the OLS approximate optimum, not a global-optimum certificate.
+Use `subplots` for subplot sizes nested within `whole_plots`, `subplot_hard` for one integer subplot-setting label per candidate, and `eta_sub` for the positive subplot-to-residual variance ratio. Subplot sizes sum to the run count and every whole-plot boundary must also be a subplot boundary; `hard` stays constant within each whole plot and `subplot_hard` within each subplot. D/A/I search requires CPU float64 and cannot combine with `blocks`, `covariates`, `alias`, `if_possible` or `models` (P2 gate §102–§103). `fixed_ids` fill leading positions subplot by subplot; every touched whole plot and subplot keeps its label, and returned IDs are sorted within each subplot (P2 gate §120–§121). `LOCAL_SPLIT_SPLIT_PLOT_EXCHANGE` certifies local optimality under within-subplot exchanges and greedy subplot/whole-plot relabels; `efficiency_lower_bound` is a conservative floor against the OLS approximate optimum, not a global-optimum certificate.
 
 ```python
 import torch
@@ -131,7 +131,8 @@ print(d["power"])
 
 Use `strip=(r, c)` with `r*c = n` for a grid in row-major run order: `row_hard` labels stay constant along each row and `col_hard` labels down each column, with variance ratios `eta_row` and `eta_col`.
 The search supports D, A and I on CPU float64 and returns `LOCAL_STRIP_PLOT_EXCHANGE` with a conservative `efficiency_lower_bound` against the OLS approximate optimum.
-Strip plots cannot be combined with `whole_plots`, `subplots`, `blocks`, `fixed_ids`, `covariates`, `alias`, `if_possible`, `models` or compound criteria.
+Strip plots cannot be combined with `whole_plots`, `subplots`, `blocks`, `covariates`, `alias`, `if_possible`, `models` or compound criteria.
+`fixed_ids` fill leading row-major cells; touched rows and columns keep their labels, and fixed run `t` is `ids[t]` in the result.
 
 ```python
 import torch
@@ -171,6 +172,28 @@ assert d["df"].tolist() == [2, 2, 2, 8]
 torch.testing.assert_close(d["vif"], F.new_ones(3), rtol=0, atol=1e-12)
 torch.testing.assert_close(d["spv"], F.new_full((16,), 24), rtol=0, atol=1e-12)
 print(d["power"])
+```
+
+For augmentation, this STF-a example keeps two fixed runs and attains the exhaustive optimum `128/27` (P2 gate §120.6).
+
+```python
+import torch
+from torchoed import optimal_design
+
+C = torch.cartesian_prod(torch.tensor([-1., 1.]), torch.tensor([-1., 1.]),
+                         torch.tensor([-1., 0., 1.])).double()
+F = torch.cat((torch.ones(12, 1), C, C[:, 2:]**2), 1)
+result = optimal_design(F, 6, fixed_ids=[1, 4], strip=(2, 3),
+                        row_hard=C[:, 0].long(), col_hard=C[:, 1].long(),
+                        restarts=20, generator=torch.Generator().manual_seed(0))
+ids = result["ids"]
+assert ids[:2].tolist() == [1, 4]
+Zr = torch.eye(2, dtype=F.dtype).repeat_interleave(3, dim=0)
+Zc = torch.eye(3, dtype=F.dtype).repeat(2, 1)
+V = torch.eye(6, dtype=F.dtype) + Zr@Zr.T + Zc@Zc.T
+X = F[ids]
+torch.testing.assert_close(torch.linalg.det(X.T@torch.linalg.solve(V, X)),
+                           F.new_tensor(128/27), rtol=1e-9, atol=0)
 ```
 
 ## Mixture designs

@@ -1191,6 +1191,96 @@ def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, genera
         G=G, criterion=criterion, B=B)
 
 
+def _strip_information(F, ids, strip, ar, ac, b):
+    X = F[ids].reshape(*strip, F.shape[1])
+    R, C, T = X.sum(1), X.sum(0), X.sum((0, 1))
+    rows = X.flatten(0, 1)
+    return rows.T@rows-ar*(R.T@R)-ac*(C.T@C)+b*torch.outer(T, T), (R, C, T)
+
+
+def _strip_design(F, n, strip, hard, col_hard, eta_row, eta_col, criterion, restarts, generator, max_iter, max_elements):
+    _features(F, max_elements)
+    m, p = F.shape
+    if (F.dtype != torch.float64 or F.device.type != "cpu" or type(n) is not int
+            or not m >= n >= p or not isinstance(strip, (tuple, list)) or len(strip) != 2
+            or any(type(x) is not int or x <= 0 for x in strip) or strip[0]*strip[1] != n):
+        raise ValueError("strip requires CPU float64, positive (r, c), r*c = n and m >= n >= p")
+    integer_dtypes = (torch.int8, torch.int16, torch.int32, torch.int64, torch.uint8,
+                      *(getattr(torch, name, None) for name in ("uint16", "uint32", "uint64")))
+    for labels in (hard, col_hard):
+        if (not isinstance(labels, torch.Tensor) or labels.shape != (m,)
+                or labels.device != F.device or labels.dtype not in integer_dtypes):
+            raise ValueError("row_hard and col_hard must be length-m integer tensors on F's device")
+    if any(type(x) not in (int, float) or not 0 < x < float("inf") for x in (eta_row, eta_col)):
+        raise ValueError("eta_row and eta_col must be finite positive Python numbers")
+    _plot_workspace(F, restarts, max_iter, max_elements, 64, "strip-plot")
+    hard, col_hard = [x.to(torch.int64) ^ -(1 << 63) if x.dtype == getattr(torch, "uint64", None)
+                      else x.to(torch.int64) for x in (hard, col_hard)]
+    r, c = strip
+    H, G = hard.unique(), col_hard.unique()
+    ar, ac = eta_row/(1+eta_row*c), eta_col/(1+eta_col*r)
+    b = (1-1/(1+eta_row*c)-1/(1+eta_col*r)+1/(1+eta_row*c+eta_col*r))/n
+    v = 1-ar-ac+b
+    B = None if criterion == "D" else torch.eye(p, dtype=F.dtype) if criterion == "A" else F.T@F/m
+    def information(ids):
+        return _strip_information(F, ids, strip, ar, ac, b)
+    def draw():
+        hs = [H[torch.randint(len(H), (1,), generator=generator).item()] for _ in range(r)]
+        gs = [G[torch.randint(len(G), (1,), generator=generator).item()] for _ in range(c)]
+        ids, used = [], torch.zeros(m, dtype=torch.bool)
+        for h in hs:
+            for g in gs:
+                pool = ((hard == h) & (col_hard == g) & ~used).nonzero().flatten()
+                if not len(pool): return None
+                chosen = pool[torch.randint(len(pool), (1,), generator=generator).item()]
+                used[chosen] = True
+                ids.append(chosen)
+        return torch.stack(ids)
+    def state(ids, summaries, L):
+        R, C, T = summaries
+        q = (F[ids].reshape(r, c, p)-ar*R[:, None]-ac*C[None]+b*T).reshape(n, p)
+        Z = torch.linalg.solve_triangular(L, F.T, upper=False).T
+        q = torch.linalg.solve_triangular(L, q.T, upper=False).T
+        return Z, q, None if B is None else _whitened_moment(L, B)
+    def scores(ids, cached, pos, pool):
+        Z, qs, Q = cached
+        delta, q = Z[pool]-Z[ids[pos]], qs[pos]
+        ratios = (1+delta@q)**2-delta.square().sum(1)*(q.square().sum()-v)
+        if Q is None: return ratios, ratios
+        gains, _ = _split_ai_scores(delta, q, delta@Q, q@Q, 1-v)
+        return gains, ratios
+    def moves(ids, summaries, L):
+        unused = torch.ones(m, dtype=torch.bool); unused[ids] = False
+        cached = state(ids, summaries, L)
+        for pos in range(n):
+            pool = (unused & (hard == hard[ids[pos]]) & (col_hard == col_hard[ids[pos]])).nonzero().flatten()
+            gains, ratios = scores(ids, cached, pos, pool)
+            for candidate in pool[(ratios > 0) & (gains > 0) if B is not None else ratios > 0].tolist():
+                trial = ids.clone(); trial[pos] = candidate
+                yield trial
+        grid = torch.arange(n).reshape(r, c)
+        for groups, labels, values in ((grid, hard, H), (grid.T, col_hard, G)):
+            for group in groups:
+                for label in values:
+                    if label == labels[ids[group[0]]]: continue
+                    trial, factor, current = ids.clone(), L, summaries
+                    for pos in group.tolist():
+                        h = label if labels is hard else hard[ids[pos]]
+                        g = label if labels is col_hard else col_hard[ids[pos]]
+                        pool = ((hard == h) & (col_hard == g) & ~torch.isin(torch.arange(m), trial)).nonzero().flatten()
+                        gains, ratios = scores(trial, state(trial, current, factor), pos, pool)
+                        if not (ratios > 0).any(): break
+                        best = gains.masked_fill(ratios <= 0, -torch.inf).argmax()
+                        trial[pos] = pool[best]
+                        M, current = information(trial)
+                        factor, info = torch.linalg.cholesky_ex(M)
+                        if info != 0: break
+                    else: yield trial
+    return _plot_restarts([1]*n, restarts, draw, information, moves, max_iter,
+        dict(strip=tuple(strip), eta_row=eta_row, eta_col=eta_col),
+        "LOCAL_STRIP_PLOT_EXCHANGE", G=F, criterion=criterion, B=B)
+
+
 @torch.no_grad()
 def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float] = "D", fixed_ids: list[int] | tuple[int, ...] | torch.Tensor | None = None, restarts: int = 10, generator: torch.Generator | None = None,
                    max_iter: int = 100, max_elements: int = 1_000_000, blocks: list[int] | tuple[int, ...] | None = None,
@@ -1201,15 +1291,26 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
                    tau: float = 1.0, models: list[list[int]] | None = None,
                    model_weights: list[float] | None = None,
                    subplots: list[int] | tuple[int, ...] | None = None,
-                   subplot_hard: torch.Tensor | None = None, eta_sub: int | float = 1.0) -> dict[str, object]:
+                   subplot_hard: torch.Tensor | None = None, eta_sub: int | float = 1.0,
+                   strip: tuple[int, int] | None = None, row_hard: torch.Tensor | None = None,
+                   col_hard: torch.Tensor | None = None, eta_row: int | float = 1.0, eta_col: int | float = 1.0) -> dict[str, object]:
     """D/A/I VND restarts with criterion-specific efficiency floor.
 
     Set blocks to fixed block sizes for CPU float64 D/A/I search without an intercept.
     Set whole_plots, hard labels and eta for CPU float64 split-plot D/A/I search.
     Set subplots, subplot_hard and eta_sub for a second nested split-plot stratum.
+    Set strip=(r, c), row_hard, col_hard and eta_row/eta_col for crossed strip-plot strata.
     Set covariates to fixed per-run columns; ids keep run order and covariates never move.
     For structured designs, fixed_ids fill the leading positions, block by block.
     """
+    if strip is not None or row_hard is not None or col_hard is not None:
+        if (strip is None or row_hard is None or col_hard is None
+                or not isinstance(criterion, str) or criterion not in ("D", "A", "I")
+                or any(x is not None for x in (whole_plots, hard, subplots, subplot_hard, blocks,
+                                               fixed_ids, covariates, alias, if_possible, models))):
+            raise ValueError("strip, row_hard, col_hard require D/A/I without other structures")
+        return _strip_design(F, n, strip, row_hard, col_hard, eta_row, eta_col,
+                             criterion, restarts, generator, max_iter, max_elements)
     if subplots is not None or subplot_hard is not None:
         if (subplots is None or subplot_hard is None or whole_plots is None or hard is None
                 or not isinstance(criterion, str) or criterion not in ("D", "A", "I")

@@ -1,0 +1,23 @@
+# W13 space-filling same-host CPU / GPU measurements
+
+Issue #422; source `120c2c5331e0a7def649051b0a45e05a7af3a93e`. Observed NVIDIA L4. A100 allocation failed; L4 fallback only. Results recorded as-is.
+Float64, seed 0; LHS five factors, one restart, max_iter=20. FFF defaults, three factors, x₁+x₂+x₃≤1.5. One untimed CUDA warm-up per cell, CPU then CUDA, synchronized CUDA timer stops. Diagnostics excluded from timing.
+Each diagnostics tuple is (minimum distance, φ₁₅, MaxPro ψ, CD2). CPU/CUDA generators differ; no equality claim. LHS validity: rounded rank permutation and residual ≤1e-9; FFF: maximum constraint violation ≤0.
+
+| Cell | CPU s | CUDA s | CPU diagnostics | CUDA diagnostics | CPU / CUDA validity |
+|---|---:|---:|---|---|---|
+| maximin-50 | 0.278761101 | 0.075951549 | 0.431277173057, 2.7699194292, 65.2310204923, 0.0730376861238 | 0.420951303597, 2.82245842771, 70.4310047042, 0.0737669040438 | PASS {'permutation': True, 'max_residual': 3.552713678800501e-15} / PASS {'permutation': True, 'max_residual': 3.552713678800501e-15} |
+| maximin-200 | 7.68727147 | 1.14591061 | 0.246829900944, 4.96200680217, 224.651225645, 0.0386369665719 | 0.235690474988, 4.98063334595, 229.015437064, 0.0435441379825 | PASS {'permutation': True, 'max_residual': 1.4210854715202004e-14} / PASS {'permutation': True, 'max_residual': 1.4210854715202004e-14} |
+| maximin-400 | 111.948291 | 9.7311183 | 0.170440605491, 7.09119733019, 319.12310263, 0.0308448543546 | 0.179373911147, 6.71342663252, 390.575431726, 0.025563177726 | PASS {'permutation': True, 'max_residual': 2.842170943040401e-14} / PASS {'permutation': True, 'max_residual': 5.684341886080802e-14} |
+| maxpro-50 | 0.15308017 | 0.080499902 | 0.297993288515, 3.5822413779, 40.1351106725, 0.0736217311729 | 0.324345494805, 3.47601085165, 41.677694651, 0.0715733307788 | PASS {'permutation': True, 'max_residual': 3.552713678800501e-15} / PASS {'permutation': True, 'max_residual': 3.552713678800501e-15} |
+| maxpro-200 | 5.91027709 | 0.807549416 | 0.155724115024, 6.85384421724, 122.993904121, 0.0378636817691 | 0.133041346957, 7.59532458771, 119.344670246, 0.0412286780099 | PASS {'permutation': True, 'max_residual': 1.4210854715202004e-14} / PASS {'permutation': True, 'max_residual': 1.4210854715202004e-14} |
+| maxpro-400 | 115.116047 | 7.32763372 | 0.0915150260886, 11.0796932616, 205.893613864, 0.0306094070781 | 0.0821964111139, 12.1847551334, 193.418657088, 0.0266072618764 | PASS {'permutation': True, 'max_residual': 2.842170943040401e-14} / PASS {'permutation': True, 'max_residual': 5.684341886080802e-14} |
+| uniform-50 | 0.182207824 | 0.169129615 | 0.254558441227, 4.01439976221, 60.6016357907, 0.0590708848456 | 0.279284800875, 3.77214367949, 65.3554684492, 0.0600792824323 | PASS {'permutation': True, 'max_residual': 3.552713678800501e-15} / PASS {'permutation': True, 'max_residual': 3.552713678800501e-15} |
+| uniform-200 | 3.42366586 | 0.526745032 | 0.0934077084613, 10.7306904203, 229.461643816, 0.0287013216317 | 0.133041346957, 7.98957471932, 354.676300549, 0.0278357855488 | PASS {'permutation': True, 'max_residual': 1.4210854715202004e-14} / PASS {'permutation': True, 'max_residual': 1.4210854715202004e-14} |
+| uniform-400 | 84.4063968 | 4.57037055 | 0.0662853679178, 15.1177451892, 492.342288054, 0.0211861588045 | 0.0821964111139, 12.2379250426, 454.594808139, 0.0188375262981 | PASS {'permutation': True, 'max_residual': 2.842170943040401e-14} / PASS {'permutation': True, 'max_residual': 5.684341886080802e-14} |
+| fff-16384 | 0.199528292 | 0.162098751 | 0.139703380982, 7.5354291262, 64.069134115, 0.238783704476 | 0.139703380982, 7.5354291262, 64.069134115, 0.238783704476 | PASS {'max_violation': -0.0060820868238806725} / PASS {'max_violation': -0.0060820868238806725} |
+| fff-131072 | 1.07525887 | 0.320732929 | 0.150311706532, 7.25040431998, 56.4679022704, 0.246003406742 | 0.150311706532, 7.25040431998, 56.4679022704, 0.246003406742 | PASS {'max_violation': -0.0002924613654613495} / PASS {'max_violation': -0.0002924613654613495} |
+
+Completed rows: 22, validity 22 PASS / 0 FAIL. Overall scientific status: PASS; skips: [].
+Cleanup confirmed for both attempts; assignments 0. CU balance 149.35 → 149.19; active rate and final rate in runtime.json. Total controller time: 504.680 s. External artifact sf-gpu.json: 7237 bytes, SHA-256 5e46598f3077c4b1d37febf23fcf0a19b10a4917cc616386a694b036642fc27f.
+Command: pinned colab_control.py --source-sha <above> --device A100 (then L4 on allocation failure) --driver tools/sf_gpu_driver.py --artifacts tools/sf_gpu_artifacts.json --task-seconds 1800 --allocation-seconds 1700 --work-timeout 1500 --cleanup-seconds 120. Production, tests, website and dependencies unchanged; no B0, R or held-out run.

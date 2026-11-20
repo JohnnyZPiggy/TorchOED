@@ -1,0 +1,115 @@
+[
+  {
+    "status": "FAIL",
+    "error": "ALLOCATION_FAILED",
+    "source_sha": "120c2c5331e0a7def649051b0a45e05a7af3a93e",
+    "run_id": "sf-422-a100",
+    "created": false,
+    "cleanup_confirmed": true,
+    "commands": [
+      {
+        "operation": "usage",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "new",
+        "status": "FAIL",
+        "exit_code": 1
+      },
+      {
+        "operation": "stop",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "usage",
+        "status": "PASS",
+        "exit_code": 0
+      }
+    ],
+    "device_requested": "A100",
+    "device_observed": null,
+    "assignments_before": 0,
+    "assignments_after": 0,
+    "balance_before": 149.35,
+    "balance_after": 149.35,
+    "artifact_sha256": {},
+    "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+    "total_seconds": 52.826619094999984
+  },
+  {
+    "status": "PASS",
+    "error": null,
+    "source_sha": "120c2c5331e0a7def649051b0a45e05a7af3a93e",
+    "run_id": "sf-422-l4",
+    "created": true,
+    "cleanup_confirmed": true,
+    "commands": [
+      {
+        "operation": "usage",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "new",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "exec",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "exec",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "download",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "stop",
+        "status": "PASS",
+        "exit_code": 0
+      },
+      {
+        "operation": "usage",
+        "status": "PASS",
+        "exit_code": 0
+      }
+    ],
+    "device_requested": "L4",
+    "device_observed": {
+      "nvidia_smi": [
+        {
+          "name": "NVIDIA L4",
+          "memory_total_mib": 23034,
+          "driver_version": "580.82.07"
+        }
+      ],
+      "torch": {
+        "status": "AVAILABLE",
+        "version": "2.14.1+cu130",
+        "cuda": "13.0",
+        "name": "NVIDIA L4",
+        "capability": [
+          8,
+          9
+        ]
+      }
+    },
+    "assignments_before": 0,
+    "assignments_after": 0,
+    "balance_before": 149.35,
+    "balance_after": 149.19,
+    "artifact_sha256": {
+      "sf-gpu.json": "5e46598f3077c4b1d37febf23fcf0a19b10a4917cc616386a694b036642fc27f"
+    },
+    "classification": "TRANSPORT_ONLY_SCIENCE_UNREVIEWED",
+    "total_seconds": 451.853054464
+  }
+]

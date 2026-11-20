@@ -1,0 +1,33 @@
+{
+  "source_sha": "120c2c5331e0a7def649051b0a45e05a7af3a93e",
+  "observed": {
+    "nvidia_smi": [
+      {
+        "name": "NVIDIA L4",
+        "memory_total_mib": 23034,
+        "driver_version": "580.82.07"
+      }
+    ],
+    "torch": {
+      "status": "AVAILABLE",
+      "version": "2.14.1+cu130",
+      "cuda": "13.0",
+      "name": "NVIDIA L4",
+      "capability": [
+        8,
+        9
+      ]
+    }
+  },
+  "dtype": "float64",
+  "seed": 0,
+  "restarts": 1,
+  "lhs_max_iter": 20,
+  "usage": {
+    "usage-after-A100.txt": "Current balance: 149.35 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
+    "usage-after-L4.txt": "Current balance: 149.19 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
+    "usage-before.txt": "Current balance: 149.35 compute units\nUsage rate: 0.00/hr\nActive assignments: 0",
+    "usage-during.txt": "Current balance: 149.35 compute units\nUsage rate: 1.94/hr\nActive assignments: 1",
+    "usage-final.txt": "Current balance: 149.19 compute units\nUsage rate: 0.00/hr\nActive assignments: 0"
+  }
+}

@@ -154,6 +154,25 @@ X = F[ids]
 assert abs(torch.linalg.det(X.T@torch.linalg.solve(V, X)).item()/(80/9)-1) < 1e-9
 ```
 
+`design_diagnostics(F, ids, strip=(r, c), eta_row=…, eta_col=…)` gives GLS correlation/VIF, SPV/FDS and power with row/column/cell containment df `r − p_R`, `c − 1 − p_C`, `(r − 1)(c − 1) − p_I`; power is exact for balanced orthogonal designs with an intercept and approximate otherwise (no Kenward–Roger).
+Whole plots, subplots, blocks, covariates and alias are excluded.
+
+```python
+import torch
+from torchoed import design_diagnostics
+
+F = torch.tensor([[1, a, b, (-1)**(i + j)]
+                  for i, a in enumerate((-1, -1, 1, 1))
+                  for j, b in enumerate((-1, -1, 1, 1))], dtype=torch.float64)
+ids = torch.arange(16)
+d = design_diagnostics(F, ids, strip=(4, 4), eta_row=2, eta_col=0.5,
+                       effect=F.new_tensor([0.2, 0.9, 0.7, 0.5]))
+assert d["df"].tolist() == [2, 2, 2, 8]
+torch.testing.assert_close(d["vif"], F.new_ones(3), rtol=0, atol=1e-12)
+torch.testing.assert_close(d["spv"], F.new_full((16,), 24), rtol=0, atol=1e-12)
+print(d["power"])
+```
+
 ## Mixture designs
 
 Designs are without replacement; replicate a point (for example the centroid) by appending copies of its candidate row.

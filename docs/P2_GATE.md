@@ -953,3 +953,34 @@ Notation. Candidates F ∈ ℝ^{m×p}. A model is a nonempty list C_k of distinc
 ## 98. Not in this section
 
 Model-robust A or I, designs with n < p_U, a maximin (worst-case) criterion over models, Bayesian model averaging with priors on models, structured (blocked, split-plot, covariate) model-robust designs, automatic model enumeration (e.g. all models with a given number of two-factor interactions), GPU.
+
+## 99. Compare Designs and the sample-size explorer (W14 B3)
+
+Notation. Candidates F ∈ ℝ^{m×p}; region R ∈ ℝ^{r×p} (default R = F). Designs S_1, …, S_K (K ≥ 2), each a 1-D int64 tensor of n_i candidate ids (repeats allowed, as in `design_diagnostics`), with M_i = F[S_i]ᵀF[S_i] ≻ 0 and n_i > p (power needs ν_i = n_i − p ≥ 1; a saturated design raises `ValueError` through `design_diagnostics`). R must have at least one nonzero row (else I and G are 0/0). Relative prediction variance (σ² = 1) v_i(x) = f_xᵀ M_i⁻¹ f_x for each row f_x of R; `design_diagnostics(F, S_i, region=R)["spv"]` equals n_i v_i, so v_i = spv / n_i.
+
+(99.1) **Relative efficiencies** of design i against design 1 (JMP Compare Designs convention: total information M_i, not per-run M_i/n_i, so designs of different sizes compare directly; values > 1 mean design i is better; design 1 gets 1 in every column):
+  D_i = (det M_i / det M_1)^{1/p}, computed as exp((log det M_i − log det M_1)/p);
+  A_i = tr(M_1⁻¹) / tr(M_i⁻¹);
+  I_i = tr(M_1⁻¹W) / tr(M_i⁻¹W), W = RᵀR / r;
+  G_i = max_x v_1(x) / max_x v_i(x), maxima over the rows of R.
+PROVED (identity used by the implementation): tr(M⁻¹W) = (1/r) Σ_x f_xᵀM⁻¹f_x = mean_x v(x), so I_i = mean v_1 / mean v_i is computed from the same v vector as G and (99.2). PROVED: D_i equals the ratio of the D-efficiencies of designs i and 1 against any common reference determinant, provided both efficiencies use the same unscaled (total-information) criteria (the reference cancels; with per-run |M/n|^{1/p} the ratio gains a factor n_1/n_i); the same holds for A, I, G with their unscaled criteria.
+
+(99.2) **Fraction of design space.** For each q in `quantiles` (default (0, 0.25, 0.5, 0.75, 1)), the q-quantile of {v_i(x) : x a row of R} by `torch.quantile` (linear interpolation). q = 0 and q = 1 are min v_i and max v_i. The full sorted vector v_i is also returned (the FDS curve, unscaled).
+
+(99.3) **Power.** Per-coefficient power of design i is `design_diagnostics(F, S_i, effect=effect, alpha=alpha)["power"]` unchanged (two-sided t-test, ν_i = n_i − p, unit σ; requires n_i > p). External reference: reports/w14-skpr-power, skpr 1.9.2 `eval_design` on 8/12/16-run designs agrees ≤ 2.1e-10; an independent quadrature puts TorchOED within 5e-14 and the whole difference on the R side (OBSERVED, #437).
+
+(99.4) **Sample-size explorer (decision).** An entry of `designs` that is a Python int n stands for the design `optimal_design(F, n, criterion=criterion, generator=generator)["ids"]`, so `compare_designs(F, [8, 12, 16], effect=1.0)` returns power and relative efficiencies against run size in one call, design 1 (the first entry) being the reference. Entries are processed in the given order with the one generator. Different n give different ν, so power is one `design_diagnostics` call per design; no cross-design batching and no GPU claim.
+
+(99.5) **Independent math review (2026-11-20, fresh agent, `Fraction`):** PASS — (a) the trace identity exact in ~200 random cases, (c) the "> 1 is better" orientation consistent for D, A, I, G, and the worked oracle below exact; three gaps fixed in this text: the unscaled-criteria condition in (99.1), n_i > p and a nonzero region row in the notation, and `bool` entries rejected in §100.
+
+(99.6) **Worked oracle** (Architect float64 + review `Fraction`). 3² grid {−1, 0, 1}², f = (1, x1, x2), R = F; design 1 = the four corners, design 2 = the corners plus the centre: D_2 = (5/4)^{1/3}, A_2 = 15/14, I_2 = 35/32, G_2 = 15/14; min v_1 = 1/4, max v_1 = 3/4, min v_2 = 1/5, max v_2 = 7/10.
+
+(99.7) **Complexity.** K × (one Cholesky O(p³) + O(r p²) for v) plus the `optimal_design` calls for int entries.
+
+## 100. API decision: `compare_designs(F, designs, *, region=None, effect=1.0, alpha=0.05, quantiles=(0.0, 0.25, 0.5, 0.75, 1.0), criterion="D", generator=None)`
+
+In `src/torchoed/information.py`, exported from `torchoed`. `designs` is a list of length ≥ 2 whose entries are 1-D int64 id tensors or Python ints (run sizes, (99.4); `bool` is not a run size); anything else, or fewer than two entries, raises `ValueError`. Returns a dict: `ids` (list of K int64 tensors), `n` (list of K ints), `efficiency` (dict with keys "D", "A", "I", "G", each a float64 tensor of shape (K,), (99.1)), `power` (tensor (K, p), (99.3)), `fds_quantiles` (tensor (K, len(quantiles)), (99.2)), `fds` (list of K sorted v_i). Unstructured designs only (no blocks, whole plots, covariates); existing functions are unchanged.
+
+## 101. Not in this section
+
+Structured (blocked, split-plot, covariate) comparisons, Bayesian or model-robust criteria in Compare Designs, alias/correlation colour maps, power by simulation for GLMs (W15), and GPU batching across designs.

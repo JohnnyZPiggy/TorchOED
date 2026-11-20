@@ -12,8 +12,9 @@ result = dict(case="RD2", run_id=runtime["run_id"], source_sha=runtime["source_s
               mbest_version=runtime["packages"].get("mbest"), expression=raw["expression"])
 summary = ["# RD2", f"Run {result['run_id']}; {result['R_version']}; skpr {result['skpr_version']}; mbest {result['mbest_version']}."]
 if raw["status"] == "NOT_RUN":
-    result.update(verdict="NOT_RUN", error=raw["error"], powers=None, combined_se=None)
-    summary += ["NOT_RUN: Rscript failed; stderr is recorded verbatim in results.json and skpr.json."]
+    result.update(verdict="NOT_RUN", error=raw["error"], powers=None, combined_se=None, reason=raw["reason"],
+                  provenance=raw["provenance"], recipe_executed=False)
+    summary += ["NOT_RUN: recipe absent at dispatched SHA (Engineer dispatch error); verbatim stderr in results.json and skpr.json."]
 else:
     attrs = raw["attributes"]
     method = attrs["parameter_analysis_method_string"]

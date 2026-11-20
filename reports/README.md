@@ -4,7 +4,7 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 
 | Directory | Measurement / producing PR | Status |
 |---|---|---|
-| [w15-frf2-ext](w15-frf2-ext/) | W15 C2 frozen FrF2 2.3-5 references: 6 recorded, BL2 NOT_RUN verbatim; no search verdict (#462). |
+| [w15-frf2-ext](w15-frf2-ext/) | W15 C2 frozen FrF2 2.3-5 references (#462) | current: 6 recorded, BL2 NOT_RUN verbatim; no search verdict |
 | [w12-heldout](w12-heldout/) | current (W12 held-out H30–H32; no tuning) | H30 MATCH Fraction exhaustive; H31/H32 R NOT_RUN (workflow version assertion); 3 local oracles PASS; #368 BLOCKED |
 | [w12-published](w12-published/) | W12 published-example source index and frozen inputs (#353) | 8/13 published MATCH; 1 NO MATCH; 4 NR (missing packages); two TorchOED oracles PASS; one Colab session cleaned up (#361) |
 | [w11-heldout2](w11-heldout2/) | current (W11 frozen H27–H29; #336) | mixture-process D, covariates A and alias Ψ MATCH exhaustive references; Δ = 0, counts and dense re-scores 6 PASS; no tuning |

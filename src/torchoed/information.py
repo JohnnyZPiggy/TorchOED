@@ -115,6 +115,7 @@ def design_diagnostics(
     effect: float | torch.Tensor | None = None, alpha: float = 0.05,
     blocks: list[int] | tuple[int, ...] | None = None,
     whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0,
+    subplots: list[int] | tuple[int, ...] | None = None, eta_sub: float = 1.0,
     covariates: torch.Tensor | None = None, centered: bool = True,
     alias: torch.Tensor | None = None, groups: list[list[int]] | None = None,
 ) -> dict[str, torch.Tensor | list[int]]:
@@ -123,6 +124,7 @@ def design_diagnostics(
     Set either `blocks` or `whole_plots` to sizes of contiguous groups in `ids`.
     Blocks absorb the intercept and center prediction contrasts over `region`.
     Whole plots use GLS with positive variance ratio `eta`.
+    Nested `subplots` add a stratum with variance ratio `eta_sub` (§114–§115).
 
     With `effect`, return `power` at level `alpha` for two-sided t-tests with
     unit error variance. Structured results also include the per-coefficient
@@ -132,6 +134,8 @@ def design_diagnostics(
     also include `group_df`. Whole-plot groups must lie in one stratum.
     With `alias`, return omitted-term aliasing using unstructured information.
     """
+    if subplots is not None and (whole_plots is None or blocks is not None or covariates is not None or alias is not None):
+        raise ValueError("subplots requires whole_plots without blocks, covariates or alias")
     if covariates is not None and (blocks is not None or whole_plots is not None or alias is not None):
         raise ValueError("covariates cannot be combined with blocks, whole_plots or alias")
     structured = blocks is not None or whole_plots is not None or covariates is not None
@@ -165,7 +169,7 @@ def design_diagnostics(
     df = None
     if structured:
         # Search imports exact_information from this module.
-        from .d_optimal_design import _block_information, _split_information, _valid_plot_sizes
+        from .d_optimal_design import _block_information, _split_information, _nested_information, _valid_plot_sizes
 
         if covariates is not None:
             Z = covariates
@@ -197,26 +201,47 @@ def design_diagnostics(
             else:
                 if type(eta) not in (int, float) or not 0 < eta < float("inf"):
                     raise ValueError("eta must be a finite positive Python int or float")
-                counts = F.new_tensor(whole_plots)
-                inverse_scale = ((counts + 1 / eta).reciprocal() / eta if eta >= 1
-                                 else (1 + eta * counts).reciprocal())
-                if blocks is not None:
-                    boundaries = torch.tensor(whole_plots).cumsum(0).tolist()
-                    if (not _valid_plot_sizes(blocks, n)
-                            or any(b not in boundaries for b in torch.tensor(blocks).cumsum(0).tolist())):
-                        raise ValueError("blocks must sum to len(ids) with boundaries at whole-plot boundaries")
-                    M, _ = _split_information(F, ids, whole_plots, inverse_scale / counts, blocks)
-                    C = M
-                    R = R - R.mean(0)
+                if subplots is not None:
+                    ends = torch.tensor(subplots).cumsum(0).tolist() if _valid_plot_sizes(subplots, n) else []
+                    if (not ends or any(b not in ends for b in torch.tensor(whole_plots).cumsum(0).tolist())
+                            or type(eta_sub) not in (int, float) or not 0 < eta_sub < float("inf")):
+                        raise ValueError("subplots must align with whole plots; eta_sub must be finite positive")
+                    plot_ids = torch.arange(n, device=F.device).split(subplots)
+                    labels = torch.repeat_interleave(ids.new_tensor(range(len(whole_plots))), ids.new_tensor(whole_plots))
+                    owner = torch.stack([labels[g[0]] for g in plot_ids])
+                    a = 1 / (1 + eta_sub * F.new_tensor(subplots))
+                    T = F.new_zeros(len(whole_plots)).index_add(0, owner, F.new_tensor(subplots)*a)
+                    scale = 1 / (1 + eta*T)
+                    M, (_, totals) = _nested_information(F, ids, plot_ids, owner, a, eta_sub*a, eta*scale)
+                    u = scale @ totals
+                    C = M - torch.outer(u, u / (scale @ T))
+                    if effect is not None:
+                        whole = torch.stack([(v == v[0]).all(0) for v in S.split(whole_plots)]).all(0)
+                        sub = torch.stack([(v == v[0]).all(0) for v in S.split(subplots)]).all(0) & ~whole
+                        stratum = torch.where(whole, 0, torch.where(sub, 1, 2))
+                        df = torch.where(whole, len(whole_plots)-whole.sum(),
+                             torch.where(sub, len(subplots)-len(whole_plots)-sub.sum(), n-len(subplots)-(~(whole|sub)).sum()))
                 else:
-                    M, sums = _split_information(F, ids, whole_plots, inverse_scale / counts)
-                    weighted_sum = inverse_scale @ sums
-                    C = M - torch.outer(weighted_sum, weighted_sum / (inverse_scale @ counts))
-                if effect is not None:
-                    whole = torch.stack([(plot == plot[0]).all(0) for plot in S.split(whole_plots)]).all(0)
-                    whole_count = whole.sum()
-                    df = torch.where(whole, len(whole_plots) - whole_count - (len(blocks) if blocks is not None else 0),
-                                     n - len(whole_plots) - (p - whole_count))
+                    counts = F.new_tensor(whole_plots)
+                    inverse_scale = ((counts + 1 / eta).reciprocal() / eta if eta >= 1
+                                     else (1 + eta * counts).reciprocal())
+                    if blocks is not None:
+                        boundaries = torch.tensor(whole_plots).cumsum(0).tolist()
+                        if (not _valid_plot_sizes(blocks, n)
+                                or any(b not in boundaries for b in torch.tensor(blocks).cumsum(0).tolist())):
+                            raise ValueError("blocks must sum to len(ids) with boundaries at whole-plot boundaries")
+                        M, _ = _split_information(F, ids, whole_plots, inverse_scale / counts, blocks)
+                        C = M
+                        R = R - R.mean(0)
+                    else:
+                        M, sums = _split_information(F, ids, whole_plots, inverse_scale / counts)
+                        weighted_sum = inverse_scale @ sums
+                        C = M - torch.outer(weighted_sum, weighted_sum / (inverse_scale @ counts))
+                    if effect is not None:
+                        whole = torch.stack([(plot == plot[0]).all(0) for plot in S.split(whole_plots)]).all(0)
+                        whole_count = whole.sum()
+                        df = torch.where(whole, len(whole_plots) - whole_count - (len(blocks) if blocks is not None else 0),
+                                         n - len(whole_plots) - (p - whole_count))
         if df is not None and (df < 1).any():
             raise ValueError("structured power requires positive residual degrees of freedom")
         L = torch.linalg.cholesky(M)
@@ -258,8 +283,9 @@ def design_diagnostics(
         if groups is not None:
             group_power, group_df = [], []
             for g in groups:
-                if whole_plots is not None and not (whole[g] == whole[g[0]]).all():
-                    raise ValueError("group contains mixed whole-plot and subplot strata")
+                strata = stratum if subplots is not None else whole if whole_plots is not None else None
+                if strata is not None and not (strata[g] == strata[g[0]]).all():
+                    raise ValueError("group contains mixed strata")
                 dof = n - p if df is None else int(df[g[0]])
                 covariance = inverse[g][:, g].to(delta.dtype)
                 lam = (delta[g] @ torch.cholesky_solve(delta[g, None], torch.linalg.cholesky(covariance))).reshape(1)

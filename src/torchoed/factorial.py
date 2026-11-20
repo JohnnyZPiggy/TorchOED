@@ -98,7 +98,7 @@ def fractional_factorial(
 
 
 def minimum_aberration(k: int, runs: int, *, blocks: int = 1,
-                       dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> dict:
+                       dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> dict[str, torch.Tensor | list[list[int]] | list[tuple[int, ...]]]:
     """First minimum-aberration regular fraction, optionally with unconfounded blocks (§108)."""
     limits = {8: 7, 16: 15, 32: 14, 64: 12}
     if (type(runs) is not int or runs not in limits or type(k) is not int

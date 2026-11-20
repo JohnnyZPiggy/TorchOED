@@ -43,8 +43,9 @@ result = dict(run_id=runtime['run_id'], source_sha=runtime['source_sha'], R_vers
               skpr=runtime['packages']['skpr'], SS1=dict(skpr_det=skpr_det, torch_det=torch_det,
               exhaustive_optimum=1280/63, skpr_feasible_for_torchoed=feasible,
               skpr_repeated_rows=len(RC)-RC.unique(dim=0).shape[0], torch_ids=r['ids'].tolist(), verdict=verdict),
-              SS2=reference['SS2'], SS2_verification='Rd2ex printed examples to the run log but returned an empty output filename; detection parsed no expressions. Independently inspected frozen gen_design.Rd at cran/skpr tag 1.9.2: no nested split-plot example. No second dispatch.',
-              SS2_source='https://github.com/cran/skpr/blob/699cf957261814894e3e7f59918a777661f6bf2f/man/gen_design.Rd')
+              SS2=dict(status='BLOCKED', original_run_status=reference['SS2']['status'],
+              reason='Initial Rd2ex extraction parsed no expressions; the frozen Rd does contain the nested temp example. Corrected rerun needs Architect authorisation after accidental unchanged-source dispatch 44776541660 was cancelled.',
+              cancelled_run_id='44776541660', cancelled_source_sha='bf430ec4db2f7d20074afd9c4a11e346c952e922'))
 (HERE/'results.json').write_text(json.dumps(result, indent=2)+'\n', encoding='utf-8')
-(HERE/'summary.md').write_text(f"# skpr split-split-plot reference\nRun {runtime['run_id']}; {runtime['R_version']}; skpr {runtime['packages']['skpr']}.\nSS1: skpr det {skpr_det:.15g}; TorchOED {torch_det:.15g}; exhaustive {1280/63:.15g}: {verdict}.\nSS1: feasible for TorchOED = {feasible}; repeated rows = {result['SS1']['skpr_repeated_rows']}.\nSS2: NOT_RUN: {reference['SS2']['error']}.\nSS2 detection parsed Rd2ex's empty return; absence independently checked in frozen gen_design.Rd, not an executed Rd example.\n", encoding='utf-8')
-print('SS1 dense GLS and exhaustive optimum PASS; SS2 NOT_RUN')
+(HERE/'summary.md').write_text(f"# skpr split-split-plot reference\nRun {runtime['run_id']}; {runtime['R_version']}; skpr {runtime['packages']['skpr']}.\nSS1: skpr det {skpr_det:.15g}; TorchOED {torch_det:.15g}; exhaustive {1280/63:.15g}: {verdict}.\nSS1: feasible for TorchOED = {feasible}; repeated rows = {result['SS1']['skpr_repeated_rows']}.\nSS2: BLOCKED: corrected extraction committed; initial absence claim withdrawn.\nAccidental unchanged-source extra dispatch 44776541660 cancelled; no corrected R results, awaiting Architect ruling.\n", encoding='utf-8')
+print('SS1 dense GLS and exhaustive optimum PASS; SS2 BLOCKED, no corrected R output')

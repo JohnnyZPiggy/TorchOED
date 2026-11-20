@@ -890,3 +890,33 @@ Let `f` be the minimised search sum of the current design (`Σ D_ij^{−p/2}`, `
 - **(92.3) PROVED (termination).** With exact `Δ`, every applied swap strictly decreases `f`; the set of designs is finite, so no design repeats and the search stops. The float64 search terminates whenever the (92.4) error bound holds (`|computed Δ − exact Δ| < τ f`), and always within `max_iter` swaps.
 - **(92.4) OBSERVED (float64 separation).** Computed `Δ` differs from the exact change by at most about `5e-14 f` in Architect checks (relative error of (86.3) up to 4.7e-14 for a 9 × 3 design, §86.3), far below `τ f`; the smallest accepted genuine improvement over 200 uniform restarts (n 6–30, k 2–5) was `2.3e-5 f`, and the independent review found no nonzero exact swap change below `6.6e-6 f` (all swaps of 300 designs, n 4–10, k 2–4). So `τ` rejects rounding noise and no genuine improvement seen in practice. The CD2² error comes from cancellation and scales like `eps (13/12)^k`, not like `f`, so the margin narrows for large `n`, `k`; this is not a proof for all `n`, `k`.
 - **(92.5) Oracle.** The default 8 × 3 uniform call of the #404 freeze terminates; every accepted swap has an exact `Fraction` decrease `> 0`.
+
+## 93. "If Possible" terms: Bayesian D and I (W14 B1)
+
+Notation. Candidates F ∈ ℝ^{m×p}, columns split into primary P (indices not in `if_possible`, p₀ of them) and potential Q (indices in `if_possible`, q = p − p₀ ≥ 1). A design is a set S of n distinct candidate ids, X = F[S]. τ > 0. K = diag(k_j) with k_j = 1 for potential columns and 0 otherwise. A(S) = XᵀX + K/τ².
+
+(93.1) **DuMouchel–Jones scaling** (DuMouchel and Jones 1994, §3). R = Q − P(PᵀP)⁻¹PᵀQ over all m candidates (P of full column rank); Q̃_j = 2 R_j / (max_i R_ij − min_i R_ij). If P is not of full column rank, or some range max_i R_ij − min_i R_ij ≤ 1e-10 · max(1, max_i |Q_ij|) (a potential column numerically in the span of the primary columns; an exact-zero test fails in float64, independent review counterexample Q = x1 + 0.1·x2 on the 3² grid gives range 1.1e-15), raise `ValueError`. F̃ = [P, Q̃] in the original column order; all criteria and outputs below use F̃. PROVED (idempotent): if PᵀQ = 0 and every column of Q has max − min = 2, then R = Q and Q̃ = Q. Architect check: on the 3² grid, raw columns [x1x2, x1², x2²] give Q̃ = [x1x2, 2(x1² − 2/3), 2(x2² − 2/3)] and scaling Q̃ again returns Q̃ (float64; `Fraction` check of PᵀQ̃ = 0 and max − min = 2).
+
+(93.2) **Criteria.** Bayesian D: maximise log det A(S). Bayesian I: minimise ψ(S) = tr(A(S)⁻¹ W), W = F̃ᵀF̃/m (the existing I moment matrix of the scaled candidates). n must satisfy m ≥ n ≥ p₀; n < p is allowed because A(S) ≻ 0 whenever X[:, primary] has full column rank; m ≥ n ≥ p₀ is necessary, not sufficient, so the search starts (and restarts are discarded, as today for singular starts) only from designs whose primary block X_P has full column rank. PROVED: for v = (v_P, v_Q) ≠ 0, vᵀAv = ‖Xv‖² + ‖v_Q‖²/τ² > 0 unless v_Q = 0 and X_P v_P = 0.
+
+(93.3) **Pseudo-run identity.** Let E ∈ ℝ^{q×p} have rows e_jᵀ/τ for the potential columns j. Then [X; E]ᵀ[X; E] = XᵀX + K/τ² = A(S). PROVED (block product). Consequence used by the implementation: Bayesian D search is the existing D search on F_aug = [F̃; E] (m + q rows) with n + q runs and the q pseudo ids added to `fixed_ids`; because ids are distinct and the pseudo ids are fixed, no pseudo row can be chosen again. Bayesian I is the existing linear (A/I) exchange on the same F_aug and fixed pseudo ids with B = W from (93.2), computed from the m real candidates only — **not** F_augᵀF_aug/(m + q). The returned `ids` exclude the pseudo ids and are sorted real candidate ids.
+
+(93.4) **Bayesian D efficiency floor** (equivalence theorem, Kiefer 1974 style). For an approximate design ξ (weights on the m real candidates, Σw = 1) let φ(ξ) = log det(n M(ξ) + K/τ²), M(ξ) = Σ w_x f̃_x f̃_xᵀ. φ is concave. For the exact design S (ξ_S uniform on S, n M(ξ_S) = XᵀX):
+  g(S) = n · max_x f̃_xᵀ A(S)⁻¹ f̃_x − tr(A(S)⁻¹ XᵀX),
+  and every exact design S* of n distinct runs has log det A(S*) ≤ log det A(S) + g(S). PROVED: concavity gives φ(ξ) ≤ φ(ξ_S) + ∇φ(ξ_S)·(ξ − ξ_S), the right side is linear in ξ so its maximum over the simplex is at a vertex δ_x, where the directional derivative is n f̃_xᵀA⁻¹f̃_x − tr(A⁻¹ n M(ξ_S)); and S* is one approximate design. Report `efficiency_lower_bound = exp(−g(S)/p)`, a lower bound on (det A(S)/det A(S*))^{1/p}. OBSERVED (Architect, float64, 3² grid above, n = 4, τ ∈ {0.5, 1, 2}): log det A(S) + g(S) ≥ Frank–Wolfe approximate optimum for all 126 subsets; the floor is loose when n < p (it is valid, not tight).
+
+(93.5) **Bayesian I efficiency floor.** ψ is convex in ξ with directional derivative toward δ_x equal to −n f̃_xᵀA⁻¹WA⁻¹f̃_x + tr(A⁻¹WA⁻¹ n M(ξ_S)). Hence every exact S* has
+  ψ(S*) ≥ L(S) = ψ(S) − n · max_x f̃_xᵀA(S)⁻¹WA(S)⁻¹f̃_x + tr(A(S)⁻¹WA(S)⁻¹XᵀX).
+  PROVED (same argument as (93.4) with convexity). Report `efficiency_lower_bound = max(L(S), 0)/ψ(S)`, a lower bound on ψ(S*)/ψ(S). OBSERVED (same Architect check): L(S) ≤ the exhaustive exact minimum for all 126 subsets; L is often negative for n < p, giving the valid floor 0.
+
+(93.6) **Independent math review (2026-11-20, fresh agent, Fraction + float64):** PASS on (93.1)–(93.5) — exhaustive all-pairs checks of (93.4)/(93.5) on 3², 2³ and 25 random cases, τ ∈ {1/2, 1, 2}; directional derivatives match finite differences; one defect (exact range-0 test in float64) fixed above with a relative tolerance.
+
+(93.7) **Complexity.** Same as the existing D and linear exchanges on m + q candidates and n + q runs; scaling (93.1) is one least-squares solve O(m p₀²); floors O(m p²).
+
+## 94. API decision: `optimal_design(F, n, *, criterion="D", if_possible=None, tau=1.0, ...)`
+
+`if_possible` is a list of distinct column indices of F (Python ints, 1 ≤ len < p); `tau` a finite positive float. Only string `criterion` "D" or "I"; CPU float64; combining with `blocks`, `whole_plots`, `hard`, `covariates`, `alias` or a compound criterion raises `ValueError`. User `fixed_ids` are honoured (real ids). Result keys as for the unstructured criterion, with `objective` = log det A(S) (D) or ψ(S) (I) on F̃, `efficiency_lower_bound` from (93.4)/(93.5), `criterion`, and `scaled_features` = F̃. `if_possible=None` leaves every existing path and result bit-identical.
+
+## 95. Not in this section
+
+Bayesian A, priors other than K/τ² (non-diagonal or estimated priors), Bayesian designs for nonlinear models (P3), structured (blocked, split-plot) Bayesian designs, and choosing τ automatically.

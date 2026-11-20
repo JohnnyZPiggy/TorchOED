@@ -21,7 +21,7 @@
     "reference": "649/324",
     "minimum_count": 4,
     "subsets": 296010,
-    "nonsingular": 294718,
+    "nonsingular": 294678,
     "float_min": 2.0030864197530867,
     "fraction_rescored": 4,
     "ids": [

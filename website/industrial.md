@@ -108,6 +108,25 @@ torch.testing.assert_close(torch.linalg.det(X.T@torch.linalg.inv(V)@X),
                            F.new_tensor(1280/63), rtol=1e-9, atol=0)
 ```
 
+`design_diagnostics` gives GLS correlation/VIF, SPV/FDS and power with three-stratum containment degrees of freedom (whole-plot, subplot, run-level; P2 gate §114–§115).
+Power is exact in the balanced orthogonal case and otherwise approximate, without Kenward–Roger; blocks, covariates and alias are excluded.
+
+```python
+import torch
+from torchoed import design_diagnostics
+
+F = torch.tensor([[1, a, b, x] for a in (-1, -1, 1, 1)
+                  for b in (-1, 1) for x in (-1, 1)], dtype=torch.float64)
+ids = torch.arange(16)
+d = design_diagnostics(F, ids, whole_plots=[4]*4, eta=2,
+                       subplots=[2]*8, eta_sub=0.5,
+                       effect=F.new_tensor([0.2, 0.9, 0.7, 0.5]))
+assert d["df"].tolist() == [2, 2, 3, 7]
+torch.testing.assert_close(d["vif"], F.new_ones(3), rtol=0, atol=1e-12)
+torch.testing.assert_close(d["spv"], F.new_full((16,), 23), rtol=0, atol=1e-12)
+print(d["power"])
+```
+
 ## Strip-plot designs
 
 Use `strip=(r, c)` with `r*c = n` for a grid in row-major run order: `row_hard` labels stay constant along each row and `col_hard` labels down each column, with variance ratios `eta_row` and `eta_col`.

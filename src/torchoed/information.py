@@ -116,6 +116,7 @@ def design_diagnostics(
     blocks: list[int] | tuple[int, ...] | None = None,
     whole_plots: list[int] | tuple[int, ...] | None = None, eta: float = 1.0,
     subplots: list[int] | tuple[int, ...] | None = None, eta_sub: float = 1.0,
+    strip: tuple[int, int] | None = None, eta_row: float = 1.0, eta_col: float = 1.0,
     covariates: torch.Tensor | None = None, centered: bool = True,
     alias: torch.Tensor | None = None, groups: list[list[int]] | None = None,
 ) -> dict[str, torch.Tensor | list[int]]:
@@ -125,6 +126,7 @@ def design_diagnostics(
     Blocks absorb the intercept and center prediction contrasts over `region`.
     Whole plots use GLS with positive variance ratio `eta`.
     Nested `subplots` add a stratum with variance ratio `eta_sub` (§114–§115).
+    Crossed `strip=(r, c)` uses row/column variance ratios (§117–§118).
 
     With `effect`, return `power` at level `alpha` for two-sided t-tests with
     unit error variance. Structured results also include the per-coefficient
@@ -134,11 +136,13 @@ def design_diagnostics(
     also include `group_df`. Whole-plot groups must lie in one stratum.
     With `alias`, return omitted-term aliasing using unstructured information.
     """
+    if strip is not None and any(x is not None for x in (whole_plots, subplots, blocks, covariates, alias)):
+        raise ValueError("strip cannot be combined with whole_plots, subplots, blocks, covariates or alias")
     if subplots is not None and (whole_plots is None or blocks is not None or covariates is not None or alias is not None):
         raise ValueError("subplots requires whole_plots without blocks, covariates or alias")
     if covariates is not None and (blocks is not None or whole_plots is not None or alias is not None):
         raise ValueError("covariates cannot be combined with blocks, whole_plots or alias")
-    structured = blocks is not None or whole_plots is not None or covariates is not None
+    structured = blocks is not None or whole_plots is not None or covariates is not None or strip is not None
     if not isinstance(centered, bool) or (not centered and structured):
         raise ValueError("centered must be bool; centered=False is unstructured only")
     if alias is not None and structured:
@@ -169,9 +173,26 @@ def design_diagnostics(
     df = None
     if structured:
         # Search imports exact_information from this module.
-        from .d_optimal_design import _block_information, _split_information, _nested_information, _valid_plot_sizes
+        from .d_optimal_design import _block_information, _split_information, _nested_information, _strip_information, _valid_plot_sizes
 
-        if covariates is not None:
+        if strip is not None:
+            if (not isinstance(strip, (tuple, list)) or len(strip) != 2
+                    or any(type(x) is not int or x <= 0 for x in strip) or strip[0]*strip[1] != n
+                    or any(type(x) not in (int, float) or not 0 < x < float("inf") for x in (eta_row, eta_col))):
+                raise ValueError("strip requires positive (r, c), r*c = len(ids), and finite positive variance ratios")
+            r, c = strip
+            lr, lc, l0 = 1+eta_row*c, 1+eta_col*r, 1+eta_row*c+eta_col*r
+            M, (_, _, totals) = _strip_information(F, ids, strip, eta_row/lr, eta_col/lc,
+                                                  (1-1/lr-1/lc+1/l0)/n)
+            C = M - torch.outer(totals, totals)/(n*l0)
+            if effect is not None:
+                grid = S.reshape(r, c, p)
+                row = (grid == grid[:, :1]).all(dim=(0, 1))
+                col = (grid == grid[:1]).all(dim=(0, 1)) & ~row
+                stratum = torch.where(row, 0, torch.where(col, 1, 2))
+                df = torch.where(row, r-row.sum(), torch.where(col, c-1-col.sum(),
+                                 (r-1)*(c-1)-(~(row|col)).sum()))
+        elif covariates is not None:
             Z = covariates
             if (not isinstance(Z, torch.Tensor) or Z.ndim != 2 or Z.shape[0] != n
                     or Z.shape[1] < 1 or Z.dtype != F.dtype or Z.device != F.device
@@ -283,7 +304,7 @@ def design_diagnostics(
         if groups is not None:
             group_power, group_df = [], []
             for g in groups:
-                strata = stratum if subplots is not None else whole if whole_plots is not None else None
+                strata = stratum if subplots is not None or strip is not None else whole if whole_plots is not None else None
                 if strata is not None and not (strata[g] == strata[g[0]]).all():
                     raise ValueError("group contains mixed strata")
                 dof = n - p if df is None else int(df[g[0]])

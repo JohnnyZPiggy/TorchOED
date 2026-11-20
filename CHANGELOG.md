@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add compare_designs(F, designs, ...): relative total-information D/A/I/G efficiencies, per-coefficient power and fraction-of-design-space quantiles for two or more designs; integer entries are run sizes searched with optimal_design (sample-size explorer) (P2 gate §99–§101, #441).
+
 - Add model-robust D designs via optimal_design(models=..., model_weights=...): weighted geometric mean of per-model D-efficiencies with robust and per-model dual efficiency floors (P2 gate §96–§98, #436).
 
 - Add "If Possible" terms: Bayesian D and I designs via optimal_design(if_possible=..., tau=...) with DuMouchel–Jones scaling and Bayesian dual efficiency floors (P2 gate §93–§95, #433).

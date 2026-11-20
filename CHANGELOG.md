@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add "If Possible" terms: Bayesian D and I designs via optimal_design(if_possible=..., tau=...) with DuMouchel–Jones scaling and Bayesian dual efficiency floors (P2 gate §93–§95, #433).
+
 - Fix the `lhs` swap search so `mode="uniform"` always terminates: a swap must lower the objective by more than `1e-12` times its current value (P2 gate §92, #411).
 
 - Add constrained `fast_flexible_filling` with Sobol candidates, Lloyd clusters and MaxPro point choice.

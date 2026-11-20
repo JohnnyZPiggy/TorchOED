@@ -248,6 +248,28 @@ for weight in (0., 0.1):
     print(weight, result["alias_trace"], result["efficiency_lower_bound"])
 ```
 
+## "If Possible" terms (Bayesian D and I)
+
+Primary terms must be estimable; potential terms may be included even when the run count is below the total column count (m ≥ n ≥ the primary count). Potential columns are residualised on the primary columns and scaled to range 2; the result exposes these as `scaled_features`. `tau` is the prior standard deviation of the scaled potential coefficients.
+
+```python
+import torch
+from torchoed import full_factorial, polynomial_features, optimal_design
+
+x = full_factorial([3, 3]).double() - 1
+base = polynomial_features(x)  # [1, x1, x2, x1², x2², x1x2]
+F = base[:, [0, 1, 2, 5, 3, 4]]
+for criterion in ("D", "I"):
+    result = optimal_design(
+        F, 4, criterion=criterion, if_possible=[3, 4, 5], tau=1.0,
+        generator=torch.Generator().manual_seed(0),
+    )
+    print(criterion, result["ids"], result["objective"],
+          result["efficiency_lower_bound"])
+```
+
+Bayesian A, structured designs, non-diagonal priors and automatic selection of τ are not supported (P2 gate §95).
+
 ## Published reference examples
 
 A published example is a call printed in a reference package's help page or vignette at a recorded version, with its inputs frozen as repository data and re-scored by one shared TorchOED metric.

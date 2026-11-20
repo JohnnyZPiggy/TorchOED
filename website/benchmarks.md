@@ -13,6 +13,8 @@
 
 Where both finished, TorchOED's design was as good or better (higher log-determinant) in 4 of 5 cells; at 3 factors and 10⁵ candidates it was 0.02 lower than PyDOE's `fedorov` (21.75 vs 21.77), reported as measured. Each TorchOED design also carries a certified efficiency floor of about 0.97.
 
+**Space filling on one GPU host** (NVIDIA L4 and the same host's CPU, float64, one restart with `max_iter=20`, seconds; [full report](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w13-sfgpu/summary.md)): for 400 × 5 Latin hypercubes, maximin took 111.9 s on CPU vs 9.7 s on GPU, MaxPro 115.1 vs 7.3 s and uniform (CD2) 84.4 vs 4.6 s; at 50 runs every call took under 0.3 s on either device. Fast flexible filling of 50 points from 2¹⁷ candidates took 1.08 vs 0.32 s. CPU and GPU use different random generators, so the designs differ; all 22 designs passed the Latin-hypercube or constraint check.
+
 ## Published examples
 
 14 of 16 published examples match or are beaten on the shared metric (P2 exit target ≥ 8 met; week 13 target ≥ 12 met).

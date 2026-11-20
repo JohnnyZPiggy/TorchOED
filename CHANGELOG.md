@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `glm_power` for batched logistic and Poisson Monte Carlo Wald power.
+
 - Add exact minimum-aberration regular factorials and blocks unconfounded with main effects and two-factor interactions (#469).
 
 - Add CPU float64 strip-plot D/A/I search with crossed row/column labels and a conservative OLS efficiency floor (#463).

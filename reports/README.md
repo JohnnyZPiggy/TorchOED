@@ -65,3 +65,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [r-oracle-probe](r-oracle-probe/) | Manual GitHub Actions R oracle; R 4.5.2, rsm 2.10.6; [run 44500473486](https://github.com/JohnnyZPiggy/TorchOED/actions/runs/44500473486); Refs #372 | PASS: all 3 CCD/BBD CSVs byte-identical |
 | [G0 Colab Pro probe](g0-probe/summary.md) | #385 | BLOCKED: retry L4 transport PASS; science import pydoe ERROR; cpu/cuda NOT_RUN; cleanup PASS |
 | [w13-published](w13-published/) | #392: four NR examples rerun on R 4.5.2 | Three MATCH, Xvert NO MATCH; published matches 8 -> 11 |
+| [w13-spacefill-ext](w13-spacefill-ext/) | #404: R lhs 1.3.0 / MaxPro 4.1-2 / DiceDesign 1.10 | Diagnostics 16/16 MATCH; maximin better, MaxPro quality NO MATCH; Rd examples 3/3, published 11 → 14 |

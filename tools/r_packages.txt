@@ -5,3 +5,6 @@ rsm 2.10.6
 FrF2 2.3-5
 AlgDesign 1.2.1.2
 mixexp 1.2.7.1
+lhs 1.3.0
+MaxPro 4.1-2
+DiceDesign 1.10

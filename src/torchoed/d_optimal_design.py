@@ -1035,7 +1035,15 @@ def _split_moves(F, ids, hard, labels, sizes, weights, coefficients, sums, L, B,
                 yield trial
 
 
-def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, generator, max_iter, max_elements, blocks=None):
+def _nested_information(F, ids, groups, owner, a, c, d):
+    X = F[ids]
+    sums = torch.stack([X[g].sum(0) for g in groups])
+    totals = F.new_zeros(len(d), F.shape[1]).index_add(0, owner, a[:, None]*sums)
+    M = X.T@X - sums.T@(c[:, None]*sums) - totals.T@(d[:, None]*totals)
+    return M, (sums, totals)
+
+
+def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, generator, max_iter, max_elements, blocks=None, subplots=None, subplot_hard=None, eta_sub=1.0):
     if not isinstance(F, torch.Tensor) or F.ndim != 2 or F.dtype != torch.float64 or F.device.type != "cpu":
         raise ValueError(f"split-plot {criterion} search requires CPU float64 features")
     m, p = F.shape
@@ -1064,6 +1072,88 @@ def _split_design(F, n, sizes, hard, eta, criterion, fixed_ids, restarts, genera
     fixed_plots = fixed.tensor_split(torch.tensor(sizes).cumsum(0)[:-1]) if n_fixed else ()
     if any(hard[prefix].unique().numel() > 1 for prefix in fixed_plots):
         raise ValueError("fixed_ids within a whole plot must share one hard label")
+    if subplots is not None:
+        boundaries = torch.tensor(subplots).cumsum(0).tolist() if _valid_plot_sizes(subplots, n) else []
+        if (not boundaries or any(b not in boundaries for b in torch.tensor(sizes).cumsum(0).tolist())
+                or not isinstance(subplot_hard, torch.Tensor) or subplot_hard.shape != (m,)
+                or subplot_hard.device != F.device or subplot_hard.dtype not in integer_dtypes
+                or type(eta_sub) not in (int, float) or not 0 < eta_sub < float("inf")):
+            raise ValueError("subplots must align with whole plots; subplot_hard must be integer; eta_sub finite positive")
+        subplot_hard = (subplot_hard.to(torch.int64) ^ -(1 << 63)
+                        if subplot_hard.dtype == getattr(torch, "uint64", None) else subplot_hard.to(torch.int64))
+        groups = torch.arange(n).split(subplots)
+        whole = torch.repeat_interleave(torch.arange(len(sizes)), torch.tensor(sizes))
+        owner = torch.tensor([whole[g[0]] for g in groups])
+        c = eta_sub / (1 + eta_sub * F.new_tensor(subplots))
+        a = 1 / (1 + eta_sub * F.new_tensor(subplots))
+        d = eta / (1 + eta * F.new_zeros(len(sizes)).index_add(0, owner, F.new_tensor(subplots)*a))
+        B = None if criterion == "D" else torch.eye(p, dtype=F.dtype) if criterion == "A" else F.T@F/m
+        def information(ids):
+            return _nested_information(F, ids, groups, owner, a, c, d)
+        def draw():
+            ids, used = [], torch.zeros(m, dtype=torch.bool)
+            for k in range(len(sizes)):
+                h = labels[torch.randint(len(labels), (1,), generator=generator).item()]
+                U = subplot_hard[hard == h].unique()
+                for j in (owner == k).nonzero().flatten().tolist():
+                    u = U[torch.randint(len(U), (1,), generator=generator).item()]
+                    pool = ((hard == h) & (subplot_hard == u) & ~used).nonzero().flatten()
+                    if len(pool) < subplots[j]: return None
+                    chosen = pool[torch.randperm(len(pool), generator=generator)[:subplots[j]]]
+                    used[chosen] = True
+                    ids.append(chosen)
+            return torch.cat(ids)
+        def state(ids, summaries, L):
+            sums, totals = summaries
+            q = torch.cat([F[ids[g]]-c[j]*sums[j]-d[owner[j]]*a[j]*totals[owner[j]]
+                           for j, g in enumerate(groups)])
+            Z = torch.linalg.solve_triangular(L, F.T, upper=False).T
+            q = torch.linalg.solve_triangular(L, q.T, upper=False).T
+            return Z, q, None if B is None else _whitened_moment(L, B)
+        def scores(ids, cached, pos, pool, j):
+            Z, qs, Q = cached
+            delta, q = Z[pool]-Z[ids[pos]], qs[pos]
+            v = 1-c[j]-d[owner[j]]*a[j]**2
+            ratios = (1+delta@q)**2-delta.square().sum(1)*(q.square().sum()-v)
+            if Q is None: return ratios, ratios
+            gains, _ = _split_ai_scores(delta, q, delta@Q, q@Q, 1-v)
+            return gains, ratios
+        def moves(ids, summaries, L):
+            unused = torch.ones(m, dtype=torch.bool); unused[ids] = False
+            cached = state(ids, summaries, L)
+            for j, g in enumerate(groups):
+                pool = (unused & (hard == hard[ids[g[0]]]) & (subplot_hard == subplot_hard[ids[g[0]]])).nonzero().flatten()
+                for pos in g.tolist():
+                    gains, ratios = scores(ids, cached, pos, pool, j)
+                    for candidate in pool[(ratios > 0) & (gains > 0) if B is not None else ratios > 0].tolist():
+                        trial = ids.clone(); trial[pos] = candidate
+                        yield trial
+            proposals = []
+            for j, g in enumerate(groups):
+                h, u = hard[ids[g[0]]], subplot_hard[ids[g[0]]]
+                for label in subplot_hard[hard == h].unique():
+                    pool = unused & (hard == h) & (subplot_hard == label)
+                    if label != u and pool.sum() >= len(g): proposals.append((g, h, label))
+            for k, g in enumerate(torch.arange(n).split(sizes)):
+                for label in labels:
+                    if label != hard[ids[g[0]]]: proposals.append((g, label, None))
+            for group, h, u in proposals:
+                trial, factor, summaries_now = ids.clone(), L, summaries
+                for pos in group.tolist():
+                    j = next(j for j, g in enumerate(groups) if pos in g)
+                    label = subplot_hard[ids[pos]] if u is None else u
+                    pool = ((hard == h) & (subplot_hard == label) & ~torch.isin(torch.arange(m), trial)).nonzero().flatten()
+                    gains, ratios = scores(trial, state(trial, summaries_now, factor), pos, pool, j)
+                    if not (ratios > 0).any(): break
+                    best = gains.masked_fill(ratios <= 0, -torch.inf).argmax()
+                    trial[pos] = pool[best]
+                    M, summaries_now = information(trial)
+                    factor, info = torch.linalg.cholesky_ex(M)
+                    if info != 0: break
+                else: yield trial
+        return _plot_restarts(subplots, restarts, draw, information, moves, max_iter,
+            dict(whole_plots=list(sizes), eta=eta, subplots=list(subplots), eta_sub=eta_sub),
+            "LOCAL_SPLIT_SPLIT_PLOT_EXCHANGE", G=F, criterion=criterion, B=B)
     counts = F.new_tensor(sizes)
     if eta >= 1:
         inverse_eta = 1 / eta
@@ -1109,14 +1199,22 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
                    covariates: torch.Tensor | None = None, alias: torch.Tensor | None = None,
                    alias_weight: float = 1.0, if_possible: list[int] | None = None,
                    tau: float = 1.0, models: list[list[int]] | None = None,
-                   model_weights: list[float] | None = None) -> dict[str, object]:
+                   model_weights: list[float] | None = None,
+                   subplots: list[int] | tuple[int, ...] | None = None,
+                   subplot_hard: torch.Tensor | None = None, eta_sub: int | float = 1.0) -> dict[str, object]:
     """D/A/I VND restarts with criterion-specific efficiency floor.
 
     Set blocks to fixed block sizes for CPU float64 D/A/I search without an intercept.
     Set whole_plots, hard labels and eta for CPU float64 split-plot D/A/I search.
+    Set subplots, subplot_hard and eta_sub for a second nested split-plot stratum.
     Set covariates to fixed per-run columns; ids keep run order and covariates never move.
     For structured designs, fixed_ids fill the leading positions, block by block.
     """
+    if subplots is not None or subplot_hard is not None:
+        if (subplots is None or subplot_hard is None or whole_plots is None or hard is None
+                or not isinstance(criterion, str) or criterion not in ("D", "A", "I")
+                or any(v is not None for v in (blocks, fixed_ids, covariates, alias, if_possible, models))):
+            raise ValueError("subplots requires whole_plots/hard and subplot_hard, D/A/I, without other structures")
     if models is not None:
         _features(F, max_elements)
         if F.ndim != 2:
@@ -1176,7 +1274,7 @@ def optimal_design(F: torch.Tensor, n: int, *, criterion: str | dict[str, float]
     if whole_plots is not None:
         if criterion not in ("D", "A", "I"):
             raise ValueError("whole_plots supports criteria D, A and I")
-        return _split_design(F, n, whole_plots, hard, eta, criterion, fixed_ids, restarts, generator, max_iter, max_elements, blocks)
+        return _split_design(F, n, whole_plots, hard, eta, criterion, fixed_ids, restarts, generator, max_iter, max_elements, blocks, subplots, subplot_hard, eta_sub)
     if blocks is not None:
         return _blocked_design(F,n,blocks,criterion,fixed_ids,restarts,generator,max_iter,max_elements)
     if criterion not in ("D","A","I"):

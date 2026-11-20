@@ -1,6 +1,6 @@
 {
-  "run_id": "44766437771",
-  "source_sha": "b4d60049f8ba09fa0e68ddab2d24c4530d25d234",
+  "run_id": "44786934760",
+  "source_sha": "4ecad291c78ae5449d40601c0bdfa8af580a76e0",
   "R_version": "R version 4.5.2 (2025-10-31)",
   "packages": {
     "abind": "1.4-8",
@@ -146,5 +146,5 @@
     "tools": "4.5.2",
     "utils": "4.5.2"
   },
-  "wall_seconds": 0.3514
+  "wall_seconds": 1.9547
 }

@@ -80,6 +80,7 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w15-glmpower-rd2b](w15-glmpower-rd2b/) | #503: published skpr Poisson RD2 retry from committed recipe | MATCH: 3/3 coefficients within 4 combined SE; worst z=1.36656; R run 44831450343, R 4.5.2 / skpr 1.9.2 / mbest 0.6.1; published count 18 -> 19 |
 | [g1-crossover](g1-crossover/) | #442: A100 G1 night 1, same-host D crossover and C3 CPU/CUDA timing | CUDA A/I out of contract, PyDOE errors recorded |
 | [w15-heldout](w15-heldout/) | #512: frozen W15 H40–H42 | H40/H41 MATCH exact exhaustive GLS maxima; H42 MATCH FrF2 2.3-5 WLP, R 4.5.2, run 44868066239 |
+| [w16-ai-scale](w16-ai-scale/) | #527: CPU A/I pair-scoring profile and bounded-workspace §2e fix, k = 5, n = 42, m ≤ 10⁴ | m = 5·10³ A/I finish (47.5 s / 162.3 s); m = 10⁴ A TIMEOUT, I 333 s; ≤ 120 s target NOT MET |
 | [w10-dsd](w10-dsd/) | Corrected daewr DSD reference (#309) | k=6 MATCH; k=7 NO MATCH (shape); controller FAIL retained |
 | [w10-rref](w10-rref/) | Week 10 FrF2/rsm reference freeze (#257, #261) | Catalogue 22/22 MATCH under §34.3, 7/22 original full-vector; PB 3/3 MATCH |
 | [w11-mixai](w11-mixai/) | AlgDesign A/I mixture reference (#296) | A and I MATCH exhaustive; neither R design repeats candidates |

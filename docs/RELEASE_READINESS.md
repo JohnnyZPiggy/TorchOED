@@ -12,7 +12,7 @@ This is a gap checklist, not release approval. Alpha 0.1.0 has an experimental A
 | License | VERIFIED by inspection: root MIT license, project metadata agrees | Distribution license inclusion relies on historical wheel evidence, not a fresh build here. |
 | Support matrix | CPU-only [CI matrix](../.github/workflows/ci.yml): Linux + Windows × Python 3.11/3.13, macOS × Python 3.13, clean wheel/sdist, `min-torch` (Python 3.11, torch 2.2.0 CPU), and `docs`. [Metadata](../pyproject.toml): Python >=3.11, torch >=2.2. | Other Python/torch combinations and GPU/TPU are not certified. M3 requires CPU float64. |
 | API/contracts | VERIFIED by inspection: 42 root exports in [torchoed.__all__](../src/torchoed/__init__.py); M1/M2/M3 contracts linked in README | Experimental stability; inline annotations/stubs and static type-check acceptance are absent. No broad PyDOE compatibility. |
-| Regression coverage | CI: Linux + Windows × Python 3.11/3.13 + clean wheel ([see badge](../README.md)) | Acceptance is limited to the current CPU suite, not exact or global optimality. |
+| Regression coverage | CPU-only CI as in the support-matrix row above ([see badge](../README.md)) | Acceptance is limited to the current CPU suite, not exact or global optimality. |
 | Usability | README describes all merged milestones; one tiny existing-API example with assertions | See PR ENGINEER_HANDOFF for exact tested SHA, real smoke output and current result. |
 | Release process | Tags `v0.7.0`/`v0.8.0`/`v0.9.0` and TestPyPI publications through [testpypi.yml](../.github/workflows/testpypi.yml); latest evidence in [#518](https://github.com/JohnnyZPiggy/TorchOED/issues/518). Real PyPI: NOT_RUN. | Real PyPI and the GitHub Release remain Scientist-gated; no release authorized here. |
 

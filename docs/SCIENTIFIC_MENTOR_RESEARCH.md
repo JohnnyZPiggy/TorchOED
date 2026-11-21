@@ -1587,3 +1587,55 @@ Draft PR #3 contains only `experiments/reference_e0/**` (11 changed files), 39 i
 **Decision:** `E0_ARCHITECT_INITIAL_REVIEW_PASS_WITH_RESEARCH_ERRATUM` but **DRAFT_PR_3_NOT_MERGED / FORMAL_ACCEPTANCE_PENDING**. The invalid historical rank hypothesis has been formally corrected in this dossier and E0 protocol. Continue strict candidate-ID and source-vs-mathematical distinctions; no automatic M0 changes, E1 dispatch or CUDA start. Engineer may preserve original `FAIL_MISMATCH` and attach a supplemental corrected expectation as a separate test/report if needed; never silently falsify original 39 results. Before any acceptance/merge, review script+data integrity, scoped files, repro commands and source provenance fully, and decide whether any corrections need a separate Engineer follow-up.
 
 **Architect next science:** prepare M1/M2 numerical interface contracts (candidate IDs, repetitions, fixed moment matrices, noise, rank/regularization, batched score shapes) and small GPU break-even *design* only. Do not claim code exists or move experimental/survey code into M0.
+
+## 26. P2.5 statistics-package landscape review (2026-11)
+
+Mentor: Claude (acting Scientific Mentor at the Scientist's request, 2026-11-21). Issue #517. All web pages were read on 2026-11-21; versions are those shown on that date. PROVED = follows from linear algebra stated here; OBSERVED = read from the cited page; CONJECTURE = judgement; NOT_VERIFIED = could not be read this session.
+
+### 26.1 statsmodels (CPU)
+- Identity and licence: PyPI `statsmodels` 0.15.0, released 2026-08-27, BSD-3-Clause, Requires-Python ≥ 3.10 — OBSERVED, https://pypi.org/project/statsmodels/. Compatible with an optional extra and with dev-only use — CONJECTURE (permissive licence).
+- (b) REML LMM: `MixedLM` is group-based; groups are always nested; crossed effects need a single group with all random effects as variance components, and "many, but not all crossed models can be fit" — OBSERVED, https://statsmodels.org/stable/examples/notebooks/generated/variance_components.html and https://www.statsmodels.org/devel/mixed_linear.html. Post-estimation inference is Wald tests, profile likelihood and LRT — OBSERVED, statsmodels `mixed_linear.rst` (0.14.4 sources). No Satterthwaite or Kenward–Roger denominator df is documented — OBSERVED (absence on those pages).
+- (a) OLS with per-term F tests via `anova_lm`; lack of fit with pure error: NOT_VERIFIED this session.
+- (c) GLM: yes (one-parameter exponential families) — OBSERVED, PyPI page.
+- (d) batched GPU fits: no GPU — OBSERVED (CPU library).
+- Validation against R: not established here — NOT_VERIFIED.
+
+### 26.2 PyStatistics (GPU candidate)
+- Identity and licence: PyPI `pystatistics` 7.0.0, released 2026-11-10, MIT, Requires-Python ≥ 3.11, repository https://github.com/sgcx-org/pystatistics, one PyPI maintainer; GPU extra `pystatistics[gpu]` requires PyTorch — OBSERVED, https://pypi.org/project/pystatistics/. This matches the package the Scientist named — CONJECTURE (name, GPU focus and module list agree).
+- (b) LMM/GLMM: random intercepts/slopes, nested and crossed, REML/ML, Satterthwaite df, GLMM by Laplace; Kenward–Roger not mentioned — OBSERVED, same page.
+- (a) `anova` module (one-way, factorial, ANCOVA, repeated measures; Type I/II/III SS); OLS lack of fit with pure error not mentioned — OBSERVED.
+- (c) GLM Gaussian, Binomial, Poisson, Gamma, Negative Binomial by IRLS — OBSERVED.
+- (d) batched multi-response regression not mentioned; a batched Monte Carlo GPU solver exists — OBSERVED.
+- Validation: CPU backends "validated against R reference implementations to near machine precision (rtol = 1e-10)", R packages named include lme4 and lmerTest; GPU backends are validated against the CPU backend, "not directly against R", with tolerances coefficients rtol ≤ 1e-3, SEs ≤ 1e-2, deviance ≤ 1e-4; GPU default precision FP32, `gpu_fp64` on CUDA only — OBSERVED, same page.
+- API stability: breaking major releases 4.0.0, 5.0.0, 6.0.0, 7.0.0 (7.0.0 removed `solver='reference'`); deprecations documented — OBSERVED. The API is moving quickly — CONJECTURE.
+
+### 26.3 statgpu (GPU candidate)
+- Identity and licence: https://github.com/TheHiddenObserver/statgpu, Apache-2.0, Python ≥ 3.9, backends NumPy, CuPy and PyTorch; PyPI `statgpu` — OBSERVED, repository README and https://statgpu.github.io/. Release 0.3.0 states a maintained matrix of Python 3.9–3.12 — OBSERVED, https://github.com/TheHiddenObserver/statgpu/releases/tag/v0.3.0.
+- (a) ANOVA: one-way, Welch, balanced two-way — OBSERVED. (b) linear mixed models / REML: not offered ("RandomEffects" is a panel-data estimator) — OBSERVED. (c) logistic and Poisson GLM — OBSERVED. (d) batched multi-response fits: not mentioned — OBSERVED.
+- Validation against R: none described — OBSERVED. Adoption: 3 stars, 0 forks — OBSERVED (README page, 2026-11-21).
+
+### 26.4 Aurora-GLM (GPU candidate)
+- Identity and licence: https://github.com/Matcraft94/Aurora-GLM, PyPI `aurora-glm`, MIT, version 1.0.0, Python ≥ 3.10 (CI 3.10 and 3.12), backends NumPy, PyTorch, JAX — OBSERVED, repository README and release v1.0.0 page.
+- (b) Gaussian GAMM by REML via Henderson's equations; nested `(1|a/b)` and crossed `(1|a)+(1|b)`; Satterthwaite/KR df not mentioned — OBSERVED. (c) Poisson and Binomial — OBSERVED. (a) OLS ANOVA table not stated; (d) batched fits not mentioned — OBSERVED.
+- Validation: R validation covers `glm()` only (coefficients, deviance, fitted values < 1e-6; release notes state ≤ 1.4e-13 across 20 comparisons); systematic comparisons against `mgcv` and `lme4` are "planned" — OBSERVED. The "up to ~140×" GPU speed-up is the authors' benchmark on an RTX 5070 Ti — OBSERVED (claim only, not reproduced). Adoption: 0 stars — OBSERVED.
+
+### 26.5 Other packages seen, not reviewed
+- `glmm` (Lenartowicz 2026; OLS, GLM, LMM, GLMM; NumPy-only dependency; claims lme4-level accuracy) — OBSERVED only from a search snippet of https://pypi.org/project/glmm/; licence, maintenance and validation NOT_VERIFIED. No GPU path, so it does not serve need (d).
+
+### 26.6 What TorchOED needs and what is already PROVED
+- (d) and most of (a): in a designed experiment every response shares one model matrix X (n × p, full column rank). For R response vectors stacked as Y (n × R), the OLS fits are B = (XᵀX)⁻¹XᵀY: one Cholesky or QR of X and one matrix product, residual sums of squares from one more product, and per-term F statistics from the same factorisation applied to nested column sets — PROVED (standard linear algebra; the cost is O(np² + npR)). This is a few dozen lines of torch, runs batched on GPU in float64, and needs no external package.
+- Lack of fit with pure error needs only replicate groups of identical design rows — PROVED (partition of the residual sum of squares).
+- (b) REML with crossed or nested random intercepts and Satterthwaite or KR df is the only need that is genuinely hard to rebuild well — CONJECTURE.
+
+### 26.7 Validation dataset for later Engineer checks
+- `nlme::Oats` (Yates' oats split-plot: Block, Variety as whole-plot factor, nitro as subplot factor; also `MASS::oats`), the split-plot example of Pinheiro & Bates, *Mixed-Effects Models in S and S-PLUS* (2000). Reference fit: `lme4::lmer(yield ~ Variety * factor(nitro) + (1 | Block/Variety))` with `lmerTest` Satterthwaite and KR df via the r-oracle workflow. Page number NOT_VERIFIED.
+
+### 26.8 Decision table
+| package | needs covered (4a–d) | licence | maintained? | R-validated? | decision | reason |
+|---|---|---|---|---|---|---|
+| statsmodels | a (partly NOT_VERIFIED), c; b limited | BSD-3 | yes (0.15.0, 2026-08) | not established here | **USE as dev-only CPU cross-check for OLS/GLM**; not for REML designs | crossed/strip-plot REML only via the single-group trick, no Satterthwaite/KR df |
+| PyStatistics | a, b, c; d not for regression | MIT | yes (7.0.0, 2026-11-10), fast-moving API | CPU vs R claimed (rtol 1e-10); GPU vs CPU only, FP32 default | **NEEDS CHECK** — the only candidate for REML + Satterthwaite | adopt as an optional, version-pinned extra only if its CPU LMM reproduces lme4 + lmerTest on `nlme::Oats` and one strip-plot case to 1e-8 via r-oracle; never use its FP32 GPU path for reported tables |
+| statgpu | a (simple ANOVA), c | Apache-2.0 | active, very low adoption | none described | **DO NOT USE** | no mixed models, no R validation |
+| Aurora-GLM | b (GAMM), c | MIT | 1.0.0, very low adoption | glm() only; lme4 planned | **DO NOT USE (for now)** | REML not yet validated against lme4 |
+
+**Recommendation.** CPU reference: R itself through `.github/workflows/r-oracle.yml` (`lm`, `lme4` + `lmerTest`) for every published-example check, with statsmodels as an in-Python dev-only cross-check for OLS and GLM. GPU path: **build the thin torch path ourselves** for batched OLS, per-term F tests, lack of fit and residual diagnostics (26.6: one factorisation shared by all responses, float64 on GPU; no package offers batched multi-response OLS, and reported tables must not depend on an FP32 path). REML: reuse rather than rebuild — PyStatistics is the only candidate and is **NEEDS CHECK**; if it fails the Oats check, P2.5 implements REML for its fixed structures (blocks, whole plots, strip plots) in torch with the r-oracle check as the gate. No adapter is built before the check task reports.

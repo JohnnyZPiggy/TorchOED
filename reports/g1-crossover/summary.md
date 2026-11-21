@@ -6,7 +6,7 @@ Observed NVIDIA A100-SXM4-40GB (40960 MiB), driver 580.82.07, torch 2.14.1+cu130
 
 | k | m | TorchOED CPU | TorchOED CUDA | PyDOE | objective / floor / peak GPU memory |
 |---|---|---|---|---|---|
-| 3, 5, 7 | 10³–10⁶ | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN |
+| 3, 5, 7 | 10³–10⁶ | NOT_CAPTURED | NOT_CAPTURED | NOT_RUN | NOT_RUN |
 
 Largest m reached: CPU / CUDA / PyDOE — none (no saved search designs). No measured cell establishes where GPU wins.
 
@@ -25,7 +25,7 @@ The original retry plan was superseded by the Architect 2026-11-21 00:19:38 UTC 
 
 ## Night 1 final session (Architect-authorized continuation)
 Measured source `de10cf1277c3b14fd7ad12e407141889f9ec365c`; A100-SXM4-40GB, 40 GiB, driver 580.82.07, torch 2.14.1+cu130, CUDA 13.0; all 12 CPU threads. One timed call/cell after warm-up; float64, seed 0; synchronized CUDA stops, transfers included. Previous sessions above and their raw records are preserved.
-Controller ended WORK_EXEC_FAILED (exec TIMEOUT); no final artifact was downloaded. This section uses only the last saved progress snapshot (file mtime 2026-11-21 03:19:09 UTC). The uncaptured tail until cleanup is NOT_CAPTURED, not an inferred failure or an unexecuted cell; NOT_RUN in the table means no result in this snapshot. Raw snapshot bytes are preserved in results.json with external size/SHA-256.
+Controller ended WORK_EXEC_FAILED (exec TIMEOUT); no final artifact was downloaded. This section uses only the last saved progress snapshot (file mtime 2026-11-21 03:19:09 UTC). The uncaptured tail until cleanup is NOT_CAPTURED, not an inferred failure or an unexecuted cell; NOT_CAPTURED means no result in this snapshot, without inferring whether the uncaptured tail attempted that cell. Raw snapshot bytes are preserved in results.json with external size/SHA-256.
 
 | k | m | criterion | CPU seconds; objective; floor; peak GPU | CUDA seconds; objective; floor; peak GPU | fastest finished PyDOE (D only) |
 |---|---|---|---|---|---|
@@ -40,15 +40,15 @@ Controller ended WORK_EXEC_FAILED (exec TIMEOUT); no final artifact was download
 | 5 | 10000 | I | TIMEOUT | ERROR | N/A |
 | 7 | 10000 | D | 6.21896s; 111.254981411; 0.9606112988011765; 0 B | 10.4344s; 111.254981411; 0.9606112988011765; 29826560 B | fedorov ERROR, modified_fedorov ERROR, detmax ERROR |
 | 3 | 100000 | D | 143.181s; 21.7469493476; 0.973302014325836; 0 B | 29.1345s; 21.7469493476; 0.973302014325836; 566349824 B | fedorov TIMEOUT, modified_fedorov ERROR, detmax ERROR |
-| 5 | 100000 | D | NOT_RUN | NOT_RUN | NOT_RUN: outside frozen PyDOE cells |
-| 5 | 100000 | A | NOT_RUN | NOT_RUN | N/A |
-| 5 | 100000 | I | NOT_RUN | NOT_RUN | N/A |
-| 7 | 100000 | D | NOT_RUN | NOT_RUN | NOT_RUN: outside frozen PyDOE cells |
-| 3 | 1000000 | D | NOT_RUN | NOT_RUN | NOT_RUN: outside frozen PyDOE cells |
-| 5 | 1000000 | D | NOT_RUN | NOT_RUN | NOT_RUN: outside frozen PyDOE cells |
-| 5 | 1000000 | A | NOT_RUN | NOT_RUN | N/A |
-| 5 | 1000000 | I | NOT_RUN | NOT_RUN | N/A |
-| 7 | 1000000 | D | NOT_RUN | NOT_RUN | NOT_RUN: outside frozen PyDOE cells |
+| 5 | 100000 | D | NOT_CAPTURED | NOT_CAPTURED | NOT_RUN: outside frozen PyDOE cells |
+| 5 | 100000 | A | NOT_CAPTURED | NOT_CAPTURED | N/A |
+| 5 | 100000 | I | NOT_CAPTURED | NOT_CAPTURED | N/A |
+| 7 | 100000 | D | NOT_CAPTURED | NOT_CAPTURED | NOT_RUN: outside frozen PyDOE cells |
+| 3 | 1000000 | D | NOT_CAPTURED | NOT_CAPTURED | NOT_RUN: outside frozen PyDOE cells |
+| 5 | 1000000 | D | NOT_CAPTURED | NOT_CAPTURED | NOT_RUN: outside frozen PyDOE cells |
+| 5 | 1000000 | A | NOT_CAPTURED | NOT_CAPTURED | N/A |
+| 5 | 1000000 | I | NOT_CAPTURED | NOT_CAPTURED | N/A |
+| 7 | 1000000 | D | NOT_CAPTURED | NOT_CAPTURED | NOT_RUN: outside frozen PyDOE cells |
 
 | C3 nsim | CPU s | CUDA s | CPU/CUDA power vectors | nonconverged CPU/CUDA; separated CPU/CUDA | 4 combined MC SE |
 |---|---|---|---|---|---|
@@ -63,4 +63,3 @@ GPU search wins only in these measured pairs: D k=5 m=10000 (1.67x); D k=3 m=100
 Local checks: 21 PASS, 0 FAIL (saved search objectives at 1e-9 relative and C3 CPU powers/counts exact). Search pair and C3 statistical agreement is recorded separately, as-is, in results.json.
 CUDA A/I failed on CPU/CUDA tensor-device mismatches inside pair-move scoring; PyDOE 1.6.0 cells failed because scipy.linalg.inv rejects assume_a, or reached the per-cell timeout. Cell timeouts remain recorded. No tuning, source workaround, extra allocation or re-timing; errors are not objective mismatches. Scientific DoD remains partial where methods fail. This session uses the accepted X.device workaround, so it does not independently test the #510 library fix.
 All six allocation attempts have confirmed cleanup; final fresh usage 0 assignments, 133.84 CU; cumulative displayed spend 15.35 CU (25 CU cap). CI and final-SHA handoff linked on PR #509. Next: Architect disposition; no further night-1 allocation.
-

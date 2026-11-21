@@ -1,52 +1,58 @@
-# Week 15 goal — 2026-11-20 → 2026-11-27 (P2+ part 3: split-split-plot and strip-plot, minimum-aberration and blocked fractional factorials, GLM power by simulation)
+# Week 16 goal — 2026-11-21 → 2026-11-28 (CONSOLIDATION: P2+ exit — parity audit and deferral table, documentation and repository health, 0.9.0 TestPyPI)
 
-**Auto-advance (Architect, 2026-11-20).** Week 14 (P2+ part 2) goals were met on 2026-11-20:
-- B1 "If Possible" terms, Bayesian D / I: every cell filled; Ext NR (DuMouchel–Jones 1994 full text not accessible verbatim, #449); guide (#444).
-- B2 model-robust D over a set of models: every cell filled; Ext NR (Li–Nachtsheim 2000 full text not accessible verbatim, #449); guide (#448).
-- B3 Compare Designs and sample-size explorer: both parity rows ✅ (#450, #455); skpr 1.9.2 power NO MATCH at 1e-10 as-is (R-side Δ).
-- Published examples 14 → 16 (target ≥ 16).
+**Auto-advance (Architect, 2026-11-21).** Week 15 (P2+ part 3) goals were met on 2026-11-21:
+- C1 split-split-plot and strip-plot: every cell filled. skpr 1.9.2 SS1 MATCH and the published `gen_design.Rd` nested example MATCH (#473).
+- C2 minimum-aberration and blocked FF: FrF2 2.3-5 6/6 feasible cases MATCH, and BL2 is infeasible on both sides (#469).
+- C3 GLM power by simulation: skpr 12/12 within 4 combined MC SE (#472). Published RD2b MATCH; RD1b NO MATCH as-is. A100 same-host timing (#509): nsim 10⁵ CPU 5.30 s vs CUDA 0.422 s. HO is open and is filled by H44 below.
+- Published examples: 16 → 19 (target ≥ 19).
 
-Held-out H36–H39 were recorded as-is (#452, PR #456, `reports/w14-heldout`):
-- H36 MATCH (det(XᵀX + K) = 62208 = exhaustive maximum over 296,010 subsets).
-- H37 MATCH (tr((XᵀX + K)⁻¹W) = 649/324 = exhaustive minimum).
-- H38 MATCH ((det M₁, det M₂) = (24576, 524288) attains the exhaustive maximum over 12,870 subsets).
-- H39 TorchOED recorded (MaxPro ψ 23.66830193247027, minimum distance 0.3132072073220248); R reference NOT_RUN (the one dispatch ran before `S.csv` was committed). Completing the R reference once from the committed sample is a W14 evidence carry-over; the TorchOED values are not recomputed.
+Held-out H40–H42 were recorded as-is (#512, PR #514, `reports/w15-heldout`):
+- H40 MATCH: det = 2097152/441 = exhaustive maximum (4,304 feasible assignments, 128 maximizers).
+- H41 MATCH: det = 2097152/315 = exhaustive maximum (5,952 feasible, 48 maximizers).
+- H42 MATCH: WLP equal to FrF2 2.3-5 (R 4.5.2, run 44868066239).
 
 Baseline: `main` at the START of this goal's commit task.
 
-**Why this week:** VISION.md P2+ (weeks 13–15) still has open parity rows dated W15: split-split-plot and strip-plot, minimum aberration and blocked fractional factorials, power by simulation for GLMs, orthogonal and covering arrays, hard-to-change covariates. At most 3 feature goals fit a week; the three chosen are the rows with an R reference (skpr, FrF2) and, for C3, a TorchOED signature (batched GPU Monte Carlo). Orthogonal / covering arrays and hard-to-change covariates are listed for a Scientist decision in the week-16 consolidation (deferral or a later P2+ week).
+**Why this week:** week 16 is a consolidation week (VISION.md weekly cadence), so it adds no new features. The P2+ exit evidence in VISION.md has three parts:
+- every parity-checklist row complete or Scientist-deferred;
+- ≥ 15 published examples (19, met);
+- one of the four signatures demonstrated on a published example.
+
+Several checklist rows are still ◐ or ❌: orthogonal / covering arrays, hard-to-change covariates, non-box mixture regions, group-orthogonal supersaturated designs and the space-filling row, whose status text is stale. These need either evidence or a deferral the Scientist can decide on in one place. The documentation also lags weeks 13–15: 13 report directories are missing from `reports/README.md`, and `website/api.md` and `docs/ALGORITHM_COVERAGE.md` have not been checked since week 12. The last release was 0.8.0 (week 12). P2.5 (week 17) needs the Mentor landscape review of statistics packages first (VISION.md "Reuse before build"; matrix P2.5 row 1, dated W16). That review runs in parallel as a [Mentor] Issue; it is not a feature goal.
 
 | Goal | Falsifiable target | Baseline |
 |---|---|---|
-| **C1 Split-split-plot and strip-plot** | `optimal_design` D, A and I for (a) split-split-plot: whole plots of given sizes, subplots of given sizes nested in them, very-hard factors constant within whole plots and hard factors constant within subplots, GLS information Xᵀ(I + η_w Z_wZ_wᵀ + η_s Z_sZ_sᵀ)⁻¹X; (b) strip-plot: an r × c grid of runs, row factors constant along rows and column factors constant down columns, information Xᵀ(I + η_r Z_rZ_rᵀ + η_c Z_cZ_cᵀ)⁻¹X. Existing split-plot results stay bit-identical. Exact oracles: exhaustive optimum on small cases in `Fraction`. Cert: dual floor vs the OLS approximate optimum (conservative, as for split-plot), or a reasoned N/A. Diag: GLS SPV/VIF and power with stated denominator df. Ext: one skpr `gen_design` split-split-plot case through `r-oracle.yml`, re-scored by the shared GLS criterion. Parity row "Split-split-plot, strip-plot" ❌ → ✅ via one new matrix row. Measured number: filled cells of that row, target **all** | ❌ (split-plot has one stratum only) |
-| **C2 Minimum-aberration and blocked fractional factorials** | (a) A minimum-aberration search for k two-level factors in 2^q runs returning generators whose word-length pattern is lexicographically minimal over the generator sets searched, exact by `word_length_pattern`; (b) blocked regular fractions with 2^b blocks from block generators, with main effects not aliased with blocks, and an alias report of block-confounded effects. Exact oracles: exhaustive enumeration of generator sets on small sizes. Ext: FrF2 at the recorded version (`FrF2(..., blocks=)` and catalogue MA designs) through `r-oracle.yml`, compared by WLP and block alias sets. Matrix: the FF row and the parity row ◐ → ✅ for MA and blocked FF. Measured number: FrF2 cases MATCH out of the frozen set, target **all** | generators from a fixed catalogue only; no blocks |
-| **C3 Power by simulation for GLMs (logistic, Poisson)** | A public function returning per-coefficient (and effect-group) Wald power for a given design, coefficient vector β, family `binomial` or `poisson`, α and number of simulations, from batched torch IRLS fits over all simulated responses at once; separated / non-converged fits counted and reported. Exact oracle: for a tiny design, power by full enumeration of all response vectors in float64, MC estimate within 4 standard errors. Ext: skpr `eval_design_mc` at the recorded version on frozen designs through `r-oracle.yml`, agreement within 4 combined MC standard errors. Dev: CPU float64 and one measured same-host GPU timing (one Colab task, #374 policy). Parity row "Power by simulation for GLMs" ❌ → ✅ via one new matrix row. Measured number: filled cells of that row, target **all** | ❌ (normal-theory power only) |
+| **G1 P2+ exit audit and deferral table** | (a) Every parity-checklist row whose status lags its P2/P2+ matrix row is corrected, with evidence links; the space-filling row at least. (b) One table "P2+ open items for Scientist decision" in `docs/CAPABILITY_MATRIX.md` lists every P2/P2+ cell or checklist row that is still ◐, ❌ or NR and not completed this week. Each entry gives the missing evidence, the reason and the week that would close it. It covers at least orthogonal / Taguchi / covering arrays, hard-to-change covariates, non-box mixture regions, group-orthogonal supersaturated designs, DSD Ext, mixture Con, A/I GPU timing, and incomplete block / crossover designs. (c) One line in the matrix names the P2+ signature evidence on a published example: a certificate or a measured GPU speed-up at equal quality, from merged reports only, or "not shown" stated as-is. Measured number: P2/P2+ cells and checklist rows that are neither complete nor listed, target **0**; stale checklist rows, target **0** | stale rows counted by the G1 task (at least the space-filling row); 5 open checklist rows; P2+ signature line absent |
+| **G2 Documentation and repository health** | (a) `reports/README.md` indexes every directory under `reports/`, and the `g1-crossover` row is tidied (description in the Measurement column, status in the Status column). (b) `website/api.md` lists every name in `torchoed.__all__` and every public keyword merged through week 15. This is checked once by a throw-away script whose output goes in the handoff, not the repository. (c) `docs/ALGORITHM_COVERAGE.md` marks no merged capability PLANNED. (d) `docs/RELEASE_READINESS.md` reflects 0.9.0. (e) Test-suite wall time on `ubuntu-latest, 3.13` is recorded at the start and end of the week; any test change keeps every behaviour test and must not slow the suite. Measured number: unindexed report directories + exported names or keywords missing from the API page + stale PLANNED entries, target **0** | 13 unindexed report directories; API and coverage gaps counted by the G2 task |
+| **G3 Release 0.9.0 on TestPyPI** | Steps: (1) one fully green CI run on `main`, including `test (macos-latest, …)`, recorded by run id; (2) version 0.9.0, with the CHANGELOG `Unreleased` section becoming `[0.9.0]`; (3) the `testpypi.yml` workflow publishes; (4) a clean-venv install from TestPyPI runs `examples/cpu_quickstart.py` and the industrial-guide snippets, and the outputs are recorded. The Engineer pushes the tag in an Engineer task. Measured number: release steps done, target **4/4** | 0/4 (0.8.0 on TestPyPI) |
 
-**Published examples (P2+ exit, ≥ 15 in total, met).** Each C goal adds at least one published example (an Rd `\examples` of skpr or FrF2 at the recorded version, or a paper table frozen as repo data). Measured number: published examples MATCH or TorchOED better, **16 → ≥ 19** this week.
-
-**Held-out additions.** These are frozen here, before any week-15 task merges. They are never used for tests, tuning or dispatch choices. They run once at week end and are reported as-is. Every TorchOED call uses `generator=torch.Generator().manual_seed(0)` and default settings otherwise.
-- **H40 (split-split-plot D):** candidates the 2³ grid on {−1, 1} in `full_factorial` order listed twice (m = 16, IDs 0–15; distinct IDs, so each (A, B, C) appears at most twice in a design), factors (A, B, C); F columns [1, A, B, C, AB, AC, BC]; n = 8; whole plots of sizes [4, 4] with A constant within each; subplots of sizes [2, 2, 2, 2] nested in them with B constant within each; C free; η_w = η_s = 1.
-  - Shared metric: det(Xᵀ(I + Z_wZ_wᵀ + Z_sZ_sᵀ)⁻¹X) in exact `Fraction`, on the design as returned (run order and plot membership).
-  - Reference: exhaustive enumeration of the 2² · 2⁴ · 2⁸ = 16,384 level assignments (A per whole plot, B per subplot, C per run), keeping those in which no (A, B, C) appears more than twice, dev-only. Verdict: MATCH if equal to the exhaustive maximum.
-- **H41 (strip-plot D):** candidates (listed twice, m = 16) and F as in H40; n = 8 as a 4 × 2 grid (4 rows, 2 columns); A constant along each row, B constant down each column, C free per cell; η_r = η_c = 1.
-  - Shared metric: det(Xᵀ(I + Z_rZ_rᵀ + Z_cZ_cᵀ)⁻¹X) in exact `Fraction`, on the design as returned.
-  - Reference: exhaustive enumeration of the 2⁴ · 2² · 2⁸ = 16,384 level assignments (A per row, B per column, C per cell), keeping those in which no (A, B, C) appears more than twice, dev-only. Verdict: MATCH if equal to the exhaustive maximum.
-- **H42 (minimum aberration):** TorchOED's C2 minimum-aberration call for k = 12 factors in 32 runs.
-  - Shared metric: `word_length_pattern` on the returned ±1 design.
-  - Reference: R `FrF2::FrF2(nruns = 32, nfactors = 12, randomize = FALSE)` through `r-oracle.yml` with `sessionInfo()`, exported as a ±1 CSV and scored by the same `word_length_pattern`. Verdict: MATCH if the WLPs are equal; TorchOED better if TorchOED's WLP is lexicographically smaller; otherwise NO MATCH with the first differing word length.
+**Held-out additions.** These are frozen here, before any week-16 task merges. They are never used for tests, tuning or dispatch choices. They run once at week end and are reported as-is. Every randomized TorchOED call uses `generator=torch.Generator().manual_seed(0)` and default settings otherwise.
+- **H43 (blocked minimum aberration):** `minimum_aberration(10, 64, blocks=4)`.
+  - Shared metric: `word_length_pattern` on the 10 factor columns. Also the list of main effects and two-factor interactions whose ±1 column is constant within every block, computed by one function for both designs from the design and its block labels.
+  - Reference: R `FrF2::FrF2(nruns = 64, nfactors = 10, blocks = 4, randomize = FALSE)` through `r-oracle.yml` with `sessionInfo()`, exported as a CSV of the ±1 factor columns plus the block label.
+  - Verdict: MATCH if the WLPs are equal and both lists are empty. TorchOED better if both lists are empty and TorchOED's WLP is lexicographically smaller. Otherwise NO MATCH, with the first differing word length or the confounded effects.
+- **H44 (Poisson GLM power):** X is [1, A, B, C] on the 2³ grid on {−1, 1} in `full_factorial` order, listed twice (n = 16), frozen as a repo CSV before the reference dispatch. The call is `glm_power(X, beta=torch.tensor([0.5, 0.5, -0.25, 0.0], dtype=torch.float64), family="poisson", alpha=0.05, nsim=10000, generator=torch.Generator().manual_seed(0))`.
+  - Shared metric: per-coefficient power with MC SE √(p(1 − p)/nsim).
+  - Reference: R `skpr::eval_design_mc(design = <the frozen CSV columns A, B, C>, model = ~A + B + C, alpha = 0.05, nsim = 10000, glmfamily = "poisson", anticoef = c(0.5, 0.5, -0.25, 0))` through `r-oracle.yml` with `sessionInfo()`, using its parameter power rows.
+  - Verdict: MATCH if all 4 coefficients are within 4 combined MC SE. Otherwise NO MATCH, with the worst z.
+- **H45 (strip-plot A, unequal variance ratios):** candidates and F as in H40, so m = 16 and F = [1, A, B, C, AB, AC, BC]; n = 8 as a 2 × 4 grid. The call is `optimal_design(F, 8, criterion="A", strip=(2, 4), row_hard=<A level of each candidate>, col_hard=<B level of each candidate>, eta_row=2.0, eta_col=0.5, generator=torch.Generator().manual_seed(0))`, with runs in the documented row-major order.
+  - Shared metric: tr((XᵀV⁻¹X)⁻¹) in exact `Fraction`, where V = I + 2·Z_rZ_rᵀ + ½·Z_cZ_cᵀ, on the design as returned.
+  - Reference: dev-only exhaustive enumeration of the 2² · 2⁴ · 2⁸ = 16,384 level assignments (A per row, B per column, C per cell). Keep the assignments in which no (A, B, C) appears more than twice and whose information matrix is nonsingular.
+  - Verdict: MATCH if TorchOED equals the exhaustive minimum. Otherwise NO MATCH, with Δ.
 
 If a reference call fails or its versions are not recorded, its column is `NOT_RUN`, with the error verbatim.
 
 **Timing rule (durable, Scientist 2026-11-07):** per restart unless a goal says otherwise.
 
 **Safeguards:**
-- Existing `optimal_design` results without the new arguments stay bit-identical, existing diagnostics are unchanged and existing `fractional_factorial` outputs are unchanged. If shared search code is touched, `tools/bench_b0.py` reruns with no time regression and identical D results.
-- Every identity used is in a gate document with PROVED/OBSERVED/CONJECTURE marks and an independent math review before it is STARTed.
-- Published examples are cited by source (paper table or Rd line) and frozen as repo data. External references follow the VISION.md oracle rules (R on `r-oracle.yml`; Colab only for GPU, one GPU task at a time, #374 budget policy).
-- No tuning on held-out cases. Historical reports and evidence are preserved.
+- No new public functions or keywords. Refactors keep every behaviour test and every D/A/I result unchanged. Any change to search code reruns `tools/bench_b0.py`, with no time regression and identical D results.
+- Matrix and checklist statuses cite merged reports or PRs only. Deferral entries are proposals: a row counts as deferred only after a Scientist signal.
+- External references follow the VISION.md oracle rules: R on `r-oracle.yml`, Colab only for GPU, one GPU task at a time.
+- No tuning on held-out cases. Historical reports and evidence are preserved, never deleted.
+- Releases and tag pushes are Engineer tasks. Real PyPI waits for the Scientist.
 
 **Out of scope this week:**
-- Orthogonal / Taguchi / covering arrays and hard-to-change covariates (Scientist decision requested in week 16: defer or schedule).
-- REML analysis of split-split-plot experiments (P2.5); GLM design optimisation (P3, Bayesian / local designs); exact (non-simulation) GLM power.
-- Group-orthogonal supersaturated designs, non-box mixture regions, new DSD sizes, analysis and Studio (P2.5).
+- New capabilities: orthogonal / covering arrays, hard-to-change covariates, non-box mixture regions, new DSD sizes (deferral or scheduling is a Scientist decision via G1).
+- Analysis and Studio (P2.5, week 17 onward). Adapters wait for the Mentor landscape review.
+- P3. GPU timing of A/I (W23).
 - Real PyPI and Issue #13.

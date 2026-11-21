@@ -403,7 +403,7 @@ def glm_power(
             or family not in ("binomial", "poisson") or type(alpha) not in (int, float)
             or not 0 < alpha < 1 or type(nsim) is not int or nsim < 1
             or type(max_elements) is not int or nsim*(X.shape[0]+X.shape[1]**2) > max_elements
-            or (generator is not None and (not isinstance(generator, torch.Generator) or generator.device != X.device))):
+            or (generator is not None and (not isinstance(generator, torch.Generator) or generator.device.type != X.device.type))):
         raise ValueError("invalid GLM matrix, coefficients, family, simulation count, level, generator or workspace")
     if groups is not None and (type(groups) is not list or any(type(g) is not list or not g
             or any(type(j) is not int or not 0 <= j < X.shape[1] for j in g)

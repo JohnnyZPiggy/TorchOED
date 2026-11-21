@@ -467,6 +467,22 @@ def _linear_pair_scores(F, ids, criterion, max_elements, free_positions=None, *,
             outgoing_table = torch.stack((G[a,a],G[a,b],G[b,b],Q[a,a],Q[a,b],Q[b,b]))
             del a,b,c,d,u,v,w,pi,qcc,qcd,qdd
             tables = incoming_table,outgoing_table
+    if not screened and tolerance is not None and len(ids)>p+1:
+        # §2e needs only selected rows and an O(q) block, not a quadratic prefix.
+        slack = max_elements-fixed-2*len(ids)*m-2*m
+        block_size = min(outgoing_count,max(0,slack//(2*(16*len(incoming)+64))))
+        eavailable = slack-block_size*(16*len(incoming)+64)
+        ecapacity = eavailable//(96+4*p)
+        erescore = (eavailable-8*ecapacity)//(32*p+256)
+        if block_size>=1 and ecapacity>=1 and erescore>=1:
+            screened,removal,sliced,hoisted = True,True,True,False
+            capacity,rescore_capacity = ecapacity,erescore
+            diagonal = T.square().sum(0) if criterion=='A' else (Z*T).sum(0)
+            B = torch.eye(p,dtype=F.dtype) if criterion=='A' else F.mT@F/m
+            phi = torch.trace(torch.cholesky_solve(B,L)).item()
+            pool = torch.tensor(incoming)
+            prefix = pool,-diagonal[pool].topk(2).values.sum().reshape(1),None
+            G,Q,gd = _linear_products(Z,T,ids,criterion,True)
     best = -float('inf')
     tiles = (_linear_prefix_tiles(len(free),prefix,diagonal[ids[free]],phi,tolerance,capacity,lambda:best)
              if screened else ((pairs,None) for pairs in _pair_tiles(len(free),incoming,capacity)))

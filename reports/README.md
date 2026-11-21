@@ -78,5 +78,17 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w15-glmpower-rd1b](w15-glmpower-rd1b/) | #493: published skpr binomial RD1 retry with mbest 0.6.1 | NO MATCH: 2/3 coefficients within 4 combined SE; intercept z=8.516; R run 44814324521, R 4.5.2 / skpr 1.9.2; published count 18 unchanged |
 | [w15-glmpower-rd2](w15-glmpower-rd2/) | #499: published skpr Poisson RD2 | NOT_RUN: Engineer dispatched before recipe commit; script absent at source SHA, run 44824241160; R 4.5.2 / skpr 1.9.2 / mbest 0.6.1; published count 18 unchanged |
 | [w15-glmpower-rd2b](w15-glmpower-rd2b/) | #503: published skpr Poisson RD2 retry from committed recipe | MATCH: 3/3 coefficients within 4 combined SE; worst z=1.36656; R run 44831450343, R 4.5.2 / skpr 1.9.2 / mbest 0.6.1; published count 18 -> 19 |
-| [g1-crossover](g1-crossover/) | #442 | #442: A100 G1 night 1, same-host D crossover and C3 CPU/CUDA timing; CUDA A/I out of contract, PyDOE errors recorded |
+| [g1-crossover](g1-crossover/) | #442: A100 G1 night 1, same-host D crossover and C3 CPU/CUDA timing | CUDA A/I out of contract, PyDOE errors recorded |
 | [w15-heldout](w15-heldout/) | #512: frozen W15 H40–H42 | H40/H41 MATCH exact exhaustive GLS maxima; H42 MATCH FrF2 2.3-5 WLP, R 4.5.2, run 44868066239 |
+| [w10-dsd](w10-dsd/) | Corrected daewr DSD reference (#309) | k=6 MATCH; k=7 NO MATCH (shape); controller FAIL retained |
+| [w10-rref](w10-rref/) | Week 10 FrF2/rsm reference freeze (#257, #261) | Catalogue 22/22 MATCH under §34.3, 7/22 original full-vector; PB 3/3 MATCH |
+| [w11-mixai](w11-mixai/) | AlgDesign A/I mixture reference (#296) | A and I MATCH exhaustive; neither R design repeats candidates |
+| [w11-mixlat](w11-mixlat/) | mixexp lattice/centroid archive reference (#321) | 7/7 MATCH; original CRAN attempt NOT_RUN retained |
+| [w11-mixproc](w11-mixproc/) | Mixture-process AlgDesign reference (#313) | D and A MATCH; I TorchOED better, as-is |
+| [w11-mixref](w11-mixref/) | Mixture archive retry (#289) | Xvert R1/R3 NO MATCH at 1e-12; D MATCH |
+| [w11-skpr](w11-skpr/) | skpr nested-block probe (#293) | Reference NOT_RUN (both calls error); TorchOED re-scoring NOT_RUN |
+| [w14-skpr-power](w14-skpr-power/) | skpr power across three run sizes (#437) | D8/D12/D16 NO MATCH at 1e-10; optional Rd NR |
+| [w14-skpr-rd](w14-skpr-rd/) | Published skpr power examples (#443) | Simple and coffee MATCH at 1e-8; 10 comparisons PASS, 0 FAIL |
+| [w8-heldout](w8-heldout/) | Frozen Week 8 H17–H18 (#221) | H17/H18 PASS against dense GLS oracles; no tuning |
+| [w8-skpr](w8-skpr/) | Published skpr split-plot comparison (#217) | PASS: TorchOED = skpr, shared logdet delta 0 |
+| [w9-skpr-i](w9-skpr-i/) | Published skpr I-optimal split-plot comparison (#237) | NOT_RUN; 0 comparisons; retry CLI_UNAVAILABLE |

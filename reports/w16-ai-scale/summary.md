@@ -39,3 +39,54 @@ Machine: Windows-11-10.0.26300-SP0, AMD64 Family 23 Model 96 Stepping 1, Authent
 | 2000 | I | 22.879 | 22.653 | 0.9901 | 22.266 | 22.080 | 0.9917 | False |
 
 Pair-phase cells >1.10: 0/4; no source or test change and Step 2 does not apply. All 16 measured calls reproduce #531 ids and objectives exactly (16 PASS, 0 FAIL). Base/head efficiency floors agree exactly in all 16 calls, but the frozen #531 I m=1,000 floor is 0.9422175849514731 while all four new calls give 0.9422175849514733 (delta 2.22e-16). Frozen-floor equality is 12 PASS, 4 FAIL: strict DoD item 3 is BLOCKED pending Architect disposition; no tolerance is silently substituted. The overlapping-load slowdown in #531 was not reproduced. No new m=5,000 or m=10,000 calls, nor B0 rerun (conditional Step 2 only). Earlier report contents are preserved.
+
+## Pair-phase breakdown (#536)
+
+Measured source `01ddb0fc9701ec9e95db30c6d723067d91b99e6c`; Windows 11 / AMD Ryzen 7 4800H, Python 3.14.6, Torch 2.15.0+cpu, CPU float64, one thread. Frozen #527 setup; six strictly sequential calls, 600 s cap, snapshots every 30 s. Scratch driver and runner embedded in the new JSON key.
+
+Overhead m=1000 A: plain 4.603055 s, wrapped 4.720349 s, ratio 1.025482 (PASS at 1.10); IDs/objective/floor identical.
+
+
+### m=5000 A — PASS, 35.759 s
+
+| Sub-step | Seconds | Pair share | Count |
+|---|---:|---:|---:|
+| Removal-tangent tiles | 14.818856 | 42.96% | 2749 tiles / 34550389 pairs |
+| Closed-form screen | 17.536398 | 50.83% | 34550389 inputs / 4 survivors |
+| 4x4 rescore | 0.000973 | 0.00% | 4 pairs |
+
+Dominant: screen, 50.83% of 34.498006 pair seconds; named sub-steps 93.79%. Survivor fraction 1.15772937e-07; phases 2, score calls 2, screened/removal calls 2/2, cutoff calls 0, resumes 0. Residual setup/filter/ranking/bookkeeping 2.141778 s.
+
+### m=5000 I — PASS, 126.768 s
+
+| Sub-step | Seconds | Pair share | Count |
+|---|---:|---:|---:|
+| Removal-tangent tiles | 51.579583 | 41.26% | 9865 tiles / 130401506 pairs |
+| Closed-form screen | 65.520065 | 52.42% | 130401506 inputs / 70 survivors |
+| 4x4 rescore | 0.003527 | 0.00% | 70 pairs |
+
+Dominant: screen, 52.42% of 125.000666 pair seconds; named sub-steps 93.68%. Survivor fraction 5.36803616e-07; phases 5, score calls 5, screened/removal calls 5/5, cutoff calls 0, resumes 0. Residual setup/filter/ranking/bookkeeping 7.897491 s.
+
+### m=10000 A — PASS, 487.869 s
+
+| Sub-step | Seconds | Pair share | Count |
+|---|---:|---:|---:|
+| Removal-tangent tiles | 218.348891 | 45.14% | 61814 tiles / 415430047 pairs |
+| Closed-form screen | 236.376388 | 48.86% | 415430047 inputs / 24 survivors |
+| 4x4 rescore | 0.004150 | 0.00% | 24 pairs |
+
+Dominant: screen, 48.86% of 483.746501 pair seconds; named sub-steps 94.00%. Survivor fraction 5.77714592e-08; phases 10, score calls 10, screened/removal calls 10/10, cutoff calls 0, resumes 0. Residual setup/filter/ranking/bookkeeping 29.017071 s.
+
+### m=10000 I — PASS, 279.939 s
+
+| Sub-step | Seconds | Pair share | Count |
+|---|---:|---:|---:|
+| Removal-tangent tiles | 107.520727 | 39.12% | 30554 tiles / 271886588 pairs |
+| Closed-form screen | 149.838642 | 54.52% | 271886588 inputs / 3 survivors |
+| 4x4 rescore | 0.001207 | 0.00% | 3 pairs |
+
+Dominant: screen, 54.52% of 274.829460 pair seconds; named sub-steps 93.64%. Survivor fraction 1.10340125e-08; phases 3, score calls 3, screened/removal calls 3/3, cutoff calls 0, resumes 0. Residual setup/filter/ranking/bookkeeping 17.468884 s.
+
+Completed-cell quality vs #531: IDs and objectives identical in 3/3 comparable cells. Floor deltas: m=5000 A +2.22e-16, I +1.11e-16; m=10000 I exact. Torch differs (2.14.1 to 2.15.0); deltas are OBSERVED per Architect ruling, with no tolerance. m=10000 A has no frozen comparison because #531 timed out. All four current cells completed; the driver also saves PARTIAL snapshots for interrupted calls.
+
+OBSERVED only: a future gate would have to reduce _linear_screen closed-form screening, the largest named sub-step in all four cells, followed by removal-tangent tile generation; the fraction reaching rescoring is reported above. Timers exclude nested work and verification between pair yields; residual contains setup/filtering/ranking and instrumentation counting overhead. Counts include repeated scans, not unique pairs. Earlier evidence is preserved; no fix or new bound is proposed.

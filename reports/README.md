@@ -78,3 +78,5 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w15-glmpower-rd1b](w15-glmpower-rd1b/) | #493: published skpr binomial RD1 retry with mbest 0.6.1 | NO MATCH: 2/3 coefficients within 4 combined SE; intercept z=8.516; R run 44814324521, R 4.5.2 / skpr 1.9.2; published count 18 unchanged |
 | [w15-glmpower-rd2](w15-glmpower-rd2/) | #499: published skpr Poisson RD2 | NOT_RUN: Engineer dispatched before recipe commit; script absent at source SHA, run 44824241160; R 4.5.2 / skpr 1.9.2 / mbest 0.6.1; published count 18 unchanged |
 | [w15-glmpower-rd2b](w15-glmpower-rd2b/) | #503: published skpr Poisson RD2 retry from committed recipe | MATCH: 3/3 coefficients within 4 combined SE; worst z=1.36656; R run 44831450343, R 4.5.2 / skpr 1.9.2 / mbest 0.6.1; published count 18 -> 19 |
+
+| [g1-crossover](g1-crossover/) | #442 | A100 G1 BLOCKED/partial: C3 CPU powers reproduce 2/2; CUDA validation ERROR; search not recorded; cleanup confirmed |

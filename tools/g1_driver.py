@@ -10,7 +10,7 @@ if '--cell' in sys.argv:
         from torchoed import glm_power
         if dev=='cuda': t.cuda.synchronize(); t.cuda.reset_peak_memory_stats()
         start=time.perf_counter(); X=t.tensor(a['model_matrix'],dtype=t.float64,device=dev); beta=t.tensor(a['anticoef'],dtype=t.float64,device=dev)
-        r=glm_power(X,beta,'binomial',alpha=a['alpha'],nsim=int(size),generator=t.Generator(device=dev).manual_seed(0))
+        r=glm_power(X,beta,'binomial',alpha=a['alpha'],nsim=int(size),generator=t.Generator(device=X.device).manual_seed(0))
         if dev=='cuda': t.cuda.synchronize()
         row=dict(power=r['power'].tolist(),nonconverged=r['nonconverged'],separated=r['separated'],seconds=time.perf_counter()-start)
     else:
@@ -38,7 +38,7 @@ def cell(kind,dev,size,crit,warmup=False):
     if time.monotonic()-start>8500: return
     try:
         r=subprocess.run([sys.executable,'-B','tools/g1_driver.py','--cell',str(kind),dev,str(size),crit],cwd=root,capture_output=True,text=True,timeout=min(1200,8500-(time.monotonic()-start)))
-        row=dict(status='PASS',**json.loads(r.stdout)) if r.returncode==0 else dict(status='ERROR',error=r.stderr)
+        row=json.loads(r.stdout) if r.returncode==0 else dict(status='ERROR',error=r.stderr)
     except subprocess.TimeoutExpired: row=dict(status='TIMEOUT')
     row.update(k=kind,m=size,method=dev,criterion=crit,warmup=warmup)
     data['c3_glm_power' if kind=='glm' else 'rows'].append(row)

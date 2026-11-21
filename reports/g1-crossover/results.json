@@ -1,0 +1,114 @@
+{
+  "measured_source_sha": "fe35940ad57d7d6a7f2d5aa80315001b84f16af9",
+  "scientific_status": "BLOCKED_PARTIAL",
+  "artifact_sha256": "877bb14c9c577fdb484ba0f94b9379d5ad50d60cbf2fc07ab6551b1621b20ceb",
+  "artifact_size_bytes": 2805,
+  "artifact": {
+    "source_sha": "fe35940ad57d7d6a7f2d5aa80315001b84f16af9",
+    "status": "PASS",
+    "rows": [],
+    "c3_glm_power": [
+      {
+        "status": "ERROR",
+        "error": "Traceback (most recent call last):\n  File \"/content/torchoed-g1/tools/g1_driver.py\", line 13, in <module>\n    r=glm_power(X,beta,'binomial',alpha=a['alpha'],nsim=int(size),generator=t.Generator(device=dev).manual_seed(0))\n  File \"/content/torchoed-g1/src/torchoed/information.py\", line 407, in glm_power\n    raise ValueError(\"invalid GLM matrix, coefficients, family, simulation count, level, generator or workspace\")\nValueError: invalid GLM matrix, coefficients, family, simulation count, level, generator or workspace\n",
+        "k": "glm",
+        "m": 10000,
+        "method": "cuda",
+        "criterion": "binomial",
+        "warmup": true
+      },
+      {
+        "status": "PASS",
+        "power": [
+          0.9928,
+          0.8816,
+          0.8747
+        ],
+        "nonconverged": 0,
+        "separated": 72,
+        "seconds": 0.431767538999992,
+        "criterion": "binomial",
+        "threads": 12,
+        "peak_gpu_bytes": 0,
+        "k": "glm",
+        "m": 10000,
+        "method": "cpu",
+        "warmup": false
+      },
+      {
+        "status": "ERROR",
+        "error": "Traceback (most recent call last):\n  File \"/content/torchoed-g1/tools/g1_driver.py\", line 13, in <module>\n    r=glm_power(X,beta,'binomial',alpha=a['alpha'],nsim=int(size),generator=t.Generator(device=dev).manual_seed(0))\n  File \"/content/torchoed-g1/src/torchoed/information.py\", line 407, in glm_power\n    raise ValueError(\"invalid GLM matrix, coefficients, family, simulation count, level, generator or workspace\")\nValueError: invalid GLM matrix, coefficients, family, simulation count, level, generator or workspace\n",
+        "k": "glm",
+        "m": 10000,
+        "method": "cuda",
+        "criterion": "binomial",
+        "warmup": false
+      },
+      {
+        "status": "PASS",
+        "power": [
+          0.99324,
+          0.88468,
+          0.87845
+        ],
+        "nonconverged": 0,
+        "separated": 676,
+        "seconds": 3.8576299780000056,
+        "criterion": "binomial",
+        "threads": 12,
+        "peak_gpu_bytes": 0,
+        "k": "glm",
+        "m": 100000,
+        "method": "cpu",
+        "warmup": false
+      },
+      {
+        "status": "ERROR",
+        "error": "Traceback (most recent call last):\n  File \"/content/torchoed-g1/tools/g1_driver.py\", line 13, in <module>\n    r=glm_power(X,beta,'binomial',alpha=a['alpha'],nsim=int(size),generator=t.Generator(device=dev).manual_seed(0))\n  File \"/content/torchoed-g1/src/torchoed/information.py\", line 407, in glm_power\n    raise ValueError(\"invalid GLM matrix, coefficients, family, simulation count, level, generator or workspace\")\nValueError: invalid GLM matrix, coefficients, family, simulation count, level, generator or workspace\n",
+        "k": "glm",
+        "m": 100000,
+        "method": "cuda",
+        "criterion": "binomial",
+        "warmup": false
+      }
+    ],
+    "device_observed": {
+      "nvidia_smi": [
+        {
+          "name": "NVIDIA A100-SXM4-40GB",
+          "memory_total_mib": 40960,
+          "driver_version": "580.82.07"
+        }
+      ],
+      "torch": {
+        "status": "AVAILABLE",
+        "version": "2.14.1+cu130",
+        "cuda": "13.0",
+        "name": "NVIDIA A100-SXM4-40GB",
+        "capability": [
+          8,
+          0
+        ]
+      }
+    }
+  },
+  "required_tests": {
+    "CPU_exact_reproduction": {
+      "PASS": 2,
+      "FAIL": 0
+    },
+    "search_rescore": "NOT_RUN: zero saved search designs",
+    "CPU_CUDA_objective_agreement": "NOT_RUN",
+    "C3_CPU_CUDA_power_agreement": "NOT_RUN"
+  },
+  "largest_m_reached": {
+    "cpu": null,
+    "cuda": null,
+    "pydoe": null
+  },
+  "failure": "C3 CUDA validation failed; artifact ends before first D row. Local reproduction identifies duplicate status keyword in adapter. Remote parent traceback unavailable.",
+  "repairs_not_gpu_tested": [
+    "Use X.device for generator",
+    "Preserve child status without duplicate keyword"
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "H40": {
+    "torchoed": "2097152/441",
+    "reference": "2097152/441",
+    "delta": "0",
+    "verdict": "MATCH",
+    "feasible_assignments": 4304,
+    "maximum_count": 128,
+    "total_assignments": 16384,
+    "ids": [
+      2,
+      3,
+      0,
+      1,
+      12,
+      13,
+      6,
+      15
+    ],
+    "independent_fraction_check": "PASS",
+    "labels": "A/B levels as length-16 integer tensors; run-order strata",
+    "inverse_scale": 21
+  },
+  "H41": {
+    "torchoed": "2097152/315",
+    "reference": "2097152/315",
+    "delta": "0",
+    "verdict": "MATCH",
+    "feasible_assignments": 5952,
+    "maximum_count": 48,
+    "total_assignments": 16384,
+    "ids": [
+      7,
+      12,
+      2,
+      9,
+      11,
+      0,
+      6,
+      13
+    ],
+    "independent_fraction_check": "PASS",
+    "labels": "A/B levels as length-16 integer tensors; run-order strata",
+    "inverse_scale": 105
+  },
+  "H42": {
+    "torchoed": [
+      0.0,
+      0.0,
+      0.0,
+      38.0,
+      0.0,
+      52.0,
+      0.0,
+      33.0,
+      0.0,
+      4.0,
+      0.0,
+      0.0
+    ],
+    "reference": [
+      0.0,
+      0.0,
+      0.0,
+      38.0,
+      0.0,
+      52.0,
+      0.0,
+      33.0,
+      0.0,
+      4.0,
+      0.0,
+      0.0
+    ],
+    "verdict": "MATCH",
+    "first_differing_word_length": null,
+    "run_id": "44868066239",
+    "oracle_source_sha": "def9885d8bb1e72b487ad034901dfa36181ad052",
+    "R_version": "R version 4.5.2 (2025-10-31)",
+    "FrF2": "2.3-5"
+  },
+  "environment": {
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.4",
+    "dtype": "float64",
+    "threads": 1
+  }
+}

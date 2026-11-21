@@ -1,0 +1,6 @@
+library(FrF2)
+out <- Sys.getenv("R_ORACLE_OUT")
+d <- FrF2::FrF2(nruns = 32, nfactors = 12, randomize = FALSE)
+x <- as.data.frame(lapply(d, function(z) as.numeric(as.character(z))))
+stopifnot(all(as.matrix(x) %in% c(-1, 1)))
+write.table(x, file.path(out, "H42-R.csv"), sep=",", row.names=FALSE, col.names=FALSE)

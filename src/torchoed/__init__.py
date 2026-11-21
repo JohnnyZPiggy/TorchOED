@@ -1,6 +1,6 @@
 """Torch-only M1 constructors and polynomial features; CPU acceptance only."""
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 from .factorial import (
     box_behnken, central_composite, definitive_screening, ff2n, fold_over, fractional_factorial,

@@ -78,30 +78,30 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | Evaluate Design: power, prediction variance, FDS, correlation map, efficiencies | Evaluate Design | skpr `eval_design`, `Vdgraph` | ✅ plain and structured SPV/VIF/power (#234, #318, #325); given-design evaluation (#332); G/V/I criteria (#290) | — | W9–W11 |
 | Alias matrix, alias-optimal and compound criteria | Custom Design | FrF2 alias tools | ✅ alias matrix (#244), compound D/A/I (#314), alias-penalised D (#322); skpr MATCH (#351, [w11-aliasext](../reports/w11-aliasext/)) | — | W10–W11 |
 | Power by simulation for GLMs (logistic, Poisson) | Sample Size Explorers | skpr `eval_design_mc` | ✅ `glm_power` CPU float64, per-coefficient/group Wald power; skpr 12/12 within 4 combined SE (#472); guide (#482); A100 timing (#509) | GPU Monte Carlo | W15 |
-| Sample size explorer (power vs n) | Sample Size Explorers | `pwr`, skpr | ✅ `compare_designs` int entries, sequential shared-generator search; D/A/I/G, power and FDS (§99–§101, #441); exact oracle + seeded run-size tests (`test_compare_designs.py`); CPU float64; Ext skpr 1.9.2 [power](../reports/w14-skpr-power/) NO MATCH at 1e-10 as-is (R-side Δ), [Rd examples](../reports/w14-skpr-rd/) MATCH at 1e-8; API documented + guide (#455); unstructured only, no cross-design GPU batching | batched over n (open, §101) | W14 |
+| Sample size explorer (power vs n) | Sample Size Explorers | `pwr`, skpr | ✅ `compare_designs` int entries, sequential shared-generator search; D/A/I/G, power and FDS (§99–§101, #441); exact oracle + seeded run-size tests (`test_compare_designs.py`); CPU float64; Ext skpr 1.9.2 [power](../reports/w14-skpr-power/) NO MATCH at 1e-10 as-is (R-side Δ), [Rd examples](../reports/w14-skpr-rd/) MATCH at 1e-8; API documented + guide (#455); unstructured only, no cross-design GPU batching | batched over n: after 1.0 (Scientist 2026-11-21) | W14 |
 | Compare Designs (side-by-side efficiencies, power, FDS) | Compare Designs | skpr power | ✅ `compare_designs` relative total-information D/A/I/G, per-coefficient power, FDS (§99–§101, #441); Fraction-derived oracle (`test_compare_designs.py`); repeated IDs supported; CPU float64; Ext skpr 1.9.2 [power](../reports/w14-skpr-power/) NO MATCH at 1e-10 as-is (R-side Δ), [Rd examples](../reports/w14-skpr-rd/) MATCH at 1e-8; API documented + guide (#455); structured/Bayesian/model-robust comparisons excluded | — | W14 |
 | "If Possible" terms, Bayesian D/I (DuMouchel–Jones) | Custom Design | — | ✅ D I (#433), guide (#444); Ext NR (#449) | certificate | W14 |
-| Definitive screening | Definitive Screening | `daewr` DSD | ◐ k 3–20, 23–30 (#248); k = 21, 22 impossible; daewr k = 6 MATCH, k = 7 shape differs (#309, [w10-dsd](../reports/w10-dsd/)) | exact orthogonality proof | W10; Ext deferral requested |
+| Definitive screening | Definitive Screening | `daewr` DSD | ◐ k 3–20, 23–30 (#248); k = 21, 22 impossible; daewr k = 6 MATCH, k = 7 shape differs (#309, [w10-dsd](../reports/w10-dsd/)) | exact orthogonality proof | W10; Ext accepted as documented (Scientist 2026-11-21) |
 | Fractional factorial by generators / resolution, minimum aberration, blocked FF, fold-over | Screening | FrF2, DoE.base | ✅ generators, fold-over, WLP, alias matrix; exact minimum aberration and blocked FF (#469); FrF2 6/6 feasible MATCH, BL2 both infeasible | — | W10; MA, blocked FF W15 (#469) |
 | Plackett–Burman | Screening | FrF2 `pb` | ✅ N ≡ 0 mod 4, 4–48 (#255); FrF2 pb 3/3 exact (#261); partial aliasing (#269) | — | W10 |
-| Group-orthogonal supersaturated designs | Screening | — | ❌ | — | backlog |
+| Group-orthogonal supersaturated designs | Screening | — | ❌ | — | after 1.0 (Scientist 2026-11-21) |
 | Central composite (incl. blocked), Box–Behnken | Response Surface | `rsm` | ✅ CCD incl. blocks and BBD k = 3–7 (#258, #262); rsm 7/7 MATCH | — | W10 |
-| Mixture: simplex lattice / centroid, extreme vertices, ABCD, constrained, mixture-process | Mixture Design | `mixexp` | ◐ lattice (#321), centroid and box vertices (#281), Scheffé D/A/I (#284), mixture-process (#306), uncentred diagnostics (#327); non-box / ABCD regions missing; [w11-mixai](../reports/w11-mixai/), [w11-mixproc](../reports/w11-mixproc/) | optimal mixture with certificate | W11; non-box deferral requested |
-| Covariates (incl. hard-to-change covariates) | Custom Design | AlgDesign (fixed rows) | ◐ fixed per-run D/A/I (#310) and adjusted diagnostics/power (#318); hard-to-change covariates missing; skpr NR, exact MATCH (#344, [w11-covext](../reports/w11-covext/)) | — | W11; hard-to-change: Scientist decision pending |
-| Space filling: LHS (maximin), MaxPro, uniform, sphere packing, fast flexible filling (constrained) | Space Filling Design | `lhs`, `MaxPro`, `DiceDesign`, `SLHD` | ◐ maximin / MaxPro LHS (#387), uniform CD2 + diagnostics (#391), constrained fast flexible filling (#395); R lhs maximin: TorchOED better, MaxProLHD NO MATCH; DiceDesign/MaxPro diagnostics MATCH (#404, [w13-spacefill-ext](../reports/w13-spacefill-ext/)); constrained R support as-is (#409, [w13-fff-ext](../reports/w13-fff-ext/)); CPU/L4 measured (#422), held-out H33–H35 MATCH or better (#426), H39 better (#461); sphere packing beyond maximin missing | GPU-scale distance search | W13 |
-| Orthogonal arrays, Taguchi arrays, covering arrays | Taguchi Arrays, Covering Arrays | DoE.base `oa.design` | ❌ | — | Scientist decision pending |
+| Mixture: simplex lattice / centroid, extreme vertices, ABCD, constrained, mixture-process | Mixture Design | `mixexp` | ◐ lattice (#321), centroid and box vertices (#281), Scheffé D/A/I (#284), mixture-process (#306), uncentred diagnostics (#327); non-box / ABCD regions missing; [w11-mixai](../reports/w11-mixai/), [w11-mixproc](../reports/w11-mixproc/) | optimal mixture with certificate | W11; non-box / ABCD W17 (Scientist 2026-11-21) |
+| Covariates (incl. hard-to-change covariates) | Custom Design | AlgDesign (fixed rows) | ◐ fixed per-run D/A/I (#310) and adjusted diagnostics/power (#318); hard-to-change covariates missing; skpr NR, exact MATCH (#344, [w11-covext](../reports/w11-covext/)) | — | W11; hard-to-change after 1.0 (Scientist 2026-11-21) |
+| Space filling: LHS (maximin), MaxPro, uniform, sphere packing, fast flexible filling (constrained) | Space Filling Design | `lhs`, `MaxPro`, `DiceDesign`, `SLHD` | ◐ maximin / MaxPro LHS (#387), uniform CD2 + diagnostics (#391), constrained fast flexible filling (#395); R lhs maximin: TorchOED better, MaxProLHD NO MATCH; DiceDesign/MaxPro diagnostics MATCH (#404, [w13-spacefill-ext](../reports/w13-spacefill-ext/)); constrained R support as-is (#409, [w13-fff-ext](../reports/w13-fff-ext/)); CPU/L4 measured (#422), held-out H33–H35 MATCH or better (#426), H39 better (#461); sphere packing beyond maximin missing | GPU-scale distance search | W13; sphere packing after 1.0 (Scientist 2026-11-21) |
+| Orthogonal arrays, Taguchi arrays, covering arrays | Taguchi Arrays, Covering Arrays | DoE.base `oa.design` | ❌ | — | W17 (Scientist 2026-11-21) |
 | Nonlinear design (local, Bayesian) | Nonlinear Design | ICAOD, acebayes | ◐ local via `jacobian_features` | autograd; NN models; GPU prior MC | W21–W22 |
 | Minimax / robust designs | — | ICAOD | ❌ | certificate; links to robust optimisation | W23 |
 | Approximate designs and rounding | — | OptimalDesign (REX, KL) | ❌ | GPU weights + equivalence certificate | W21 |
 | Discrete choice / MaxDiff designs | Choice Design, MaxDiff | `idefix` | ❌ | — | W26 |
-| Incomplete block (BIBD, alpha), crossover designs | — | agricolae, crossdes | ❌ | — | backlog (Scientist decides after W16) |
+| Incomplete block (BIBD, alpha), crossover designs | — | agricolae, crossdes | ❌ | — | P4 W25+ (Scientist 2026-11-21) |
 | Fit Model: least squares, effect tests, lack of fit, residuals | Fit Model | `lm`, `rsm` | ❌ | batched fits; autograd | W17 |
 | Mixed-model / REML analysis of split-plot and blocked experiments | Fit Model (REML) | `lme4`, `nlme` | ❌ | — | W17–W18 |
 | Prediction profiler, desirability, multi-response optimisation | Prediction Profiler | `rsm`, `desirability` | ❌ | gradient-based optimisation of the fitted model | W18 |
 | Interactive DOE workflow (design → evaluate → compare → analyse) | DOE platform GUI | — | ❌ TorchOED Studio | certificates and GPU shown in the UI | W19 |
 | Sequential / closed-loop design with a model | — | — | ✅ `next_batch` (linearized) | autograd + BoTorch adapter | done; adapter W25 |
 | Differentiable continuous design (no candidate grid) | — | — | ❌ | unique to TorchOED | W25–W26 |
-| Measurement systems analysis (MSA) designs | MSA Design | — | ❌ | — | backlog |
+| Measurement systems analysis (MSA) designs | MSA Design | — | ❌ | — | after 1.0 (Scientist 2026-11-21) |
 
 Weeks 12, 16, 20, 24 and 28 are consolidation weeks (refresh this matrix, published-example matches, release).
 
@@ -118,33 +118,33 @@ Listed for Scientist decision; listing is not a deferral approval. Open cells ne
 
 ## P2+ open items for Scientist decision
 
-Listed for Scientist decision; listing is not a deferral approval. Open cells/rows neither completed nor listed: 0.
+Decided by the Scientist on 2026-11-21 ("同意建议", [#516](https://github.com/JohnnyZPiggy/TorchOED/issues/516)). "Accepted as documented" items stay recorded as NR / NO MATCH with their reason and do not block the P2+ exit. Open cells/rows neither completed nor listed: 0.
 
-| Item | Row / column | Status | Missing evidence | Why | Proposed close (week) |
+| Item | Row / column | Status | Missing evidence | Why | Decision (Scientist 2026-11-21) |
 |---|---|---|---|---|---|
-| A/I GPU timing | P1 optimal_design / Dev | Partial despite ✅ | Same-host A/I timing | D only measured; CUDA A/I mixed-device error (#509, [g1-crossover](../reports/g1-crossover/)) | W23 GPU scale |
-| Blocking GPU | P2 blocking / Dev | ◐ | Same-host D/A/I timing | CPU only; allocation failures (#362, [w12-structgpu](../reports/w12-structgpu/)) | W23 GPU scale or Scientist deferral requested |
-| Split-plot GPU and I reference | P2 split-plot / Dev, Ext | ◐ / I NR within ✅ | GPU timing; skpr I comparison | CPU only; skpr I NOT_RUN ([w9-skpr-i](../reports/w9-skpr-i/)) | W23 GPU scale; Scientist deferral requested for I reference |
-| Nested blocks reference | P2 blocks + split-plot / Ext, HO | NR; skpr NR within ✅ HO | Working external nested-block call / H26 reference | skpr errors (#294, [w11-skpr](../reports/w11-skpr/)); H26 recorded as-is (#329) | Scientist deferral requested |
-| Fractional-factorial H21 reference | P2 fractional factorial / HO | NOT_RUN within ✅ | FrF2 H21 comparison | H21 TorchOED recorded as-is; H42 later MATCH (#514, [w15-heldout](../reports/w15-heldout/)) | Scientist deferral requested for H21 |
-| DSD reference and factor coverage | P2 definitive screening / Ext; checklist DSD | ◐ | daewr k = 7 shape match; k = 21/22 coverage | 15×7 vs 17×7; order-22 conference matrix impossible (#309, [w10-dsd](../reports/w10-dsd/)) | Scientist deferral requested |
-| Non-box mixture regions including ABCD | P2 mixtures / Con; checklist Mixture | ◐ | Non-box regions | Only box vertices/face centroids (#281); mixture Con remains open | Scientist deferral requested |
-| Mixture vertex coordinates | P2 mixtures / Ext | NO MATCH within ✅ | Xvert coordinates at 1e-12 | mixexp single precision (#289, [w11-mixref](../reports/w11-mixref/)) | Scientist deferral requested |
-| Covariate reference | P2 covariates / Ext | NR | External adjusted-design comparison | skpr singleton whole-plot error; exhaustive MATCH only (#344, [w11-covext](../reports/w11-covext/)) | Scientist deferral requested |
-| Hard-to-change covariates | checklist Covariates | ◐ | Search/diagnostics with hard-to-change covariates | Fixed per-run covariates only (#310, #318) | Scientist deferral requested |
-| GLM power held-out | P2 GLM power / HO | ❌ | Frozen H44 result | Filled by H44 at week end (#516); not run yet | W16 week end |
-| GLM published reference discrepancies | P2 GLM power / Ext | NO MATCH / NOT_RUN within ✅ | RD1b agreement; valid RD2 dispatch | RD1b z = 8.52; RD2 dispatched before recipe commit (#498, #502); RD2b MATCH (#506) | Scientist deferral requested |
-| Compare Designs / sample-size explorer limitations | checklist Compare Designs, Sample size explorer | NO MATCH within ✅; batching open | skpr power agreement; batched search over n | R-side power delta; sequential unstructured search only (#455, [w14-skpr-power](../reports/w14-skpr-power/)) | Scientist deferral requested |
-| MaxPro external optimum | P2 maximin / MaxPro LHS / Ext; checklist Space filling | ◐ | MaxProLHD match | maximin better, MaxPro NO MATCH (#404, [w13-spacefill-ext](../reports/w13-spacefill-ext/)) | Scientist deferral requested |
-| Sphere packing beyond maximin | checklist Space filling | ◐ | Sphere-packing design evidence | W13 implements LHS/CD2/constrained FFF only (#387, #391, #395) | Scientist deferral requested |
-| Bayesian D/I paper | P2 If Possible / Ext | NR | Verbatim published example | DuMouchel–Jones full text inaccessible (#449, [w14-paper-ext](../reports/w14-paper-ext/)) | Scientist deferral requested |
-| Model-robust paper | P2 model-robust D / Ext | NR | Verbatim published example | Li–Nachtsheim full text inaccessible (#449, [w14-paper-ext](../reports/w14-paper-ext/)) | Scientist deferral requested |
-| Orthogonal / Taguchi / covering arrays | checklist Orthogonal arrays | ❌ | Constructors and external examples | No merged implementation | Scientist deferral requested |
-| Group-orthogonal supersaturated designs | checklist Group-orthogonal | ❌ | Constructor and reference | No merged implementation | Scientist deferral requested |
-| Incomplete block / crossover designs | checklist Incomplete block | ❌ | BIBD/alpha/crossover designs and references | Backlog; VISION places them in P4 | W25+ P4 or Scientist deferral requested |
-| Measurement systems analysis designs | checklist MSA | ❌ | MSA design evidence | Backlog; no merged implementation | Scientist deferral requested |
+| A/I GPU timing | P1 optimal_design / Dev | Partial despite ✅ | Same-host A/I timing | D only measured; CUDA A/I mixed-device error (#509, [g1-crossover](../reports/g1-crossover/)) | Scheduled: W23 GPU scale |
+| Blocking GPU | P2 blocking / Dev | ◐ | Same-host D/A/I timing | CPU only; allocation failures (#362, [w12-structgpu](../reports/w12-structgpu/)) | Scheduled: W23 GPU scale |
+| Split-plot GPU and I reference | P2 split-plot / Dev, Ext | ◐ / I NR within ✅ | GPU timing; skpr I comparison | CPU only; skpr I NOT_RUN ([w9-skpr-i](../reports/w9-skpr-i/)) | GPU scheduled: W23 GPU scale; I reference accepted as documented |
+| Nested blocks reference | P2 blocks + split-plot / Ext, HO | NR; skpr NR within ✅ HO | Working external nested-block call / H26 reference | skpr errors (#294, [w11-skpr](../reports/w11-skpr/)); H26 recorded as-is (#329) | Accepted as documented |
+| Fractional-factorial H21 reference | P2 fractional factorial / HO | NOT_RUN within ✅ | FrF2 H21 comparison | H21 TorchOED recorded as-is; H42 later MATCH (#514, [w15-heldout](../reports/w15-heldout/)) | Accepted as documented |
+| DSD reference and factor coverage | P2 definitive screening / Ext; checklist DSD | ◐ | daewr k = 7 shape match; k = 21/22 coverage | 15×7 vs 17×7; order-22 conference matrix impossible (#309, [w10-dsd](../reports/w10-dsd/)) | Accepted as documented |
+| Non-box mixture regions including ABCD | P2 mixtures / Con; checklist Mixture | ◐ | Non-box regions | Only box vertices/face centroids (#281); mixture Con remains open | Do now: W17 (P2+ completion) |
+| Mixture vertex coordinates | P2 mixtures / Ext | NO MATCH within ✅ | Xvert coordinates at 1e-12 | mixexp single precision (#289, [w11-mixref](../reports/w11-mixref/)) | Accepted as documented |
+| Covariate reference | P2 covariates / Ext | NR | External adjusted-design comparison | skpr singleton whole-plot error; exhaustive MATCH only (#344, [w11-covext](../reports/w11-covext/)) | Accepted as documented |
+| Hard-to-change covariates | checklist Covariates | ◐ | Search/diagnostics with hard-to-change covariates | Fixed per-run covariates only (#310, #318) | Deferred: after 1.0 |
+| GLM power held-out | P2 GLM power / HO | ❌ | Frozen H44 result | Filled by H44 at week end (#516); not run yet | Scheduled: W16 week end (#524) |
+| GLM published reference discrepancies | P2 GLM power / Ext | NO MATCH / NOT_RUN within ✅ | RD1b agreement; valid RD2 dispatch | RD1b z = 8.52; RD2 dispatched before recipe commit (#498, #502); RD2b MATCH (#506) | Accepted as documented |
+| Compare Designs / sample-size explorer limitations | checklist Compare Designs, Sample size explorer | NO MATCH within ✅; batching open | skpr power agreement; batched search over n | R-side power delta; sequential unstructured search only (#455, [w14-skpr-power](../reports/w14-skpr-power/)) | skpr power delta accepted as documented; batched search over n deferred: after 1.0 |
+| MaxPro external optimum | P2 maximin / MaxPro LHS / Ext; checklist Space filling | ◐ | MaxProLHD match | maximin better, MaxPro NO MATCH (#404, [w13-spacefill-ext](../reports/w13-spacefill-ext/)) | Accepted as documented |
+| Sphere packing beyond maximin | checklist Space filling | ◐ | Sphere-packing design evidence | W13 implements LHS/CD2/constrained FFF only (#387, #391, #395) | Deferred: after 1.0 |
+| Bayesian D/I paper | P2 If Possible / Ext | NR | Verbatim published example | DuMouchel–Jones full text inaccessible (#449, [w14-paper-ext](../reports/w14-paper-ext/)) | Accepted as documented |
+| Model-robust paper | P2 model-robust D / Ext | NR | Verbatim published example | Li–Nachtsheim full text inaccessible (#449, [w14-paper-ext](../reports/w14-paper-ext/)) | Accepted as documented |
+| Orthogonal / Taguchi / covering arrays | checklist Orthogonal arrays | ❌ | Constructors and external examples | No merged implementation | Do now: W17 (P2+ completion) |
+| Group-orthogonal supersaturated designs | checklist Group-orthogonal | ❌ | Constructor and reference | No merged implementation | Deferred: after 1.0 |
+| Incomplete block / crossover designs | checklist Incomplete block | ❌ | BIBD/alpha/crossover designs and references | Backlog; VISION places them in P4 | Scheduled: P4 (W25+) |
+| Measurement systems analysis designs | checklist MSA | ❌ | MSA design evidence | Backlog; no merged implementation | Deferred: after 1.0 |
 
-P2+ signature on a published example: not shown
+P2+ signature on a published example: not shown (not a P2+ exit blocker; week-16 evidence task, Scientist 2026-11-21)
 
 ## Known documentation debt (week 12 consolidation)
 Documentation debt is closed by #363 and #365.

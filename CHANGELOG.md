@@ -2,38 +2,38 @@
 
 ## Unreleased
 
-- Fix `glm_power` rejecting a CUDA generator created without a device index (#510).
+## [0.9.0] — 2026-11-21
+
+### Added
 
 - Support fixed-run augmentation for split-split-plot and strip-plot D/A/I designs (#488).
-
 - Add strip-plot GLS diagnostics and crossed containment power (§117–§118).
-
 - Add nested split-split-plot GLS diagnostics and containment power (§114–§115).
-
 - Add `glm_power` for batched logistic and Poisson Monte Carlo Wald power (P2 gate §111–§112, #472).
-
 - Add exact minimum-aberration regular factorials and blocks unconfounded with main effects and two-factor interactions (#469).
-
 - Add CPU float64 strip-plot D/A/I search with crossed row/column labels and a conservative OLS efficiency floor (#463).
-
 - Add split-split-plot D/A/I designs via optimal_design(subplots=..., subplot_hard=..., eta_sub=...): closed-form nested GLS information, rank-2 within-subplot exchanges, subplot and whole-plot relabels, OLS dual efficiency floor (P2 gate §102–§103, #459).
-
 - Add compare_designs(F, designs, ...): relative total-information D/A/I/G efficiencies, per-coefficient power and fraction-of-design-space quantiles for two or more designs; integer entries are run sizes searched with optimal_design (sample-size explorer) (P2 gate §99–§101, #441).
-
 - Add model-robust D designs via optimal_design(models=..., model_weights=...): weighted geometric mean of per-model D-efficiencies with robust and per-model dual efficiency floors (P2 gate §96–§98, #436).
-
 - Add "If Possible" terms: Bayesian D and I designs via optimal_design(if_possible=..., tau=...) with DuMouchel–Jones scaling and Bayesian dual efficiency floors (P2 gate §93–§95, #433).
-
-- Fix the `lhs` swap search so `mode="uniform"` always terminates: a swap must lower the objective by more than `1e-12` times its current value (P2 gate §92, #411).
-
 - Add constrained `fast_flexible_filling` with Sobol candidates, Lloyd clusters and MaxPro point choice.
-
 - Add uniform (CD2) Latin hypercubes and shared `space_filling_diagnostics`.
-
 - Add midpoint maximin and MaxPro `lhs` modes with batched column swaps, restarts and optional iteration limit.
 
 Docs: add benchmarks and validation page.
 Docs: new README and Material-themed documentation site.
+
+### Fixed
+
+- Fix `glm_power` rejecting a CUDA generator created without a device index (#510).
+- Fix the `lhs` swap search so `mode="uniform"` always terminates: a swap must lower the objective by more than `1e-12` times its current value (P2 gate §92, #411).
+
+### Known limitations
+
+- CPU float64 only for design search. The API is experimental.
+- Non-box mixture regions, orthogonal / covering arrays and hard-to-change covariates are not supported (Scientist decision pending, #516 G1).
+- A/I GPU timing has not been measured.
+- Real PyPI publication requires the Scientist.
 
 ## [0.8.0] — 2026-11-19
 

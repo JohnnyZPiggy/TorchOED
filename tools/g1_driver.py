@@ -40,6 +40,7 @@ def cell(kind,dev,size,crit,warmup=False):
         r=subprocess.run([sys.executable,'-B','tools/g1_driver.py','--cell',str(kind),dev,str(size),crit],cwd=root,capture_output=True,text=True,timeout=min(1200,8500-(time.monotonic()-start)))
         row=json.loads(r.stdout) if r.returncode==0 else dict(status='ERROR',error=r.stderr)
     except subprocess.TimeoutExpired: row=dict(status='TIMEOUT')
+    row.setdefault('status','PASS')
     row.update(k=kind,m=size,method=dev,criterion=crit,warmup=warmup)
     data['c3_glm_power' if kind=='glm' else 'rows'].append(row)
     pathlib.Path('/content/g1-crossover.json').write_text(json.dumps(data,allow_nan=False)+'\n')

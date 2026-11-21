@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix `glm_power` rejecting a CUDA generator created without a device index (#510).
+
 - Support fixed-run augmentation for split-split-plot and strip-plot D/A/I designs (#488).
 
 - Add strip-plot GLS diagnostics and crossed containment power (§117–§118).

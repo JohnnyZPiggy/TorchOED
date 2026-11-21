@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+
+- A/I two-swap search keeps candidate screening on large candidate sets by bounding its workspace; k = 5 quadratic, n = 42, m = 5·10³ now finishes on CPU (#527, #531).
+
 ## [0.9.0] — 2026-11-21
 
 ### Added

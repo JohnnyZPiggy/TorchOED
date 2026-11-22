@@ -501,7 +501,7 @@ def _oa_field(p, k):
             return digits, add, mul
 
 
-def orthogonal_array(levels, *, device=None, max_elements=1_000_000):
+def orthogonal_array(levels: list[int] | tuple[int, ...], *, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
     """Strength-2 GF(q)/replacement or PB array. See P2 gate sections 128–130.
 
     Labels are int64, in input factor order. Run size is minimal within this

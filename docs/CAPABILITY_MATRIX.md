@@ -37,11 +37,11 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | Capability | Status | Week |
 |---|---|---|
 | Mentor landscape review of statistics packages to reuse (CPU: statsmodels; GPU candidates named by the Scientist: PyStatistics, statgpu, Aurora-GLM) — existence, licence, maintenance, validation vs R | ✅ [Mentor §26](SCIENTIFIC_MENTOR_RESEARCH.md#26-p25-statistics-package-landscape-review-2026-11) (#517) | W16 (consolidation) |
-| optional adapters to the chosen packages behind extras (never core dependencies) | ❌ | W17 |
+| optional adapters to the chosen packages behind extras (never core dependencies) | ◐ PyStatistics 7.0.0: BUILD (#567, [w17-reml-check](../reports/w17-reml-check/)) | W17 |
 | bootstrap intervals and batched fits for closed-loop rounds (GPU where measured faster) | ❌ | W18 |
 | out of scope by decision: GP surrogates (BoTorch/Ax), general GLMM, survival analysis | N/A | — |
 | least-squares fit: coefficients, SEs, effect tests (t, F by term), lack of fit, residual diagnostics | ◐ `fit_least_squares` (§123–§124, #554); R published examples pending | W17 |
-| REML / mixed-model fit for blocked and split-plot designs (whole-plot vs subplot error) | ❌ | W17–W18 |
+| REML / mixed-model fit for blocked and split-plot designs (whole-plot vs subplot error) | ◐ decision BUILD (#567); implementation W18 | W17–W18 |
 | prediction profiler data (prediction ± interval at a point, effect traces) | ❌ | W18 |
 | desirability functions and multi-response optimisation | ❌ | W18 |
 | Studio: factors/model → design → evaluate → compare → export | ❌ | W19 |
@@ -86,7 +86,7 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | Plackett–Burman | Screening | FrF2 `pb` | ✅ N ≡ 0 mod 4, 4–48 (#255); FrF2 pb 3/3 exact (#261); partial aliasing (#269) | — | W10 |
 | Group-orthogonal supersaturated designs | Screening | — | ❌ | — | after 1.0 (Scientist 2026-11-21) |
 | Central composite (incl. blocked), Box–Behnken | Response Surface | `rsm` | ✅ CCD incl. blocks and BBD k = 3–7 (#258, #262); rsm 7/7 MATCH | — | W10 |
-| Mixture: simplex lattice / centroid, extreme vertices, ABCD, constrained, mixture-process | Mixture Design | `mixexp` | ◐ lattice (#321), centroid and box vertices (#281), Scheffé D/A/I (#284), mixture-process (#306), uncentred diagnostics (#327); non-box / ABCD regions missing; [w11-mixai](../reports/w11-mixai/), [w11-mixproc](../reports/w11-mixproc/) | optimal mixture with certificate | W11; non-box / ABCD W17 (Scientist 2026-11-21) |
+| Mixture: simplex lattice / centroid, extreme vertices, ABCD, constrained, mixture-process | Mixture Design | `mixexp` | ◐ lattice (#321), centroid and box vertices (#281), Scheffé D/A/I (#284), mixture-process (#306), uncentred diagnostics (#327); general linear constraints incl. ABCD (§126–§127, #559); `mixexp::Xvert` conmx pending; [w11-mixai](../reports/w11-mixai/), [w11-mixproc](../reports/w11-mixproc/) | optimal mixture with certificate | W11; non-box / ABCD W17 (Scientist 2026-11-21) |
 | Covariates (incl. hard-to-change covariates) | Custom Design | AlgDesign (fixed rows) | ◐ fixed per-run D/A/I (#310) and adjusted diagnostics/power (#318); hard-to-change covariates missing; skpr NR, exact MATCH (#344, [w11-covext](../reports/w11-covext/)) | — | W11; hard-to-change after 1.0 (Scientist 2026-11-21) |
 | Space filling: LHS (maximin), MaxPro, uniform, sphere packing, fast flexible filling (constrained) | Space Filling Design | `lhs`, `MaxPro`, `DiceDesign`, `SLHD` | ◐ maximin / MaxPro LHS (#387), uniform CD2 + diagnostics (#391), constrained fast flexible filling (#395); R lhs maximin: TorchOED better, MaxProLHD NO MATCH; DiceDesign/MaxPro diagnostics MATCH (#404, [w13-spacefill-ext](../reports/w13-spacefill-ext/)); constrained R support as-is (#409, [w13-fff-ext](../reports/w13-fff-ext/)); CPU/L4 measured (#422), held-out H33–H35 MATCH or better (#426), H39 better (#461); sphere packing beyond maximin missing | GPU-scale distance search | W13; sphere packing after 1.0 (Scientist 2026-11-21) |
 | Orthogonal arrays, Taguchi arrays, covering arrays | Taguchi Arrays, Covering Arrays | DoE.base `oa.design` | ◐ strength-2 OA by GF(q) + replacement and PB (§128–§129, #566); covering arrays: binary t = 2 (Kleitman–Spencer) and index-1 prime-power families, optimal N (§131, #570); general family pending (§133); oa.design match pending | — | W17 (Scientist 2026-11-21) |
@@ -95,8 +95,8 @@ One row per capability a practitioner would look for in JMP or the named R packa
 | Approximate designs and rounding | — | OptimalDesign (REX, KL) | ❌ | GPU weights + equivalence certificate | W21 |
 | Discrete choice / MaxDiff designs | Choice Design, MaxDiff | `idefix` | ❌ | — | W26 |
 | Incomplete block (BIBD, alpha), crossover designs | — | agricolae, crossdes | ❌ | — | P4 W25+ (Scientist 2026-11-21) |
-| Fit Model: least squares, effect tests, lack of fit, residuals | Fit Model | `lm`, `rsm` | ❌ | batched fits; autograd | W17 |
-| Mixed-model / REML analysis of split-plot and blocked experiments | Fit Model (REML) | `lme4`, `nlme` | ❌ | — | W17–W18 |
+| Fit Model: least squares, effect tests, lack of fit, residuals | Fit Model | `lm`, `rsm` | ◐ `fit_least_squares` (§123–§124, #554); R published examples pending | batched fits; autograd | W17 |
+| Mixed-model / REML analysis of split-plot and blocked experiments | Fit Model (REML) | `lme4`, `nlme` | ◐ reuse check BUILD (#567, [w17-reml-check](../reports/w17-reml-check/)); torch REML W18 | — | W17–W18 |
 | Prediction profiler, desirability, multi-response optimisation | Prediction Profiler | `rsm`, `desirability` | ❌ | gradient-based optimisation of the fitted model | W18 |
 | Interactive DOE workflow (design → evaluate → compare → analyse) | DOE platform GUI | — | ❌ TorchOED Studio | certificates and GPU shown in the UI | W19 |
 | Sequential / closed-loop design with a model | — | — | ✅ `next_batch` (linearized) | autograd + BoTorch adapter | done; adapter W25 |

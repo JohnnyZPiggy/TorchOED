@@ -1,4 +1,5 @@
 """G1 final continuation: frozen calls, bounded session, per-cell artifact writes."""
+if '--cell' not in __import__('sys').argv: __import__('pathlib').Path('/content/g1-crossover.json').write_text('{"status":"STARTED"}')
 import json, os, pathlib, subprocess, sys, time
 if '--cell' in sys.argv:
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -17,6 +18,7 @@ if '--cell' in sys.argv:
         row=b.call(int(kind),int(size),dev)
     row.update(threads=t.get_num_threads(),peak_gpu_bytes=t.cuda.max_memory_allocated() if dev=='cuda' else 0)
     print(json.dumps(row)); sys.exit(0)
+log=open('/content/g1-driver.log','a',buffering=1); os.dup2(log.fileno(),1); os.dup2(log.fileno(),2)
 root=pathlib.Path('/content/torchoed-g1'); driver=pathlib.Path(__file__).read_bytes()
 sha='d869c1a394e03219eca40256c9c78f1f552bdc96'
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)

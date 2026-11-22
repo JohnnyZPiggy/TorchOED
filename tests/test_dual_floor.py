@@ -224,3 +224,14 @@ def test_given_design_poor_oracle_and_boundary():
     assert torch.linalg.det(M).item()<best
     assert kw-1e-12<=e['efficiency_lower_bound']<=(torch.linalg.det(M).item()/best)**(1/3)+1e-12
     with pytest.raises(ValueError): optimal_design(F,n,fixed_ids=[0,1,2,3,4],restarts=1)
+
+
+def test_fully_fixed_ai_has_no_k2_neighborhood():
+    from fractions import Fraction
+    F = polynomial_features(torch.arange(-4, 5, dtype=torch.float64)[:, None], 2)
+    for criterion, value in [('D', None), ('A', Fraction(289, 20)), ('I', Fraction(1045, 12))]:
+        r = optimal_design(F, 4, criterion=criterion, fixed_ids=[0, 1, 2, 3], restarts=1)
+        assert r['stop_reason'] == 'NO_K2_NEIGHBORHOOD'
+        assert r['certificate'] == 'NOT_CERTIFIED'
+        if value is not None:
+            assert abs(-r['objective'] - float(value)) < 1e-12

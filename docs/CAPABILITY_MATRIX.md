@@ -5,7 +5,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 ## P1 / P1.5 — engine and model-driven design
 | Capability | Crit | Aug | Con | Cert | Diag | Dev | Ext | Docs | HO | Week |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `optimal_design` (plain exact) | ✅ D A I | ✅ | ✅ | ✅ KW dual floor; given-design evaluation `fixed_ids` length n (§80, #332) | ✅ | ✅ CPU; GPU measured for D only (`w5-crossover`; A100 k = 3/5/7, m ≤ 10⁵, `g1-crossover` #509); CPU A/I k = 5, n = 42: m = 5·10³ finishes (#531); m = 10⁴ A 488 s, I 280 s (instrumented, #536), above the 120 s target ([w16-ai-scale](../reports/w16-ai-scale/)) | ✅ PyDOE, AlgDesign | ✅ | ✅ H1–H8 | done; A/I GPU timing → W23 |
+| `optimal_design` (plain exact) | ✅ D A I | ✅ | ✅ | ✅ KW dual floor; given-design evaluation `fixed_ids` length n (§80, #332); fully fixed A/I: NO_K2_NEIGHBORHOOD like D (#545) | ✅ | ✅ CPU; GPU measured for D only (`w5-crossover`; A100 k = 3/5/7, m ≤ 10⁵, `g1-crossover` #509); CPU A/I k = 5, n = 42: m = 5·10³ finishes (#531); m = 10⁴ A 488 s, I 280 s (instrumented, #536), above the 120 s target ([w16-ai-scale](../reports/w16-ai-scale/)) | ✅ PyDOE, AlgDesign | ✅ | ✅ H1–H8 | done; A/I GPU timing → W23 |
 | `jacobian_features` + `next_batch` | ✅ D A I | ✅ | ✅ | ✅ linearized only | ✅ | ◐ CPU only measured | ❌ no published nonlinear design reproduced | ✅ | ✅ H9–H10 | W21 (published nonlinear examples) |
 | criterion functions | ✅ D A E c G V I evaluated (§51, #290) | N/A | N/A | N/A | N/A | ✅ | ✅ | ✅ | N/A | W11 |
 

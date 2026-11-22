@@ -550,6 +550,10 @@ def _linear_exchange(F, ids, B, criterion, max_iter, *, _free_positions=None, ma
                           for flat in moves[delta.flatten()[moves].argsort(stable=True)].tolist())
             reason = "NUMERICAL_INCONCLUSIVE"
         else:
+            free_count = len(ids) if _free_positions is None else _free_positions.sum().item()
+            if free_count < 2 or len(F)-len(ids) < 2:
+                reason = "NO_K2_NEIGHBORHOOD"
+                break
             candidates = _linear_pair_moves(F,ids,criterion,max_elements,_free_positions,tolerance)
             reason = "LOCAL_2_NUMERICAL"
         for positions,incoming_ids in candidates:

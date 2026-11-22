@@ -496,7 +496,7 @@ from torchoed import full_factorial, polynomial_features, fit_least_squares
 C = (full_factorial([3, 3]).double() - 1).repeat(2, 1)
 X = polynomial_features(C, 2)  # bias, two linear, two squares, one product
 y = 2 + C[:, 0] - 2*C[:, 1] + .5*C[:, 0]**2 + C[:, 0]*C[:, 1]
-y = y + .1 * (torch.arange(18, dtype=torch.float64) % 3)
+y = y + .1 * (torch.arange(18, dtype=torch.float64) % 5)
 r = fit_least_squares(X, y, terms=(1, 2, 2, 1))
 a, lof = r['anova'], r['lack_of_fit']
 print('ANOVA df:', a['df'], 'p:', a['p'])

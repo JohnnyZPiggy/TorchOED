@@ -483,6 +483,31 @@ print(result["power"])
 
 Structured, Bayesian and model-robust comparisons and cross-design GPU batching are not supported (P2 gate §101).
 
+## Analysing the results (least squares)
+
+`fit_least_squares` uses one QR fit; `terms` groups consecutive columns into type I ANOVA rows, and `intercept=True` drops the constant row as in R `anova(lm(...))`.
+Lack of fit is reported only with replicated points and `G > p`, `n > G`, where `G` counts distinct model rows.
+P-values have absolute-accuracy guarantees only (gate §123.6).
+
+```python
+import torch
+from torchoed import full_factorial, polynomial_features, fit_least_squares
+
+C = (full_factorial([3, 3]).double() - 1).repeat(2, 1)
+X = polynomial_features(C, 2)  # bias, two linear, two squares, one product
+y = 2 + C[:, 0] - 2*C[:, 1] + .5*C[:, 0]**2 + C[:, 0]*C[:, 1]
+y = y + .1 * (torch.arange(18, dtype=torch.float64) % 5)
+r = fit_least_squares(X, y, terms=(1, 2, 2, 1))
+a, lof = r['anova'], r['lack_of_fit']
+print('ANOVA df:', a['df'], 'p:', a['p'])
+print('Lack-of-fit df:', lof['df_lof'], 'pure-error df:', lof['df_pe'])
+assert abs(a['ss'].sum() + a['ss_resid'] - ((y - y.mean())**2).sum()) < 1e-10
+assert abs(lof['ss_lof'] + lof['ss_pe'] - a['ss_resid']) < 1e-10
+assert lof['df_lof'] == 3 and lof['df_pe'] == 9
+```
+
+See the [API entry](api.md); R `lm`/`anova` comparisons on published examples are tracked in the [capability matrix](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/CAPABILITY_MATRIX.md).
+
 ## Published reference examples
 
 A published example is a call printed in a reference package's help page or vignette at a recorded version, with its inputs frozen as repository data and re-scored by one shared TorchOED metric.

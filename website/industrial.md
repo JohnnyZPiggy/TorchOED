@@ -278,6 +278,25 @@ assert X.shape == (12, 6)
 
 In the 12-run design, each main effect is partially aliased with every two-factor interaction that does not contain it, with coefficient ±1/3 as reported by `design_diagnostics(..., alias=)`.
 
+## Orthogonal arrays
+
+`orthogonal_array(levels)` returns strength-2 arrays: every pair of columns shows each level pair equally often, so main effects are orthogonal. It supports one prime power, optionally mixed with its prime (for example, 4- and 2-level columns), with int64 labels `0 … s−1` in input order. All-two-level requests use Plackett–Burman when smaller. Taguchi L4, L8, L9, L16, L25, L27, L32, L49, L64 and L12 follow up to row, column and level permutations (gate §128).
+
+```python
+from torchoed import orthogonal_array, effects_coding
+A = orthogonal_array((2,) * 7)
+assert A.shape == (8, 7)
+X = 2 * A.double() - 1
+assert torch.equal(X.T @ X, 8 * torch.eye(7, dtype=X.dtype))
+B = orthogonal_array((4, 2, 2, 2, 2))
+assert B.shape == (16, 5)
+assert B[:4].tolist() == [[0, 0, 0, 0, 0], [1, 0, 0, 0, 0], [2, 0, 0, 0, 1], [3, 0, 0, 0, 1]]
+assert orthogonal_array((2,) * 11).shape == (12, 11)
+assert effects_coding(B[:, 0], 4).shape == (16, 3)
+```
+
+The run size is the smallest **within this construction**, not always the smallest possible: `(4, 2, 2, 2, 2)` returns 16 runs although an 8-run OA(8; 4¹2⁴) exists; mixed primes (L18, L36) are unsupported (gate §128.6, §130).
+
 ## Central composite and Box–Behnken
 
 Use a central composite design to fit a quadratic response surface. For blocked analysis, pass the cube and axial block sizes in row order. Box–Behnken designs use 3 to 7 factors.

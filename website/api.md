@@ -239,4 +239,4 @@ Fit float64 full-rank OLS with one QR for `(n,)` or `(n, J)` responses (`n > p`,
 
 ### `orthogonal_array(levels, *, device=None, max_elements=1_000_000)`
 
-Strength-2 integer orthogonal arrays with factor levels in input order: one prime power, optionally mixed with its prime, using GF(q) replacement or two-level Plackett–Burman. Returns int64 labels starting at zero; run size is minimal within the family, not globally. Mixed primes and strength ≥ 3 are unsupported. See [gate §128–§130](../docs/P2_GATE.md#128-strength-2-orthogonal-arrays-by-gfq-and-replacement-w17-g3a-p2).
+Strength-2 integer orthogonal arrays with factor levels in input order: one prime power, optionally mixed with its prime, using GF(q) replacement or two-level Plackett–Burman. Returns int64 labels starting at zero; run size is minimal within the family, not globally. Mixed primes and strength ≥ 3 are unsupported. See [gate §128–§130](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/P2_GATE.md).

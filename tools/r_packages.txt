@@ -11,3 +11,5 @@ DiceDesign 1.10
 support 0.1.7
 skpr 1.9.2
 mbest 0.6.1
+lme4 2.1-0
+lmerTest 3.2-1

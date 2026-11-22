@@ -1,0 +1,92 @@
+Newest PyPI release at START: 7.0.0 (https://pypi.org/pypi/pystatistics/json)
+Python 3.14.6, Windows CPU only.
+Command: scratch/venv/Scripts/python.exe -m pip install pystatistics==7.0.0
+Collecting pystatistics==7.0.0
+  Downloading pystatistics-7.0.0.tar.gz (661 kB)
+     ---------------------------------------- 661.9/661.9 kB 3.0 MB/s  0:00:00
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  Preparing metadata (pyproject.toml) did not run successfully.
+  exit code: 1
+  
+  [56 lines of output]
+  [1/4] Cythonizing pystatistics/survival/_concordance_fenwick.pyx
+  [2/4] Cythonizing pystatistics/timeseries/_arima_kalman_kernel.pyx
+  [3/4] Cythonizing pystatistics/timeseries/_ets_recursion.pyx
+  [4/4] Cythonizing pystatistics/timeseries/_stl_kernels.pyx
+  Traceback (most recent call last):
+    File "D:\Dropbox\study\ms-phd\PHD-EPFL\Doctoral proposal\EPFL\small interesting research\TorchOED\.sae-550-20261122\scratch\venv\Lib\site-packages\pip\_vendor\pyproject_hooks\_in_process\_in_process.py", line 389, in <module>
+      main()
+      ~~~~^^
+    File "D:\Dropbox\study\ms-phd\PHD-EPFL\Doctoral proposal\EPFL\small interesting research\TorchOED\.sae-550-20261122\scratch\venv\Lib\site-packages\pip\_vendor\pyproject_hooks\_in_process\_in_process.py", line 373, in main
+      json_out["return_val"] = hook(**hook_input["kwargs"])
+                               ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+    File "D:\Dropbox\study\ms-phd\PHD-EPFL\Doctoral proposal\EPFL\small interesting research\TorchOED\.sae-550-20261122\scratch\venv\Lib\site-packages\pip\_vendor\pyproject_hooks\_in_process\_in_process.py", line 178, in prepare_metadata_for_build_wheel
+      whl_basename = backend.build_wheel(metadata_directory, config_settings)
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\hatchling\build.py", line 58, in build_wheel
+      return os.path.basename(next(builder.build(directory=wheel_directory, versions=["standard"])))
+                              ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\hatchling\builders\plugin\interface.py", line 158, in build
+      build_hook.initialize(version, build_data)
+      ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-install-1mslbavm\pystatistics_8f1583ddc89546aea76df9ac03cff96e\hatch_build.py", line 78, in initialize
+      cmd.run()
+      ~~~~~~~^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\setuptools\command\build_ext.py", line 108, in run
+      _build_ext.run(self)
+      ~~~~~~~~~~~~~~^^^^^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\setuptools\_distutils\command\build_ext.py", line 382, in run
+      self.build_extensions()
+      ~~~~~~~~~~~~~~~~~~~~~^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\setuptools\_distutils\command\build_ext.py", line 498, in build_extensions
+      self._build_extensions_serial()
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\setuptools\_distutils\command\build_ext.py", line 524, in _build_extensions_serial
+      self.build_extension(ext)
+      ~~~~~~~~~~~~~~~~~~~~^^^^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\setuptools\command\build_ext.py", line 273, in build_extension
+      _build_ext.build_extension(self, ext)
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\Cython\Distutils\build_ext.py", line 140, in build_extension
+      super().build_extension(ext)
+      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\setuptools\_distutils\command\build_ext.py", line 585, in build_extension
+      objects = self.compiler.compile(
+          sources,
+      ...<5 lines>...
+          depends=ext.depends,
+      )
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\setuptools\_distutils\compilers\C\msvc.py", line 444, in compile
+      self.initialize()
+      ~~~~~~~~~~~~~~~^^
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\setuptools\_distutils\compilers\C\msvc.py", line 354, in initialize
+      vc_env = _get_vc_env(plat_spec)
+    File "C:\Users\zhangru\AppData\Local\Temp\pip-build-env-1hezeh8q\overlay\Lib\site-packages\setuptools\_distutils\compilers\C\msvc.py", line 152, in _get_vc_env
+      raise PlatformError(
+      ...<3 lines>...
+      )
+  distutils.compilers.errors.PlatformError: Microsoft Visual C++ 14.0 or greater is required. Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visual-cpp-build-tools/
+  [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+
+[notice] A new release of pip is available: 26.1.2 -> 26.3
+[notice] To update, run: D:\Dropbox\study\ms-phd\PHD-EPFL\Doctoral proposal\EPFL\small interesting research\TorchOED\.sae-550-20261122\scratch\venv\Scripts\python.exe -m pip install --upgrade pip
+error: metadata-generation-failed
+
+Encountered error while generating package metadata.
+
+pystatistics
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.
+
+Command: scratch/venv/Scripts/python.exe -m pip show pystatistics
+WARNING: Package(s) not found: pystatistics
+No fit attempted, no GPU, no replacement version or rebuild.

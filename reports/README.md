@@ -95,3 +95,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w9-skpr-i](w9-skpr-i/) | Published skpr I-optimal split-plot comparison (#237) | NOT_RUN; 0 comparisons; retry CLI_UNAVAILABLE |
 | [w16-signature](w16-signature/) | Published AlgDesign D/A/I designs with dual efficiency floors (#541) | 13 checks PASS; D/I match, published A better; fixed D NOT_CERTIFIED |
 | [w16-heldout](w16-heldout/) | W16 frozen H43–H45: blocked MA, Poisson GLM power, strip A; 3/3 MATCH; end-of-week suite time | MATCH |
+| [w17-reml-check](w17-reml-check/) | W17 REML reuse check: R lme4/lmerTest vs exact EMS, PyStatistics (#567) | BUILD; PyStatistics 7.0.0 NOT_RUN (install failed); R vs exact 26/81 at 1e-8 |

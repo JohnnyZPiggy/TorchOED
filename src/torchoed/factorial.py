@@ -548,14 +548,16 @@ def orthogonal_array(levels: list[int] | tuple[int, ...], *, device: torch.devic
 
 def covering_array(k: int, v: int, *, strength: int = 2, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
     """Optimal binary strength-2 or prime-power index-1 array (gate 131–133)."""
-    from math import comb
     from itertools import islice
     if type(k) is not int or type(v) is not int or v < 2 or strength not in (2, 3) or k < strength:
         raise ValueError("require integer k >= strength, integer v >= 2, strength 2 or 3")
     if v == 2 and strength == 2:
-        n = 4
-        while comb(n - 1, (n + 1) // 2) < k:
+        n, capacity = 4, 3
+        while capacity < k:
             n += 1
+            capacity = 1
+            for j in range(1, (n + 1) // 2 + 1):
+                capacity = capacity * (n - j) // j
         budget((n, k), max_elements)
         columns = list(islice(combinations(range(1, n), (n + 1) // 2), k))
         rows = [[int(i in c) for c in columns] for i in range(n)]

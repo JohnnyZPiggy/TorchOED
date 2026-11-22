@@ -1,58 +1,55 @@
-# Week 16 goal — 2026-11-21 → 2026-11-28 (CONSOLIDATION: P2+ exit — parity audit and deferral table, documentation and repository health, 0.9.0 TestPyPI)
+# Week 17 goal — 2026-11-22 → 2026-11-29 (P2.5 part 1: least-squares analysis, REML reuse check, P2+ completion items)
 
-**Auto-advance (Architect, 2026-11-21).** Week 15 (P2+ part 3) goals were met on 2026-11-21:
-- C1 split-split-plot and strip-plot: every cell filled. skpr 1.9.2 SS1 MATCH and the published `gen_design.Rd` nested example MATCH (#473).
-- C2 minimum-aberration and blocked FF: FrF2 2.3-5 6/6 feasible cases MATCH, and BL2 is infeasible on both sides (#469).
-- C3 GLM power by simulation: skpr 12/12 within 4 combined MC SE (#472). Published RD2b MATCH; RD1b NO MATCH as-is. A100 same-host timing (#509): nsim 10⁵ CPU 5.30 s vs CUDA 0.422 s. HO is open and is filled by H44 below.
-- Published examples: 16 → 19 (target ≥ 19).
+**Auto-advance (Architect, 2026-11-22).** Week 16 (consolidation, P2+ exit) goals were met on 2026-11-22:
+- G1 P2+ exit audit: every P2/P2+ open item is listed and decided by the Scientist (21 items, #540, PR #542); undecided 0. P2+ signature on a published example shown (#541, PR #544): certified AlgDesign D/A/I floors; fully fixed A/I labels fixed (#545, PR #547).
+- G2 documentation and repository health: unindexed report directories, API-page gaps and stale PLANNED entries 0 (#525, #528, #530, #534, #539). Suite wall time on `ubuntu-latest, 3.13`: start 388 passed in 71.64 s, end 392 passed in 55.05 s (different hosts; descriptive only, #546).
+- G3 0.9.0 on TestPyPI: 4/4 (#518).
+- W16-perf (CPU A/I at m = 10⁴ within 120 s) is not met: A 488 s, I 280 s (#537). It is not a week-17 goal; it stays open in the matrix Dev cell and is revisited with W23 GPU scale.
 
-Held-out H40–H42 were recorded as-is (#512, PR #514, `reports/w15-heldout`):
-- H40 MATCH: det = 2097152/441 = exhaustive maximum (4,304 feasible assignments, 128 maximizers).
-- H41 MATCH: det = 2097152/315 = exhaustive maximum (5,952 feasible, 48 maximizers).
-- H42 MATCH: WLP equal to FrF2 2.3-5 (R 4.5.2, run 44868066239).
+Held-out H43–H45 were recorded as-is (#524, PR #546, `reports/w16-heldout`):
+- H43 MATCH: WLP equal to FrF2 2.3-5, no main effect or 2FI confounded with blocks on either side (R 4.5.2, run 45009364423).
+- H44 MATCH: skpr 1.9.2 Poisson powers within 4 combined MC SE, worst z 1.74.
+- H45 MATCH: exact A trace 13/4 equals the exhaustive minimum (960 feasible assignments, 48 minimizers).
 
 Baseline: `main` at the START of this goal's commit task.
 
-**Why this week:** week 16 is a consolidation week (VISION.md weekly cadence), so it adds no new features. The P2+ exit evidence in VISION.md has three parts:
-- every parity-checklist row complete or Scientist-deferred;
-- ≥ 15 published examples (19, met);
-- one of the four signatures demonstrated on a published example.
-
-Several checklist rows are still ◐ or ❌: orthogonal / covering arrays, hard-to-change covariates, non-box mixture regions, group-orthogonal supersaturated designs and the space-filling row, whose status text is stale. These need either evidence or a deferral the Scientist can decide on in one place. The documentation also lags weeks 13–15: 13 report directories are missing from `reports/README.md`, and `website/api.md` and `docs/ALGORITHM_COVERAGE.md` have not been checked since week 12. The last release was 0.8.0 (week 12). P2.5 (week 17) needs the Mentor landscape review of statistics packages first (VISION.md "Reuse before build"; matrix P2.5 row 1, dated W16). That review runs in parallel as a [Mentor] Issue; it is not a feature goal.
+**Why this week:** P2.5 starts (VISION.md, weeks 17–19). The Mentor landscape review (§26, #517) recommends building the thin torch least-squares path ourselves (§26.6: one factorisation shared by all responses), and checking PyStatistics against lme4 + lmerTest on `nlme::Oats` before any REML adapter (§26.8: NEEDS CHECK). The Scientist also put two P2+ items in week 17 (2026-11-21, "Do now: W17"): orthogonal / Taguchi / covering arrays, and non-box mixture regions including ABCD.
 
 | Goal | Falsifiable target | Baseline |
 |---|---|---|
-| **G1 P2+ exit audit and deferral table** | (a) Every parity-checklist row whose status lags its P2/P2+ matrix row is corrected, with evidence links; the space-filling row at least. (b) One table "P2+ open items for Scientist decision" in `docs/CAPABILITY_MATRIX.md` lists every P2/P2+ cell or checklist row that is still ◐, ❌ or NR and not completed this week. Each entry gives the missing evidence, the reason and the week that would close it. It covers at least orthogonal / Taguchi / covering arrays, hard-to-change covariates, non-box mixture regions, group-orthogonal supersaturated designs, DSD Ext, mixture Con, A/I GPU timing, and incomplete block / crossover designs. (c) One line in the matrix names the P2+ signature evidence on a published example: a certificate or a measured GPU speed-up at equal quality, from merged reports only, or "not shown" stated as-is. Measured number: P2/P2+ cells and checklist rows that are neither complete nor listed, target **0**; stale checklist rows, target **0** | stale rows counted by the G1 task (at least the space-filling row); 5 open checklist rows; P2+ signature line absent |
-| **G2 Documentation and repository health** | (a) `reports/README.md` indexes every directory under `reports/`, and the `g1-crossover` row is tidied (description in the Measurement column, status in the Status column). (b) `website/api.md` lists every name in `torchoed.__all__` and every public keyword merged through week 15. This is checked once by a throw-away script whose output goes in the handoff, not the repository. (c) `docs/ALGORITHM_COVERAGE.md` marks no merged capability PLANNED. (d) `docs/RELEASE_READINESS.md` reflects 0.9.0. (e) Test-suite wall time on `ubuntu-latest, 3.13` is recorded at the start and end of the week; any test change keeps every behaviour test and must not slow the suite. Measured number: unindexed report directories + exported names or keywords missing from the API page + stale PLANNED entries, target **0** | 13 unindexed report directories; API and coverage gaps counted by the G2 task |
-| **G3 Release 0.9.0 on TestPyPI** | Steps: (1) one fully green CI run on `main`, including `test (macos-latest, …)`, recorded by run id; (2) version 0.9.0, with the CHANGELOG `Unreleased` section becoming `[0.9.0]`; (3) the `testpypi.yml` workflow publishes; (4) a clean-venv install from TestPyPI runs `examples/cpu_quickstart.py` and the industrial-guide snippets, and the outputs are recorded. The Engineer pushes the tag in an Engineer task. Measured number: release steps done, target **4/4** | 0/4 (0.8.0 on TestPyPI) |
+| **G1 Least-squares analysis in the library** | One public least-squares function (API fixed by its gate) on a design matrix and one or more responses (Y n × R, one shared factorisation). It returns coefficients, SEs, t tests, sequential per-term F tests (as R `anova(lm(...))`), lack of fit against pure error when replicates exist, and residual diagnostics (residuals, leverage, studentized residuals, Cook's distance). It matches R `lm` / `anova` to **1e-8** (relative for estimates, SEs, SS and F; absolute for p-values) on two published examples: `warpbreaks` (`breaks ~ wool + tension`, lack of fit against the 6 cells) and `rsm::ChemReact` (second-order model, lack of fit). R runs on `r-oracle.yml` with `sessionInfo()`. Measured number: published analysis examples matching R at 1e-8, target **2**; matrix row `least-squares fit` ✅ except Dev (CPU float64; CUDA runs, no timing claim) | 0 published analysis examples; row ❌ |
+| **G2 REML for blocked and split-plot designs: reuse check first** | (a) Evidence: the PyStatistics CPU LMM (exact version pinned) on `nlme::Oats` (`yield ~ Variety * factor(nitro) + (1 | Block/Variety)`) and on one strip-plot data set frozen as a repo CSV, against `lme4::lmer` + `lmerTest` (Satterthwaite df) on `r-oracle.yml`. Compared: fixed effects, their SEs, variance components, REML log-likelihood and Satterthwaite df, at 1e-8 (Mentor §26.8). (b) Decision recorded in the matrix: **ADOPT** (both cases match; an optional extra adapter, never a core dependency, follows in W18) or **BUILD** (torch REML for blocks, whole plots and strip plots, gated by the same r-oracle check, W18). Measured number: Oats + strip-plot quantities matching lme4/lmerTest at 1e-8 out of those compared, recorded as-is; adapter row and REML row carry the decision | Mentor §26 NEEDS CHECK; rows ❌ |
+| **G3 P2+ completion (Scientist 2026-11-21: "Do now: W17")** | (a) Orthogonal, Taguchi and covering arrays: one constructor family for strength-2 mixed-level orthogonal arrays (including the standard L-arrays) and strength-2/3 covering arrays, with an exact balance / coverage check. External: DoE.base `oa.design` catalogue arrays matched (run size, strength 2, equal GWLP A3) through `r-oracle.yml`. (b) Non-box mixture regions: extreme vertices and centroids of a mixture region with general linear constraints (ABCD / McLean–Anderson), checked against an exact `Fraction` vertex enumeration and against `mixexp::Xvert` with `conmx` at 1e-6 (its single precision, #289). Measured number: checklist rows `Orthogonal arrays …` and `Mixture …` complete, target **2 of 2** | OA row ❌; mixture row ◐ (box regions only) |
 
-**Held-out additions.** These are frozen here, before any week-16 task merges. They are never used for tests, tuning or dispatch choices. They run once at week end and are reported as-is. Every randomized TorchOED call uses `generator=torch.Generator().manual_seed(0)` and default settings otherwise.
-- **H43 (blocked minimum aberration):** `minimum_aberration(10, 64, blocks=4)`.
-  - Shared metric: `word_length_pattern` on the 10 factor columns. Also the list of main effects and two-factor interactions whose ±1 column is constant within every block, computed by one function for both designs from the design and its block labels.
-  - Reference: R `FrF2::FrF2(nruns = 64, nfactors = 10, blocks = 4, randomize = FALSE)` through `r-oracle.yml` with `sessionInfo()`, exported as a CSV of the ±1 factor columns plus the block label.
-  - Verdict: MATCH if the WLPs are equal and both lists are empty. TorchOED better if both lists are empty and TorchOED's WLP is lexicographically smaller. Otherwise NO MATCH, with the first differing word length or the confounded effects.
-- **H44 (Poisson GLM power):** X is [1, A, B, C] on the 2³ grid on {−1, 1} in `full_factorial` order, listed twice (n = 16), frozen as a repo CSV before the reference dispatch. The call is `glm_power(X, beta=torch.tensor([0.5, 0.5, -0.25, 0.0], dtype=torch.float64), family="poisson", alpha=0.05, nsim=10000, generator=torch.Generator().manual_seed(0))`.
-  - Shared metric: per-coefficient power with MC SE √(p(1 − p)/nsim).
-  - Reference: R `skpr::eval_design_mc(design = <the frozen CSV columns A, B, C>, model = ~A + B + C, alpha = 0.05, nsim = 10000, glmfamily = "poisson", anticoef = c(0.5, 0.5, -0.25, 0))` through `r-oracle.yml` with `sessionInfo()`, using its parameter power rows.
-  - Verdict: MATCH if all 4 coefficients are within 4 combined MC SE. Otherwise NO MATCH, with the worst z.
-- **H45 (strip-plot A, unequal variance ratios):** candidates and F as in H40, so m = 16 and F = [1, A, B, C, AB, AC, BC]; n = 8 as a 2 × 4 grid. The call is `optimal_design(F, 8, criterion="A", strip=(2, 4), row_hard=<A level of each candidate>, col_hard=<B level of each candidate>, eta_row=2.0, eta_col=0.5, generator=torch.Generator().manual_seed(0))`, with runs in the documented row-major order.
-  - Shared metric: tr((XᵀV⁻¹X)⁻¹) in exact `Fraction`, where V = I + 2·Z_rZ_rᵀ + ½·Z_cZ_cᵀ, on the design as returned.
-  - Reference: dev-only exhaustive enumeration of the 2² · 2⁴ · 2⁸ = 16,384 level assignments (A per row, B per column, C per cell). Keep the assignments in which no (A, B, C) appears more than twice and whose information matrix is nonsingular.
-  - Verdict: MATCH if TorchOED equals the exhaustive minimum. Otherwise NO MATCH, with Δ.
+**Held-out additions.** These are frozen here, before any week-17 task merges. They are never used for tests, tuning or dispatch choices. They run once at week end and are reported as-is.
+- **H46 (least-squares ANOVA, published data):** R `datasets::npk` (24 rows), exported to CSV by `r-oracle.yml` in the week-end dispatch. The model is `yield ~ block + N + P + K` with treatment contrasts in R's default column order.
+  - TorchOED: the G1 function with default settings on that model matrix.
+  - Shared metric: against R `lm` / `anova`, the max relative difference over coefficients, SEs, and the sequential ANOVA df, SS and F, and the max absolute difference over the t and F p-values.
+  - Verdict: MATCH if both are ≤ 1e-8, otherwise NO MATCH with the worst quantity.
+- **H47 (mixed-level orthogonal array):** one four-level and twelve two-level factors.
+  - TorchOED: the G3(a) constructor with default settings, asked for the smallest strength-2 array.
+  - Reference: R `DoE.base::oa.design(nlevels = c(4, rep(2, 12)), randomize = FALSE)` through `r-oracle.yml` with `sessionInfo()`.
+  - Shared metric: run count, strength-2 balance of every column pair, and GWLP A3, computed by one function in `run.py` for both arrays.
+  - Verdict: MATCH if both are strength 2 with equal run count and A3. TorchOED better if it is strength 2 with fewer runs, or equal runs and smaller A3. Otherwise NO MATCH.
+- **H48 (non-box mixture vertices):** q = 4, x₁ + x₂ + x₃ + x₄ = 1, lower bounds (0.1, 0.1, 0.05, 0), upper bounds (0.6, 0.5, 0.4, 0.3), and 0.3 ≤ x₁ + x₂ ≤ 0.8.
+  - TorchOED: the G3(b) vertex function with default settings.
+  - Reference: dev-only exact `Fraction` enumeration of the region's vertices (all 3-subsets of the inequality constraints, solved together with the mixture equality, kept if feasible).
+  - Verdict: MATCH if the vertex sets are equal to 1e-12, otherwise NO MATCH with the missing or extra vertices.
 
 If a reference call fails or its versions are not recorded, its column is `NOT_RUN`, with the error verbatim.
 
 **Timing rule (durable, Scientist 2026-11-07):** per restart unless a goal says otherwise.
 
 **Safeguards:**
-- No new public functions or keywords. Refactors keep every behaviour test and every D/A/I result unchanged. Any change to search code reruns `tools/bench_b0.py`, with no time regression and identical D results.
-- Matrix and checklist statuses cite merged reports or PRs only. Deferral entries are proposals: a row counts as deferred only after a Scientist signal.
+- Production numerical dependency stays torch only. R, statsmodels and PyStatistics are dev-only references this week; pyproject, `src/` and `tests/` never import them. An adapter extra is a W18 task and only after an ADOPT decision.
+- Analysis code calls no design search; any change to search code reruns `tools/bench_b0.py`, with no time regression and identical D results.
+- Every numerical claim has an independent oracle (dense `torch.linalg` closed form or exact `Fraction`) in its test. Analysis tables are float64; no FP32 path feeds a reported table.
+- The library stays GUI-free; no Studio work this week (W19).
 - External references follow the VISION.md oracle rules: R on `r-oracle.yml`, Colab only for GPU, one GPU task at a time.
-- No tuning on held-out cases. Historical reports and evidence are preserved, never deleted.
-- Releases and tag pushes are Engineer tasks. Real PyPI waits for the Scientist.
+- No tuning on held-out cases. Historical reports and evidence are preserved.
 
 **Out of scope this week:**
-- New capabilities: orthogonal / covering arrays, hard-to-change covariates, non-box mixture regions, new DSD sizes (deferral or scheduling is a Scientist decision via G1).
-- Analysis and Studio (P2.5, week 17 onward). Adapters wait for the Mentor landscape review.
-- P3. GPU timing of A/I (W23).
-- Real PyPI and Issue #13.
+- Studio (W19); prediction profiler, desirability and bootstrap / batched closed-loop fits (W18); the adapter extra itself (W18, after the G2 decision).
+- General GLMM, survival analysis and GP surrogates (out of scope by decision).
+- Deferred P2+ items (Scientist 2026-11-21): group-orthogonal supersaturated designs, hard-to-change covariates, sphere packing, MSA, batched sample-size search.
+- P3, A/I GPU timing (W23), real PyPI and Issue #13.

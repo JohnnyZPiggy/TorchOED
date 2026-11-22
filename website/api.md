@@ -236,3 +236,7 @@ With `strip=(r, c)`, `row_hard`, `col_hard`, `eta_row` and `eta_col`, CPU float6
 `fit_least_squares(X, Y, *, terms=None, intercept=True)`
 
 Fit float64 full-rank OLS with one QR for `(n,)` or `(n, J)` responses (`n > p`, identical dtype/device). Returns coefficients, SEs, t/p, residual variance/df, sequential type I ANOVA, lack-of-fit vs pure error when replicated, leverage, internally studentized residuals and Cook distances. `terms` is a tuple of positive column counts; `None` means one column each. With `intercept=True`, the first term is assumed to be the constant column alone and omitted from ANOVA. Leverage within 10 eps of 1 is set to 1 with NaN diagnostics. CPU/CUDA share code; p-values have absolute accuracy only, degrading at large df (gate §123–§124). No formula parser, rank-deficient fits, weighted/GLS/REML or prediction intervals.
+
+### `orthogonal_array(levels, *, device=None, max_elements=1_000_000)`
+
+Strength-2 integer orthogonal arrays with factor levels in input order: one prime power, optionally mixed with its prime, using GF(q) replacement or two-level Plackett–Burman. Returns int64 labels starting at zero; run size is minimal within the family, not globally. Mixed primes and strength ≥ 3 are unsupported. See [gate §128–§130](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/P2_GATE.md).

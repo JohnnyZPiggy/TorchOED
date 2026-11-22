@@ -17,6 +17,8 @@ Where both finished, TorchOED's design was as good or better (higher log-determi
 
 ## Published examples
 
+Published AlgDesign D/A/I designs carry dual efficiency floors **0.975053 / 0.928937 / 0.925260**; TorchOED on the same problem gives **0.975053 / 0.881383 / 0.925260** (fixed D label: NOT_CERTIFIED; [certificate report](https://github.com/JohnnyZPiggy/TorchOED/blob/main/reports/w16-signature/summary.md)).
+
 19 published examples match or are beaten on the shared metric (week 15 target ≥ 19 met). The table below lists the examples through week 13 and the week-15 GLM power examples; the week-16 consolidation refreshes the full table.
 
 | ID | Package and source | Shared metric | Verdict |

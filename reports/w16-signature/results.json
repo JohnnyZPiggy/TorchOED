@@ -1,0 +1,152 @@
+{
+  "torch": "2.15.0+cpu",
+  "device": "CPU",
+  "dtype": "float64",
+  "threads": 1,
+  "criteria": {
+    "D": {
+      "published": {
+        "ids": [
+          0,
+          2,
+          5,
+          6,
+          7,
+          8,
+          10,
+          12,
+          17,
+          18,
+          20,
+          22,
+          24,
+          26
+        ],
+        "value": 18.683477161182246,
+        "objective": 18.683477161182246,
+        "floor": 0.975053309925363,
+        "certificate": "NOT_CERTIFIED",
+        "stop_reason": "NO_K2_NEIGHBORHOOD"
+      },
+      "torchoed": {
+        "ids": [
+          0,
+          2,
+          23,
+          4,
+          8,
+          11,
+          24,
+          12,
+          6,
+          16,
+          20,
+          18,
+          19,
+          26
+        ],
+        "value": 18.683477161182246,
+        "objective": 18.683477161182246,
+        "floor": 0.975053309925363,
+        "certificate": "LOCAL_2_NUMERICAL",
+        "stop_reason": "LOCAL_2_NUMERICAL"
+      }
+    },
+    "A": {
+      "published": {
+        "ids": [
+          0,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26
+        ],
+        "value": 2.3,
+        "objective": -2.3,
+        "floor": 0.9289365080953955,
+        "certificate": "LOCAL_2_NUMERICAL",
+        "stop_reason": "LOCAL_2_NUMERICAL"
+      },
+      "torchoed": {
+        "ids": [
+          0,
+          2,
+          6,
+          4,
+          8,
+          20,
+          10,
+          12,
+          13,
+          24,
+          17,
+          18,
+          25,
+          23
+        ],
+        "value": 2.4240924092409237,
+        "objective": -2.4240924092409237,
+        "floor": 0.8813830530860193,
+        "certificate": "LOCAL_2_NUMERICAL",
+        "stop_reason": "LOCAL_2_NUMERICAL"
+      }
+    },
+    "I": {
+      "published": {
+        "ids": [
+          0,
+          2,
+          5,
+          6,
+          7,
+          10,
+          11,
+          12,
+          17,
+          18,
+          20,
+          22,
+          24,
+          26
+        ],
+        "value": 0.7440667990372216,
+        "objective": -0.7440667990372218,
+        "floor": 0.9252602210990462,
+        "certificate": "LOCAL_2_NUMERICAL",
+        "stop_reason": "LOCAL_2_NUMERICAL"
+      },
+      "torchoed": {
+        "ids": [
+          0,
+          2,
+          5,
+          6,
+          7,
+          10,
+          20,
+          15,
+          18,
+          17,
+          22,
+          24,
+          12,
+          26
+        ],
+        "value": 0.7440667990372217,
+        "objective": -0.7440667990372217,
+        "floor": 0.925260221099046,
+        "certificate": "LOCAL_2_NUMERICAL",
+        "stop_reason": "LOCAL_2_NUMERICAL"
+      }
+    }
+  }
+}

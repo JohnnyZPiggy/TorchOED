@@ -17,7 +17,7 @@ One shared relative metric abs(x−reference)/abs(reference) scores every pair/g
 
 At 1e-8, 26/81 individual R quantities match (24 coefficients and two log-likelihoods); 4/10 groups match. The optimized R variances, SEs and df do not meet 1e-8 against exact EMS; no rerun or tolerance adjustment. PyStatistics-vs-exact and PyStatistics-vs-R are NOT_RUN in every group, and do not alter the frozen BUILD decision.
 
-Reproduce: `PYTHONPATH=src python reports/w17-reml-check/run.py`. Uses stdlib only, saves results.json deterministically, never installs or refits. Required checks: exact EMS self-check and byte-identical regeneration. Historical source, tests, pyproject, website and workflows untouched; tools/r_packages.txt only appends the two authorized pins. Nine evidence files; Python+R 125 lines (S120, below 1.5×180).
+Reproduce: `PYTHONPATH=src python reports/w17-reml-check/run.py`. Uses stdlib only, saves results.json deterministically, never installs or refits. Required checks: exact EMS self-check and byte-identical regeneration (0.196 s on this host). Historical source, tests, pyproject, website and workflows untouched; tools/r_packages.txt only appends the two authorized pins. Nine evidence files; Python+R 126 lines (S120, below 1.5×180).
 
 Deferred matrix-only texts (START forbids editing matrix in this PR):
 - Adapters Status: ◐ PyStatistics 7.0.0: BUILD (#567, [w17-reml-check](../reports/w17-reml-check/)).

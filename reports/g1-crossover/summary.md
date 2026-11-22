@@ -82,3 +82,46 @@ Recovery ruling 7078405964; driver `3a502232edb10ffe2e3ab4e9f77b98c3bb4ea6ea`; f
 Work exec returned 0; artifact download succeeded, containing only `{"status":"STARTED"}` (20 bytes). No completed cell; all three new scientific checks NOT_RUN. Sanitized log-tail exec returned 0 but output was a newline only. This readback cannot establish that no exception occurred: fd redirection may not capture notebook Python streams. Directory listing was conditional on download failure and was not needed. No same-session retry. Historical records remain unchanged; ruling 7078405964 supersedes attempt 1 completion uncertainty: none completed.
 All four cleanup readbacks PASS; final 0 assignments, 133.84 CU, displayed spend 0.00 CU; cumulative 15.35/25 CU, 9.65 remain. Internal 3600 s budget / work timeout 4500 s / host 24.5 CU stop preserved.
 What this tells us / next change to try: fallback T4 allocation and initial artifact transport work, but driver startup still fails before a completed cell. Use an explicit foreground Python subprocess wrapper that redirects stdout/stderr to the log and records its actual exit code, subject to Architect recovery ruling; no numerical or timing claim from attempt 2.
+
+
+## Final continuation attempt 3 (2026-11-22): real subprocess wrapper
+Ruling 7079058649; committed driver unchanged at e067247; frozen library d869c1a394e03219eca40256c9c78f1f552bdc96, cells/order/2700 s cap unchanged. Host kernel-globals preflight PASS: no NameError; real driver exit captured after a stubbed first network step.
+Allocation/cleanup: H100: ALLOCATION_FAILED, A100: ALLOCATION_FAILED, L4: allocated.
+Observed device: {"nvidia_smi": [{"name": "NVIDIA L4", "memory_total_mib": 23034, "driver_version": "580.82.07"}], "torch": {"status": "AVAILABLE", "version": "2.14.1+cu130", "cuda": "13.0", "name": "NVIDIA L4", "capability": [8, 9]}}.
+Driver subprocess exit: 0; controller: None.
+| k | m | method | seconds/status | logdet | returned floor |
+|---|---|---|---|---|---|
+| 3 | 1000 | fedorov | 8.79464928500002 | 19.99210978218451 |  |
+| 3 | 1000 | modified_fedorov | 4.324637834000015 | 19.917102261222833 |  |
+| 3 | 1000 | detmax | 7.198036080999998 | 19.99210978218451 |  |
+| 5 | 1000 | fedorov | 7.572735434000009 | 49.62078438346606 |  |
+| 5 | 1000 | modified_fedorov | 7.465130748000007 | 49.62078438346606 |  |
+| 5 | 1000 | detmax | 7.724672249999998 | 49.62078438346606 |  |
+| 7 | 1000 | fedorov | 19.37627909699998 | 95.77972507385135 |  |
+| 7 | 1000 | modified_fedorov | 19.745858391000013 | 95.77972507385135 |  |
+| 7 | 1000 | detmax | 19.663633465999965 | 95.77972507385135 |  |
+| 3 | 10000 | fedorov | 180.43315084200003 | 21.27450044494405 |  |
+| 3 | 10000 | modified_fedorov | 28.586297849999994 | 21.181697749824256 |  |
+| 3 | 10000 | detmax | 138.136914331 | 21.274500444944053 |  |
+| 5 | 10000 | fedorov | 1261.470988025 | 56.7516740899648 |  |
+| 5 | 10000 | modified_fedorov | 171.18784787699997 | 56.48425485671348 |  |
+| 5 | 10000 | detmax | 358.8465012060001 | 56.77632526255357 |  |
+| 7 | 10000 | fedorov | 199.93528479700035 | 103.215613119547 |  |
+| 7 | 10000 | modified_fedorov | 196.03564263999988 | 103.215613119547 |  |
+| 7 | 10000 | detmax | 197.08180929599985 | 103.215613119547 |  |
+| 5 | 100000 | cpu | TIMEOUT |  |  |
+| 5 | 100000 | cuda | NOT_RUN |  |  |
+| 7 | 100000 | cpu | NOT_RUN |  |  |
+| 7 | 100000 | cuda | NOT_RUN |  |  |
+| 3 | 1000000 | cuda | NOT_RUN |  |  |
+| 3 | 1000000 | cpu | NOT_RUN |  |  |
+Largest m reached, cpu: None.
+Largest m reached, cuda: None.
+Largest m reached, fedorov: 10000.
+Largest m reached, modified_fedorov: 10000.
+Largest m reached, detmax: 10000.
+Local saved objective rescoring: 18 PASS, 0 FAIL at 1e-9 relative. Same-host CPU/CUDA agreement: "NOT_RUN".
+C3 CUDA GLM (warmup excluded): [{"power": [0.9929, 0.8842000000000001, 0.8781], "nonconverged": 0, "separated": 71, "seconds": 0.4147639530000049, "threads": 12, "peak_gpu_bytes": 133902336, "status": "PASS", "k": "glm", "m": 10000, "method": "cuda", "criterion": "binomial", "warmup": false}]. Historical CPU statistical comparison: [{"reference": "Historical accepted A100-host CPU nsim=10000, seed 0; not a same-host timing comparison", "CPU": [0.9928, 0.8816, 0.8747], "CUDA": [0.9929, 0.8842000000000001, 0.8781], "MATCH": [true, true, true]}]. No cross-host timing ratio.
+GPU wins only in measured same-host pairs: []. One GPU per timing table; no A100/L4/T4 timing conflation.
+All 3 cleanup readbacks PASS; final 0 assignments, 131.95 CU; cumulative 17.24/25 CU, remaining 7.76. No same-session retry.
+What this tells us / next change to try: the real subprocess wrapper reaches measured cells and confirms the prior kernel __file__ launch diagnosis. Missing/timed-out/error cells remain partial evidence. If the long reference cells consume the remaining budget before CPU/CUDA pairs, the next proposed change is to prioritize a paired TorchOED cell before long PyDOE calls, subject to a new Architect ruling. No order change or retry was made in this attempt.

@@ -230,3 +230,9 @@ A dict `criterion={"D": w_D, "A": w_A, "I": w_I}` maximises the weighted log-eff
 Set `subplots`, `subplot_hard` and `eta_sub` for CPU float64 split-split-plot D/A/I: subplots nest within whole plots and align with every whole-plot boundary (P2 gate §102–§103). Results include `subplots` and `eta_sub`; `LOCAL_SPLIT_SPLIT_PLOT_EXCHANGE` covers within-subplot exchanges and greedy subplot/whole-plot relabels. The OLS dual efficiency floor remains conservative. See the [split-split-plot guide](industrial.md#split-split-plot-designs); blocks, covariates, alias, Bayesian and model-robust options are unsupported.
 
 With `strip=(r, c)`, `row_hard`, `col_hard`, `eta_row` and `eta_col`, CPU float64 D/A/I search uses an `r × c` row-major grid with `r*c = n`. The `LOCAL_STRIP_PLOT_EXCHANGE` certificate covers the local exchanges and the OLS dual efficiency floor remains conservative (§105). Whole plots, subplots, blocks, covariates, alias, Bayesian, model-robust and compound criteria are excluded; see the [strip-plot guide](industrial.md#strip-plot-designs).
+
+## Least-squares analysis
+
+`fit_least_squares(X, Y, *, terms=None, intercept=True)`
+
+Fit float64 full-rank OLS with one QR for `(n,)` or `(n, J)` responses (`n > p`, identical dtype/device). Returns coefficients, SEs, t/p, residual variance/df, sequential type I ANOVA, lack-of-fit vs pure error when replicated, leverage, internally studentized residuals and Cook distances. `terms` is a tuple of positive column counts; `None` means one column each. With `intercept=True`, the first term is assumed to be the constant column alone and omitted from ANOVA. Leverage within 10 eps of 1 is set to 1 with NaN diagnostics. CPU/CUDA share code; p-values have absolute accuracy only, degrading at large df (gate §123–§124). No formula parser, rank-deficient fits, weighted/GLS/REML or prediction intervals.

@@ -40,7 +40,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | optional adapters to the chosen packages behind extras (never core dependencies) | ❌ | W17 |
 | bootstrap intervals and batched fits for closed-loop rounds (GPU where measured faster) | ❌ | W18 |
 | out of scope by decision: GP surrogates (BoTorch/Ax), general GLMM, survival analysis | N/A | — |
-| least-squares fit: coefficients, SEs, effect tests (t, F by term), lack of fit, residual diagnostics | ❌ | W17 |
+| least-squares fit: coefficients, SEs, effect tests (t, F by term), lack of fit, residual diagnostics | ◐ `fit_least_squares` (§123–§124, #554); R published examples pending | W17 |
 | REML / mixed-model fit for blocked and split-plot designs (whole-plot vs subplot error) | ❌ | W17–W18 |
 | prediction profiler data (prediction ± interval at a point, effect traces) | ❌ | W18 |
 | desirability functions and multi-response optimisation | ❌ | W18 |

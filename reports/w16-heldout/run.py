@@ -14,7 +14,7 @@ tiny = 2*full_factorial([2,2]).double()-1
 assert confounded(tiny,tiny.prod(1)) == [[0,1]]; print('H43 non-held-out AB check: PASS')
 def features(x): return np.column_stack((np.ones(8,dtype=np.int64),x,x[:,0]*x[:,1],x[:,0]*x[:,2],x[:,1]*x[:,2]))
 x = torch.tensor([[float(v) for v in row] for row in list(csv.reader((p/'H44-design.csv').open()))[1:]])
-F = torch.tensor(features(x[:8].numpy().astype(np.int64))).repeat(2,1)
+F = torch.tensor(features(x[:8].numpy().astype(np.int64)),dtype=torch.float64).repeat(2,1)
 if 'torchoed' not in runtime:
     t = time.perf_counter(); a = minimum_aberration(10,64,blocks=4)
     h43 = dict(wlp=word_length_pattern(a['design']).tolist(),confounded=confounded(a['design'],a['block'])); times = dict(H43=time.perf_counter()-t)

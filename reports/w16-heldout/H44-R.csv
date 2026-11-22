@@ -1,0 +1,5 @@
+"parameter","type","power"
+"(Intercept)","parameter.power.mc",0.523
+"A","parameter.power.mc",0.7322
+"B","parameter.power.mc",0.2559
+"C","parameter.power.mc",0.0465

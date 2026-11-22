@@ -1,0 +1,90 @@
+{
+  "H43": {
+    "torchoed": {
+      "wlp": [
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        8.0,
+        4.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "confounded": []
+    },
+    "reference": {
+      "wlp": [
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        8.0,
+        4.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "confounded": []
+    },
+    "verdict": "MATCH",
+    "first_differing_word_length": null,
+    "run_id": "45009364423",
+    "source_sha": "3f1c4531c88fb4215acdad609551b0cf4d7a2785",
+    "R_version": "R version 4.5.2 (2025-10-31)",
+    "FrF2": "2.3-5",
+    "skpr": "1.9.2"
+  },
+  "H44": {
+    "torchoed": [
+      0.5107,
+      0.7336,
+      0.2561,
+      0.0441
+    ],
+    "reference": [
+      0.523,
+      0.7322,
+      0.2559,
+      0.0465
+    ],
+    "verdict": "MATCH",
+    "worst_z": 1.7406031030156741,
+    "run_id": "45009364423",
+    "source_sha": "3f1c4531c88fb4215acdad609551b0cf4d7a2785",
+    "R_version": "R version 4.5.2 (2025-10-31)",
+    "FrF2": "2.3-5",
+    "skpr": "1.9.2"
+  },
+  "H45": {
+    "torchoed": "13/4",
+    "reference": "13/4",
+    "delta": "0",
+    "verdict": "MATCH",
+    "feasible_assignments": 960,
+    "minimum_count": 48,
+    "total_assignments": 16384,
+    "ids": [
+      14,
+      5,
+      12,
+      7,
+      11,
+      8,
+      1,
+      2
+    ],
+    "independent_fraction_check": "PASS"
+  },
+  "environment": {
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.4",
+    "sympy": "1.14.0",
+    "threads": 1,
+    "dtype": "float64",
+    "device": "CPU"
+  }
+}

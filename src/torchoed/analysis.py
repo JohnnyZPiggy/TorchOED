@@ -17,7 +17,8 @@ def _f_survival(f, d1, d2):
     return torch.where(f <= 0, 1., torch.where(f.isinf(), 0., p))
 
 
-def fit_least_squares(X, Y, *, terms=None, intercept=True):
+def fit_least_squares(X: torch.Tensor, Y: torch.Tensor, *, terms: tuple[int, ...] | None = None,
+                      intercept: bool = True) -> dict[str, torch.Tensor | int | dict[str, torch.Tensor | int] | None]:
     """Fit full-rank OLS; return coefficients, type I ANOVA, LOF and diagnostics.
 
     X must be float64, n > p. Y is (n,) or (n,J) on X's device.

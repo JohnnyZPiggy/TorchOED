@@ -474,3 +474,73 @@ def mixture_vertices(lower: list[int | float | Fraction | str] | tuple[int | flo
                 faces.add(face)
         rows.extend(sorted(tuple(sum(v[j] for v in face) / len(face) for j in range(q)) for face in faces))
     return torch.tensor([[float(x) for x in row] for row in rows], dtype=dtype, device=device)
+
+
+def _oa_field(p, k):
+    """GF(p^k) labels and tables; first quotient with no zero divisors."""
+    q = p ** k
+    digits = [tuple((v // p ** i) % p for i in range(k)) for v in range(q)]
+    add = [[sum((a + b) % p * p ** i for i, (a, b) in enumerate(zip(x, y)))
+            for y in digits] for x in digits]
+    for label in range(q):
+        g = digits[label]
+        mul = []
+        for x in digits:
+            row = []
+            for y in digits:
+                c = [0] * (2 * k - 1)
+                for i, a in enumerate(x):
+                    for j, b in enumerate(y):
+                        c[i + j] += a * b
+                for degree in range(2 * k - 2, k - 1, -1):
+                    for i in range(k):
+                        c[degree - k + i] -= c[degree] * g[i]
+                row.append(sum(c[i] % p * p ** i for i in range(k)))
+            mul.append(row)
+        if all(mul[a][b] != 0 for a in range(1, q) for b in range(1, q)):
+            return digits, add, mul
+
+
+def orthogonal_array(levels, *, device=None, max_elements=1_000_000):
+    """Strength-2 GF(q)/replacement or PB array. See P2 gate sections 128–130.
+
+    Labels are int64, in input factor order. Run size is minimal within this
+    family, not among all orthogonal arrays. Mixed primes are unsupported.
+    """
+    if not isinstance(levels, (tuple, list)) or not levels or any(type(s) is not int or s < 2 for s in levels):
+        raise ValueError("levels must be a nonempty tuple/list of Python ints >= 2")
+    q = max(levels)
+    p = next(d for d in range(2, q + 1) if q % d == 0)
+    k, power = 0, 1
+    while power < q:
+        power *= p
+        k += 1
+    if power != q or any(s not in (p, q) for s in levels):
+        raise ValueError("levels must use one prime and at most its largest power")
+    nq = levels.count(q) if k > 1 else 0
+    np = len(levels) - nq
+    r, m = (q - 1) // (p - 1), 1
+    while nq > (q ** m - 1) // (q - 1) or np > ((q ** m - 1) // (q - 1) - nq) * r:
+        m += 1
+    n = q ** m
+    nh = 4 * ((len(levels) + 4) // 4) if q == 2 and len(levels) <= 47 else n
+    budget((min(n, nh), len(levels)), max_elements)
+    if nh < n:
+        return ((plackett_burman(nh, device=device)[:, :len(levels)] + 1) / 2).to(torch.int64)
+    digits, add, mul = _oa_field(p, k)
+    points = [a for a in product(range(q), repeat=m) if any(a) and next(v for v in a if v) == 1]
+    functionals = [a for a in product(range(p), repeat=k) if any(a) and next(v for v in a if v) == 1]
+    specs = [(a, None) for a in points[:nq]]
+    specs += [(a, lam) for a in points[nq:] for lam in functionals][:np]
+    high, low = iter(specs[:nq]), iter(specs[nq:])
+    specs = [next(high if s == q and k > 1 else low) for s in levels]
+    rows = []
+    for u in product(range(q), repeat=m):
+        row = []
+        for a, lam in specs:
+            v = 0
+            for x, y in zip(a, u):
+                v = add[v][mul[x][y]]
+            row.append(v if lam is None else sum(x * y for x, y in zip(lam, digits[v])) % p)
+        rows.append(row)
+    return torch.tensor(rows, dtype=torch.int64, device=device)

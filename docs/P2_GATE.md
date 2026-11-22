@@ -1242,4 +1242,3 @@ Weighted or generalized least squares, rank-deficient (aliased) models, type II/
 - Return value and dtype unchanged: an `m × q` tensor, vertices then requested centroids (§126.5).
 - One code path: the item 3 / item 5 enumeration replaces the box loops, because item 4 makes the box case a special case with the same system count `q · 2^{q−1}`.
 - Cost: `O(C(q + K, q − 1) · 2^{q−1} · q³)` exact operations for vertices, plus the face enumeration. This is intended for the textbook sizes (`q ≤ 8`, `K ≤ 4`). No length cap.
-

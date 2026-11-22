@@ -218,7 +218,7 @@ D, A and I use the same engine and support `fixed_ids`. I uses the **candidate-a
 
 Use `simplex_lattice(q, m)` for the `{q, m}` simplex lattice: every row is a mixture of `q` components whose proportions are multiples of `1/m`. Its rows are valid candidates for `scheffe_features` and `optimal_design` too.
 
-Use `simplex_centroid` for one equal-proportion point per nonempty subset, or `mixture_vertices` for box-constrained vertices and face centroids. Centroids average the face's extreme vertices. Decimal float bounds are interpreted exactly as typed; pass `"1/3"` or `Fraction(1, 3)` for an exact third, because the float `1/3` repeated three times is below one in this decimal convention.
+Use `simplex_centroid` for one equal-proportion point per nonempty subset, or `mixture_vertices` for box- or linearly constrained vertices and face centroids. Centroids average the face's extreme vertices. Decimal float bounds are interpreted exactly as typed; pass `"1/3"` or `Fraction(1, 3)` for an exact third, because the float `1/3` repeated three times is below one in this decimal convention.
 
 ```python
 from torchoed import simplex_centroid, mixture_vertices
@@ -227,6 +227,21 @@ C = simplex_centroid(3)
 V = mixture_vertices([0.2, 0.1, 0.1], [0.6, 0.5, 0.6], face_dims=(1, 2))
 assert C.shape == (7, 3)
 assert V.shape == (13, 3)  # six vertices, six edge means, one overall mean
+```
+
+General constraints are `(a, lo, hi)` meaning `lo <= a @ x <= hi`, with either side optionally `None`; a ratio such as `x1 >= x2` is `([1, -1, 0], 0, None)` (see gate §126–§127).
+
+```python
+V = mixture_vertices([.1, .1, .1], [.6, 1, 1],
+                     constraints=[([1, -1, 0], 0, None)], face_dims=(1, 2))
+assert V.shape == (9, 3)  # four vertices, four edge means, one overall mean
+assert torch.allclose(V[:4], V.new_tensor([[.1, .1, .8], [.45, .45, .1],
+                                        [.6, .1, .3], [.6, .3, .1]]), atol=1e-15, rtol=0)
+assert torch.allclose(V[-1], V.new_tensor([7/16, 19/80, 13/40]), atol=1e-15, rtol=0)
+r = optimal_design(scheffe_features(V), 6, criterion="D", generator=torch.Generator().manual_seed(0))
+runs = V[r["ids"]]
+assert torch.all(runs[:, 0] >= runs[:, 1] - 1e-12)
+assert torch.allclose(runs.sum(dim=1), runs.new_ones(6), atol=1e-12, rtol=0)
 ```
 
 Cross mixture and process features with `mixture_process_features`; decode selected IDs by quotient and remainder:

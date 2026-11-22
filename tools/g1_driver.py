@@ -1,4 +1,4 @@
-"""G1 night 2: frozen calls, bounded session, per-cell artifact writes."""
+"""G1 final continuation: frozen calls, bounded session, per-cell artifact writes."""
 import json, os, pathlib, subprocess, sys, time
 if '--cell' in sys.argv:
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -32,7 +32,7 @@ def cell(kind,dev,size,warmup=False):
     row=dict(status='NOT_RUN',reason='internal wall budget exhausted')
     if remaining>0:
         try:
-            r=subprocess.run([sys.executable,'-B','tools/g1_driver.py','--cell',str(kind),dev,str(size)],cwd=root,capture_output=True,text=True,timeout=min(1200,remaining))
+            r=subprocess.run([sys.executable,'-B','tools/g1_driver.py','--cell',str(kind),dev,str(size)],cwd=root,capture_output=True,text=True,timeout=min(2700,remaining))
             row=json.loads(r.stdout) if r.returncode==0 else dict(status='ERROR',error=r.stderr)
         except subprocess.TimeoutExpired: row=dict(status='TIMEOUT')
     row.setdefault('status','PASS')

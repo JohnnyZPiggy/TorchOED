@@ -1,0 +1,303 @@
+{
+  "run_id": "45045947960",
+  "source_sha": "46948f6552af978bc8ee09672378fcf449d31e10",
+  "versions": {
+    "R": "R version 4.5.2 (2025-10-31)",
+    "rsm": "2.10.6",
+    "python": "3.14.6",
+    "torch": "2.14.1+cpu"
+  },
+  "device": "cpu",
+  "dtype": "float64",
+  "tolerance": 1e-08,
+  "cases": {
+    "warpbreaks": {
+      "verdict": "MATCH",
+      "df": [
+        50,
+        2,
+        48
+      ],
+      "groups": {
+        "coef": {
+          "max_difference": 1.2297855042001728e-15,
+          "index": 1,
+          "torch": -5.7777777777777874,
+          "R": -5.77777777777778,
+          "metric": "relative"
+        },
+        "se": {
+          "max_difference": 1.2614940363510004e-15,
+          "index": 2,
+          "torch": 3.872377647127835,
+          "R": 3.87237764712784,
+          "metric": "relative"
+        },
+        "t": {
+          "max_difference": 2.716870759818101e-15,
+          "index": 0,
+          "torch": 12.422666711928734,
+          "R": 12.4226667119287,
+          "metric": "relative"
+        },
+        "p_t": {
+          "max_difference": 2.498001805406602e-16,
+          "index": 1,
+          "torch": 0.07361366898060395,
+          "R": 0.0736136689806042,
+          "metric": "absolute"
+        },
+        "residuals": {
+          "max_difference": 1.478817068800707e-14,
+          "index": 11,
+          "torch": -0.2777777777777821,
+          "R": -0.277777777777778,
+          "metric": "relative"
+        },
+        "leverage": {
+          "max_difference": 7.494005416219815e-16,
+          "index": 2,
+          "torch": 0.07407407407407406,
+          "R": 0.074074074074074,
+          "metric": "relative"
+        },
+        "studentized": {
+          "max_difference": 1.7452588413310827e-14,
+          "index": 11,
+          "torch": -0.024849085919166434,
+          "R": -0.024849085919166,
+          "metric": "relative"
+        },
+        "cooks": {
+          "max_difference": 3.3059517489727846e-14,
+          "index": 11,
+          "torch": 1.2349541420362309e-05,
+          "R": 1.23495414203619e-05,
+          "metric": "relative"
+        },
+        "anova.df": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 1.0,
+          "R": 1.0,
+          "metric": "relative"
+        },
+        "anova.ss": {
+          "max_difference": 3.1532961646158268e-15,
+          "index": 0,
+          "torch": 450.66666666666845,
+          "R": 450.666666666667,
+          "metric": "relative"
+        },
+        "anova.f": {
+          "max_difference": 2.1278092152587064e-15,
+          "index": 0,
+          "torch": 3.3393160000658773,
+          "R": 3.33931600006587,
+          "metric": "relative"
+        },
+        "anova.p": {
+          "max_difference": 3.608224830031759e-16,
+          "index": 0,
+          "torch": 0.07361366898060384,
+          "R": 0.0736136689806042,
+          "metric": "absolute"
+        },
+        "anova.ss_resid": {
+          "max_difference": 1.3478210989373389e-16,
+          "index": 0,
+          "torch": 6747.888888888889,
+          "R": 6747.88888888889,
+          "metric": "relative"
+        },
+        "lack_of_fit.df_lof": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 2.0,
+          "R": 2.0,
+          "metric": "relative"
+        },
+        "lack_of_fit.ss_lof": {
+          "max_difference": 1.7005787360020089e-15,
+          "index": 0,
+          "torch": 1002.7777777777783,
+          "R": 1002.77777777778,
+          "metric": "relative"
+        },
+        "lack_of_fit.df_pe": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 48.0,
+          "R": 48.0,
+          "metric": "relative"
+        },
+        "lack_of_fit.ss_pe": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 5745.11111111111,
+          "R": 5745.11111111111,
+          "metric": "relative"
+        },
+        "lack_of_fit.f": {
+          "max_difference": 1.0601143436983978e-15,
+          "index": 0,
+          "torch": 4.189068966851045,
+          "R": 4.18906896685105,
+          "metric": "relative"
+        },
+        "lack_of_fit.p": {
+          "max_difference": 2.220446049250313e-16,
+          "index": 0,
+          "torch": 0.02104419072786312,
+          "R": 0.0210441907278629,
+          "metric": "absolute"
+        }
+      }
+    },
+    "ChemReact": {
+      "verdict": "NO MATCH",
+      "df": [
+        7,
+        3,
+        4
+      ],
+      "groups": {
+        "coef": {
+          "max_difference": 8.467537287301937,
+          "index": 6,
+          "torch": -0.9334421609128093,
+          "R": 0.125000000000009,
+          "metric": "relative"
+        },
+        "se": {
+          "max_difference": 0.3584325759643269,
+          "index": 4,
+          "torch": 0.08159231260932877,
+          "R": 0.06006357183492,
+          "metric": "relative"
+        },
+        "t": {
+          "max_difference": 11.144145913299216,
+          "index": 6,
+          "torch": -15.54090328624317,
+          "R": 1.53200707275599,
+          "metric": "relative"
+        },
+        "p_t": {
+          "max_difference": 0.1693818521479798,
+          "index": 4,
+          "torch": 0.16938196047186826,
+          "R": 1.08323888461612e-07,
+          "metric": "absolute"
+        },
+        "residuals": {
+          "max_difference": 2.9690325680176588e-12,
+          "index": 3,
+          "torch": 0.011317354377155198,
+          "R": 0.0113173543771888,
+          "metric": "relative"
+        },
+        "leverage": {
+          "max_difference": 1.9819875592060917e-15,
+          "index": 7,
+          "torch": 0.23806647184742852,
+          "R": 0.238066471847429,
+          "metric": "relative"
+        },
+        "studentized": {
+          "max_difference": 2.9685920984689282e-12,
+          "index": 3,
+          "torch": 0.1258849507416183,
+          "R": 0.125884950741992,
+          "metric": "relative"
+        },
+        "cooks": {
+          "max_difference": 5.935087645593401e-12,
+          "index": 3,
+          "torch": 0.0051948866707945875,
+          "R": 0.00519488667082542,
+          "metric": "relative"
+        },
+        "anova.df": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 1.0,
+          "R": 1.0,
+          "metric": "relative"
+        },
+        "anova.ss": {
+          "max_difference": 101.90369631030553,
+          "index": 5,
+          "torch": 6.431481019395043,
+          "R": 0.0625000000000092,
+          "metric": "relative"
+        },
+        "anova.f": {
+          "max_difference": 101.90369631030592,
+          "index": 5,
+          "torch": 241.51967495236374,
+          "R": 2.34704567097436,
+          "metric": "relative"
+        },
+        "anova.p": {
+          "max_difference": 0.16938180388715263,
+          "index": 3,
+          "torch": 0.16938196047186882,
+          "R": 1.56584716193464e-07,
+          "metric": "absolute"
+        },
+        "anova.ss_resid": {
+          "max_difference": 4.91368895680862e-15,
+          "index": 0,
+          "torch": 0.18640455335427608,
+          "R": 0.186404553354277,
+          "metric": "relative"
+        },
+        "lack_of_fit.df_lof": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 3.0,
+          "R": 3.0,
+          "metric": "relative"
+        },
+        "lack_of_fit.ss_lof": {
+          "max_difference": 7.97555677015309e-15,
+          "index": 0,
+          "torch": 0.053071220020946525,
+          "R": 0.0530712200209461,
+          "metric": "relative"
+        },
+        "lack_of_fit.df_pe": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 4.0,
+          "R": 4.0,
+          "metric": "relative"
+        },
+        "lack_of_fit.ss_pe": {
+          "max_difference": 3.330669073875553e-15,
+          "index": 0,
+          "torch": 0.13333333333332956,
+          "R": 0.13333333333333,
+          "metric": "relative"
+        },
+        "lack_of_fit.f": {
+          "max_difference": 1.3806865490625367e-14,
+          "index": 0,
+          "torch": 0.5307122002094803,
+          "R": 0.530712200209473,
+          "metric": "relative"
+        },
+        "lack_of_fit.p": {
+          "max_difference": 3.9968028886505635e-15,
+          "index": 0,
+          "torch": 0.685087753032344,
+          "R": 0.685087753032348,
+          "metric": "absolute"
+        }
+      }
+    }
+  },
+  "matched": 1,
+  "total": 2
+}

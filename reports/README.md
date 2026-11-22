@@ -94,5 +94,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w8-skpr](w8-skpr/) | Published skpr split-plot comparison (#217) | PASS: TorchOED = skpr, shared logdet delta 0 |
 | [w9-skpr-i](w9-skpr-i/) | Published skpr I-optimal split-plot comparison (#237) | NOT_RUN; 0 comparisons; retry CLI_UNAVAILABLE |
 | [w16-signature](w16-signature/) | Published AlgDesign D/A/I designs with dual efficiency floors (#541) | 13 checks PASS; D/I match, published A better; fixed D NOT_CERTIFIED |
-
 | [w16-heldout](w16-heldout/) | W16 frozen H43–H45: blocked MA, Poisson GLM power, strip A; 3/3 MATCH; end-of-week suite time | MATCH |

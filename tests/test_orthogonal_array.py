@@ -44,3 +44,28 @@ def test_trust_boundary():
             orthogonal_array(levels)
     with pytest.raises(ValueError):
         orthogonal_array((2,) * 40, max_elements=1000)
+
+
+def test_binary_covering_array():
+    from torchoed import covering_array
+    for k, n in zip((2, 3, 4, 10, 11, 35, 36), (4, 4, 5, 6, 7, 8, 9)):
+        a = covering_array(k, 2)
+        assert a.shape == (n, k) and a.dtype == torch.int64
+        for cols in combinations(range(k), 2):
+            assert {tuple(row[j] for j in cols) for row in a.tolist()} == set(product(range(2), repeat=2))
+
+
+def test_index_one_covering_array():
+    from torchoed import covering_array
+    for q, t, k in ((3, 2, 4), (4, 2, 5), (5, 3, 6), (2, 3, 3), (9, 3, 4)):
+        a = covering_array(k, q, strength=t)
+        assert a.shape == (q ** t, k) and a.dtype == torch.int64
+        for cols in combinations(range(k), t):
+            assert Counter(tuple(row[j] for j in cols) for row in a.tolist()) == dict.fromkeys(product(range(q), repeat=t), 1)
+
+
+def test_covering_scope():
+    from torchoed import covering_array
+    for args, kw in [((5, 3), {}), ((4, 2), {"strength": 3}), ((3, 6), {}), ((4, 2), {"strength": 4}), ((2, 3), {"strength": 3}), ((3, True), {}), ((10, 2), {"max_elements": 59})]:
+        with pytest.raises(ValueError):
+            covering_array(*args, **kw)

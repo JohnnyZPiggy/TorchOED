@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add optimal binary strength-2 and prime-power index-1 `covering_array` constructors.
+
 - Add `orthogonal_array` for strength-2 GF(q), mixed-level replacement and Plackett–Burman arrays.
 
 - `mixture_vertices` accepts general linear constraints, including ABCD regions, and exact face centroids (§126–§127).

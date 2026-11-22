@@ -240,3 +240,7 @@ Fit float64 full-rank OLS with one QR for `(n,)` or `(n, J)` responses (`n > p`,
 ### `orthogonal_array(levels, *, device=None, max_elements=1_000_000)`
 
 Strength-2 integer orthogonal arrays with factor levels in input order: one prime power, optionally mixed with its prime, using GF(q) replacement or two-level Plackett–Burman. Returns int64 labels starting at zero; run size is minimal within the family, not globally. Mixed primes and strength ≥ 3 are unsupported. See [gate §128–§130](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/P2_GATE.md).
+
+### `covering_array(k, v, *, strength=2, device=None, max_elements=1_000_000)`
+
+Returns deterministic int64 covering arrays with optimal run size: binary strength 2 (Kleitman–Spencer), or prime-power v with strength 2/3 and strength ≤ k ≤ v + 1 (index 1). Other families raise ValueError; the element budget is checked before construction. See [gate §131–§133](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/P2_GATE.md).

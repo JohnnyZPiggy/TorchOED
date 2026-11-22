@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 from fractions import Fraction
 from itertools import combinations, product
 
@@ -31,7 +30,7 @@ def ff2n(k: int, *, device: torch.device | str | None = None, dtype: torch.dtype
                               max_elements=max_elements) - 1).to(dtype=dtype)
 
 
-# First entries of the frozen FrF2 catalogue (P2 gate Â§34).
+# First entries of the frozen FrF2 catalogue (P2 gate Ã‚Â§34).
 _FRF2_GENERATORS = {
     (4, 8): (7,),
     (5, 8): (3, 5),
@@ -62,8 +61,8 @@ def fractional_factorial_generators(k: int, runs: int) -> list[list[int]]:
     """Return fresh zero-based generator lists for a covered FrF2 catalogue size."""
     if type(k) is not int or type(runs) is not int or (k, runs) not in _FRF2_GENERATORS:
         raise ValueError(
-            "(k, runs) must have k in 4â€“7 for 8 runs, 5â€“11 for 16 runs, "
-            "6â€“11 for 32 runs, or 7â€“11 for 64 runs, with Python ints"
+            "(k, runs) must have k in 4Ã¢â‚¬â€œ7 for 8 runs, 5Ã¢â‚¬â€œ11 for 16 runs, "
+            "6Ã¢â‚¬â€œ11 for 32 runs, or 7Ã¢â‚¬â€œ11 for 64 runs, with Python ints"
         )
     m = runs.bit_length() - 1
     return [[c for c in range(m) if g & (1 << c)] for g in _FRF2_GENERATORS[k, runs]]
@@ -100,11 +99,11 @@ def fractional_factorial(
 
 def minimum_aberration(k: int, runs: int, *, blocks: int = 1,
                        dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> dict[str, torch.Tensor | list[list[int]] | list[tuple[int, ...]]]:
-    """First minimum-aberration regular fraction, optionally with unconfounded blocks (Â§108)."""
+    """First minimum-aberration regular fraction, optionally with unconfounded blocks (Ã‚Â§108)."""
     limits = {8: 7, 16: 15, 32: 14, 64: 12}
     if (type(runs) is not int or runs not in limits or type(k) is not int
             or type(blocks) is not int or blocks not in (1, 2, 4, 8)):
-        raise ValueError("covered sizes: runs 8/16/32/64, blocks 1/2/4/8; see Â§108.9")
+        raise ValueError("covered sizes: runs 8/16/32/64, blocks 1/2/4/8; see Ã‚Â§108.9")
     m = runs.bit_length() - 1
     if not m <= k <= (limits[runs] if blocks == 1 else min(11, limits[runs])) or (blocks == 8 and runs > 32):
         raise ValueError("covered sizes: k from log2(runs) to 7/15/14/12 (blocked: at most 11); blocks=8 needs runs<=32")
@@ -300,7 +299,7 @@ def definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: 
 def simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64,
                     device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
     """Return the {q, m} simplex lattice in full_factorial order.
-    For a ScheffÃ© quadratic, drop the q square columns of polynomial_features(X, 2, include_bias=False).
+    For a ScheffÃƒÂ© quadratic, drop the q square columns of polynomial_features(X, 2, include_bias=False).
     """
     integer(q, "q")
     integer(m, "m")
@@ -415,9 +414,12 @@ def _mixture_solve(rows, rhs):
 
 def mixture_vertices(lower: list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
                      upper: list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
-                     *, constraints: Sequence[tuple[Sequence[int | float | Fraction | str],
-                                                    int | float | Fraction | str | None,
-                                                    int | float | Fraction | str | None]] = (),
+                     *, constraints: (list[tuple[list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
+                                               int | float | Fraction | str | None,
+                                               int | float | Fraction | str | None]] |
+                                     tuple[tuple[list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
+                                                 int | float | Fraction | str | None,
+                                                 int | float | Fraction | str | None], ...]) = (),
                      face_dims: tuple[int, ...] | list[int] = (), dtype: torch.dtype = torch.float64,
                      device: torch.device | str | None = None) -> torch.Tensor:
     """Exact linearly constrained simplex vertices and requested face centroids.

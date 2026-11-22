@@ -63,3 +63,10 @@ GPU search wins only in these measured pairs: D k=5 m=10000 (1.67x); D k=3 m=100
 Local checks: 21 PASS, 0 FAIL (saved search objectives at 1e-9 relative and C3 CPU powers/counts exact). Search pair and C3 statistical agreement is recorded separately, as-is, in results.json.
 CUDA A/I failed on CPU/CUDA tensor-device mismatches inside pair-move scoring; PyDOE 1.6.0 cells failed because scipy.linalg.inv rejects assume_a, or reached the per-cell timeout. Cell timeouts remain recorded. No tuning, source workaround, extra allocation or re-timing; errors are not objective mismatches. Scientific DoD remains partial where methods fail. This session uses the accepted X.device workaround, so it does not independently test the #510 library fix.
 All six allocation attempts have confirmed cleanup; final fresh usage 0 assignments, 133.84 CU; cumulative displayed spend 15.35 CU (25 CU cap). CI and final-SHA handoff linked on PR #509. Next: Architect disposition; no further night-1 allocation.
+
+## Night 2 (2026-11-22 CET): allocation blocked
+Driver `f97ed86b5eb46656cb32b7eb098a5187063d89ad`; library source pinned to `d869c1a394e03219eca40256c9c78f1f552bdc96` but not measured. Local PyDOE 1.6.0 / SciPy 1.18.1 import and `inspect.signature(scipy.linalg.inv)` confirm assume_a support. Driver compilation PASS.
+Preflight PASS; H100 ALLOCATION_FAILED (23.9305 s), then A100 ALLOCATION_FAILED (53.8765 s). No session created and no science cells run or re-timed. New objective rescoring, CPU/CUDA agreement and #510 GPU confirmation NOT_RUN; historical evidence above is unchanged.
+Both attempts: cleanup PASS, assignments 0; final fresh readback 133.84 CU, night-2 spend 0.00 CU; cumulative spend 15.35/25 CU from original 149.19 CU, 9.65 CU remain.
+Work timeout 4500 s projects 7.88 CU from the observed night-1 burn rate; internal 3600 s budget leaves 900 s for final artifact transfer. Host monitor stops at cumulative 24.5 CU.
+Next: final night 3, 2026-11-23 00:30-06:30 CET, preferably at or after 02:00, same frozen plan. No further night-2 allocation.

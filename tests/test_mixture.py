@@ -141,3 +141,53 @@ def test_mixture_process_rows_information_and_boundary():
     with pytest.raises(ValueError): mixture_process_features(s,p.float())
     with pytest.raises(TypeError): mixture_process_features(s,[[1.]])
     with pytest.raises(ValueError): mixture_process_features(s,p,max_elements=935)
+
+
+def test_mixture_constraints_box_redundant():
+    bounds = ([.2, .1, .1], [.6, .5, .6])
+    expected = mixture_vertices(*bounds, face_dims=(1, 2))
+    assert torch.equal(expected, mixture_vertices(*bounds, constraints=(), face_dims=(1, 2)))
+    assert torch.equal(expected, mixture_vertices(*bounds, constraints=[([1, 1, 0], 0, 1)], face_dims=(1, 2)))
+    bounds = ([.2, 0, 0], [.2, 1, 1])
+    expected = mixture_vertices(*bounds, face_dims=(1, 2))
+    assert expected.shape == (3, 3)  # two vertices, one edge; no 2-face
+    assert torch.equal(expected, mixture_vertices(*bounds, constraints=[([1, 0, 0], 0, None)], face_dims=(1, 2)))
+
+
+def test_mixture_constraints_hand_solved():
+    expected = [('0','1/5','4/5'), ('0','4/5','1/5'), ('1/5','0','4/5'), ('4/5','0','1/5'),
+                ('0','1/2','1/2'), ('1/10','1/10','4/5'), ('2/5','2/5','1/5'), ('1/2','0','1/2'),
+                ('1/4','1/4','1/2')]
+    actual = mixture_vertices([0]*3, [1]*3, constraints=[([1, 1, 0], '1/5', '4/5')], face_dims=(1, 2))
+    assert actual.tolist() == [[float(Fraction(x)) for x in row] for row in expected]
+
+
+def test_mixture_constraints_vertex_oracle():
+    # Independent Cramer's rule and determinant minors; no production solve/rank.
+    from itertools import permutations
+    def det(a):
+        return sum((-1)**sum(p[i] > p[j] for i in range(len(p)) for j in range(i+1, len(p))) *
+                   math.prod(a[i][p[i]] for i in range(len(p))) for p in permutations(range(len(a))))
+    one = [Fraction(1)]*4
+    normals = [[Fraction(i == j) for i in range(4)] for j in range(4)]
+    halfspaces = [(a, Fraction(b), sign) for a in normals for b, sign in ((0, 1), (1, -1))]
+    halfspaces += [(list(map(Fraction, a)), Fraction(b), sign) for a, b, sign in
+                   (([1, 1, 0, 0], '1/4', 1), ([1, 1, 0, 0], '3/4', -1), ([0, 1, 1, 0], '1/2', -1))]
+    feasible = lambda v: all(sign*(sum(x*y for x,y in zip(a,v))-b) >= 0 for a,b,sign in halfspaces)
+    expected = set()
+    for subset in combinations(halfspaces, 3):
+        a = [one] + [row for row, _, _ in subset]
+        denominator = det(a)
+        if not denominator:
+            continue
+        rhs = [Fraction(1)] + [b for _, b, _ in subset]
+        v = tuple(det([[rhs[i] if k == j else x for k,x in enumerate(row)] for i,row in enumerate(a)]) / denominator for j in range(4))
+        if feasible(v):
+            expected.add(v)
+    actual = mixture_vertices([0]*4, [1]*4, constraints=[([1,1,0,0], '1/4', '3/4'), ([0,1,1,0], None, '1/2')])
+    assert actual.tolist() == [[float(x) for x in v] for v in sorted(expected)]
+    for row in actual.tolist():
+        v = tuple(Fraction(x).limit_denominator(1000) for x in row)
+        assert v in expected and sum(v) == 1 and feasible(v)
+        active = [a for a,b,_ in halfspaces if sum(x*y for x,y in zip(a,v)) == b]
+        assert any(det([one] + list(s)) != 0 for s in combinations(active, 3))

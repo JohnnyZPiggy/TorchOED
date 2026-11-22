@@ -52,9 +52,9 @@ Return coded Box–Behnken rows followed by center rows for 3 to 7 factors. Uses
 
 One point per nonempty component subset, by subset size then lexicographic support; `q >= 2`.
 
-`mixture_vertices(lower, upper, *, face_dims=(), dtype=torch.float64, device=None) -> Tensor`
+`mixture_vertices(lower, upper, *, constraints=(), face_dims=(), dtype=torch.float64, device=None) -> Tensor`
 
-Box-constrained simplex vertices in exact lexicographic order, then vertex-mean centroids for each requested face dimension (1 through q−1). Bounds are int, float, Fraction or str; floats use their shortest decimal. Invalid or infeasible bounds raise `ValueError`. See [mixture guide](industrial.md#mixture-designs).
+Linearly constrained simplex vertices in exact lexicographic order, then vertex-mean centroids for each requested face dimension (1 through q−1). Bounds and constraint values are int, float, Fraction or str; floats use their shortest decimal. Each `constraints` item is `(a, lo, hi)`, imposing `lo <= a @ x <= hi`; `a` has q entries and either side may be `None`, but not both. Equalities and lower-dimensional regions are allowed; dimensions above the region's add no rows. Invalid inputs or empty regions raise `ValueError`. Exact enumeration is intended for textbook sizes (q ≤ 8, K ≤ 4); see gate §126–§127 and the [mixture guide](industrial.md#mixture-designs).
 
 `simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor`
 

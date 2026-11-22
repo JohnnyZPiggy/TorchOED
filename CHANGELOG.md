@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `mixture_vertices` accepts general linear constraints, including ABCD regions, and exact face centroids (§126–§127).
+
 ### Changed
 
 - A/I two-swap search keeps candidate screening on large candidate sets by bounding its workspace; k = 5 quadratic, n = 42, m = 5·10³ now finishes on CPU (#527, #531).

@@ -387,53 +387,90 @@ def _fraction_rank(rows):
     return len(basis)
 
 
+def _mixture_fraction(value):
+    if isinstance(value, bool) or not isinstance(value, (int, float, Fraction, str)):
+        raise ValueError("values must be int, float, Fraction or str")
+    try:
+        return Fraction(repr(value)) if isinstance(value, float) else Fraction(value)
+    except (ValueError, ZeroDivisionError, OverflowError) as exc:
+        raise ValueError("value does not convert to Fraction") from exc
+
+
+def _mixture_solve(rows, rhs):
+    a = [list(row) + [value] for row, value in zip(rows, rhs)]
+    for j in range(len(a)):
+        pivot = next((i for i in range(j, len(a)) if a[i][j]), None)
+        if pivot is None:
+            return None
+        a[j], a[pivot] = a[pivot], a[j]
+        scale = a[j][j]
+        a[j] = [x / scale for x in a[j]]
+        for i in range(len(a)):
+            if i != j:
+                scale = a[i][j]
+                a[i] = [x - scale*y for x, y in zip(a[i], a[j])]
+    return tuple(row[-1] for row in a)
+
+
 def mixture_vertices(lower: list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
                      upper: list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
-                     *, face_dims: tuple[int, ...] | list[int] = (), dtype: torch.dtype = torch.float64,
+                     *, constraints: (list[tuple[list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
+                                               int | float | Fraction | str | None,
+                                               int | float | Fraction | str | None]] |
+                                     tuple[tuple[list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
+                                                 int | float | Fraction | str | None,
+                                                 int | float | Fraction | str | None], ...]) = (),
+                     face_dims: tuple[int, ...] | list[int] = (), dtype: torch.dtype = torch.float64,
                      device: torch.device | str | None = None) -> torch.Tensor:
-    """Exact box-constrained simplex vertices, followed by requested face centroids.
+    """Exact linearly constrained simplex vertices and requested face centroids.
 
     Float bounds mean their shortest decimal; use strings for exact ratios like '1/3'.
     Face centroids average extreme vertices, rather than volume.
     """
     if len(lower) != len(upper) or len(lower) < 2:
         raise ValueError("bounds must have equal lengths >= 2")
-    bounds = []
-    for values in (lower, upper):
-        converted = []
-        for value in values:
-            if isinstance(value, bool) or not isinstance(value, (int, float, Fraction, str)):
-                raise ValueError("bounds must be int, float, Fraction or str")
-            try:
-                converted.append(Fraction(repr(value)) if isinstance(value, float) else Fraction(value))
-            except (ValueError, ZeroDivisionError, OverflowError) as exc:
-                raise ValueError("bound does not convert to Fraction") from exc
-        bounds.append(converted)
-    lower, upper = bounds
+    lower, upper = [[_mixture_fraction(x) for x in values] for values in (lower, upper)]
     q = len(lower)
     if any(not 0 <= l <= u <= 1 for l, u in zip(lower, upper)) or not sum(lower) <= 1 <= sum(upper):
         raise ValueError("invalid bounds or empty mixture region")
     face_dims = tuple(face_dims)
     if any(type(d) is not int or not 1 <= d < q for d in face_dims):
         raise ValueError("face dimensions must be ints from 1 to q - 1")
+    normals = [tuple(Fraction(i == j) for i in range(q)) for j in range(q)]
+    sides = list(zip(lower, upper))
+    for a, lo, hi in constraints:
+        if len(a) != q or (lo is None and hi is None):
+            raise ValueError("constraint requires q coefficients and at least one side")
+        lo, hi = [None if x is None else _mixture_fraction(x) for x in (lo, hi)]
+        if lo is not None and hi is not None and lo > hi:
+            raise ValueError("constraint lower side exceeds upper side")
+        normals.append(tuple(_mixture_fraction(x) for x in a))
+        sides.append((lo, hi))
+    one = [Fraction(1)] * q
+    def systems(count):
+        for indices in combinations(range(len(normals)), count):
+            for values in product(*[tuple(x for x in sides[j] if x is not None) for j in indices]):
+                yield [one] + [normals[j] for j in indices], (Fraction(1),) + values
+    def dot(a, v):
+        return sum(x*y for x, y in zip(a, v))
     vertices = set()
-    for free in range(q):
-        fixed = [j for j in range(q) if j != free]
-        for values in product(*[(lower[j], upper[j]) for j in fixed]):
-            row = list(lower)
-            for j, value in zip(fixed, values):
-                row[j] = value
-            row[free] = 1 - sum(values)
-            if lower[free] <= row[free] <= upper[free]:
-                vertices.add(tuple(row))
+    for matrix, rhs in systems(q - 1):
+        row = _mixture_solve(matrix, rhs)
+        if row is not None and all((lo is None or lo <= dot(a, row)) and
+                                   (hi is None or dot(a, row) <= hi)
+                                   for a, (lo, hi) in zip(normals, sides)):
+            vertices.add(row)
+    if not vertices:
+        raise ValueError("empty mixture region")
     vertices = sorted(vertices)
     rows = list(vertices)
     for d in face_dims:
         faces = set()
-        for fixed in combinations(range(q), q - 1 - d):
-            for values in product(*[(lower[j], upper[j]) for j in fixed]):
-                face = tuple(v for v in vertices if all(v[j] == b for j, b in zip(fixed, values)))
-                if face and _fraction_rank([[x - y for x, y in zip(v, face[0])] for v in face[1:]]) == d:
-                    faces.add(face)
+        for matrix, rhs in systems(q - 1 - d):
+            if _fraction_rank(matrix) != q - d:
+                continue
+            face = tuple(v for v in vertices if all(dot(a, v) == b for a, b in zip(matrix, rhs)))
+            if face and _fraction_rank([[x - y for x, y in zip(v, face[0])] for v in face[1:]]) == d:
+                faces.add(face)
         rows.extend(sorted(tuple(sum(v[j] for v in face) / len(face) for j in range(q)) for face in faces))
     return torch.tensor([[float(x) for x in row] for row in rows], dtype=dtype, device=device)

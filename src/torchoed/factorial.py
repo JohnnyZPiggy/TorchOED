@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from fractions import Fraction
 from itertools import combinations, product
 
@@ -30,7 +31,7 @@ def ff2n(k: int, *, device: torch.device | str | None = None, dtype: torch.dtype
                               max_elements=max_elements) - 1).to(dtype=dtype)
 
 
-# First entries of the frozen FrF2 catalogue (P2 gate §34).
+# First entries of the frozen FrF2 catalogue (P2 gate Â§34).
 _FRF2_GENERATORS = {
     (4, 8): (7,),
     (5, 8): (3, 5),
@@ -61,8 +62,8 @@ def fractional_factorial_generators(k: int, runs: int) -> list[list[int]]:
     """Return fresh zero-based generator lists for a covered FrF2 catalogue size."""
     if type(k) is not int or type(runs) is not int or (k, runs) not in _FRF2_GENERATORS:
         raise ValueError(
-            "(k, runs) must have k in 4–7 for 8 runs, 5–11 for 16 runs, "
-            "6–11 for 32 runs, or 7–11 for 64 runs, with Python ints"
+            "(k, runs) must have k in 4â€“7 for 8 runs, 5â€“11 for 16 runs, "
+            "6â€“11 for 32 runs, or 7â€“11 for 64 runs, with Python ints"
         )
     m = runs.bit_length() - 1
     return [[c for c in range(m) if g & (1 << c)] for g in _FRF2_GENERATORS[k, runs]]
@@ -99,11 +100,11 @@ def fractional_factorial(
 
 def minimum_aberration(k: int, runs: int, *, blocks: int = 1,
                        dtype: torch.dtype = torch.float64, device: torch.device | str | None = None) -> dict[str, torch.Tensor | list[list[int]] | list[tuple[int, ...]]]:
-    """First minimum-aberration regular fraction, optionally with unconfounded blocks (§108)."""
+    """First minimum-aberration regular fraction, optionally with unconfounded blocks (Â§108)."""
     limits = {8: 7, 16: 15, 32: 14, 64: 12}
     if (type(runs) is not int or runs not in limits or type(k) is not int
             or type(blocks) is not int or blocks not in (1, 2, 4, 8)):
-        raise ValueError("covered sizes: runs 8/16/32/64, blocks 1/2/4/8; see §108.9")
+        raise ValueError("covered sizes: runs 8/16/32/64, blocks 1/2/4/8; see Â§108.9")
     m = runs.bit_length() - 1
     if not m <= k <= (limits[runs] if blocks == 1 else min(11, limits[runs])) or (blocks == 8 and runs > 32):
         raise ValueError("covered sizes: k from log2(runs) to 7/15/14/12 (blocked: at most 11); blocks=8 needs runs<=32")
@@ -299,7 +300,7 @@ def definitive_screening(k: int, *, dtype: torch.dtype = torch.float64, device: 
 def simplex_lattice(q: int, m: int, *, dtype: torch.dtype = torch.float64,
                     device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
     """Return the {q, m} simplex lattice in full_factorial order.
-    For a Scheffé quadratic, drop the q square columns of polynomial_features(X, 2, include_bias=False).
+    For a ScheffÃ© quadratic, drop the q square columns of polynomial_features(X, 2, include_bias=False).
     """
     integer(q, "q")
     integer(m, "m")
@@ -387,53 +388,87 @@ def _fraction_rank(rows):
     return len(basis)
 
 
+def _mixture_fraction(value):
+    if isinstance(value, bool) or not isinstance(value, (int, float, Fraction, str)):
+        raise ValueError("values must be int, float, Fraction or str")
+    try:
+        return Fraction(repr(value)) if isinstance(value, float) else Fraction(value)
+    except (ValueError, ZeroDivisionError, OverflowError) as exc:
+        raise ValueError("value does not convert to Fraction") from exc
+
+
+def _mixture_solve(rows, rhs):
+    a = [list(row) + [value] for row, value in zip(rows, rhs)]
+    for j in range(len(a)):
+        pivot = next((i for i in range(j, len(a)) if a[i][j]), None)
+        if pivot is None:
+            return None
+        a[j], a[pivot] = a[pivot], a[j]
+        scale = a[j][j]
+        a[j] = [x / scale for x in a[j]]
+        for i in range(len(a)):
+            if i != j:
+                scale = a[i][j]
+                a[i] = [x - scale*y for x, y in zip(a[i], a[j])]
+    return tuple(row[-1] for row in a)
+
+
 def mixture_vertices(lower: list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
                      upper: list[int | float | Fraction | str] | tuple[int | float | Fraction | str, ...],
-                     *, face_dims: tuple[int, ...] | list[int] = (), dtype: torch.dtype = torch.float64,
+                     *, constraints: Sequence[tuple[Sequence[int | float | Fraction | str],
+                                                    int | float | Fraction | str | None,
+                                                    int | float | Fraction | str | None]] = (),
+                     face_dims: tuple[int, ...] | list[int] = (), dtype: torch.dtype = torch.float64,
                      device: torch.device | str | None = None) -> torch.Tensor:
-    """Exact box-constrained simplex vertices, followed by requested face centroids.
+    """Exact linearly constrained simplex vertices and requested face centroids.
 
     Float bounds mean their shortest decimal; use strings for exact ratios like '1/3'.
     Face centroids average extreme vertices, rather than volume.
     """
     if len(lower) != len(upper) or len(lower) < 2:
         raise ValueError("bounds must have equal lengths >= 2")
-    bounds = []
-    for values in (lower, upper):
-        converted = []
-        for value in values:
-            if isinstance(value, bool) or not isinstance(value, (int, float, Fraction, str)):
-                raise ValueError("bounds must be int, float, Fraction or str")
-            try:
-                converted.append(Fraction(repr(value)) if isinstance(value, float) else Fraction(value))
-            except (ValueError, ZeroDivisionError, OverflowError) as exc:
-                raise ValueError("bound does not convert to Fraction") from exc
-        bounds.append(converted)
-    lower, upper = bounds
+    lower, upper = [[_mixture_fraction(x) for x in values] for values in (lower, upper)]
     q = len(lower)
     if any(not 0 <= l <= u <= 1 for l, u in zip(lower, upper)) or not sum(lower) <= 1 <= sum(upper):
         raise ValueError("invalid bounds or empty mixture region")
     face_dims = tuple(face_dims)
     if any(type(d) is not int or not 1 <= d < q for d in face_dims):
         raise ValueError("face dimensions must be ints from 1 to q - 1")
+    normals = [tuple(Fraction(i == j) for i in range(q)) for j in range(q)]
+    sides = list(zip(lower, upper))
+    for a, lo, hi in constraints:
+        if len(a) != q or (lo is None and hi is None):
+            raise ValueError("constraint requires q coefficients and at least one side")
+        lo, hi = [None if x is None else _mixture_fraction(x) for x in (lo, hi)]
+        if lo is not None and hi is not None and lo > hi:
+            raise ValueError("constraint lower side exceeds upper side")
+        normals.append(tuple(_mixture_fraction(x) for x in a))
+        sides.append((lo, hi))
+    one = [Fraction(1)] * q
+    def systems(count):
+        for indices in combinations(range(len(normals)), count):
+            for values in product(*[tuple(x for x in sides[j] if x is not None) for j in indices]):
+                yield [one] + [normals[j] for j in indices], (Fraction(1),) + values
+    def dot(a, v):
+        return sum(x*y for x, y in zip(a, v))
     vertices = set()
-    for free in range(q):
-        fixed = [j for j in range(q) if j != free]
-        for values in product(*[(lower[j], upper[j]) for j in fixed]):
-            row = list(lower)
-            for j, value in zip(fixed, values):
-                row[j] = value
-            row[free] = 1 - sum(values)
-            if lower[free] <= row[free] <= upper[free]:
-                vertices.add(tuple(row))
+    for matrix, rhs in systems(q - 1):
+        row = _mixture_solve(matrix, rhs)
+        if row is not None and all((lo is None or lo <= dot(a, row)) and
+                                   (hi is None or dot(a, row) <= hi)
+                                   for a, (lo, hi) in zip(normals, sides)):
+            vertices.add(row)
+    if not vertices:
+        raise ValueError("empty mixture region")
     vertices = sorted(vertices)
     rows = list(vertices)
     for d in face_dims:
         faces = set()
-        for fixed in combinations(range(q), q - 1 - d):
-            for values in product(*[(lower[j], upper[j]) for j in fixed]):
-                face = tuple(v for v in vertices if all(v[j] == b for j, b in zip(fixed, values)))
-                if face and _fraction_rank([[x - y for x, y in zip(v, face[0])] for v in face[1:]]) == d:
-                    faces.add(face)
+        for matrix, rhs in systems(q - 1 - d):
+            if _fraction_rank(matrix) != q - d:
+                continue
+            face = tuple(v for v in vertices if all(dot(a, v) == b for a, b in zip(matrix, rhs)))
+            if face and _fraction_rank([[x - y for x, y in zip(v, face[0])] for v in face[1:]]) == d:
+                faces.add(face)
         rows.extend(sorted(tuple(sum(v[j] for v in face) / len(face) for j in range(q)) for face in faces))
     return torch.tensor([[float(x) for x in row] for row in rows], dtype=dtype, device=device)

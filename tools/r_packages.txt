@@ -13,3 +13,4 @@ skpr 1.9.2
 mbest 0.6.1
 lme4 2.1-0
 lmerTest 3.2-1
+DoE.base 1.2-5

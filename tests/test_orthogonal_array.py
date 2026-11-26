@@ -66,6 +66,37 @@ def test_index_one_covering_array():
 
 def test_covering_scope():
     from torchoed import covering_array
-    for args, kw in [((5, 3), {}), ((4, 2), {"strength": 3}), ((3, 6), {}), ((4, 2), {"strength": 4}), ((2, 3), {"strength": 3}), ((3, True), {}), ((10, 2), {"max_elements": 59})]:
+    for args, kw in [((4, 2), {"strength": 4}), ((2, 3), {"strength": 3}), ((3, True), {}), ((10, 2), {"max_elements": 59})]:
+        with pytest.raises(ValueError):
+            covering_array(*args, **kw)
+
+
+def test_general_covering_coverage_sizes():
+    from torchoed import covering_array
+    sizes = {(2, 3, 5): 13, (2, 4, 10): 28, (3, 2, 4): 8, (3, 2, 10): 16}
+    for t, v, k in [(2, 3, 5), (2, 4, 10), (2, 6, 4), (2, 6, 13),
+                    (3, 2, 4), (3, 2, 10), (3, 3, 6), (3, 6, 5)]:
+        a = covering_array(k, v, strength=t)
+        assert a.dtype == torch.int64 and a.shape[1] == k
+        if (t, v, k) in sizes:
+            assert len(a) == sizes[t, v, k]
+        rows = a.tolist()
+        for cols in combinations(range(k), t):
+            assert {tuple(row[j] for j in cols) for row in rows} == set(product(range(v), repeat=t))
+
+
+def test_general_covering_rows_needed():
+    from torchoed import covering_array
+    rows = covering_array(13, 3).tolist()
+    for i in range(len(rows)):
+        remaining = rows[:i] + rows[i + 1:]
+        assert any(len({tuple(row[j] for j in cols) for row in remaining}) < 9
+                   for cols in combinations(range(13), 2))
+
+
+def test_general_covering_scope():
+    from torchoed import covering_array
+    assert torch.equal(covering_array(5, 3), covering_array(5, 3))
+    for args, kw in [((9, 7), {}), ((101, 3), {}), ((5, 3), {"strength": 4})]:
         with pytest.raises(ValueError):
             covering_array(*args, **kw)

@@ -1639,3 +1639,72 @@ Mentor: Claude (acting Scientific Mentor at the Scientist's request, 2026-11-21)
 | Aurora-GLM | b (GAMM), c | MIT | 1.0.0, very low adoption | glm() only; lme4 planned | **DO NOT USE (for now)** | REML not yet validated against lme4 |
 
 **Recommendation.** CPU reference: R itself through `.github/workflows/r-oracle.yml` (`lm`, `lme4` + `lmerTest`) for every published-example check, with statsmodels as an in-Python dev-only cross-check for OLS and GLM. GPU path: **build the thin torch path ourselves** for batched OLS, per-term F tests, lack of fit and residual diagnostics (26.6: one factorisation shared by all responses, float64 on GPU; no package offers batched multi-response OLS, and reported tables must not depend on an FP32 path). REML: reuse rather than rebuild — PyStatistics is the only candidate and is **NEEDS CHECK**; if it fails the Oats check, P2.5 implements REML for its fixed structures (blocks, whole plots, strip plots) in torch with the r-oracle check as the gate. No adapter is built before the check task reports.
+
+## 27. General covering arrays for t ∈ {2, 3}, v ≤ 6, k ≤ 100 (W17 G3(a), part 3; Issue #564, 2026-11-23)
+
+Mentor: Claude (acting Scientific Mentor). PROVED = proof given here; OBSERVED = URL and read date, or exact computation in the Mentor sandbox (NumPy 2.5.3, float64 density, exhaustive coverage check with a negative control: deleting a row breaks coverage); CONJECTURE = judgement; NOT_VERIFIED = not read or not checked this session.
+
+### 27.1 Recommended family H (deterministic, integer arrays)
+Bases:
+- (B1) cyclic Latin square OA(v²; 2, 3, v), rows (a, b, a+b mod v), for every v.
+- (B2) index-1 OA(q^t; t, k, q), k ≤ q+1, over GF(q), q ∈ {2,3,4,5,7,8,9}: row = polynomial f with deg f < t; column x ∈ GF(q) holds f(x), and the column ∞ holds the coefficient of x^{t−1} (Bush). For v = 2, t = 3, k = 4: the 8 even-weight words. Here k ≤ q means k ≤ q columns, which keeps the q constant rows f ≡ c.
+- (B3) collapse: any CA over q symbols with every symbol s ≥ v replaced by a symbol < v (prototype: s mod v), so that q ≥ v.
+- (B4) density greedy (DDA type: Colbourn–Cohen–Turban 2004; Bryce–Colbourn 2007 — citations NOT_VERIFIED this session). Add rows until every t-tuple is covered. In each row, repeatedly fix the free (column c, value x) with the largest density D(c, x) = Σ over column sets S ∋ c whose other columns are fixed or free of (#uncovered tuples of S consistent with the fixed values and x) / v^{#free columns of S other than c}. Ties go to the smallest (c, x). Optional variant: seed the array with the v constant rows.
+
+Recursions:
+- (R1) t = 2 product: CA(N; 2, k₁, v) and CA(M; 2, k₂, v) give CA(N + M; 2, k₁k₂, v). Column (i, j) holds A[:, i] in the top N rows and B[:, j] in the bottom M rows.
+- (R2) R1 when both inputs contain the v constant rows: delete the v constant rows of the bottom block. This gives N + M − v rows, and the output again contains the v constant rows.
+- (R3) t = 3 doubling: CA(N; 3, k, v) A and CA(M; 2, k, v) B give CA(N + (v−1)M; 3, 2k, v). The rows are [A | A] and, for d = 1, …, v−1, [B | B + d mod v].
+
+Selection: a dynamic programme over k (k ≤ 100) takes the smallest N among B1–B4, R1–R3 (t = 2: R1/R2 over k₁ ≤ k₂, k₁k₂ ≥ k; t = 3: R3 from ⌈k/2⌉, greedy B4 only for k ≤ 30, because its cost is about k³v³ per step). Columns are truncated to k. Last, one pass deletes rows from the last row to the first: a row goes when every t-tuple it covers is covered by another row. Every step is deterministic. To get the same output on every platform, D(c, x)·v^{t−1} should be computed in integers (it is an integer, PROVED: each term has denominator v^r with r ≤ t−1).
+
+### 27.2 Proofs (all PROVED; each also checked by exhaustive coverage on the instances of 27.3)
+- B1: any two of the columns a, b, a+b determine (a, b).
+- B2: for t columns at distinct field points, f ↦ (f(x₁), …, f(x_t)) is a bijection on polynomials of degree < t (Vandermonde). With ∞ among the columns, fix the leading coefficient; the remaining f of degree < t−1 is determined by t−1 values. Each t-tuple therefore occurs exactly once.
+- B3: rows whose t chosen entries are all < v are unchanged, and in the q-symbol array they already cover every tuple in {0, …, v−1}^t. This holds per column, so it also gives mixed levels (27.5).
+- B4 terminates, and each row covers at least u/v^t new tuples (u = uncovered count). Let E = the expected number of newly covered tuples when the free entries are uniform. For one free c, E(c = x) = D(c, x)·(constant) + (terms without c), so the maximising x never lowers E. The first E is u/v^t > 0, and the completed row covers E ≥ u/v^t tuples (method of conditional expectations).
+- R1: take distinct columns (i, j), (i′, j′). If i ≠ i′, the top block restricted to them is A on columns i, i′, which covers all v² pairs. If i = i′, then j ≠ j′, and the bottom block is B on columns j, j′.
+- R2: a constant row of B gives a constant row of the bottom block, which equals the top-block row from the same constant row of A. So deleting it loses no pair.
+- R3: (a) for three distinct underlying columns, the block [A | A] is A on three distinct columns. (b) Take the columns (i,L), (i,R), (j,X) and a target (a, b, c). If a = b, [A | A] contains it, because A covers (a, c) on columns (i, j). If a ≠ b, let d = b − a mod v. Block d holds (B_i, B_i + d, B_j) when X = L, or (B_i, B_i + d, B_j + d) when X = R. Choose a B row with (B_i, B_j) = (a, c) or (a, c − d).
+- Row deletion keeps coverage by construction.
+
+### 27.3 Sizes (OBSERVED, Mentor sandbox 2026-11-23, before row deletion; all arrays exhaustively verified)
+Each cell is H / IPOG-F, where IPOG-F is the NIST table (Forbes et al., arrays generated by IPOG-F, pages dated 2008-02-01, read 2026-11-23: https://math.nist.gov/coveringarrays/ipof/tables/table.t.v.html with t.v ∈ {2.3, 2.4, 2.5, 2.6, 3.2, 3.3, 3.4, 3.5, 3.6}).
+
+| t | v | k=4 | 5 | 6 | 8 | 10 | 13 | 16 | 20 | 30 | 50 | 100 | max H/IPOG-F |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | 3 | 9/12 | 13/13 | 14/15 | 15/15 | 17/19 | 18/20 | 18/20 | 21/21 | 23/23 | 26/26 | 30/30 | 1.00 |
+| 2 | 4 | 16/20 | 16/22 | 22/24 | 27/27 | 28/29 | 28/33 | 28/35 | 32/37 | 38/41 | 40/46 | 48/52 | 1.00 |
+| 2 | 5 | 25/30 | 25/33 | 25/38 | 40/41 | 45/45 | 45/49 | 45/51 | 45/56 | 50/63 | 65/70 | 65/81 | 1.00 |
+| 2 | 6 | 44/43 | 47/46 | 49/52 | 49/57 | 61/63 | 67/68 | 71/75 | 77/79 | 87/86 | 97/99 | 114/116 | 1.023 |
+| 3 | 2 | 8/9 | 12/11 | 12/14 | 13/17 | 16/18 | 19/20 | 19/22 | 22/25 | 26/28 | 34/36 | 43/45 | 1.09 |
+| 3 | 3 | 27/34 | 43/42 | 45/49 | 45/56 | 62/66 | 71/76 | 75/82 | 86/92 | 100/106 | 136/126 | 188/159 | 1.18 |
+| 3 | 4 | 64/76 | 64/94 | 111/109 | 112/135 | 112/155 | 169/177 | 186/194 | 196/215 | 242/255 | 321/306 | 441/378 | 1.17 |
+| 3 | 5 | 125/148 | 125/181 | 125/209 | 225/257 | 225/299 | 331/344 | 366/380 | 402/420 | 534/495 | 623/602 | 883/744 | 1.19 |
+| 3 | 6 | 261/259 | 318/310 | 343/361 | 343/437 | 491/507 | 566/589 | 588/652 | 691/724 | 948/859 | 1311/1041 | 1796/1298 | 1.38 |
+
+- Cells with H = v^t are optimal (PROVED: CAN ≥ v^t). Row deletion changed only a few cells, for example (2, 4, 100) 48 → 43 and (3, 6, 16) 588 → 576.
+- For the v = 6, t = 2 cases with k ≤ 3, B1 gives 36 (optimal).
+- The NIST IPOG-F values for the Architect's examples are 3¹³ → 20, 3¹⁰⁰ → 30, 4¹⁰ → 29 and 2¹⁰ (t = 3) → 18 (OBSERVED). So a plain IPOG is not IPOG-F; B4 gives 18 for 3¹³.
+- **Ratio to Colbourn's best-known CAN: NOT_VERIFIED.** CAN values are not stated here from memory. t = 3 best-known sizes are believed to lie well below IPOG-F for v ≥ 3 and large k, so H probably exceeds 1.3× best-known in some t = 3 cells (CONJECTURE).
+- The prototype is 283 lines, including GF(q) tables, verification and DP tooling. A repository implementation of 27.1 alone is about 150 lines (CONJECTURE).
+
+### 27.4 External reference plan
+- Frozen published table: the NIST IPOG-F pages above (sizes and downloadable arrays). These are upper bounds, not best-known sizes.
+- R (dev-only, via `r-oracle.yml`):
+  - `CAs` 0.24-3, GPL-3, maintainer U. Grömping, manual built 2026-10-15 (OBSERVED, https://cran.r-universe.dev/CAs, read 2026-11-23). It provides `eCAN(t, k, v)`, the best-known size from `colbournBigFrame`. That dataset is a November 2024 snapshot of Colbourn's tables for t = 2–6, v = 2–25, and the manual notes that the tables were no longer public as of June 2025 (OBSERVED). `bestCA(t, k, v)` returns the package's best implemented array (OBSERVED). Its random filling of flexible entries is seeded (OBSERVED).
+  - `caverify` 0.3.0, MIT, published 2026-11-02: `ca_verify(x, t, v)` returns `$covered` (OBSERVED, https://stat.ethz.ch/CRAN/web/packages/caverify/refman/caverify.html).
+  - The exact return structure of `eCAN` is NOT_VERIFIED; the check task prints `str(eCAN(3, 10, 3))` first.
+- Python oracle: dense enumeration of all C(k, t) column sets (an independent check of about 20 lines, already used for §131).
+
+### 27.5 Mixed levels (v_i per column)
+- Building H at v = max v_i and collapsing each column i to v_i (B3) gives a valid mixed CA (PROVED), followed by row deletion. B4 extends directly, with tuple counts ∏ v over S.
+- R1/R2 need equal alphabets across the merged column (i, j) (PROVED necessary for the construction as stated), so they do not apply to genuinely mixed inputs. R3 needs a common v.
+- The quality of mixed arrays against published mixed tables is NOT_VERIFIED.
+
+### 27.6 Decision items (for gate §134+)
+- D1: implement H exactly as 27.1 (B1–B4, R1–R3, DP, row deletion; integer density; smallest-index ties). Gate tests: exhaustive coverage at a fixed grid of (t, k, v), and a negative control (a deleted row breaks coverage at one OA case).
+- D2: scope t ∈ {2, 3}, 2 ≤ v ≤ 6 (q ≤ 9 internally), t ≤ k ≤ 100. v = 2, t = 2 stays Kleitman–Spencer (§131).
+- D3: evidence task (r-oracle): for the grid of 27.3, report N_H, `eCAN`, N_H / eCAN and `ca_verify(…)$covered`. Accept "within 1.3× best-known" only for the cells where that ratio is measured ≤ 1.3.
+- D4 (Scientist): t = 3, v = 6 under H is 1.10× IPOG-F at k = 30 and 1.26–1.38× for k ≥ 50. Either accept the gap, defer the cells, or add an IPOG-F horizontal-growth step for t = 3 (more code; its size gain is CONJECTURE).
+- D5: mixed levels by max-v collapse (27.5) only. No separate mixed constructions in this phase.

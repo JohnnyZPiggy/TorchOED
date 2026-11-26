@@ -72,7 +72,7 @@ def main():
         versions=dict(R=runtime['R_version'], DoE_base=runtime['packages']['DoE.base'],
                       Python=platform.python_version(), torch=torch.__version__),
         matches=sum(c['verdict']=='MATCH' for c in cases.values()), total=8, cases=cases)
-    (ROOT/'results.json').write_text(json.dumps(result, indent=2)+'\n')
+    (ROOT/'results.json').write_text(json.dumps(result, indent=2)+'\n', newline='\n')
     print(f"Sandbox: 3 PASS; shared scoring: 8 PASS; matches: {result['matches']}/8")
 
 

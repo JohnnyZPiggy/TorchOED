@@ -546,8 +546,109 @@ def orthogonal_array(levels: list[int] | tuple[int, ...], *, device: torch.devic
     return torch.tensor(rows, dtype=torch.int64, device=device)
 
 
+def _covering_index_one(k, v, strength):
+    p = next(d for d in range(2, v + 1) if v % d == 0)
+    degree = 1
+    while p ** degree < v:
+        degree += 1
+    _, add, mul = _oa_field(p, degree)
+    rows = []
+    for c in product(range(v), repeat=strength):
+        row = []
+        for a in range(min(k, v)):
+            y = 0
+            for coefficient in reversed(c):
+                y = add[mul[y][a]][coefficient]
+            row.append(y)
+        rows.append(row + ([c[-1]] if k == v + 1 else []))
+    return torch.tensor(rows, dtype=torch.int64)
+
+
+def _covering_density(k, v, t):
+    cols = torch.tensor(list(combinations(range(k), t)))
+    values = torch.tensor(list(product(range(v), repeat=t)))
+    columns = cols.repeat_interleave(v ** t, dim=0)
+    targets = values.repeat(len(cols), 1)
+    rows = []
+    while len(targets):
+        cset, tuples = columns, targets
+        weights = torch.ones(len(targets), dtype=torch.int64)
+        row = torch.full((k,), -1, dtype=torch.int64)
+        for _ in range(k):
+            scores = torch.zeros(k * v, dtype=torch.int64)
+            scores.scatter_add_(0, (cset * v + tuples).flatten(),
+                                weights[:, None].expand(-1, t).flatten())
+            scores = scores.reshape(k, v)
+            scores[row >= 0] = -1
+            c, x = divmod(int(scores.argmax()), v)
+            row[c] = x
+            contains = cset == c
+            keep = (~contains | (tuples == x)).all(dim=1)
+            weights = (weights * torch.where(contains.any(dim=1), v, 1))[keep]
+            cset, tuples = cset[keep], tuples[keep]
+        rows.append(row)
+        keep = (row[columns] != targets).any(dim=1)
+        columns, targets = columns[keep], targets[keep]
+    return torch.stack(rows)
+
+
+def _covering_general(k, v, t):
+    from functools import lru_cache
+    from math import comb
+
+    @lru_cache(None)
+    def build(k, t):
+        candidates = []
+        if t == 2 and v == 2:
+            candidates.append(covering_array(k, 2))
+        for q in (2, 3, 4, 5, 7, 8, 9):
+            if q >= v and k <= q + 1:
+                candidates.append(_covering_index_one(k, q, t) % v)
+        if t == 2 and k <= 3:
+            candidates.append(torch.tensor([(a, b, (a + b) % v)[:k]
+                                           for a, b in product(range(v), repeat=2)]))
+        if comb(k, t) * v ** t <= 100_000:
+            candidates.append(_covering_density(k, v, t))
+        if t == 2:
+            a = 2
+            while a <= (k + a - 1) // a:
+                b = (k + a - 1) // a
+                if b < k:
+                    left, right = build(a, 2), build(b, 2)
+                    top = left.repeat_interleave(b, dim=1)
+                    bottom = right.repeat(1, a)
+                    if all((left == s).all(dim=1).any() for s in range(v)):
+                        bottom = bottom[~(bottom == bottom[:, :1]).all(dim=1)]
+                    candidates.append(torch.cat((top, bottom))[:, :k])
+                a += 1
+        elif (h := (k + 1) // 2) >= 3:
+            a, b = build(h, 3), build(h, 2)
+            candidates.append(torch.cat([torch.cat((a, a), dim=1)] +
+                                        [torch.cat((b, (b + d) % v), dim=1)
+                                         for d in range(1, v)])[:, :k])
+        return min(candidates, key=len)
+
+    rows = build(k, t)
+    cols = torch.tensor(list(combinations(range(k), t)))
+    powers = v ** torch.arange(t - 1, -1, -1)
+    counts = torch.zeros((len(cols), v ** t), dtype=torch.int32)
+    indices = torch.arange(len(cols))
+    for row in rows:
+        counts[indices, (row[cols] * powers).sum(dim=1)] += 1
+    keep = torch.ones(len(rows), dtype=torch.bool)
+    for i in range(len(rows) - 1, -1, -1):
+        codes = (rows[i][cols] * powers).sum(dim=1)
+        if (counts[indices, codes] > 1).all():
+            keep[i] = False
+            counts[indices, codes] -= 1
+    return rows[keep]
+
+
 def covering_array(k: int, v: int, *, strength: int = 2, device: torch.device | str | None = None, max_elements: int = 1_000_000) -> torch.Tensor:
-    """Optimal binary strength-2 or prime-power index-1 array (gate 131–133)."""
+    """Exact-family or deterministic general covering array (gate 131–135).
+
+    Family H is not generally optimal; it uses integer arithmetic on CPU.
+    """
     from itertools import islice
     if type(k) is not int or type(v) is not int or v < 2 or strength not in (2, 3) or k < strength:
         raise ValueError("require integer k >= strength, integer v >= 2, strength 2 or 3")
@@ -568,16 +669,11 @@ def covering_array(k: int, v: int, *, strength: int = 2, device: torch.device | 
             power *= p
             degree += 1
         if power != v or k > v + 1:
-            raise ValueError("covering-array family outside scope: see gate §133")
+            if v > 6 or k > 100:
+                raise ValueError("covering-array family outside scope: see gate §135")
+            rows = _covering_general(k, v, strength)
+            budget(rows.shape, max_elements)
+            return rows.to(device=device)
         budget((v ** strength, k), max_elements)
-        _, add, mul = _oa_field(p, degree)
-        rows = []
-        for c in product(range(v), repeat=strength):
-            row = []
-            for a in range(min(k, v)):
-                y = 0
-                for coefficient in reversed(c):
-                    y = add[mul[y][a]][coefficient]
-                row.append(y)
-            rows.append(row + ([c[-1]] if k == v + 1 else []))
+        return _covering_index_one(k, v, strength).to(device=device)
     return torch.tensor(rows, dtype=torch.int64, device=device)

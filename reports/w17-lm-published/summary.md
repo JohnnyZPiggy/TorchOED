@@ -43,3 +43,32 @@ Reproduce: `PYTHONPATH=src python reports/w17-lm-published/run.py`. Reads commit
 Proposed P2.5 least-squares Status: ◐ `fit_least_squares` (§123–§124, #554); published R comparison 1/2 MATCH, ChemReact dispatch-order discrepancy (#562, [w17-lm-published](../reports/w17-lm-published/)).
 Proposed parity Fit Model Status: ◐ `fit_least_squares` (§123–§124, #554); warpbreaks MATCH, ChemReact positional NO MATCH (R term order differs from frozen X; #562).
 No matrix update in this evidence lane. No source, tests, dependency pins, website, workflow, held-out cases or search changes.
+
+## R term order (#576)
+
+Aligned verdict: **2 / 2 MATCH**; frozen #562 verdict stays **1 / 2 MATCH**.
+ChemReact_R_order uses X columns `1, BlockB2, x1, x2, x1^2, x2^2, x1*x2`, CPU float64 defaults and `terms=(1,)*7`.
+The existing shared scorer compares against the same committed ChemReact entry in `r.json`; no new R run.
+df (residual, lack of fit, pure error) = (7, 3, 4) on both sides: PASS. Every aligned group is <= 1e-8: MATCH.
+
+| Group | warpbreaks | ChemReact_R_order |
+|---|---:|---:|
+| coef | 1.2297855e-15 | 3.10862447e-14 |
+| se | 1.26149404e-15 | 8.77902065e-15 |
+| t | 2.71687076e-15 | 4.43507411e-14 |
+| p_t | 2.49800181e-16 | 1.54598556e-14 |
+| residuals | 1.47881707e-14 | 1.71336324e-12 |
+| leverage | 7.49400542e-16 | 1.74881255e-15 |
+| studentized | 1.74525884e-14 | 1.72330034e-12 |
+| cooks | 3.30595175e-14 | 3.44598064e-12 |
+| anova.df | 0 | 0 |
+| anova.ss | 3.15329616e-15 | 6.55031585e-14 |
+| anova.f | 2.12780922e-15 | 8.15503728e-14 |
+| anova.p | 3.60822483e-16 | 1.54598556e-14 |
+| anova.ss_resid | 1.3478211e-16 | 1.47410669e-14 |
+| lack_of_fit.df_lof | 0 | 0 |
+| lack_of_fit.ss_lof | 1.70057874e-15 | 7.70098842e-14 |
+| lack_of_fit.df_pe | 0 | 0 |
+| lack_of_fit.ss_pe | 0 | 3.33066907e-15 |
+| lack_of_fit.f | 1.06011434e-15 | 8.28411929e-14 |
+| lack_of_fit.p | 2.22044605e-16 | 2.40918396e-14 |

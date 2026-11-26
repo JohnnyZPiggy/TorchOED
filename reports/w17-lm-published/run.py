@@ -31,12 +31,14 @@ def main():
     reference = json.loads((ROOT / 'r.json').read_text(encoding='utf-8-sig'))
     runtime = json.loads((ROOT / 'runtime.json').read_text(encoding='utf-8-sig'))
     cases = {}
-    for name, expected in [('warpbreaks', (50, 2, 48)), ('ChemReact', (7, 3, 4))]:
-        ref = reference[name]
+    for name, expected in [('warpbreaks', (50, 2, 48)), ('ChemReact', (7, 3, 4)),
+                           ('ChemReact_R_order', (7, 3, 4))]:
+        data_name = 'ChemReact' if name == 'ChemReact_R_order' else name
+        ref = reference[data_name]
         if 'error' in ref:
             cases[name] = dict(verdict='NOT_RUN', error=ref['error'])
             continue
-        with (ROOT / (name + '.csv')).open(encoding='utf-8-sig', newline='') as stream:
+        with (ROOT / (data_name + '.csv')).open(encoding='utf-8-sig', newline='') as stream:
             rows = list(csv.DictReader(stream))
         if name == 'warpbreaks':
             x = [[1, r['wool'] == 'B', r['tension'] == 'M', r['tension'] == 'H'] for r in rows]
@@ -45,6 +47,8 @@ def main():
         else:
             x = [[1, r['Block'] == 'B2', (float(r['Time'])-85)/5, (float(r['Temp'])-175)/5] for r in rows]
             x = [[a, b, c, d, c*d, c*c, d*d] for a, b, c, d in x]
+            if name == 'ChemReact_R_order':
+                x = [[r[i] for i in (0, 1, 2, 3, 5, 6, 4)] for r in x]
             y = [float(r['Yield']) for r in rows]
             terms = (1,)*7
         fit = fit_least_squares(torch.tensor(x, dtype=torch.float64), torch.tensor(y, dtype=torch.float64), terms=terms)
@@ -64,9 +68,12 @@ def main():
                   versions=dict(R=runtime['R_version'], rsm=runtime['packages']['rsm'],
                                 python=platform.python_version(), torch=torch.__version__),
                   device='cpu', dtype='float64', tolerance=1e-8, cases=cases,
-                  matched=sum(c['verdict'] == 'MATCH' for c in cases.values()), total=2)
+                  matched=sum(cases[n]['verdict'] == 'MATCH' for n in ('warpbreaks', 'ChemReact')), total=2,
+                  aligned_matched=sum(cases[n]['verdict'] == 'MATCH' for n in ('warpbreaks', 'ChemReact_R_order')),
+                  aligned_total=2)
     (ROOT / 'results.json').write_bytes((json.dumps(result, indent=2, allow_nan=False) + '\n').encode())
-    print('PASS: frozen df checks and shared scoring; MATCH %d / 2' % result['matched'])
+    print('PASS: df checks and shared scoring; frozen MATCH %d / 2; aligned MATCH %d / 2'
+          % (result['matched'], result['aligned_matched']))
 
 
 if __name__ == '__main__':

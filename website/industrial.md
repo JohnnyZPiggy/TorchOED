@@ -299,7 +299,7 @@ The run size is the smallest **within this construction**, not always the smalle
 
 ## Covering arrays
 
-`covering_array(k, v, strength=2)` returns int64 arrays in which every `strength` columns show all `v**strength` level combinations at least once, at the optimal run size for two families: binary strength 2 (Kleitman–Spencer: the smallest N with C(N − 1, ⌈N/2⌉) ≥ k) and prime-power `v` with `strength ≤ k ≤ v + 1` (index 1, `v**strength` runs). Other families raise `ValueError` (gate §131–§133).
+`covering_array(k, v, strength=2)` returns int64 arrays in which every `strength` columns show all `v**strength` level combinations at least once, at the optimal run size for two families: binary strength 2 (Kleitman–Spencer: the smallest N with C(N − 1, ⌈N/2⌉) ≥ k) and prime-power `v` with `strength ≤ k ≤ v + 1` (index 1, `v**strength` runs). Other inputs with strength 2 or 3, 2 ≤ v ≤ 6 and k ≤ 100 use the deterministic general family H (gate §134). Its run size is not optimal in general: for strength 3 and v = 6 it is 1.26–1.38× the NIST IPOG-F sizes once k ≥ 50, a gap the Scientist accepted on 2026-11-26. Everything else raises `ValueError` (gate §135).
 
 ```python
 from itertools import combinations
@@ -310,6 +310,8 @@ for i, j in combinations(range(10), 2):
     assert len(set(zip(C[:, i].tolist(), C[:, j].tolist()))) == 4
 T = covering_array(4, 3, strength=3)
 assert T.shape == (27, 4)
+G = covering_array(5, 3)
+assert G.shape == (13, 5)
 ```
 
 ## Central composite and Box–Behnken

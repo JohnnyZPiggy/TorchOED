@@ -4,7 +4,7 @@
 
 - Add `fit_least_squares` for least-squares analysis of one or more responses: coefficients, SEs, t tests, sequential F tests, lack of fit and residual diagnostics (§123–§124).
 
-- Add optimal binary strength-2 and prime-power index-1 `covering_array` constructors.
+- Add `covering_array`: optimal binary strength-2 and prime-power index-1 families, and the deterministic general family H for strength 2/3, 2 ≤ v ≤ 6, k ≤ 100 (not optimal in general; §131–§135).
 
 - Add `orthogonal_array` for strength-2 GF(q), mixed-level replacement and Plackett–Burman arrays.
 

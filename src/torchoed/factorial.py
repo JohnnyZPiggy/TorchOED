@@ -593,11 +593,11 @@ def _covering_density(k, v, t):
 
 
 def _covering_general(k, v, t):
-    from functools import lru_cache
-    from math import comb
+    cache = {}
 
-    @lru_cache(None)
     def build(k, t):
+        if (k, t) in cache:
+            return cache[k, t]
         candidates = []
         if t == 2 and v == 2:
             candidates.append(covering_array(k, 2))
@@ -607,7 +607,8 @@ def _covering_general(k, v, t):
         if t == 2 and k <= 3:
             candidates.append(torch.tensor([(a, b, (a + b) % v)[:k]
                                            for a, b in product(range(v), repeat=2)]))
-        if comb(k, t) * v ** t <= 100_000:
+        nsets = k * (k - 1) // 2 if t == 2 else k * (k - 1) * (k - 2) // 6
+        if nsets * v ** t <= 100_000:
             candidates.append(_covering_density(k, v, t))
         if t == 2:
             a = 2
@@ -626,7 +627,8 @@ def _covering_general(k, v, t):
             candidates.append(torch.cat([torch.cat((a, a), dim=1)] +
                                         [torch.cat((b, (b + d) % v), dim=1)
                                          for d in range(1, v)])[:, :k])
-        return min(candidates, key=len)
+        cache[k, t] = min(candidates, key=len)
+        return cache[k, t]
 
     rows = build(k, t)
     cols = torch.tensor(list(combinations(range(k), t)))

@@ -125,3 +125,20 @@ C3 CUDA GLM (warmup excluded): [{"power": [0.9929, 0.8842000000000001, 0.8781], 
 GPU wins only in measured same-host pairs: []. One GPU per timing table; no A100/L4/T4 timing conflation.
 All 3 cleanup readbacks PASS; final 0 assignments, 131.95 CU; cumulative 17.24/25 CU, remaining 7.76. No same-session retry.
 What this tells us / next change to try: the real subprocess wrapper reaches measured cells and confirms the prior kernel __file__ launch diagnosis. Missing/timed-out/error cells remain partial evidence. If the long reference cells consume the remaining budget before CPU/CUDA pairs, the next proposed change is to prioritize a paired TorchOED cell before long PyDOE calls, subject to a new Architect ruling. No order change or retry was made in this attempt.
+
+## Attempt 4/6 (2026-11-26): prioritize TorchOED paired cells
+Rulings 7080475080 / 7197505476 / 7203940085: any time and available GPU; frozen library d869c1a, driver ec7e0fc, six CUDA/CPU cells in the prescribed order. Prior 18 PyDOE reference cells and C3 GLM are cited from attempt 3 above, not rerun.
+Allocation: H100: ALLOCATION_FAILED, A100: ALLOCATION_FAILED, L4: allocated. Observed device and versions: {"nvidia_smi": [{"name": "NVIDIA L4", "memory_total_mib": 23034, "driver_version": "580.82.07"}], "torch": {"status": "AVAILABLE", "version": "2.14.1+cu130", "cuda": "13.0", "name": "NVIDIA L4", "capability": [8, 9]}}.
+| k | m | method | seconds / status | logdet | returned floor | peak GPU bytes |
+|---|---|---|---|---|---|---|
+| 5 | 100000 | cuda | 102.882662932 | 59.2955345215783 | 0.9763343515837629 | 592449536 |
+| 5 | 100000 | cpu | 754.9892664230001 | 59.295534521578304 | 0.9763343515837629 | 0 |
+| 7 | 100000 | cuda | 93.71315486100002 | 116.80849172968863 | 0.9557194734951894 | 213503488 |
+| 7 | 100000 | cpu | 66.00600667999993 | 116.80849172968864 | 0.9557194734951894 | 0 |
+| 3 | 1000000 | cuda | TIMEOUT |  |  |  |
+| 3 | 1000000 | cpu | NOT_RUN |  |  |  |
+Local saved-ID objective rescoring: 4 PASS, 0 FAIL at 1e-9 relative. Same-host CPU/CUDA agreement and speedup: [{"k": 5, "m": 100000, "CPU_status": "PASS", "CUDA_status": "PASS", "agreement": "MATCH", "speedup": 7.338352691376273, "CPU": 59.295534521578304, "CUDA": 59.2955345215783}, {"k": 7, "m": 100000, "CPU_status": "PASS", "CUDA_status": "PASS", "agreement": "MATCH", "speedup": 0.7043408876576964, "CPU": 116.80849172968864, "CUDA": 116.80849172968863}, {"k": 3, "m": 1000000, "CPU_status": "NOT_RUN", "CUDA_status": "TIMEOUT", "agreement": "NOT_RUN", "speedup": "NOT_RUN"}].
+Largest m reached this attempt: cpu 100000, cuda 100000.
+GPU wins only on completed measured pairs: [{"k": 5, "m": 100000, "CPU_status": "PASS", "CUDA_status": "PASS", "agreement": "MATCH", "speedup": 7.338352691376273, "CPU": 59.295534521578304, "CUDA": 59.2955345215783}]. No speedup inferred from TIMEOUT or cross-host data.
+Cleanup: 3 readbacks PASS; final 0 assignments; 329.75 CU. This attempt 2.20 CU, cumulative 19.44/25, remaining 40.56 under latest 60 CU task cap; November known spend since Nov19 19.60 CU (full month NOT_VERIFIED: pre-Nov19 usage not reconciled). Frozen attempt stayed within its original cap. Balance top-up of 200 CU does not reset task spend. No same-session retry.
+Next change to try: resume any unfinished cells in a later authorized attempt; preserve completed measurements and caps. No library or tuning change.

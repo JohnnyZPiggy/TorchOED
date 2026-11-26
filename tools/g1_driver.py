@@ -41,11 +41,5 @@ def cell(kind,dev,size,warmup=False):
     row.update(k=kind,m=size,method=dev,criterion='binomial' if kind=='glm' else 'D',warmup=warmup)
     data['c3_glm_power' if kind=='glm' else 'rows'].append(row)
     pathlib.Path('/content/g1-crossover.json').write_text(json.dumps(data,allow_nan=False)+'\n')
-cell('glm','cuda',10000,True)
-cell('glm','cuda',10000)
-for m in (1000,10000):
-    for k in (3,5,7):
-        for dev in ('fedorov','modified_fedorov','detmax'): cell(k,dev,m)
-for k in (5,7):
-    for dev in ('cpu','cuda'): cell(k,dev,100000)
-for dev in ('cuda','cpu'): cell(3,dev,1000000)
+for k,m in ((5,100000),(7,100000),(3,1000000)):
+    for dev in ('cuda','cpu'): cell(k,dev,m)

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `fit_least_squares` for least-squares analysis of one or more responses: coefficients, SEs, t tests, sequential F tests, lack of fit and residual diagnostics (§123–§124).
+
 - Add optimal binary strength-2 and prime-power index-1 `covering_array` constructors.
 
 - Add `orthogonal_array` for strength-2 GF(q), mixed-level replacement and Plackett–Burman arrays.

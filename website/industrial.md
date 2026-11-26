@@ -297,6 +297,21 @@ assert effects_coding(B[:, 0], 4).shape == (16, 3)
 
 The run size is the smallest **within this construction**, not always the smallest possible: `(4, 2, 2, 2, 2)` returns 16 runs although an 8-run OA(8; 4¹2⁴) exists; mixed primes (L18, L36) are unsupported (gate §128.6, §130).
 
+## Covering arrays
+
+`covering_array(k, v, strength=2)` returns int64 arrays in which every `strength` columns show all `v**strength` level combinations at least once, at the optimal run size for two families: binary strength 2 (Kleitman–Spencer: the smallest N with C(N − 1, ⌈N/2⌉) ≥ k) and prime-power `v` with `strength ≤ k ≤ v + 1` (index 1, `v**strength` runs). Other families raise `ValueError` (gate §131–§133).
+
+```python
+from itertools import combinations
+from torchoed import covering_array
+C = covering_array(10, 2)
+assert C.shape == (6, 10)
+for i, j in combinations(range(10), 2):
+    assert len(set(zip(C[:, i].tolist(), C[:, j].tolist()))) == 4
+T = covering_array(4, 3, strength=3)
+assert T.shape == (27, 4)
+```
+
 ## Central composite and Box–Behnken
 
 Use a central composite design to fit a quadratic response surface. For blocked analysis, pass the cube and axial block sizes in row order. Box–Behnken designs use 3 to 7 factors.

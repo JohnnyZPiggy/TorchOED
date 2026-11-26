@@ -296,8 +296,153 @@
           "metric": "absolute"
         }
       }
+    },
+    "ChemReact_R_order": {
+      "verdict": "MATCH",
+      "df": [
+        7,
+        3,
+        4
+      ],
+      "groups": {
+        "coef": {
+          "max_difference": 3.108624468950215e-14,
+          "index": 6,
+          "torch": 0.1250000000000051,
+          "R": 0.125000000000009,
+          "metric": "relative"
+        },
+        "se": {
+          "max_difference": 8.779020652149728e-15,
+          "index": 2,
+          "torch": 0.057698833965175306,
+          "R": 0.0576988339651748,
+          "metric": "relative"
+        },
+        "t": {
+          "max_difference": 4.435074113909238e-14,
+          "index": 6,
+          "torch": 1.532007072755922,
+          "R": 1.53200707275599,
+          "metric": "relative"
+        },
+        "p_t": {
+          "max_difference": 1.5459855617905305e-14,
+          "index": 6,
+          "torch": 0.16938196047191245,
+          "R": 0.169381960471897,
+          "metric": "absolute"
+        },
+        "residuals": {
+          "max_difference": 1.7133632444657404e-12,
+          "index": 3,
+          "torch": 0.011317354377169409,
+          "R": 0.0113173543771888,
+          "metric": "relative"
+        },
+        "leverage": {
+          "max_difference": 1.7488125522406691e-15,
+          "index": 7,
+          "torch": 0.23806647184742857,
+          "R": 0.238066471847429,
+          "metric": "relative"
+        },
+        "studentized": {
+          "max_difference": 1.7233003447439948e-12,
+          "index": 3,
+          "torch": 0.12588495074177505,
+          "R": 0.125884950741992,
+          "metric": "relative"
+        },
+        "cooks": {
+          "max_difference": 3.4459806430191633e-12,
+          "index": 3,
+          "torch": 0.005194886670807518,
+          "R": 0.00519488667082542,
+          "metric": "relative"
+        },
+        "anova.df": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 1.0,
+          "R": 1.0,
+          "metric": "relative"
+        },
+        "anova.ss": {
+          "max_difference": 6.550315845287459e-14,
+          "index": 5,
+          "torch": 0.06250000000000511,
+          "R": 0.0625000000000092,
+          "metric": "relative"
+        },
+        "anova.f": {
+          "max_difference": 8.155037279948522e-14,
+          "index": 5,
+          "torch": 2.3470456709741687,
+          "R": 2.34704567097436,
+          "metric": "relative"
+        },
+        "anova.p": {
+          "max_difference": 1.5459855617905305e-14,
+          "index": 5,
+          "torch": 0.16938196047191245,
+          "R": 0.169381960471897,
+          "metric": "absolute"
+        },
+        "anova.ss_resid": {
+          "max_difference": 1.474106687042586e-14,
+          "index": 0,
+          "torch": 0.18640455335427975,
+          "R": 0.186404553354277,
+          "metric": "relative"
+        },
+        "lack_of_fit.df_lof": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 3.0,
+          "R": 3.0,
+          "metric": "relative"
+        },
+        "lack_of_fit.ss_lof": {
+          "max_difference": 7.700988422328149e-14,
+          "index": 0,
+          "torch": 0.05307122002095019,
+          "R": 0.0530712200209461,
+          "metric": "relative"
+        },
+        "lack_of_fit.df_pe": {
+          "max_difference": 0.0,
+          "index": 0,
+          "torch": 4.0,
+          "R": 4.0,
+          "metric": "relative"
+        },
+        "lack_of_fit.ss_pe": {
+          "max_difference": 3.330669073875553e-15,
+          "index": 0,
+          "torch": 0.13333333333332956,
+          "R": 0.13333333333333,
+          "metric": "relative"
+        },
+        "lack_of_fit.f": {
+          "max_difference": 8.284119294375221e-14,
+          "index": 0,
+          "torch": 0.5307122002095169,
+          "R": 0.530712200209473,
+          "metric": "relative"
+        },
+        "lack_of_fit.p": {
+          "max_difference": 2.4091839634365897e-14,
+          "index": 0,
+          "torch": 0.6850877530323239,
+          "R": 0.685087753032348,
+          "metric": "absolute"
+        }
+      }
     }
   },
   "matched": 1,
-  "total": 2
+  "total": 2,
+  "aligned_matched": 2,
+  "aligned_total": 2
 }

@@ -1,0 +1,179 @@
+_T_h_i_s _f_u_n_c_t_i_o_n _c_r_e_a_t_e_s _a_n _e_x_t_r_e_m_e _v_e_r_t_i_c_e_s _d_e_s_i_g_n _i_n _a _c_o_n_s_t_r_a_i_n_e_d
+_m_i_x_t_u_r_e _s_p_a_c_e.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     This function calls the function crvtave to create an extreme
+     vertices design in a constrained mixture space.  If there are only
+     three factors the function DesignPoints is called to plot the
+     results.
+
+_U_s_a_g_e:
+
+     Xvert(nfac=3,uc=c(0,0),lc=c(0,0),nlc=0,lb=c(0,0),ub=c(0,0),coef,ndm=0,plot=TRUE,
+                      cornerlabs = c("x1","x2","x3"), axislabs = c("x1","x2","x3"),
+                      pseudo=TRUE)  
+     
+_A_r_g_u_m_e_n_t_s:
+
+    nfac: an integer representing the number of mixture variables in
+          the design. Maximum nfac=12
+
+      uc: a vector of length nfac containing upper constraints on each
+          mixture component
+
+      lc: a vector of length nfac containing lower constraints on each
+          mixture component
+
+     nlc: the number of linear constraints, the default is zero
+
+      lb: a vector of length nlc containing the lower bounds for the
+          linear constraints
+
+      ub: a vector of length nlc containing the upper bounds for the
+          linear constraints
+
+    coef: an nlc by nfac matrix containing the coefficients of the
+          components of the linear constraints
+
+     ndm: an integer representing the highest order of centroids
+          requested. An overall centroid is always included, 0
+          indicates no other centroids will be created, 1 indicates
+          edge centroids are requested, etc.
+
+    plot: a logical variable indicating whether a plot of the design is
+          desired when there are only 3 components. Default is TRUE
+
+cornerlabs: This is a vector of text labels for the x1, x2 and x3
+          vertices. Use when there are only 3 components for plotting.
+
+axislabs: This is a vector of text labels for the x1, x2 and x3 axis.
+          Use when there are only 3 components for plotting.
+
+  pseudo: logical variable, when TRUE plot in pseudo component space
+          when there are lower constraints.
+
+_N_o_t_e:
+
+     This function calls crvtave. If the number of factors is 3, the
+     function DesignPoints is called to graph the results.
+
+_A_u_t_h_o_r(_s):
+
+     John S. Lawson <mailto:lawson@byu.edu>
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     1. Piepel, G. F. "Programs for Generating Extreme Vertices and
+     Centroids of Linearly Consrtained Experimental Regions" _Journal
+     of Quality Technology_, Vol 20, No. 2, pp. 125-139, 1988.
+
+     2. "John Lawson, Cameron Willden (2016).", "Mixture Experiments in
+     R Using mixexp.", "Journal of Statistical Software, Code Snippets,
+     72(2), 1-20.", "doi:10.18637/jss.v072.c02"
+
+_E_x_a_m_p_l_e_s:
+
+     # Polvoron Example from Lawson
+     des<-Xvert(3,uc=c(.8,.95,.50),lc=c(0,.10,.05),ndm=1,plot=FALSE)
+     
+     
+     #Snee Marquardt(1976) example
+     Xvert(8,uc=c(.45,.50,.10,.4,.6,.2,.05,.05),lc=c(.1,.05,0,0,.1,.05,0,0),ndm=0)
+         
+     # Example page 465
+     exvert<-Xvert(4,uc=c(.188,.128,.438,.438),lc=c(.124,.064,.374,.374),ndm=2)
+     
+     # Example from Piepel 1988
+     coef<-matrix(c(.85,.9,1,.7,0,1),ncol=3,byrow=TRUE)
+     des<-Xvert(3,lc=c(.1,.1,0),uc=c(.5,.7,.7),nlc=2,lb=c(.9,.4),ub=c(.95,0),coef,ndm=1,plot=FALSE)
+     
+
+Installed Xvert source (internal conmx convention):
+function (nfac = 3, uc = c(0, 0), lc = c(0, 0), nlc = 0, lb = c(0, 
+    0), ub = c(0, 0), coef, ndm = 0, plot = TRUE, cornerlabs = c("x1", 
+    "x2", "x3"), axislabs = c("x1", "x2", "x3"), pseudo = TRUE) 
+{
+    if (nfac > 12) {
+        stop(" The maximum number of factors allowed is 12")
+    }
+    n.uc <- length(uc)
+    n.lc <- length(lc)
+    if (max(n.uc, n.lc) > 12) {
+        stop(" The maximum number of mixture components is 12")
+    }
+    if (max(n.uc, n.lc) == 0) {
+        stop(" No constraints given")
+    }
+    if (n.uc != n.lc) {
+        stop(" the number of upper constraints supplied is different than the number of lower constraints")
+    }
+    ck <- c(lc[1], uc[1])
+    for (i in 2:n.uc) {
+        ck <- cbind(ck, c(lc[i], uc[i]))
+    }
+    for (i in (n.uc + 1):12) {
+        ck <- cbind(ck, c(0, 1))
+    }
+    nfacc = 0
+    for (i in 1:12) {
+        cks <- ck[1, i] + (1 - ck[2, i])
+        if (cks != 0) {
+            nfacc = i
+        }
+        else {
+            break
+        }
+    }
+    if (nfacc > nfac) {
+        stop(" The number of upper and lower limits supplied exceeds the number of factors")
+    }
+    v <- c(-ck[1, 1], ck[2, 1])
+    for (i in 2:nfac) {
+        v <- c(v, -ck[1, i], ck[2, i])
+    }
+    Ip <- diag(nfac)
+    In <- -1 * Ip
+    conmx = matrix(data = NA, nrow = dim(Ip)[1] * 2, ncol = dim(Ip)[2])
+    for (i in 1:dim(Ip)[1]) {
+        conmx[2 * i - 1, ] = Ip[i, ]
+        conmx[2 * i, ] = In[i, ]
+    }
+    conmx <- cbind(conmx, v)
+    if (nlc > 0) {
+        loc <- nrow(coef)
+        if (loc != nlc) {
+            stop(" The number of rows of the coefficient matrix must equal the number of linear constraints")
+        }
+        loc2 <- ncol(coef)
+        if (loc2 != nfac) {
+            stop(" The number of columns of the coefficient matrix must equal the number of mixture components")
+        }
+        lolb <- length(lb)
+        if (lolb != nlc) {
+            stop(" The number of lower bounds for linear constraints is not equal to the number of linear constraints")
+        }
+        loub <- length(ub)
+        if (loub != nlc) {
+            stop(" The number of upper bounds for linear constraints is not equal to the number of linear constraints")
+        }
+        lincon <- coef
+        nlcon1 <- nrow(lincon)
+        nlinc <- -1 * lincon
+        lincon <- rbind(nlinc, lincon)
+        v <- ub
+        v <- c(v, -lb)
+        lincon <- cbind(lincon, v)
+        conmx <- rbind(conmx, lincon)
+    }
+    conmx <- conmx[abs(conmx[, nfac + 1]) > 0, ]
+    des <- crvtave(ndm, conmx)
+    des <- data.frame(des)
+    if (nfac == 3 & plot) {
+        DesignPoints(des[, 1:3], x1lower = lc[1], x1upper = uc[1], 
+            x2lower = lc[2], x2upper = uc[2], x3lower = lc[3], 
+            x3upper = uc[3], cornerlabs = cornerlabs, axislabs = axislabs, 
+            pseudo = pseudo)
+    }
+    return(des)
+}

@@ -1,0 +1,13 @@
+# W17 Xvert conmx comparison (Issue #572)
+- Result: **2/2 MATCH** under the frozen 1e-12 exact / 1e-6 Xvert tolerances; CPU float64, defaults, no tuning.
+- R1: TorchOED/exact/Xvert 5/5/5 vertices; exact max absolute coordinate difference 0; Xvert 5.3644179986989116e-08.
+- R2: TorchOED/exact/Xvert 10/10/10 vertices; exact max absolute coordinate difference 0; Xvert 5.960464499743523e-08.
+- One overall centroid per region (`dimen != 0`) dropped, as prescribed. Shared scorer: symmetric nearest-vertex maximum absolute coordinate difference; equal counts required.
+- One R workflow: [45843121915](https://github.com/JohnnyZPiggy/TorchOED/actions/runs/45843121915), source a0e2d3c1b67a56f8406c0b73c01b4461ec939f1f. R 4.5.2, mixexp 1.2.7.1; Python 3.14.6, torch 2.14.1+cpu. Exact versions in sessionInfo.txt/runtime.json.
+- API wording correction: installed `?Xvert` has no `conmx` argument or paragraph; it documents `nlc/lb/ub/coef`. xvert_help.txt preserves that help and installed source: Xvert constructs internal conmx rows (a,b) with a*x+b >= 0, then deletes rows with b=0.
+- R1 uses .2 <= x1+x2 <= .75 (the lower bound is implied by the box). R2 uses 1 <= 2*x1+x3+x4 <= 2; with sum(x)=1 this is x1-x2 >= 0, with the upper bound implied by the box. Positive bounds avoid Xvert's zero-bound deletion. The mathematical regions are unchanged.
+- `run.py` independently enumerates every (q-1)-subset of inequalities plus sum(x)=1 using Fraction Gaussian elimination and feasibility; required exact counts 5/10 PASS. One scorer is applied to exact and downloaded Xvert vertex sets for both regions: PASS.
+- Reproduce: `PYTHONPATH=src python reports/w17-xvert-conmx/run.py`; results.json is byte-identical on the recorded Python/torch environment.
+- Proposed parity Status cell: ✅ lattice/centroid/box/Scheffe/mixture-process as previously recorded; non-box linear constraints incl. ABCD (§126–§127, #559), Xvert conmx 2/2 MATCH at 1e-6 (#572, [w17-xvert-conmx](../reports/w17-xvert-conmx/)); historical mixture references unchanged.
+- Proposed P2+ Status cell: ✅ constructor (#559); Xvert conmx 2/2 MATCH at 1e-6 (#572, [w17-xvert-conmx](../reports/w17-xvert-conmx/)). Matrix commit belongs to the docs lane.
+- No production, tests, dependencies, tools, workflow, docs or website edits; no held-out H48, GPU or timing claim. All five downloaded artifact files preserved byte-for-byte.

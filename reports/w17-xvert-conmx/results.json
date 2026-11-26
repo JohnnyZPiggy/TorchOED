@@ -1,0 +1,35 @@
+{
+  "run_id": "45843121915",
+  "source_sha": "a0e2d3c1b67a56f8406c0b73c01b4461ec939f1f",
+  "versions": {
+    "R": "R version 4.5.2 (2025-10-31)",
+    "mixexp": "1.2.7.1",
+    "python": "3.14.6",
+    "torch": "2.14.1+cpu"
+  },
+  "device": "cpu",
+  "dtype": "float64",
+  "convention": "Xvert exposes nlc/lb/ub/coef, not conmx; installed source builds conmx rows (a,b) meaning a*x+b >= 0 and drops b=0 rows. R1: .2 <= x1+x2 <= .75. R2: 1 <= 2*x1+x3+x4 <= 2, equivalent to x1-x2 >= 0 on sum(x)=1 with the box bounds.",
+  "cases": {
+    "R1": {
+      "torchoed_count": 5,
+      "exact_count": 5,
+      "xvert_count": 5,
+      "centroids_dropped": 1,
+      "exact_max_abs": 0.0,
+      "xvert_max_abs": 5.3644179986989116e-08,
+      "verdict": "MATCH"
+    },
+    "R2": {
+      "torchoed_count": 10,
+      "exact_count": 10,
+      "xvert_count": 10,
+      "centroids_dropped": 1,
+      "exact_max_abs": 0.0,
+      "xvert_max_abs": 5.960464499743523e-08,
+      "verdict": "MATCH"
+    }
+  },
+  "matched": 2,
+  "total": 2
+}

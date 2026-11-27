@@ -237,6 +237,12 @@ With `strip=(r, c)`, `row_hard`, `col_hard`, `eta_row` and `eta_col`, CPU float6
 
 Fit float64 full-rank OLS with one QR for `(n,)` or `(n, J)` responses (`n > p`, identical dtype/device). Returns coefficients, SEs, t/p, residual variance/df, sequential type I ANOVA, lack-of-fit vs pure error when replicated, leverage, internally studentized residuals and Cook distances. `terms` is a tuple of positive column counts; `None` means one column each. With `intercept=True`, the first term is assumed to be the constant column alone and omitted from ANOVA. Leverage within 10 eps of 1 is set to 1 with NaN diagnostics. CPU/CUDA share code; p-values have absolute accuracy only, degrading at large df (gate §123–§124). No formula parser, rank-deficient fits, weighted/GLS/REML or prediction intervals.
 
+## REML analysis
+
+`fit_reml(X, y, groups)`
+
+Fit a CPU float64 random-intercept REML model (§136–§138): full-rank `(n, p)` X with `n > p`, response `(n,)`, and a tuple of 1–3 integer grouping label tensors `(n,)`. Labels may be noncontiguous. Returns `coef`, `se`, Satterthwaite `df`, `t`, `variance` (groupings in input order, then residual), `loglik` (lme4 REML convention) and `iterations`. Dense autograd Newton with Fisher-scoring fallback; no timing claim. Duplicate partitions, one row per level, and groupings spanned by X raise `ValueError`; a group variance approaching zero raises `ValueError` naming the grouping. Nonconvergence raises `RuntimeError` with the gradient norm. No random slopes, boundary estimates, Kenward–Roger df, ML, p-values or GPU support. See the [REML guide](industrial.md#analysing-blocked-and-split-plot-results-reml).
+
 ### `orthogonal_array(levels, *, device=None, max_elements=1_000_000)`
 
 Strength-2 integer orthogonal arrays with factor levels in input order: one prime power, optionally mixed with its prime, using GF(q) replacement or two-level Plackett–Burman. Returns int64 labels starting at zero; run size is minimal within the family, not globally. Mixed primes and strength ≥ 3 are unsupported. See [gate §128–§130](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/P2_GATE.md).

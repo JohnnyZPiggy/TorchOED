@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `fit_reml` for CPU float64 random-intercept REML: coefficients, SEs, Satterthwaite df and variance components (§136–§138).
+
 - Add `fit_least_squares` for least-squares analysis of one or more responses: coefficients, SEs, t tests, sequential F tests, lack of fit and residual diagnostics (§123–§124).
 
 - Add `covering_array`: optimal binary strength-2 and prime-power index-1 families, and the deterministic general family H for strength 2/3, 2 ≤ v ≤ 6, k ≤ 100 (not optimal in general; §131–§135).

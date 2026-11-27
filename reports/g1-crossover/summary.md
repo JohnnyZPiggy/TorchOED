@@ -237,11 +237,13 @@ Frozen library 94361f75319744ccaf2ebc716d08feeb2e53b9b7; driver f0980d3c22b7d6f7
 
 N=100000: median CPU/CUDA speedup 5.664198x; pooled agreement MATCH, MATCH, MATCH. Absolute differences [9.199999999998099e-05, 0.0010100000000000664, 0.0010339999999999794]; 4-SE bands [0.00067553436081372, 0.0025611916852090553, 0.002616998334153081].
 
+| N | method | seeds PASS | seconds min / median / max | pooled N | power +/- MC SE (3 coefficients) |
+|---|---|---|---|---|---|
 | 1000000 | cuda | 10/10 | 19.296174 / 19.471909 / 19.505934 | 10000000 | 0.993016700 +/- 0.000026334; 0.884667800 +/- 0.000101010; 0.878068000 +/- 0.000103472 |
 | 1000000 | cpu | 0/10 | NOT_RUN | NOT_RUN | NOT_RUN |
 
-CPU ERROR cells returned nonzero with empty stderr; the frozen driver does not retain the subprocess return code, so cause (including OOM) is NOT_VERIFIED. Failed-cell seconds and threads are NOT_VERIFIED. No failed cells rerun. All PASS-cell power ranges and recomputed MC SE checked locally at 1e-12. Pooled independent seed counts use rounded rejection totals; comparison rule |p_cpu-p_cuda| <= 4 sqrt(SE_cpu^2+SE_cuda^2). Results as-is: {'PASS': 21, 'TIMEOUT': 0, 'ERROR': 10, 'NOT_RUN': 0} (includes excluded warmup). Peak GPU bytes 12546044416. Nonconverged and separated counts retained per cell in results.json.
+N=1000000 CPU/CUDA pooled agreement and median speedup: NOT_RUN (0/10 CPU cells PASS). CPU ERROR cells returned nonzero with empty stderr; the frozen driver does not retain the subprocess return code, so cause (including OOM) is NOT_VERIFIED. Failed-cell seconds and threads are NOT_VERIFIED. No failed cells rerun. All PASS-cell power ranges and recomputed MC SE checked locally at 1e-12. Pooled independent seed counts use rounded rejection totals; comparison rule |p_cpu-p_cuda| <= 4 sqrt(SE_cpu^2+SE_cuda^2). Results as-is: {'PASS': 21, 'TIMEOUT': 0, 'ERROR': 10, 'NOT_RUN': 0} (includes excluded warmup). Peak GPU bytes 12546044416. Nonconverged and separated counts retained per cell in results.json.
 
 Cleanup 4/4 PASS; fresh sessions none, zero assignments, 0.00 CU/hr. Balance 321.17 CU; retry/task 0.17/60 CU; November >= 28.18 known since Nov19, full month NOT_VERIFIED. Prior history unchanged. No usage polling during cells.
 
-Next change to try: no library change needed for this frozen workload; retain CPU default outside measured same-host cases.
+Next change to try: in a separate scoped task, retain failed subprocess return codes to diagnose the million-simulation CPU failure before considering chunking. Retain CPU default outside measured same-host cases.

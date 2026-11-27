@@ -195,7 +195,7 @@ def predict_least_squares(fit: dict[str, torch.Tensor | int], X0: torch.Tensor, 
                 pi=torch.stack((mean-pi, mean+pi), -1), t=t)
 
 
-def prediction_trace(fit: dict[str, torch.Tensor | int], rows: torch.types.Callable[[torch.Tensor], torch.Tensor], f0: torch.Tensor, j: int, grid: torch.Tensor, *, level: float = 0.95) -> dict[str, torch.Tensor]:
+def prediction_trace(fit: dict[str, torch.Tensor | int], rows: object, f0: torch.Tensor, j: int, grid: torch.Tensor, *, level: float = 0.95) -> dict[str, torch.Tensor]:
     """Vary factor j on grid, holding the other factors at f0."""
     F = f0.repeat(len(grid), 1)
     F[:, j] = grid

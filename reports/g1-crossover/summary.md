@@ -211,3 +211,16 @@ Per Architect ruling 7213416955, the three Tesla T4 7200 s TIMEOUT cells above a
 Cleanup PASS on all four paths: no created session, zero assignments, unchanged balance 321.34 CU. Additional spend 0.00 CU; task 8.41/60 CU; November known since Nov19 28.01 CU, full month NOT_VERIFIED. Objective rescore 0 PASS / 0 FAIL / 8 NOT_RUN; CPU/CUDA agreement and speedup NOT_RUN. Largest completed m remains 100000 for both methods on CPU and CUDA in historical evidence; million-candidate cells on T4 TIMEOUT at 2 h. The requested 100000 repeat spread remains NOT_RUN (no repeats measured).
 
 Next change to try: Architect review of allocation availability before a later retry of only the five unfinished cells; no algorithm or speed claim from these allocation outcomes.
+
+
+## G4-GLM attempt_glm1e7 — #612, 2026-11-27
+
+Library frozen at 94361f75319744ccaf2ebc716d08feeb2e53b9b7; driver f0980d3c22b7d6f763876fe81bce128363c8d143. Warmup N=10000 seed0 CUDA; A N=100000 seeds0–4, B N=1000000 seeds0–9, each CUDA then CPU, float64, alpha=.2, max_elements=N*(90+9), frozen 90x3 input. Resume skips recorded cells, per-cell cap7200s, internal cap8h.
+
+H100/A100/L4/T4 each ALLOCATION_FAILED before a session was created. All 30 measured cells plus excluded warmup NOT_RUN, no device/driver/CUDA/torch/thread identity observed. Per-host min/median/max seconds for either N/method: NOT_RUN. Pooled power ± SE, CPU/CUDA agreement per coefficient and speedups: NOT_RUN; zero measured seeds. No scientific call ran locally or remotely.
+
+Required pooled-agreement and PASS-cell range/mc_se checks NOT_RUN (no measurements). Driver compile PASS. Four allocation/cleanup records and three history-preservation checks PASS. Initial local preflight missing temp directory fixed by mkdir; preflight2 PASS before allocation. Controller uses the unchanged pinned transport from #595, no usage polling during work.
+
+Cleanup PASS on all four attempts; fresh sessions readback no active sessions; usage zero assignments, 0.00 CU/hr, 321.34 CU. Task0/60CU (expected25); November known since Nov19 ≥28.01CU; full calendar month NOT_VERIFIED (no inferred full-month total). No December use. Historical evidence preserved.
+
+Next change to try: retry unchanged G4 protocol on the next Engineer run when a GPU allocates; no tuning or library change. No timing or agreement claim.

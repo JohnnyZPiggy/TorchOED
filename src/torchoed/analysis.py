@@ -1,5 +1,4 @@
 """Float64 least squares (§123–§124) and random-intercept REML (§136–§138)."""
-import math
 import torch
 
 
@@ -111,7 +110,7 @@ def fit_reml(X: torch.Tensor, y: torch.Tensor, groups: tuple[torch.Tensor, ...])
         C = torch.cholesky_inverse(cchol)
         beta = C @ WX.T @ y
         r = y - X @ beta
-        ll = -.5 * ((n-p) * math.log(2*math.pi) + 2*chol.diag().log().sum()
+        ll = -.5 * ((n-p) * X.new_tensor(2*torch.pi).log() + 2*chol.diag().log().sum()
                     + 2*cchol.diag().log().sum() + r @ torch.cholesky_solve(r[:, None], chol)[:, 0])
         return ll, beta, C, WX, chol
 

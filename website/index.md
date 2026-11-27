@@ -39,3 +39,12 @@ print(result["ids"].tolist(), result["objective"], result["efficiency_lower_boun
 Read [criteria](criteria.md), [augmentation and constraints](augmentation.md), [space-filling designs](space_filling.md), the [PyDOE comparison](pydoe.md), and the [API reference](api.md).
 
 [TorchOED Studio replay demo (E1 ChemReact, E2 Oats)](https://johnnyzpiggy.github.io/TorchOED/studio/?replay)
+
+**Run Studio locally** from a checkout:
+
+```bash
+pip install -e . -e studio
+torchoed-studio --port 8000
+```
+
+Open <http://127.0.0.1:8000>; the server binds to 127.0.0.1 only. Studio calls public `torchoed` functions only; there is no hosted server.

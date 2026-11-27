@@ -618,6 +618,25 @@ assert torch.allclose(r['coef'], torch.tensor([10., 2.], dtype=torch.float64))
 
 Oats and the frozen strip-plot example match all 81 exact balanced EMS quantities at 1e-10 relative. The frozen lme4/lmerTest comparison uses the measured W18 reference rule: 1e-8 for coefficients/log-likelihood, 1e-4 for SEs, variance components and df. No new R run or timing claim.
 
+## Bootstrap intervals and batched fits
+
+Residual bootstrap uses modified centred residuals and type-7 percentile intervals; pass `indices` to reproduce an external run. CPU float64, no timing claim: frozen R stackloss/ChemReact replicates and interval ends match at 1e-10 ([evidence](https://github.com/JohnnyZPiggy/TorchOED/tree/main/reports/w19-bootstrap-refs), #619).
+
+```python
+import torch
+from torchoed import residual_bootstrap, fit_least_squares_batched
+
+x = torch.linspace(-1, 1, 12, dtype=torch.float64)
+X = torch.stack((torch.ones(12, dtype=torch.float64), x), 1)
+y = 3 + 2*x + 0.1*torch.sin(7*x)
+boot = residual_bootstrap(X, y, B=499, generator=torch.Generator().manual_seed(0))
+assert boot['coef'].shape == (499, 2) and (boot['lower'] < boot['upper']).all()
+print('95% bootstrap intervals:', boot['lower'], boot['upper'])
+
+batch = fit_least_squares_batched(torch.stack((X, X.flip(0))), torch.stack((y, y.flip(0))))
+assert torch.allclose(batch['coef'][0], batch['coef'][1]) and torch.allclose(batch['se'][0], batch['se'][1])
+```
+
 ## Published reference examples
 
 A published example is a call printed in a reference package's help page or vignette at a recorded version, with its inputs frozen as repository data and re-scored by one shared TorchOED metric.

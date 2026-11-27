@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add `residual_bootstrap` percentile intervals and `fit_least_squares_batched` coefficients and SEs (§143–§144).
+
+- Add the `torchoed-studio` 0.1.0 package: design and analysis workflow JSON API, static PWA page, and replay demo on the docs site.
+
 - Add Derringer–Suich desirabilities and a CPU float64 autograd BFGS box maximiser (§140–§142).
 
 - Add `predict_least_squares` intervals and `prediction_trace` effect data using the saved OLS QR factor (§139).

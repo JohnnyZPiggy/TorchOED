@@ -78,5 +78,7 @@ def test_chemreact_profile():
     assert out["trace"] == json_values(prediction_trace(fit, chem_rows, torch.zeros(2, dtype=torch.float64), 0, torch.tensor([-1., 0., 1.], dtype=torch.float64)))
     assert out["prediction"] == json_values(predict_least_squares(fit, chem_rows([[0., 0.]])))
     assert handle("/api/profile", dict(body, prediction_block=2))["prediction"] == json_values(predict_least_squares(fit, chem_rows([[0., 0.]], [2])))
+    single = dict(body, block=[1]*len(body["runs"]))
+    assert handle("/api/profile", dict(single, prediction_block=2)) == handle("/api/profile", single)
     bounds = torch.ones(2, dtype=torch.float64)
     assert out["goal"] == json_values(maximize_desirability(lambda x: d_max(predict_least_squares(fit, chem_rows(x))["fit"], 80, 84), -bounds, bounds))

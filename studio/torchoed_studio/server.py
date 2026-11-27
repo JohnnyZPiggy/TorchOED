@@ -98,9 +98,10 @@ def handle(path: str, body: dict) -> dict | str:
             raise ValueError("profile needs a least-squares fit")
         factors = body["factors"]
         point = body.get("point", [(f["low"]+f["high"])/2 if "low" in f else sorted(f["levels"])[0] for f in factors])
+        k = max(body["block"]) if body.get("block") else 1
         def rows(coded):
             factors_coded = [dict(f, low=-1, high=1) if "low" in f else f for f in factors]
-            block = [body.get("prediction_block", 1)]*len(coded)+[max(body["block"])] if body.get("block") else None
+            block = [body.get("prediction_block", 1) if k > 1 else 1]*len(coded)+[k] if body.get("block") else None
             # One extra row retains every training block dummy, including for B1 predictions.
             return fit_matrix(dict(body, factors=factors_coded, runs=list(coded)+[f0], block=block))[:len(coded)]
         f0 = [((v-(f["low"]+f["high"])/2)/((f["high"]-f["low"])/2)) if "low" in f else v for v, f in zip(point, factors)]

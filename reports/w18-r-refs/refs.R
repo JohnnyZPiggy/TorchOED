@@ -28,9 +28,10 @@ points <- rbind(optimum=best$par, centre=c(0,0,0),
   as.matrix(expand.grid(time=c(-1.682,1.682), temperature=c(-1.682,1.682),
     catalyst=c(-1.682,1.682)))[1:3,])
 responses <- t(apply(points, 1, function(x) c(conversion=conversionPred(x), activity=activityPred(x))))
-ds <- list(source="desirability.Rnw, sections 4 An Example and 5 Optimization; square region",
+ds <- list(source="desirability.Rnw, sections 4 An Example and 5 Maximizing Desirability; square region",
   models=list(conversion=deparse(conversionPred), activity=deparse(activityPred)),
-  objects=list(conversion=unclass(conversionD), activity=unclass(activityD), overall=unclass(overallD)),
+  objects=list(conversion=conversionD[c("low","high","scale")],
+    activity=activityD[c("low","target","high","lowScale","highScale")], overall="dOverall(conversionD, activityD)"),
   points=points, responses=responses, individual=list(conversion=predict(conversionD, responses[,1]),
     activity=predict(activityD, responses[,2])), overall=predict(overallD, as.data.frame(responses)),
   optimization=list(method="optim default Nelder-Mead, control=list(fnscale=-1), square box +/-1.682",
@@ -39,5 +40,6 @@ tcrit <- qt(.975, wb$confidence$df)
 ends <- wb$confidence$fit[1,1] + c(-1,1)*tcrit*wb$confidence$se.fit[1]
 stopifnot(max(abs(ends-wb$confidence$fit[1,2:3])) <= 1e-12)
 jsonlite::write_json(list(warpbreaks=wb, ChemReact=cr, stationary=stationary, desirability=ds,
+  sessionInfo=capture.output(sessionInfo()),
   consistency=list(tcrit=tcrit, manual=ends, R=wb$confidence$fit[1,2:3])),
   file.path(out,"r.json"), digits=NA, auto_unbox=TRUE, pretty=TRUE)

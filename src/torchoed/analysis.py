@@ -200,3 +200,94 @@ def prediction_trace(fit: dict[str, torch.Tensor | int], rows: object, f0: torch
     F = f0.repeat(len(grid), 1)
     F[:, j] = grid
     return predict_least_squares(fit, rows(F), level=level)
+
+
+def d_max(y: torch.Tensor, low: float, high: float, scale: float = 1.0) -> torch.Tensor:
+    """Larger-is-better Derringer–Suich desirability (§140)."""
+    if not low < high or not scale > 0:
+        raise ValueError('require low < high and positive scale')
+    return ((y-low)/(high-low)).clamp(0, 1).pow(scale)
+
+
+def d_min(y: torch.Tensor, low: float, high: float, scale: float = 1.0) -> torch.Tensor:
+    """Smaller-is-better Derringer–Suich desirability (§140)."""
+    if not low < high or not scale > 0:
+        raise ValueError('require low < high and positive scale')
+    return ((y-high)/(low-high)).clamp(0, 1).pow(scale)
+
+
+def d_target(y: torch.Tensor, low: float, target: float, high: float, low_scale: float = 1.0, high_scale: float = 1.0) -> torch.Tensor:
+    """Target desirability, taking the lower piece at the target (§140)."""
+    if not low < target < high or not (low_scale > 0 and high_scale > 0):
+        raise ValueError('require low < target < high and positive scales')
+    return torch.where(y <= target, ((y-low)/(target-low)).clamp(0, 1).pow(low_scale),
+                       ((y-high)/(target-high)).clamp(0, 1).pow(high_scale))
+
+
+def d_overall(*d: torch.Tensor) -> torch.Tensor:
+    """Geometric mean of equal-shape individual desirabilities (§140)."""
+    return torch.stack(d).prod(0).pow(1/len(d))
+
+
+def maximize_desirability(overall: object, lower: torch.Tensor, upper: torch.Tensor, *, starts: torch.Tensor | None = None) -> dict[str, torch.Tensor]:
+    """CPU float64 multistart BFGS with weak Wolfe bisection (§140–§141).
+
+    Nonsmooth convergence is observed, with no global-optimality guarantee.
+    """
+    if not (lower < upper).all():
+        raise ValueError('require lower < upper')
+    k = len(lower)
+    c, h = (upper+lower)/2, (upper-lower)/2
+    if starts is None:
+        grid = (torch.arange(5, dtype=lower.dtype, device=lower.device)+.5)/5
+        starts = lower+(upper-lower)*torch.cartesian_prod(*([grid]*k)).reshape(-1, k)
+    if not ((starts >= lower) & (starts <= upper)).all():
+        raise ValueError('starts must lie inside the box')
+    points, values, iterations = [], [], []
+
+    def evaluate(z):
+        z = z.detach().requires_grad_()
+        f = -overall((c+h*z.sin())[None, :])[0]
+        # Do not use the undefined geometric-mean gradient at zero.
+        g = torch.zeros_like(z) if f == 0 else torch.autograd.grad(f, z)[0]
+        return f.detach(), g.detach()
+
+    eye = torch.eye(k, dtype=lower.dtype, device=lower.device)
+    for x0 in starts:
+        z = ((x0-c)/h).clamp(-1, 1).asin()
+        H, steps = eye.clone(), 0
+        f, g = evaluate(z)
+        for _ in range(500):
+            if f == 0 or not torch.isfinite(g).all() or (g == 0).all():
+                break
+            p = -H@g
+            if g@p >= 0:
+                H, p = eye.clone(), -g
+            slope = g@p
+            alpha, beta, t = 0., float('inf'), 1.
+            for _ in range(60):
+                trial = z+t*p
+                ft, gt = evaluate(trial)
+                if ft > f+1e-4*t*slope:
+                    beta = t
+                elif gt@p < .9*slope:
+                    alpha = t
+                else:
+                    break
+                t = (alpha+beta)/2 if beta < float('inf') else 2*alpha
+            else:
+                break
+            s, y = trial-z, gt-g
+            sy = s@y
+            if sy > 0:
+                A = eye-torch.outer(s, y)/sy
+                H = A@H@A.T+torch.outer(s, s)/sy
+            z, f, g = trial, ft, gt
+            steps += 1
+        points.append(c+h*z.sin())
+        values.append(-f)
+        iterations.append(steps)
+    all_values = torch.stack(values)
+    best = all_values.argmax()
+    return dict(x=torch.stack(points)[best], value=all_values[best], values=all_values,
+                iterations=torch.tensor(iterations, dtype=torch.int64))

@@ -16,3 +16,4 @@ lmerTest 3.2-1
 DoE.base 1.2-5
 CAs 0.24-3
 caverify 0.3.0
+desirability 2.1

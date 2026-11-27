@@ -142,3 +142,37 @@ Largest m reached this attempt: cpu 100000, cuda 100000.
 GPU wins only on completed measured pairs: [{"k": 5, "m": 100000, "CPU_status": "PASS", "CUDA_status": "PASS", "agreement": "MATCH", "speedup": 7.338352691376273, "CPU": 59.295534521578304, "CUDA": 59.2955345215783}]. No speedup inferred from TIMEOUT or cross-host data.
 Cleanup: 3 readbacks PASS; final 0 assignments; 329.75 CU. This attempt 2.20 CU, cumulative 19.44/25, remaining 40.56 under latest 60 CU task cap; November known spend since Nov19 19.60 CU (full month NOT_VERIFIED: pre-Nov19 usage not reconciled). Frozen attempt stayed within its original cap. Balance top-up of 200 CU does not reset task spend. No same-session retry.
 Next change to try: resume any unfinished cells in a later authorized attempt; preserve completed measurements and caps. No library or tuning change.
+
+## G1-M: million-candidate continuation (#595) — BLOCKED
+Library frozen at 89bab8d2c0d1393c6b391760a372bf19dee160b1; driver 655ac6fb832e7e031c8f17b7b7e3001e0ec1f9ea. Frozen eight-cell order, 7200 s per cell, 28800 s internal budget; seed 0, float64, one restart. No completed cell recovered.
+Original host: T4 requested; kernel identity, driver, CUDA, torch and threads NOT_VERIFIED (no recovered science artifact). H100/A100/L4 allocation failed with cleanup PASS; T4 session history records creation at 00:14:27 UTC and termination at 00:51:01 UTC. The local controller no longer existed when this run resumed; only a STARTED checkpoint survived. Cleanup readback PASS: no active sessions and zero assignments, 329.25 CU.
+Resume host: provider status reported A100; kernel identity, driver, CUDA, torch and threads NOT_RUN. H100 allocation failed; A100 kernel probe exec TIMEOUT after 90 s (KERNEL_PROBE_FAILED), before science. Both controller cleanup readbacks PASS; zero assignments, 329.08 CU. No further allocation this run.
+
+### Original T4 (identity NOT_VERIFIED)
+| Cell | k | m | method | status |
+|---|---|---|---|---|
+| 1 | 3 | 1000000 | cuda | NOT_RUN |
+| 2 | 3 | 1000000 | cpu | NOT_RUN |
+| 3 | 5 | 1000000 | cuda | NOT_RUN |
+| 4 | 5 | 1000000 | cpu | NOT_RUN |
+| 5 | 5 | 100000 | cuda | NOT_RUN |
+| 6 | 5 | 100000 | cpu | NOT_RUN |
+| 7 | 5 | 100000 | cuda | NOT_RUN |
+| 8 | 5 | 100000 | cpu | NOT_RUN |
+
+### Resume A100 (provider hardware; kernel NOT_VERIFIED)
+| Cell | k | m | method | status |
+|---|---|---|---|---|
+| 1 | 3 | 1000000 | cuda | NOT_RUN |
+| 2 | 3 | 1000000 | cpu | NOT_RUN |
+| 3 | 5 | 1000000 | cuda | NOT_RUN |
+| 4 | 5 | 1000000 | cpu | NOT_RUN |
+| 5 | 5 | 100000 | cuda | NOT_RUN |
+| 6 | 5 | 100000 | cpu | NOT_RUN |
+| 7 | 5 | 100000 | cuda | NOT_RUN |
+| 8 | 5 | 100000 | cpu | NOT_RUN |
+
+No saved IDs or objective exist: dense rescoring 0 PASS, 0 FAIL, 8 NOT_RUN. CPU/CUDA agreement and speedup NOT_RUN. Largest m reached in this task: CPU NOT_RUN, CUDA NOT_RUN; historical completed same-host scale remains 100000.
+Repeated k=5,m=100000 timing spread: CPU NOT_RUN, CUDA NOT_RUN (zero completed repeats; no min/max).
+Cleanup: five controller readbacks PASS plus original T4 recovery readback PASS; final zero assignments. Task spend 0.67/60 CU, remaining 59.33 CU. November known since Nov19 20.27 CU; full calendar month NOT_VERIFIED (pre-Nov19 unreconciled). No top-up treated as a reset.
+Next change to try: Architect review of the 90 s A100 kernel-start timeout, then resume the frozen cells from the first missing result on a later authorized run; preserve completed cells and separate hosts. No speedup claim from NOT_RUN.

@@ -40,18 +40,18 @@ def main():
         ref, check = refs[t,v,k], checks[t,v,k]
         n = None if ref['eCAN'] in ('NA','') else int(ref['eCAN'])
         cells.append(dict(t=t,v=v,k=k,N_H=len(rows),eCAN=n,ratio=None if n is None else round(len(rows)/n,6),
-            covered=check['covered']=='TRUE',python_coverage=covered,error=ref.get('error','') or check.get('error',''),
+            covered=None if check['covered']=='NA' else check['covered']=='TRUE',python_coverage=covered,error=ref.get('error','') or check.get('error',''),
             optimal_consistency=None if n is None or len(rows)!=v**t else n==v**t))
     ratios = [c['ratio'] for c in cells if c['ratio'] is not None]
     result = dict(workflow_run_id=runtime['run_id'],source_sha=runtime['source_sha'],
         versions=dict(R=runtime['R_version'],CAs=runtime['packages'].get('CAs','NOT_RUN'),
         caverify=runtime['packages'].get('caverify','NOT_RUN'),Python=platform.python_version(),torch=torch.__version__),
-        max_ratio=max(ratios,default=None),within_1_3=sum(r<=1.3 for r in ratios),cells=cells)
+        measured_ratios=len(ratios),max_ratio=max(ratios,default=None),within_1_3=sum(r<=1.3 for r in ratios),cells=cells)
     save('results.json',result)
     lines = ['# W17 covering-array sizes vs best-known','',f"R run {runtime['run_id']}, frozen source `{runtime['source_sha']}`.",
         'Versions: '+json.dumps(result['versions'])+'.','',
-        'Colbourn November 2024 snapshot via pinned CAs 0.24-3; ratios reported as-is.',
-        f"Python coverage: {sum(c['python_coverage'] for c in cells)}/99 PASS; R covered: {sum(c['covered'] for c in cells)}/99; ratios <= 1.3: {result['within_1_3']}/99.",'',
+        'Target: Colbourn November 2024 snapshot via pinned CAs 0.24-3; reference lookup NOT_RUN.',
+        f"Python coverage: {sum(c['python_coverage'] for c in cells)}/99 PASS; R covered: {sum(c['covered'] is True for c in cells)} TRUE, {sum(c['covered'] is None for c in cells)} NOT_RUN; ratios measured: {len(ratios)}/99; count <= 1.3: NOT_RUN.",'',
         '| t,v | '+' | '.join(map(str,KS))+' | max |','|---|'+'---|'*12]
     for t,v in TV:
         cs = [c for c in cells if (c['t'],c['v'])==(t,v)]
@@ -60,6 +60,7 @@ def main():
     errors = sorted({c['error'] for c in cells if c['error']})
     lines += ['', 'Errors (verbatim): '+json.dumps(errors),
         'Index-one consistency failures: '+json.dumps([f"{c['t']}.{c['v']}.{c['k']}" for c in cells if c['optimal_consistency'] is False]),
+        'R workflow FAILED at the first str(eCAN(3, 10, 3)) probe; both pins installed. The CSVs are host-generated NOT_RUN placeholders, not R outputs. No second dispatch permitted; matrix pending text retained.',
         'Scope: CPU evidence only; no constructor changes, tuning, held-out cases or timing claims.']
     (ROOT/'summary.md').write_text('\n'.join(lines)+'\n',newline='\n')
     print(f'Coverage 99 PASS 0 FAIL; {len(ratios)} ratios; wall {time.monotonic()-start:.6f} s')

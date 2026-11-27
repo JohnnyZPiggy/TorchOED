@@ -235,6 +235,8 @@ With `strip=(r, c)`, `row_hard`, `col_hard`, `eta_row` and `eta_col`, CPU float6
 
 `fit_least_squares(X, Y, *, terms=None, intercept=True)`
 
+`residual_bootstrap(X, y, *, B=999, level=0.95, generator=None, indices=None, max_elements=10_000_000)` returns replicate coefficients and percentile intervals; `fit_least_squares_batched(X, Y)` returns coefficients and SEs over designs (§143–§144).
+
 Fit float64 full-rank OLS with one QR for `(n,)` or `(n, J)` responses (`n > p`, identical dtype/device). Returns coefficients, SEs, t/p, residual variance/df, sequential type I ANOVA, lack-of-fit vs pure error when replicated, leverage, internally studentized residuals and Cook distances and the shared `qr_r` factor. `terms` is a tuple of positive column counts; `None` means one column each. With `intercept=True`, the first term is assumed to be the constant column alone and omitted from ANOVA. Leverage within 10 eps of 1 is set to 1 with NaN diagnostics. CPU/CUDA share code; p-values have absolute accuracy only, degrading at large df (gate §123–§124). No formula parser, rank-deficient fits, weighted/GLS/REML fits.
 
 ## Prediction profiler data

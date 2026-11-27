@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "torchoed-studio"
+version = "0.1.0"
+dependencies = ["torchoed"]
+[project.scripts]
+torchoed-studio = "torchoed_studio.server:main"
+[tool.setuptools.package-data]
+torchoed_studio = ["static/*"]

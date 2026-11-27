@@ -202,3 +202,12 @@ Zero completed cells, objective rescore 0 PASS / 0 FAIL / 8 NOT_RUN; CPU/CUDA ag
 Recovery cleanup PASS: `colab stop -s sae-g1-595-resume3-t4` terminated session; `colab sessions` reported no active sessions; `colab usage` reported zero assignments and 0.00 CU/hr, balance 321.34 CU. Detached attempt 7.74 CU; task total 8.41/60 CU (remaining 51.59); November known since Nov19 28.01 CU, full calendar month NOT_VERIFIED. No top-up reset.
 
 Next change to try: Architect ruling on detached-controller survival across WSL/network failure before another authorized frozen-cell retry. BLOCKED; no speed or agreement claim.
+
+
+## G1-M detached retry 4 (2026-11-27)
+
+Per Architect ruling 7213416955, the three Tesla T4 7200 s TIMEOUT cells above are recorded results and were not rerun. Resume targeted (5, 1000000, cpu), then the four 100000 spread cells, at frozen library 89bab8d and driver 655ac6f, kernel timeout 300 s. Existing controller launched detached; no mid-run usage polling. H100, A100, L4 and T4 each returned ALLOCATION_FAILED before creating a session. These five cells remain NOT_RUN with reason: all four authorized allocation paths exhausted before science. No new device identity or measurement inferred.
+
+Cleanup PASS on all four paths: no created session, zero assignments, unchanged balance 321.34 CU. Additional spend 0.00 CU; task 8.41/60 CU; November known since Nov19 28.01 CU, full month NOT_VERIFIED. Objective rescore 0 PASS / 0 FAIL / 8 NOT_RUN; CPU/CUDA agreement and speedup NOT_RUN. Largest completed m remains 100000 for both methods on CPU and CUDA in historical evidence; million-candidate cells on T4 TIMEOUT at 2 h. The requested 100000 repeat spread remains NOT_RUN (no repeats measured).
+
+Next change to try: Architect review of allocation availability before a later retry of only the five unfinished cells; no algorithm or speed claim from these allocation outcomes.

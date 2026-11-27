@@ -49,7 +49,7 @@ def test_exact_oracle():
                 for k, v in value.items():
                     close(result[key][k] if k.startswith('df') else result[key][k][..., j], v)
             else:
-                close(result[key] if key in ('leverage', 'df_resid') else result[key][..., j], value)
+                close(result[key] if key in ('leverage', 'df_resid', 'qr_r') else result[key][..., j], value)
     assert result['df_resid'] == 14 and result['anova']['df'].tolist() == [2, 1]
     assert (result['lack_of_fit']['df_lof'], result['lack_of_fit']['df_pe']) == (2, 12)
 
@@ -196,3 +196,35 @@ def test_reml_unidentifiable():
     X = torch.ones((8, 1), dtype=torch.float64)
     with pytest.raises(ValueError, match='grouping 0.*identifiable'):
         fit_reml(X, torch.arange(8, dtype=torch.float64), (torch.zeros(8, dtype=torch.int64),))
+
+
+def test_prediction_dense():
+    from torchoed import predict_least_squares
+    g = torch.Generator().manual_seed(3)
+    X, y = torch.randn(12, 3, generator=g, dtype=torch.float64), torch.randn(12, generator=g, dtype=torch.float64)
+    fit = fit_least_squares(X, y, intercept=False)
+    out = predict_least_squares(fit, X)
+    torch.testing.assert_close(out['se'].square()/fit['sigma2'], (X @ torch.linalg.inv(X.T@X)*X).sum(1), rtol=1e-12, atol=0)
+    torch.testing.assert_close(out['se'].square()/fit['sigma2'], fit['leverage'], rtol=1e-12, atol=0)
+    torch.testing.assert_close(((out['pi'][:, 1]-out['pi'][:, 0])/2).square()-((out['ci'][:, 1]-out['ci'][:, 0])/2).square(), (out['t'].square()*fit['sigma2']).expand(len(X)))
+
+
+def test_prediction_quantile():
+    from torchoed import predict_least_squares
+    for nu, level in product((1, 2), (.5, .9, .95, .99)):
+        fit = fit_least_squares(torch.ones(nu+1, 1, dtype=torch.float64), torch.arange(nu+1, dtype=torch.float64))
+        t = predict_least_squares(fit, torch.ones(1, 1, dtype=torch.float64), level=level)['t']
+        a = 1-level
+        expected = math.tan(math.pi*level/2) if nu == 1 else math.sqrt(2/(a*(2-a))-2)
+        assert math.isclose(float(t), expected, rel_tol=1e-12)
+    with pytest.raises(ValueError):
+        predict_least_squares(fit, torch.ones(1, 1, dtype=torch.float64), level=.4)
+
+
+def test_prediction_trace():
+    from torchoed import predict_least_squares, prediction_trace
+    X = torch.tensor([[1., -1.], [1., 0.], [1., 1.]], dtype=torch.float64)
+    fit = fit_least_squares(X, torch.tensor([0., 2., 3.], dtype=torch.float64))
+    actual = prediction_trace(fit, lambda f: f, X[1], 1, X[:, 1])
+    for key, value in predict_least_squares(fit, X).items():
+        torch.testing.assert_close(actual[key], value)

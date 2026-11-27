@@ -70,7 +70,7 @@ def fit_least_squares(X: torch.Tensor, Y: torch.Tensor, *, terms: tuple[int, ...
         fl = sl / (G - p) / (pe / (n - G))
         lof = dict(df_lof=G-p, ss_lof=out(sl), df_pe=n-G, ss_pe=out(pe), f=out(fl), p=out(_f_survival(fl, G-p, n-G)))
     return dict(coef=out(coef), se=out(se), t=out(stat), p_t=out(_f_survival(stat.square(), 1, nu)),
-                sigma2=out(sigma2), df_resid=nu, anova=anova, lack_of_fit=lof,
+                sigma2=out(sigma2), df_resid=nu, qr_r=R, anova=anova, lack_of_fit=lof,
                 residuals=out(e), leverage=h, studentized=out(student), cooks=out(cooks))
 
 
@@ -170,3 +170,33 @@ def fit_reml(X: torch.Tensor, y: torch.Tensor, groups: tuple[torch.Tensor, ...])
     df = 2*C.diag().square() / (g * torch.linalg.solve(H, g.T).T).sum(1)
     return dict(coef=beta, se=se, df=df, t=beta/se, variance=torch.cat((variance[1:], variance[:1])),
                 loglik=ll, iterations=iteration)
+
+
+def predict_least_squares(fit, X0, *, level=0.95):
+    """Single-response unweighted OLS predictions and intervals (section 139)."""
+    if not 0.5 <= level < 1:
+        raise ValueError('require 0.5 <= level < 1')
+    if fit['coef'].ndim != 1:
+        raise ValueError('require a single-response fit')
+    w = torch.linalg.solve_triangular(fit['qr_r'].mT, X0.mT, upper=False)
+    mean, se = X0 @ fit['coef'], (fit['sigma2'] * w.square().sum(0)).sqrt()
+    lo, hi = X0.new_tensor(0.), X0.new_tensor(1.)
+    while _f_survival(hi.square(), 1, fit['df_resid']) > 1-level:
+        hi = 2*hi
+    for _ in range(200):
+        mid = (lo+hi)/2
+        if _f_survival(mid.square(), 1, fit['df_resid']) > 1-level:
+            lo = mid
+        else:
+            hi = mid
+    t = (lo+hi)/2
+    ci, pi = t*se, t*(se.square()+fit['sigma2']).sqrt()
+    return dict(fit=mean, se=se, ci=torch.stack((mean-ci, mean+ci), -1),
+                pi=torch.stack((mean-pi, mean+pi), -1), t=t)
+
+
+def prediction_trace(fit, rows, f0, j, grid, *, level=0.95):
+    """Vary factor j on grid, holding the other factors at f0."""
+    F = f0.repeat(len(grid), 1)
+    F[:, j] = grid
+    return predict_least_squares(fit, rows(F), level=level)

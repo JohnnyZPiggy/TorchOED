@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `predict_least_squares` intervals and `prediction_trace` effect data using the saved OLS QR factor (§139).
+
 - Add `fit_reml` for CPU float64 random-intercept REML: coefficients, SEs, Satterthwaite df and variance components (§136–§138).
 
 - Add `fit_least_squares` for least-squares analysis of one or more responses: coefficients, SEs, t tests, sequential F tests, lack of fit and residual diagnostics (§123–§124).

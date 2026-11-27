@@ -235,7 +235,17 @@ With `strip=(r, c)`, `row_hard`, `col_hard`, `eta_row` and `eta_col`, CPU float6
 
 `fit_least_squares(X, Y, *, terms=None, intercept=True)`
 
-Fit float64 full-rank OLS with one QR for `(n,)` or `(n, J)` responses (`n > p`, identical dtype/device). Returns coefficients, SEs, t/p, residual variance/df, sequential type I ANOVA, lack-of-fit vs pure error when replicated, leverage, internally studentized residuals and Cook distances. `terms` is a tuple of positive column counts; `None` means one column each. With `intercept=True`, the first term is assumed to be the constant column alone and omitted from ANOVA. Leverage within 10 eps of 1 is set to 1 with NaN diagnostics. CPU/CUDA share code; p-values have absolute accuracy only, degrading at large df (gate §123–§124). No formula parser, rank-deficient fits, weighted/GLS/REML or prediction intervals.
+Fit float64 full-rank OLS with one QR for `(n,)` or `(n, J)` responses (`n > p`, identical dtype/device). Returns coefficients, SEs, t/p, residual variance/df, sequential type I ANOVA, lack-of-fit vs pure error when replicated, leverage, internally studentized residuals and Cook distances and the shared `qr_r` factor. `terms` is a tuple of positive column counts; `None` means one column each. With `intercept=True`, the first term is assumed to be the constant column alone and omitted from ANOVA. Leverage within 10 eps of 1 is set to 1 with NaN diagnostics. CPU/CUDA share code; p-values have absolute accuracy only, degrading at large df (gate §123–§124). No formula parser, rank-deficient fits, weighted/GLS/REML fits.
+
+## Prediction profiler data
+
+`predict_least_squares(fit, X0, *, level=0.95)`
+
+For a single-response `fit_least_squares` result and float64 model rows `X0` of shape `(m, p)` in the original coding, return `fit`, `se` (both `(m,)`), `ci`, `pi` (both `(m, 2)`) and scalar Student quantile `t`. Requires `0.5 <= level < 1`; multi-response fits raise `ValueError`. Unweighted intervals only, CPU float64; uses the saved QR factor (§139).
+
+`prediction_trace(fit, rows, f0, j, grid, *, level=0.95)`
+
+Return the same predictions along factor `j` on `grid`, holding the other factors at `f0`. The caller supplies `rows(F)` mapping factor settings to model rows. See the [guide](industrial.md#prediction-at-new-points-and-effect-traces) and [R comparison](https://github.com/JohnnyZPiggy/TorchOED/tree/main/reports/w18-predict). No plotting or formula parsing.
 
 ## REML analysis
 

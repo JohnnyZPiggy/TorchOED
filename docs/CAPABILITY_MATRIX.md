@@ -42,7 +42,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | out of scope by decision: GP surrogates (BoTorch/Ax), general GLMM, survival analysis | N/A | — |
 | least-squares fit: coefficients, SEs, effect tests (t, F by term), lack of fit, residual diagnostics | ✅ `fit_least_squares` (§123–§124, #554); R 4.5.2 `lm`/`anova` 2/2 published examples MATCH at 1e-8 in R's term order (warpbreaks; rsm::ChemReact re-scored #576), frozen positional verdict 1/2 kept (#562, [w17-lm-published](../reports/w17-lm-published/)); Dev: CPU float64, no timing claim; held-out H46 MATCH (#587, [w17-heldout](../reports/w17-heldout/)) | W17 |
 | REML / mixed-model fit for blocked and split-plot designs (whole-plot vs subplot error) | ✅ `fit_reml` (§136–§138, #607); exact Fraction EMS 81/81 at 1e-10; R lme4/lmerTest under W18 reference rule (#567); Dev: CPU float64, no timing claim; HO: pending H49 (W18 week end) | W17–W18 |
-| prediction profiler data (prediction ± interval at a point, effect traces) | ❌ | W18 |
+| prediction profiler data (prediction ± interval at a point, effect traces) | ✅ `predict_least_squares` + `prediction_trace` (§139, PR_PLACEHOLDER); R predict 2/2 MATCH at 1e-8 ([w18-predict](../reports/w18-predict/)); Dev: CPU float64, no timing claim; HO: pending H50 (W18 week end) | W18 |
 | desirability functions and multi-response optimisation | ❌ | W18 |
 | Studio: factors/model → design → evaluate → compare → export | ❌ | W19 |
 | Studio: import responses → fit → profiler; hosted demo | ❌ | W19 |

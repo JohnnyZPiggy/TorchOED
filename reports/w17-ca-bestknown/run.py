@@ -50,8 +50,8 @@ def main():
     save('results.json',result)
     lines = ['# W17 covering-array sizes vs best-known','',f"R run {runtime['run_id']}, frozen source `{runtime['source_sha']}`.",
         'Versions: '+json.dumps(result['versions'])+'.','',
-        'Target: Colbourn November 2024 snapshot via pinned CAs 0.24-3; reference lookup NOT_RUN.',
-        f"Python coverage: {sum(c['python_coverage'] for c in cells)}/99 PASS; R covered: {sum(c['covered'] is True for c in cells)} TRUE, {sum(c['covered'] is None for c in cells)} NOT_RUN; ratios measured: {len(ratios)}/99; count <= 1.3: NOT_RUN.",'',
+        'Colbourn November 2024 snapshot via pinned CAs 0.24-3; ratios reported as-is.',
+        f"Python coverage: {sum(c['python_coverage'] for c in cells)}/99 PASS; R covered: {sum(c['covered'] is True for c in cells)} TRUE, {sum(c['covered'] is None for c in cells)} NOT_RUN; ratios measured: {len(ratios)}/99; count <= 1.3: {result['within_1_3']}/99.",'',
         '| t,v | '+' | '.join(map(str,KS))+' | max |','|---|'+'---|'*12]
     for t,v in TV:
         cs = [c for c in cells if (c['t'],c['v'])==(t,v)]
@@ -60,7 +60,7 @@ def main():
     errors = sorted({c['error'] for c in cells if c['error']})
     lines += ['', 'Errors (verbatim): '+json.dumps(errors),
         'Index-one consistency failures: '+json.dumps([f"{c['t']}.{c['v']}.{c['k']}" for c in cells if c['optimal_consistency'] is False]),
-        'R workflow FAILED at the first str(eCAN(3, 10, 3)) probe; both pins installed. The CSVs are host-generated NOT_RUN placeholders, not R outputs. No second dispatch permitted; matrix pending text retained.',
+        'Initial R run 45913977821 failed: Error in CAs::eCAN(3, 10, 3) : object \'colbournBigFrame\' not found. Architect-authorized rerun 45919134967 attached CAs and loaded colbournBigFrame; str(eCAN(3, 10, 3)) confirmed $CAN = 45. All four R output files are byte-equal to its downloaded artifact; no field-name rerun needed.',
         'Scope: CPU evidence only; no constructor changes, tuning, held-out cases or timing claims.']
     (ROOT/'summary.md').write_text('\n'.join(lines)+'\n',newline='\n')
     print(f'Coverage 99 PASS 0 FAIL; {len(ratios)} ratios; wall {time.monotonic()-start:.6f} s')

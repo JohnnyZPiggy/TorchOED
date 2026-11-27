@@ -74,6 +74,69 @@ def fit_least_squares(X: torch.Tensor, Y: torch.Tensor, *, terms: tuple[int, ...
                 residuals=out(e), leverage=h, studentized=out(student), cooks=out(cooks))
 
 
+def residual_bootstrap(X: torch.Tensor, y: torch.Tensor, *, B: int = 999, level: float = 0.95,
+                       generator: torch.Generator | None = None, indices: torch.Tensor | None = None,
+                       max_elements: int = 10_000_000) -> dict[str, torch.Tensor]:
+    """Modified-residual bootstrap with type-7 percentile intervals (§143–§144).
+
+    Explicit indices are zero-based (n, B); returned coefficients are (B, p).
+    Float64 only. Seeded draws are reproducible within TorchOED, not across R.
+    """
+    if X.ndim != 2 or X.dtype != torch.float64:
+        raise ValueError('X must be 2-D float64')
+    n, p = X.shape
+    if y.shape != (n,) or y.dtype != X.dtype or y.device != X.device or n <= p:
+        raise ValueError('y must match X; require n > p')
+    if not 0 < level < 1 or (generator is not None and indices is not None):
+        raise ValueError('require 0 < level < 1; choose generator or indices')
+    if indices is not None:
+        if (indices.ndim != 2 or indices.shape[0] != n or indices.device != X.device
+                or indices.dtype not in (torch.int32, torch.int64)):
+            raise ValueError('indices must be an integer (n, B) matrix on X device')
+        B = indices.shape[1]
+        if (indices < 0).any() or (indices >= n).any():
+            raise ValueError('indices must lie in [0, n)')
+    if type(B) is not int or B < 1 or n * B > max_elements:
+        raise ValueError('require positive B and n * B <= max_elements')
+    if torch.linalg.matrix_rank(X) != p:
+        raise ValueError('X must have full column rank')
+    Q, R = torch.linalg.qr(X, mode='reduced')
+    fitted = Q @ (Q.T @ y)
+    h = Q.square().sum(1)
+    if (h >= 1).any():
+        raise ValueError('require leverage < 1')
+    r = (y - fitted) / (1 - h).sqrt()
+    r = r - r.mean()
+    if indices is None:
+        indices = torch.randint(n, (n, B), generator=generator, device=X.device)
+    responses = fitted[:, None] + r[indices]
+    coef = torch.linalg.solve_triangular(R, Q.T @ responses, upper=True).T
+    ordered = coef.sort(dim=0).values
+    def quantile(q):
+        g = (B - 1) * q
+        j = int(g)
+        return ordered[j] + (g - j) * (ordered[min(j + 1, B - 1)] - ordered[j])
+    alpha = 1 - level
+    return dict(coef=coef, lower=quantile(alpha / 2), upper=quantile(1 - alpha / 2), indices=indices)
+
+
+def fit_least_squares_batched(X: torch.Tensor, Y: torch.Tensor) -> dict[str, torch.Tensor]:
+    """Fit full-rank float64 designs (D, n, p), returning (D, p) coef and SE."""
+    if X.ndim != 3 or X.dtype != torch.float64:
+        raise ValueError('X must be 3-D float64')
+    D, n, p = X.shape
+    if Y.shape != (D, n) or Y.dtype != X.dtype or Y.device != X.device or n <= p:
+        raise ValueError('Y must match X; require n > p')
+    if (torch.linalg.matrix_rank(X) != p).any():
+        raise ValueError('each X slice must have full column rank')
+    Q, R = torch.linalg.qr(X, mode='reduced')
+    z = Q.mT @ Y[..., None]
+    coef = torch.linalg.solve_triangular(R, z, upper=True).squeeze(-1)
+    sigma2 = (Y - (Q @ z).squeeze(-1)).square().sum(-1) / (n - p)
+    ri = torch.linalg.solve_triangular(R, torch.eye(p, dtype=X.dtype, device=X.device).expand(D, p, p), upper=True)
+    return dict(coef=coef, se=(sigma2[:, None] * ri.square().sum(-1)).sqrt())
+
+
 def fit_reml(X: torch.Tensor, y: torch.Tensor, groups: tuple[torch.Tensor, ...]) -> dict[str, torch.Tensor | int]:
     """Dense CPU float64 REML for 1–3 identifiable random intercepts (§136–§138).
 

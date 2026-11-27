@@ -176,3 +176,29 @@ No saved IDs or objective exist: dense rescoring 0 PASS, 0 FAIL, 8 NOT_RUN. CPU/
 Repeated k=5,m=100000 timing spread: CPU NOT_RUN, CUDA NOT_RUN (zero completed repeats; no min/max).
 Cleanup: five controller readbacks PASS plus original T4 recovery readback PASS; final zero assignments. Task spend 0.67/60 CU, remaining 59.33 CU. November known since Nov19 20.27 CU; full calendar month NOT_VERIFIED (pre-Nov19 unreconciled). No top-up treated as a reset.
 Next change to try: Architect review of the 90 s A100 kernel-start timeout, then resume the frozen cells from the first missing result on a later authorized run; preserve completed cells and separate hosts. No speedup claim from NOT_RUN.
+
+
+## G1-M detached retry recovery (2026-11-27)
+
+Frozen library `89bab8d2c0d1393c6b391760a372bf19dee160b1`, driver `655ac6fb832e7e031c8f17b7b7e3001e0ec1f9ea`; kernel timeout 300 s. Existing detached wrapper exited with `CalledProcessError` from `colab usage`; controller/exec processes were absent at recovery and WSL init had restarted. The causal link between those observations is NOT_VERIFIED. No new controller code or allocation during recovery. Colab session remained active; recovered its checkpoint before releasing it. The checkpoint's top-level PASS is transport/driver status, **not** a completed scientific measurement.
+
+### Detached Tesla T4 host (sae-g1-595-resume3-t4)
+
+Observed Tesla T4 15360 MiB, NVIDIA driver 580.82.07, torch 2.14.1+cu130, CUDA 13.0, capability 7.5; scipy 1.18.1 and pydoe 1.6.0. Threads NOT_VERIFIED (checkpoint does not record them). No per-cell timings, logdet, floor, peak bytes or IDs were saved for the timed-out cells; these quantities are NOT_RUN, not inferred from the 7200 s cap.
+
+| Cell | k | m | method | status |
+|---|---|---|---|---|
+| 1 | 3 | 1000000 | cuda | TIMEOUT |
+| 2 | 3 | 1000000 | cpu | TIMEOUT |
+| 3 | 5 | 1000000 | cuda | TIMEOUT |
+| 4 | 5 | 1000000 | cpu | NOT_RUN |
+| 5 | 5 | 100000 | cuda | NOT_RUN |
+| 6 | 5 | 100000 | cpu | NOT_RUN |
+| 7 | 5 | 100000 | cuda | NOT_RUN |
+| 8 | 5 | 100000 | cpu | NOT_RUN |
+
+Zero completed cells, objective rescore 0 PASS / 0 FAIL / 8 NOT_RUN; CPU/CUDA agreement and speedup NOT_RUN. Largest completed m on this host: CPU NOT_RUN, CUDA NOT_RUN; historical 100000 remains unchanged. Repeated 100000 timing spread: zero completed repeats, min/max NOT_RUN.
+
+Recovery cleanup PASS: `colab stop -s sae-g1-595-resume3-t4` terminated session; `colab sessions` reported no active sessions; `colab usage` reported zero assignments and 0.00 CU/hr, balance 321.34 CU. Detached attempt 7.74 CU; task total 8.41/60 CU (remaining 51.59); November known since Nov19 28.01 CU, full calendar month NOT_VERIFIED. No top-up reset.
+
+Next change to try: Architect ruling on detached-controller survival across WSL/network failure before another authorized frozen-cell retry. BLOCKED; no speed or agreement claim.

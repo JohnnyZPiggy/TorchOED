@@ -44,7 +44,7 @@ Every feature PR updates its row. Cell legend: ✅ done with evidence · ◐ par
 | REML / mixed-model fit for blocked and split-plot designs (whole-plot vs subplot error) | ✅ `fit_reml` (§136–§138, #607); exact Fraction EMS 81/81 at 1e-10; R lme4/lmerTest under W18 reference rule (#567); Dev: CPU float64, no timing claim; HO: H49 MATCH (#610, [w18-heldout](../reports/w18-heldout/)) | W17–W18 |
 | prediction profiler data (prediction ± interval at a point, effect traces) | ✅ `predict_least_squares` + `prediction_trace` (§139, #609); R predict 2/2 MATCH at 1e-8 ([w18-predict](../reports/w18-predict/)); Dev: CPU float64, no timing claim; HO: H50 MATCH (#610, [w18-heldout](../reports/w18-heldout/)) | W18 |
 | desirability functions and multi-response optimisation | ✅ `d_max`, `d_min`, `d_target`, `d_overall`, `maximize_desirability` (§140–§142, #608); [w18-desirability](../reports/w18-desirability/) G3 2/2 PASS; Dev: CPU float64, no timing claim; HO: H51 MATCH (#610, [w18-heldout](../reports/w18-heldout/)) | W18 |
-| Studio: factors/model → design → evaluate → compare → export | ◐ model/generate/export 6/10 (#616); evaluate/compare pending | W19 |
+| Studio: factors/model → design → evaluate → compare → export | ✅ 5/5 steps on E1 and E2 (10/10), #622 + #623; evaluate/compare equal direct public-library calls; Dev: CPU float64, no timing claim | W19 |
 | Studio: import responses → fit → profiler; hosted demo | ❌ | W19 |
 
 ## P3 — torch-native frontier (weeks 21–23)

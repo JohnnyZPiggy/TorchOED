@@ -51,3 +51,35 @@ def test_export_and_http():
         finally:
             server.shutdown()
             thread.join()
+
+
+def test_evaluate():
+    import torch
+    from torchoed import design_diagnostics, polynomial_features, effects_coding
+    for body, structure in ((E1, dict(blocks=[7, 7])), (E2, dict(whole_plots=[4]*18, eta=1.0))):
+        state = {**body, **handle('/api/generate', body)}
+        if body is E1:
+            coded = (torch.tensor(state['runs'], dtype=torch.float64) - torch.tensor([85., 175.])) / 5
+            F = polynomial_features(coded, 2)[:, 1:]
+        else:
+            codes = torch.tensor([[f['levels'].index(r[j]) for j,f in enumerate(body['factors'])] for r in state['runs']])
+            F = torch.cat([torch.ones((72,1), dtype=torch.float64), effects_coding(codes[:,0],3), effects_coding(codes[:,1],4)], dim=1)
+        direct = design_diagnostics(F, torch.arange(len(F)), effect=1.0, alpha=0.05, **structure)
+        assert handle('/api/evaluate', state) == {k: v.tolist() if isinstance(v, torch.Tensor) else v for k,v in direct.items()}
+
+
+def test_compare():
+    import torch
+    from torchoed import compare_designs, polynomial_features, effects_coding
+    for body in (E1, E2):
+        state = {**body, **handle('/api/generate', body), 'seed': 17}
+        if body is E1:
+            F = polynomial_features((torch.tensor(state['runs'], dtype=torch.float64) - torch.tensor([85.,175.])) / 5, 2)
+        else:
+            codes = torch.tensor([[f['levels'].index(r[j]) for j,f in enumerate(body['factors'])] for r in state['runs']])
+            F = torch.cat([torch.ones((72,1), dtype=torch.float64), effects_coding(codes[:,0],3), effects_coding(codes[:,1],4)], dim=1)
+        direct = compare_designs(F, [torch.arange(len(F)), len(F)], effect=1.0, alpha=0.05, generator=torch.Generator().manual_seed(17))
+        expected = {**direct, 'ids': [v.tolist() for v in direct['ids']], 'efficiency': {k:v.tolist() for k,v in direct['efficiency'].items()}, 'power': direct['power'].tolist(), 'fds_quantiles': direct['fds_quantiles'].tolist(), 'fds': [v.tolist() for v in direct['fds']]}
+        out = handle('/api/compare', state)
+        assert out == expected
+        assert out['efficiency']['D'][0] == 1.0

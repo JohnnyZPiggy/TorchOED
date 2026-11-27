@@ -1,0 +1,789 @@
+{
+  "warpbreaks": {
+    "points": [
+      {
+        "wool": "A",
+        "tension": "L"
+      },
+      {
+        "wool": "B",
+        "tension": "L"
+      },
+      {
+        "wool": "A",
+        "tension": "M"
+      },
+      {
+        "wool": "B",
+        "tension": "M"
+      },
+      {
+        "wool": "A",
+        "tension": "H"
+      },
+      {
+        "wool": "B",
+        "tension": "H"
+      }
+    ],
+    "model_matrix": [
+      [1, 0, 0, 0],
+      [1, 1, 0, 0],
+      [1, 0, 1, 0],
+      [1, 1, 1, 0],
+      [1, 0, 0, 1],
+      [1, 1, 0, 1]
+    ],
+    "coef": [39.2777777777778, -5.77777777777778, -10, -14.7222222222222],
+    "confidence": {
+      "fit": [
+        [39.2777777777778, 32.9271495038284, 45.6284060517272],
+        [33.5, 27.1493717260506, 39.8506282739494],
+        [29.2777777777778, 22.9271495038284, 35.6284060517271],
+        [23.5, 17.1493717260506, 29.8506282739494],
+        [24.5555555555556, 18.2049272816062, 30.9061838295049],
+        [18.7777777777778, 12.4271495038284, 25.1284060517272]
+      ],
+      "se.fit": [3.16178310894083, 3.16178310894083, 3.16178310894083, 3.16178310894083, 3.16178310894083, 3.16178310894083],
+      "df": 50,
+      "residual.scale": 11.6171329413835
+    },
+    "prediction": {
+      "fit": [
+        [39.2777777777778, 15.0953057707365, 63.4602497848191],
+        [33.5, 9.31752799295871, 57.6824720070413],
+        [29.2777777777778, 5.09530577073648, 53.4602497848191],
+        [23.5, -0.682472007041298, 47.6824720070413],
+        [24.5555555555556, 0.373083548514266, 48.7380275625968],
+        [18.7777777777778, -5.40469422926351, 42.9602497848191]
+      ],
+      "se.fit": [3.16178310894083, 3.16178310894083, 3.16178310894083, 3.16178310894083, 3.16178310894083, 3.16178310894083],
+      "df": 50,
+      "residual.scale": 11.6171329413835
+    }
+  },
+  "ChemReact": {
+    "points": [
+      {
+        "Block": "B1",
+        "x1": 0,
+        "x2": 0,
+        "_row": ""
+      },
+      {
+        "Block": "B1",
+        "x1": 0.372295397461474,
+        "x2": 0.334380203385956,
+        "_row": "x1"
+      }
+    ],
+    "model_matrix": [
+      [1, 0, 0, 0, 0, 0, 0],
+      [1, 0, 0.372295397461474, 0.334380203385956, 0.138603862970997, 0.111810120416433, 0.124488210722823]
+    ],
+    "coef": [84.09542720345, -4.45752976187259, 0.932540813662861, 0.577712234547412, -1.30855544512464, -0.933442160912807, 0.125000000000009],
+    "confidence": {
+      "fit": [
+        [84.09542720345, 83.9071303918054, 84.2837240150945],
+        [84.3656052971291, 84.1780805729255, 84.5531300213326]
+      ],
+      "se.fit": [0.079630753815432, 0.0793042379047154],
+      "df": 7,
+      "residual.scale": 0.163184625218658
+    },
+    "prediction": {
+      "fit": [
+        [84.09542720345, 83.6660653573443, 84.5247890495557],
+        [84.3656052971291, 83.936581489161, 84.7946291050971]
+      ],
+      "se.fit": [0.079630753815432, 0.0793042379047154],
+      "df": 7,
+      "residual.scale": 0.163184625218658
+    }
+  },
+  "stationary": [0.372295397461474, 0.334380203385956],
+  "desirability": {
+    "source": "desirability.Rnw, sections 4 An Example and 5 Maximizing Desirability; square region",
+    "models": {
+      "conversion": ["function (x) ", "81.09 + 1.0284 * x[1] + 4.043 * x[2] + 6.2037 * x[3] - 1.8366 * ", "    x[1]^2 + 2.9382 * x[2]^2 - 5.1915 * x[3]^2 + 2.215 * x[1] * ", "    x[2] + 11.375 * x[1] * x[3] - 3.875 * x[2] * x[3]"],
+      "activity": ["function (x) ", "59.85 + 3.583 * x[1] + 0.2546 * x[2] + 2.2298 * x[3] + 0.83479 * ", "    x[1]^2 + 0.07484 * x[2]^2 + 0.05716 * x[3]^2 - 0.3875 * x[1] * ", "    x[2] - 0.375 * x[1] * x[3] + 0.3125 * x[2] * x[3]"]
+    },
+    "objects": {
+      "conversion": {
+        "low": 80,
+        "high": 97,
+        "scale": 1
+      },
+      "activity": {
+        "low": 55,
+        "target": 57.5,
+        "high": 60,
+        "lowScale": 1,
+        "highScale": 1
+      },
+      "overall": "dOverall(conversionD, activityD)"
+    },
+    "points": [
+      [-0.51171323646621, 1.68199999791297, -0.586386348250898],
+      [0, 0, 0],
+      [-1.682, -1.682, -1.682],
+      [1.682, -1.682, -1.682],
+      [-1.682, 1.682, -1.682]
+    ],
+    "responses": [
+      [95.1015076660788, 57.5000000145806],
+      [81.09, 59.85],
+      [78.0393872124, 51.10669619196],
+      [4.60333449240003, 67.47432229196],
+      [101.0327308924, 52.38753919196]
+    ],
+    "individual": {
+      "conversion": [0.888323980357575, 0.0641176470588237, 0, 0, 1],
+      "activity": [0.999999994167769, 0.0599999999999994, 0, 0, 0]
+    },
+    "overall": [0.942509403229837, 0.0620246630263268, 0, 0, 0],
+    "optimization": {
+      "method": "optim default Nelder-Mead, control=list(fnscale=-1), square box +/-1.682",
+      "starts": [
+        {
+          "time": -1.5,
+          "temperature": -1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": -1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0,
+          "temperature": -1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": -1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": -1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": -1.5,
+          "temperature": -0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": -0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0,
+          "temperature": -0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": -0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": -0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": -1.5,
+          "temperature": 0,
+          "catalyst": -1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": 0,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0,
+          "temperature": 0,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": 0,
+          "catalyst": -1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": 0,
+          "catalyst": -1.5
+        },
+        {
+          "time": -1.5,
+          "temperature": 0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": 0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0,
+          "temperature": 0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": 0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": 0.75,
+          "catalyst": -1.5
+        },
+        {
+          "time": -1.5,
+          "temperature": 1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": 1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0,
+          "temperature": 1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": 1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": 1.5,
+          "catalyst": -1.5
+        },
+        {
+          "time": -1.5,
+          "temperature": -1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": -1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0,
+          "temperature": -1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": -1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": -1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": -0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": -0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0,
+          "temperature": -0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": -0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": -0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": 0,
+          "catalyst": -0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": 0,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0,
+          "temperature": 0,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": 0,
+          "catalyst": -0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": 0,
+          "catalyst": -0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": 0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": 0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0,
+          "temperature": 0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": 0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": 0.75,
+          "catalyst": -0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": 1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": 1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0,
+          "temperature": 1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": 1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": 1.5,
+          "catalyst": -0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": -1.5,
+          "catalyst": 0
+        },
+        {
+          "time": -0.75,
+          "temperature": -1.5,
+          "catalyst": 0
+        },
+        {
+          "time": 0,
+          "temperature": -1.5,
+          "catalyst": 0
+        },
+        {
+          "time": 0.75,
+          "temperature": -1.5,
+          "catalyst": 0
+        },
+        {
+          "time": 1.5,
+          "temperature": -1.5,
+          "catalyst": 0
+        },
+        {
+          "time": -1.5,
+          "temperature": -0.75,
+          "catalyst": 0
+        },
+        {
+          "time": -0.75,
+          "temperature": -0.75,
+          "catalyst": 0
+        },
+        {
+          "time": 0,
+          "temperature": -0.75,
+          "catalyst": 0
+        },
+        {
+          "time": 0.75,
+          "temperature": -0.75,
+          "catalyst": 0
+        },
+        {
+          "time": 1.5,
+          "temperature": -0.75,
+          "catalyst": 0
+        },
+        {
+          "time": -1.5,
+          "temperature": 0,
+          "catalyst": 0
+        },
+        {
+          "time": -0.75,
+          "temperature": 0,
+          "catalyst": 0
+        },
+        {
+          "time": 0,
+          "temperature": 0,
+          "catalyst": 0
+        },
+        {
+          "time": 0.75,
+          "temperature": 0,
+          "catalyst": 0
+        },
+        {
+          "time": 1.5,
+          "temperature": 0,
+          "catalyst": 0
+        },
+        {
+          "time": -1.5,
+          "temperature": 0.75,
+          "catalyst": 0
+        },
+        {
+          "time": -0.75,
+          "temperature": 0.75,
+          "catalyst": 0
+        },
+        {
+          "time": 0,
+          "temperature": 0.75,
+          "catalyst": 0
+        },
+        {
+          "time": 0.75,
+          "temperature": 0.75,
+          "catalyst": 0
+        },
+        {
+          "time": 1.5,
+          "temperature": 0.75,
+          "catalyst": 0
+        },
+        {
+          "time": -1.5,
+          "temperature": 1.5,
+          "catalyst": 0
+        },
+        {
+          "time": -0.75,
+          "temperature": 1.5,
+          "catalyst": 0
+        },
+        {
+          "time": 0,
+          "temperature": 1.5,
+          "catalyst": 0
+        },
+        {
+          "time": 0.75,
+          "temperature": 1.5,
+          "catalyst": 0
+        },
+        {
+          "time": 1.5,
+          "temperature": 1.5,
+          "catalyst": 0
+        },
+        {
+          "time": -1.5,
+          "temperature": -1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": -1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0,
+          "temperature": -1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": -1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": -1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": -0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": -0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0,
+          "temperature": -0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": -0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": -0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": 0,
+          "catalyst": 0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": 0,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0,
+          "temperature": 0,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": 0,
+          "catalyst": 0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": 0,
+          "catalyst": 0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": 0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": 0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0,
+          "temperature": 0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": 0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": 0.75,
+          "catalyst": 0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": 1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": -0.75,
+          "temperature": 1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0,
+          "temperature": 1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": 0.75,
+          "temperature": 1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": 1.5,
+          "temperature": 1.5,
+          "catalyst": 0.75
+        },
+        {
+          "time": -1.5,
+          "temperature": -1.5,
+          "catalyst": 1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": -1.5,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0,
+          "temperature": -1.5,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": -1.5,
+          "catalyst": 1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": -1.5,
+          "catalyst": 1.5
+        },
+        {
+          "time": -1.5,
+          "temperature": -0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": -0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0,
+          "temperature": -0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": -0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": -0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": -1.5,
+          "temperature": 0,
+          "catalyst": 1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": 0,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0,
+          "temperature": 0,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": 0,
+          "catalyst": 1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": 0,
+          "catalyst": 1.5
+        },
+        {
+          "time": -1.5,
+          "temperature": 0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": 0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0,
+          "temperature": 0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": 0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": 0.75,
+          "catalyst": 1.5
+        },
+        {
+          "time": -1.5,
+          "temperature": 1.5,
+          "catalyst": 1.5
+        },
+        {
+          "time": -0.75,
+          "temperature": 1.5,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0,
+          "temperature": 1.5,
+          "catalyst": 1.5
+        },
+        {
+          "time": 0.75,
+          "temperature": 1.5,
+          "catalyst": 1.5
+        },
+        {
+          "time": 1.5,
+          "temperature": 1.5,
+          "catalyst": 1.5
+        }
+      ],
+      "result": {
+        "par": [-0.51171323646621, 1.68199999791297, -0.586386348250898],
+        "value": 0.942509403229837,
+        "counts": [226, "NA"],
+        "convergence": 0,
+        "message": {}
+      }
+    }
+  },
+  "sessionInfo": ["R version 4.5.2 (2025-10-31)", "Platform: x86_64-pc-linux-gnu", "Running under: Ubuntu 24.04.5 LTS", "", "Matrix products: default", "BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 ", "LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0", "", "locale:", " [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       ", " [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   ", " [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          ", "[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   ", "", "time zone: UTC", "tzcode source: system (glibc)", "", "attached base packages:", "[1] stats     graphics  grDevices utils     datasets  methods   base     ", "", "other attached packages:", "[1] desirability_2.1 rsm_2.10.6      ", "", "loaded via a namespace (and not attached):", "[1] compiler_4.5.2 jsonlite_2.0.0"],
+  "consistency": {
+    "tcrit": 2.00855911210076,
+    "manual": [32.9271495038284, 45.6284060517272],
+    "R": [32.9271495038284, 45.6284060517272]
+  }
+}

@@ -1,0 +1,15 @@
+# W18 R prediction and desirability references (#602)
+
+[R oracle run 45936707367](https://github.com/JohnnyZPiggy/TorchOED/actions/runs/45936707367), SUCCESS; source `871a8bf6c572a419385414eb1df6db39c1f85aeb`. Command: `gh workflow run r-oracle.yml --ref bench/602-w18-r-refs -f script=reports/w18-r-refs/refs.R`. Reference execution 1.4561 s. The three outputs were downloaded using `gh run download` and copied byte-identically; no TorchOED scoring or held-out exports.
+
+R 4.5.2, rsm 2.10.6, desirability 2.1; all 19 package pins match `runtime.json`. `sessionInfo.txt` is the workflow's fresh-process session; the actual reference process's `sessionInfo()` is also frozen in `r.json`, including the attached rsm/desirability versions. `options(digits=17)` and JSON `digits=NA` were used.
+
+G2 freezes all six warpbreaks cells in R level order (wool A/B within tension L/M/H), and ChemReact at the centre and coded stationary point (0.372295397461474, 0.334380203385956), both Block B1. The W17 model formulas are unchanged. Each includes the model matrix, coefficients, fit, se.fit, confidence/prediction limits, df and residual.scale.
+
+Warpbreaks A/L consistency check using R's own numbers: fit 39.2777777777778, SE 3.16178310894083, df 50, `qt(0.975,50)` = 2.00855911210076. Multiplication gives 39.2777777777778 ± 6.350628273949377 = [32.927149503828424, 45.628406051727175]; R gives [32.9271495038284, 45.6284060517272]. Maximum absolute discrepancy 2.14e-14 < 1e-12: PASS.
+
+G3 uses the explicitly permitted fallback: the Myers–Montgomery conversion/activity example, **not tire tread**. Exact source: desirability 2.1 `inst/doc/desirability.Rnw`, §4 “An Example” and §5 “Maximizing Desirability”, executable `doc/desirability.R` chunks 2, 6, 7, 12 and 13 ([published vignette](https://cran.r-project.org/web/packages/desirability/vignettes/desirability.pdf)). These chunks are evaluated directly from the installed pinned package. The prediction functions are frozen as R source strings in `r.json`; objects are `dMax(80,97,scale=1)`, `dTarget(55,57.5,60,lowScale=1,highScale=1)`, and `dOverall(conversionD,activityD)`.
+
+Five fixed points, in output order: the documented procedure's optimum (-0.51171323646621, 1.68199999791297, -0.586386348250898), centre (0,0,0), and rows 1–3 of `expand.grid(time=c(-1.682,1.682), temperature=c(-1.682,1.682), catalyst=c(-1.682,1.682))`: (-1.682,-1.682,-1.682), (1.682,-1.682,-1.682), (-1.682,1.682,-1.682). Individual and overall `predict()` values are frozen; overall values are [0.942509403229837, 0.0620246630263268, 0, 0, 0].
+
+Optimisation exactly follows the vignette's square-region procedure: default `optim` Nelder–Mead with `control=list(fnscale=-1)`, zero desirability outside ±1.682, 125 starts from `expand.grid` of `seq(-1.5,1.5,length=5)` in each factor, keeping the largest result. All starts and the returned result are frozen. Best overall desirability 0.942509403229837, convergence 0. This records the published numerical procedure, without a global-optimality claim. G2/G3 capability counts remain 0/2 until their code tasks are scored.

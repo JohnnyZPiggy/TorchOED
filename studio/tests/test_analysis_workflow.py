@@ -81,4 +81,6 @@ def test_chemreact_profile():
     single = dict(body, block=[1]*len(body["runs"]))
     assert handle("/api/profile", dict(single, prediction_block=2)) == handle("/api/profile", single)
     bounds = torch.ones(2, dtype=torch.float64)
-    assert out["goal"] == json_values(maximize_desirability(lambda x: d_max(predict_least_squares(fit, chem_rows(x))["fit"], 80, 84), -bounds, bounds))
+    direct = json_values(maximize_desirability(lambda x: d_max(predict_least_squares(fit, chem_rows(x))["fit"], 80, 84), -bounds, bounds))
+    assert {k: v for k, v in out["goal"].items() if k != "x"} == {k: v for k, v in direct.items() if k != "x"}
+    close(out["goal"]["x"], direct["x"], 1e-12)

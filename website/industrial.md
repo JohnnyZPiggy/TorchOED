@@ -559,6 +559,28 @@ assert lof['df_lof'] == 3 and lof['df_pe'] == 9
 
 See the [API entry](api.md); R `lm`/`anova` comparisons on published examples are tracked in the [capability matrix](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/CAPABILITY_MATRIX.md).
 
+## Analysing blocked and split-plot results (REML)
+
+Supply the fixed-effect matrix and integer labels for each random-intercept grouping. For a split plot use block labels and labels unique to each whole plot across blocks; for a strip plot add both strip groupings. `variance` follows that order, with residual variance last. This CPU float64 fit reports Satterthwaite df from the observed information (§136–§138); boundary variances are outside its scope.
+
+```python
+import torch
+from torchoed import fit_reml
+
+block = torch.arange(6).repeat_interleave(4)
+treatment = torch.tensor([0., 1., 0., 1.], dtype=torch.float64).repeat(6)
+X = torch.stack((torch.ones(24, dtype=torch.float64), treatment), 1)
+block_effect = torch.tensor([-3., -2., -1., 1., 2., 3.], dtype=torch.float64)
+y = 10 + 2*treatment + block_effect[block]
+y += torch.tensor([-.5, -.5, .5, .5], dtype=torch.float64).repeat(6)
+r = fit_reml(X, y, (block,))
+print('Coefficients:', r['coef'], 'SE:', r['se'], 'df:', r['df'])
+print('Block, residual variances:', r['variance'])
+assert torch.allclose(r['coef'], torch.tensor([10., 2.], dtype=torch.float64))
+```
+
+Oats and the frozen strip-plot example match all 81 exact balanced EMS quantities at 1e-10 relative. The frozen lme4/lmerTest comparison uses the measured W18 reference rule: 1e-8 for coefficients/log-likelihood, 1e-4 for SEs, variance components and df. No new R run or timing claim.
+
 ## Published reference examples
 
 A published example is a call printed in a reference package's help page or vignette at a recorded version, with its inputs frozen as repository data and re-scored by one shared TorchOED metric.

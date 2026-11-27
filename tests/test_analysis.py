@@ -78,3 +78,121 @@ def test_diagnostics_boundary():
     assert r['leverage'][0] == 1 and r['studentized'][0].isnan() and r['cooks'][0].isnan()
     with pytest.raises(ValueError, match='rank'):
         fit_least_squares(torch.ones_like(X), y)
+
+
+def test_reml_fraction_ems():
+    import csv
+    from pathlib import Path
+    from torchoed import fit_reml
+    root = Path(__file__).resolve().parents[1] / 'reports/w17-reml-check'
+    for name, crossed in (('Oats', False), ('strip', True)):
+        rows = list(csv.DictReader((root / f'{name}.csv').open()))
+        bkey, akey, ckey, ykey = ('block', 'A', 'B', 'y') if crossed else ('Block', 'Variety', 'nitro', 'yield')
+        b, a, c = [[row[k] for row in rows] for k in (bkey, akey, ckey)]
+        y = [F(row[ykey]) for row in rows]
+        B, A, D = (len(set(v)) for v in (b, a, c))
+        av, cv = sorted(set(a)), sorted(set(c), key=F)
+        x = [[F(1)] + [F(i == v) for v in av[1:]] + [F(j == v) for v in cv[1:]] +
+             [F(i == v and j == w) for w in cv[1:] for v in av[1:]] for i, j in zip(a, c)]
+        n, p = len(y), len(x[0])
+        def project(w, keys):
+            sums, counts = {}, {}
+            for key, val in zip(keys, w):
+                sums[key] = sums.get(key, F(0)) + val
+                counts[key] = counts.get(key, 0) + 1
+            return [sums[key] / counts[key] for key in keys]
+        def strata(w):
+            pb = project(w, b)
+            parts = [pb, [v-z for v, z in zip(project(w, list(zip(b, a))), pb)]]
+            if crossed:
+                parts += [[v-z for v, z in zip(project(w, list(zip(b, c))), pb)]]
+            return parts + [[v-sum(part[i] for part in parts) for i, v in enumerate(w)]]
+        # Balanced saturated treatment means remove X exactly before stratum SS.
+        e = [v-z for v, z in zip(y, project(y, list(zip(a, c))))]
+        dfs = [B-1, (B-1)*(A-1)] + ([(B-1)*(D-1), (B-1)*(A-1)*(D-1)] if crossed else [A*(B-1)*(D-1)])
+        ms = [sum(v*v for v in part)/d for part, d in zip(strata(e), dfs)]
+        variance = [(ms[0]-ms[1]-(ms[2]-ms[-1] if crossed else 0))/(A*D), (ms[1]-ms[-1])/D]
+        variance += ([(ms[2]-ms[-1])/A] if crossed else []) + [ms[-1]]
+        # Fraction Gauss–Jordan; OLS weights suffice since X is stratum invariant.
+        aug = [[sum(row[i]*row[j] for row in x) for j in range(p)] + [F(i == j) for j in range(p)] for i in range(p)]
+        det = F(1)
+        for i in range(p):
+            pivot = aug[i][i]
+            det *= pivot
+            aug[i] = [v/pivot for v in aug[i]]
+            for j in range(p):
+                if j != i:
+                    scale = aug[j][i]
+                    aug[j] = [v-scale*w for v, w in zip(aug[j], aug[i])]
+        weights = [[sum(aug[i][p+j]*row[j] for j in range(p)) for row in x] for i in range(p)]
+        beta = [sum(w*v for w, v in zip(ws, y)) for ws in weights]
+        se, df = [], []
+        for ws in weights:
+            terms = [sum(v*v for v in part)*lam for part, lam in zip(strata(ws), ms)]
+            se.append(math.sqrt(sum(terms)))
+            df.append(float(sum(terms)**2 / sum(t*t/d for t, d in zip(terms, dfs))))
+        ll = -.5*((n-p)*(math.log(2*math.pi)+1) + math.log(det) + sum(d*math.log(lam) for d, lam in zip(dfs, ms)))
+        labels = [b, list(zip(b, a))] + ([list(zip(b, c))] if crossed else [])
+        groups = tuple(torch.tensor([sorted(set(v)).index(key)*7+3 for key in v]) for v in labels)
+        out = fit_reml(torch.tensor(x, dtype=torch.float64), torch.tensor(y, dtype=torch.float64), groups)
+        expected = dict(coef=list(map(float, beta)), se=se, df=df, variance=list(map(float, variance)), loglik=ll)
+        errors = {}
+        for key, value in expected.items():
+            ref = torch.as_tensor(value, dtype=torch.float64)
+            errors[key] = float(((out[key]-ref).abs()/ref.abs()).max())
+            torch.testing.assert_close(out[key], ref, rtol=1e-10, atol=0)
+        close(out['t'], out['coef']/out['se'])
+        print(name, 'exact relative errors', errors, 'iterations', out['iterations'])
+        # Frozen R is external, under W18's measured reference rule, never refit.
+        r = {}
+        for row in csv.DictReader((root / 'r.csv').open()):
+            if row['case'] == name:
+                r.setdefault(row['group'], []).append(float(row['value']))
+        order = [2, 1, 0, 3] if crossed else [1, 0, 2]
+        r['variance'] = [r['variance'][i] for i in order]
+        for key, rkey in (('coef', 'fixed'), ('se', 'SE'), ('df', 'df'), ('variance', 'variance'), ('loglik', 'logLik')):
+            ref = torch.tensor(r[rkey], dtype=torch.float64).reshape(out[key].shape)
+            print(name, 'R relative', key, float(((out[key]-ref).abs()/ref.abs()).max()))
+            torch.testing.assert_close(out[key], ref, rtol=1e-8 if key in ('coef', 'loglik') else 1e-4, atol=0)
+
+
+def test_reml_unbalanced_score():
+    from torchoed import fit_reml
+    # Seed 17; all fitted group/residual ratios > .1 (interior).
+    rng = torch.Generator().manual_seed(17)
+    labels = torch.tensor(list(product(range(5), range(3), range(3))))
+    b, a, c = labels.T
+    X = torch.stack([torch.ones(len(b))] + [(a == i).double() for i in (1, 2)] +
+                    [(c == j).double() for j in (1, 2)] + [(a == i).double()*(c == j) for j in (1, 2) for i in (1, 2)], 1).double()
+    y = X @ torch.arange(1., 10., dtype=torch.float64) + 3*torch.randn(5, generator=rng, dtype=torch.float64)[b]
+    y += 2*torch.randn(15, generator=rng, dtype=torch.float64)[3*b+a] + .5*torch.randn(45, generator=rng, dtype=torch.float64)
+    X, y, groups = X[1:-1], y[1:-1], (b[1:-1], (3*b+a)[1:-1])
+    out = fit_reml(X, y, groups)
+    assert (out['variance'][:-1]/out['variance'][-1] > .1).all()
+    K = torch.stack([torch.eye(len(y), dtype=torch.float64)] + [(g[:, None] == g).double() for g in groups])
+    variance = torch.cat((out['variance'][-1:], out['variance'][:-1]))
+    def dense(v):
+        V = (v[:, None, None]*K).sum(0)
+        W = torch.linalg.inv(V)
+        C = torch.linalg.inv(X.T @ W @ X)
+        P = W - W @ X @ C @ X.T @ W
+        ll = -.5*((len(y)-X.shape[1])*math.log(2*math.pi) + torch.linalg.slogdet(V)[1] +
+                  torch.linalg.slogdet(X.T @ W @ X)[1] + y @ P @ y)
+        return ll, P
+    ll, P = dense(variance)
+    trace = torch.einsum('ij,kji->k', P, K)
+    quadratic = torch.einsum('i,kij,j->k', P@y, K, P@y)
+    assert float((.5*(trace-quadratic)).abs().max()/quadratic.norm()) <= 1e-8
+    for k in range(len(K)):
+        for factor in (.99, 1.01):
+            trial = variance.clone()
+            trial[k] *= factor
+            assert dense(trial)[0] < ll
+    print('unbalanced variance ratios', out['variance'][:-1]/out['variance'][-1], 'score', .5*(quadratic-trace))
+
+
+def test_reml_unidentifiable():
+    from torchoed import fit_reml
+    X = torch.ones((8, 1), dtype=torch.float64)
+    with pytest.raises(ValueError, match='grouping 0.*identifiable'):
+        fit_reml(X, torch.arange(8, dtype=torch.float64), (torch.zeros(8, dtype=torch.int64),))

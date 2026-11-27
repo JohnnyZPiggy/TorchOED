@@ -9,7 +9,9 @@ from pathlib import Path
 
 import torch
 from torchoed import (central_composite, full_factorial, effects_coding,
-                      polynomial_features, design_diagnostics, compare_designs)
+                      polynomial_features, design_diagnostics, compare_designs,
+                      fit_least_squares, fit_reml, predict_least_squares,
+                      prediction_trace, d_max, maximize_desirability)
 
 
 def features(body):
@@ -29,6 +31,40 @@ def features(body):
     return torch.cat((torch.ones((len(coded), 1), dtype=torch.float64), coded), dim=1)
 
 
+def fit_matrix(body):
+    groups, names = [], ["Intercept"]
+    n = len(body["runs"])
+    columns = [torch.ones((n, 1), dtype=torch.float64)]
+    if body.get("whole_plot") is None and body.get("block") is not None:
+        ids = torch.tensor(body["block"])
+        k = int(ids.max())
+        columns += [(ids[:, None] == torch.arange(2, k+1)).double()]
+        names += [f"Block{b}" for b in range(2, k+1)]
+    for j, factor in enumerate(body["factors"]):
+        values = [row[j] for row in body["runs"]]
+        if "low" in factor:
+            x = torch.stack([torch.as_tensor(v, dtype=torch.float64) for v in values])
+            group = ((x-(factor["low"]+factor["high"])/2)/((factor["high"]-factor["low"])/2))[:, None]
+            labels = [factor["name"]]
+        else:
+            levels = sorted(factor["levels"])[1:]
+            group = torch.tensor([[v == level for level in levels] for v in values], dtype=torch.float64)
+            labels = [f"{factor['name']}[{v}]" for v in levels]
+        groups.append((group, labels))
+        columns.append(group)
+        names += labels
+    if body["model"] == "quadratic":
+        columns += [g.square() for g, _ in groups]
+        names += [f"{labels[0]}^2" for _, labels in groups]
+    if body["model"] in ("quadratic", "interaction"):
+        for i, (a, an) in enumerate(groups):
+            for b, bn in groups[i+1:]:
+                columns += [(a[:, :, None]*b[:, None, :]).transpose(1, 2).flatten(1)]
+                names += [f"{x}:{y}" for y in bn for x in an]
+    body["terms"] = names
+    return torch.cat(columns, dim=1)
+
+
 def json_values(value):
     if isinstance(value, torch.Tensor):
         return value.tolist()
@@ -40,6 +76,50 @@ def json_values(value):
 
 
 def handle(path: str, body: dict) -> dict | str:
+    if path == "/api/import":
+        records = list(csv.DictReader(io.StringIO(body["csv"])))
+        def ids(keys):
+            labels = [tuple(r[k] for k in keys) for r in records]
+            order = list(dict.fromkeys(labels))
+            return [order.index(v)+1 for v in labels]
+        factors = body["factors"]
+        runs = [[float(r[f["name"]]) if "low" in f or all(isinstance(v, (int, float)) for v in f["levels"]) else r[f["name"]] for f in factors] for r in records]
+        return dict(columns=[f["name"] for f in factors], runs=runs,
+                    response=[float(r[body["response"]]) for r in records],
+                    block=ids([body["block"]]) if body.get("block") else None,
+                    whole_plot=ids(body["whole_plot"]) if body.get("whole_plot") else None)
+    if path in ("/api/fit", "/api/profile"):
+        F, y = fit_matrix(body), torch.tensor(body["response"], dtype=torch.float64)
+        reml = body.get("whole_plot") is not None
+        fit = fit_reml(F, y, tuple(torch.tensor(body[k]) for k in ("block", "whole_plot"))) if reml else fit_least_squares(F, y, terms=(1,)*F.shape[1])
+        if path == "/api/fit":
+            return dict(json_values(fit), kind="reml" if reml else "least_squares", terms=body["terms"])
+        if reml:
+            raise ValueError("profile needs a least-squares fit")
+        factors = body["factors"]
+        point = body.get("point", [(f["low"]+f["high"])/2 if "low" in f else sorted(f["levels"])[0] for f in factors])
+        k = max(body["block"]) if body.get("block") else 1
+        def rows(coded):
+            factors_coded = [dict(f, low=-1, high=1) if "low" in f else f for f in factors]
+            block = [body.get("prediction_block", 1) if k > 1 else 1]*len(coded)+[k] if body.get("block") else None
+            # One extra row retains every training block dummy, including for B1 predictions.
+            return fit_matrix(dict(body, factors=factors_coded, runs=list(coded)+[f0], block=block))[:len(coded)]
+        f0 = [((v-(f["low"]+f["high"])/2)/((f["high"]-f["low"])/2)) if "low" in f else v for v, f in zip(point, factors)]
+        level = body.get("level", .95)
+        out = dict(prediction=predict_least_squares(fit, rows([f0]), level=level))
+        if body.get("trace"):
+            trace = body["trace"]
+            j = next(i for i, f in enumerate(factors) if f["name"] == trace["factor"])
+            f = factors[j]
+            grid = (torch.tensor(trace["grid"], dtype=torch.float64)-(f["low"]+f["high"])/2)/((f["high"]-f["low"])/2)
+            out["trace"] = prediction_trace(fit, rows, torch.tensor(f0, dtype=torch.float64), j, grid, level=level)
+        if body.get("goal"):
+            goal = body["goal"]
+            if goal["kind"] != "max":
+                raise ValueError("goal kind must be max")
+            bounds = torch.ones(len(factors), dtype=torch.float64)
+            out["goal"] = maximize_desirability(lambda x: d_max(predict_least_squares(fit, rows(x))["fit"], goal["low"], goal["high"]), -bounds, bounds)
+        return json_values(out)
     if path in ("/api/evaluate", "/api/compare"):
         F = features(body)
         ids = torch.arange(len(F))

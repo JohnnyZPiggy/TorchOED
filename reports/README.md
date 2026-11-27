@@ -100,3 +100,4 @@ One row per report directory. `current` retains distinct acceptance evidence; it
 | [w17-lm-published](w17-lm-published/) | W17 R lm/anova published least-squares comparison (#562) | frozen 1/2 MATCH (ChemReact order discrepancy); R-order aligned 2/2 MATCH (#576) |
 | [w17-xvert-conmx](w17-xvert-conmx/) | W17 Xvert conmx vs exact Fraction on two non-box mixture regions (#572) | 2/2 MATCH; exact errors 0, Xvert errors <6e-8 |
 | [w17-oa-design](w17-oa-design/) | W17 DoE.base oa.design catalogue comparison (#573) | 8/8 MATCH: run count, strength 2, A3 |
+| [w17-heldout](w17-heldout/) | W17 frozen H46–H48: npk least-squares, mixed-level OA, constrained mixture (#587) | 3/3 MATCH |

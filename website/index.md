@@ -37,3 +37,5 @@ print(result["ids"].tolist(), result["objective"], result["efficiency_lower_boun
 `ids` indexes rows of F; `objective` is the maximized log determinant for D. The efficiency field is a certified lower bound, not achieved efficiency or a global-optimality certificate. Search uses seeded feasible restarts; recreate the generator to repeat a call.
 
 Read [criteria](criteria.md), [augmentation and constraints](augmentation.md), [space-filling designs](space_filling.md), the [PyDOE comparison](pydoe.md), and the [API reference](api.md).
+
+[TorchOED Studio replay demo (E1 ChemReact, E2 Oats)](https://johnnyzpiggy.github.io/TorchOED/studio/?replay)

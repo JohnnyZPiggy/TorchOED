@@ -1,8 +1,11 @@
 <!doctype html>
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>TorchOED Studio</title>
+<link rel="manifest" href="manifest.webmanifest">
 <style>body{font:16px system-ui;max-width:900px;margin:2em auto;padding:1em}input{width:90%}table{width:100%}pre{overflow:auto}button,select{padding:.6em;margin:.5em 0}</style>
 <h1>TorchOED Studio</h1><label>Example <select id="example"><option>ChemReact</option><option>Oats</option></select></label>
+<p id="replaynotice" hidden>Replay demo: recorded responses for the preset request, no server</p>
+<pre id="recordedrequest" hidden></pre>
 <table><thead><tr><th>Factor</th><th>Low</th><th>High</th><th>Levels (JSON, for Oats)</th></tr></thead><tbody id="factors"></tbody></table>
 <label>Model <select id="model"><option>quadratic</option><option>linear</option></select></label>
 <button id="generate">Generate</button> <button id="evaluate" disabled>Evaluate</button> <button id="compare" disabled>Compare</button> <button id="export" disabled>Export CSV</button><pre id="result" aria-live="polite"></pre>
@@ -11,9 +14,13 @@
 <button id="importdata">Import</button> <button id="fitdata" disabled>Fit</button> <button id="profile" disabled>Profile</button>
 <script>
 let state;
+const replay=new URLSearchParams(location.search).has('replay');
+const recordings=replay?fetch('replay.json').then(r=>r.json()):null;
+navigator.serviceWorker?.register('sw.js');
+async function replayPreset(){if(!replay)return;replaynotice.hidden=false;model.disabled=true;for(const input of factors.querySelectorAll('input'))input.readOnly=true;const entry=(await recordings)[example.value+' /api/import'];csvdata.value=entry.request.csv;responsecol.value=entry.request.response;csvdata.readOnly=responsecol.readOnly=true}
 function preset(){const oats=example.value==='Oats';model.value=oats?'linear':'quadratic';factors.replaceChildren();for(const f of oats?[['Variety','','','["Victory","Golden Rain","Marvellous"]'],['nitro','','','[0,0.2,0.4,0.6]']]:[['Time',80,90,''],['Temp',170,180,'']]){const tr=document.createElement('tr');for(const v of f){const td=document.createElement('td'),input=document.createElement('input');input.value=v;td.append(input);tr.append(td)}factors.append(tr)}}
-async function post(path,body){const r=await fetch('/api/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw Error((await r.json()).error);return r}
-example.onchange=()=>{preset();responsecol.value=example.value==='Oats'?'yield':'Yield'};preset();
+async function post(path,body){if(replay){const entry=(await recordings)[example.value+' /api/'+path];recordedrequest.hidden=false;recordedrequest.textContent=entry?'Recorded request\n'+JSON.stringify(entry.request,null,2):'';if(!entry)throw Error('not recorded');return new Response(path==='export'?entry.response:JSON.stringify(entry.response))}const r=await fetch('/api/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw Error((await r.json()).error);return r}
+example.onchange=()=>{preset();responsecol.value=example.value==='Oats'?'yield':'Yield';replayPreset()};preset();replayPreset();
 importdata.onclick=async()=>{try{const fs=[...factors.rows].map(r=>{const [name,low,high,levels]=[...r.querySelectorAll('input')].map(i=>i.value);return levels?{name,levels:JSON.parse(levels)}:{name,low:Number(low),high:Number(high)}});const request={csv:csvdata.value,factors:fs,response:responsecol.value,block:'Block',whole_plot:example.value==='Oats'?['Block','Variety']:null};state={factors:fs,model:example.value==='Oats'?'interaction':model.value,...await(await post('import',request)).json()};result.textContent=JSON.stringify(state,null,2);fitdata.disabled=profile.disabled=false}catch(e){result.textContent=e.message}};
 for(const [id,path] of [['fitdata','fit'],['profile','profile']])document.getElementById(id).onclick=async()=>{try{result.textContent=JSON.stringify(await(await post(path,state)).json(),null,2)}catch(e){result.textContent=e.message}};
 generate.onclick=async()=>{try{const fs=[...factors.rows].map(r=>{const [name,low,high,levels]=[...r.querySelectorAll('input')].map(i=>i.value);return levels?{name,levels:JSON.parse(levels)}:{name,low:Number(low),high:Number(high)}});const design=example.value==='Oats'?{kind:'split_plot_full_factorial',blocks:6,whole_plot:[fs[0].name],subplot:[fs[1].name]}:{kind:'central_composite',alpha:Math.sqrt(2),center:[3,3]};const request={factors:fs,model:model.value,design};state={...request,...await(await post('generate',request)).json()};result.textContent=JSON.stringify(state,null,2);for(const id of ['evaluate','compare','export'])document.getElementById(id).disabled=false}catch(e){result.textContent=e.message}};

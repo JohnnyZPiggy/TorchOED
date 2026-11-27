@@ -228,3 +228,32 @@ def test_prediction_trace():
     actual = prediction_trace(fit, lambda f: f, X[1], 1, X[:, 1])
     for key, value in predict_least_squares(fit, X).items():
         torch.testing.assert_close(actual[key], value)
+
+
+def test_desirability_fraction():
+    from torchoed import d_max, d_min, d_target, d_overall
+    low, target, high = F(-1), F(1, 3), F(2)
+    points = sorted({v+d for v in (low, target, high) for d in (F(-1, 10), F(0), F(1, 10))} | {F(0), F(1)})
+    def exact(y):
+        a = F(0) if y < low else F(1) if y > high else ((y-low)/(high-low))**2
+        b = F(1) if y < low else F(0) if y > high else ((y-high)/(low-high))**3
+        c = F(0) if y < low or y > high else ((y-low)/(target-low))**2 if y <= target else ((y-high)/(target-high))**3
+        return a, b, c
+    y = torch.tensor([float(v) for v in points], dtype=torch.float64)
+    refs = torch.tensor([[float(v) for v in exact(p)] for p in points], dtype=torch.float64).T
+    actual = (d_max(y, -1, 2, 2), d_min(y, -1, 2, 3), d_target(y, -1, 1/3, 2, 2, 3))
+    torch.testing.assert_close(torch.stack(actual), refs, rtol=0, atol=1e-15)
+    overall = torch.tensor([float(math.prod(exact(p)))**(1/3) for p in points], dtype=torch.float64)
+    torch.testing.assert_close(d_overall(*actual), overall, rtol=0, atol=1e-15)
+    with pytest.raises(ValueError):
+        d_max(y, 1, 1)
+
+
+def test_desirability_closed_form():
+    from torchoed import d_max, d_min, d_overall, maximize_desirability
+    lo, hi = torch.tensor([-1.], dtype=torch.float64), torch.tensor([1.], dtype=torch.float64)
+    for objective, x, value in ((lambda f: d_overall(d_max(f[:, 0], -1, 1), d_min(f[:, 0], -1, 1)), 0., .5),
+                                (lambda f: d_max(f[:, 0], -1, 1), 1., 1.)):
+        out = maximize_desirability(objective, lo, hi)
+        assert abs(float(out['value'])-value) <= 1e-8
+        assert abs(float(out['x'][0])-x) <= 1e-5

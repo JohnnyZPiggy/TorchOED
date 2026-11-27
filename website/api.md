@@ -260,3 +260,14 @@ Strength-2 integer orthogonal arrays with factor levels in input order: one prim
 ### `covering_array(k, v, *, strength=2, device=None, max_elements=1_000_000)`
 
 Returns deterministic int64 covering arrays. The run size is optimal for binary strength 2 (Kleitman–Spencer) and for prime-power v with strength 2/3 and strength ≤ k ≤ v + 1 (index 1). Otherwise, for strength 2/3, 2 ≤ v ≤ 6 and k ≤ 100, it returns the general family H (index-1 bases, density greedy, products, doubling, row deletion), whose run size is not optimal in general: for strength 3, v = 6, k ≥ 50 it is 1.26–1.38× the NIST IPOG-F sizes. Other inputs raise ValueError. The element budget is checked before construction for the optimal families and on the result for family H. See [gate §131–§135](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/P2_GATE.md).
+
+
+## Desirability and multi-response optimisation
+
+`d_max(y, low, high, scale=1.0)`, `d_min(y, low, high, scale=1.0)`, `d_target(y, low, target, high, low_scale=1.0, high_scale=1.0)`
+
+Return Derringer–Suich desirabilities of the same shape as float64 `y`. Thresholds must be ordered and shape exponents positive. `d_overall(*d)` returns the geometric mean of equal-shape individual values; a zero individual makes the overall value zero. The target uses the lower branch at the join (§140–§141).
+
+`maximize_desirability(overall, lower, upper, *, starts=None)`
+
+CPU float64 box maximisation: `overall` maps `(m, k)` factor settings to `(m,)` desirabilities using torch operations. Bounds are length-k tensors, strictly ordered; optional starts have shape `(s, k)` and lie inside the box. The default is the 5-per-factor midpoint grid in cartesian-product order. Returns `x` `(k,)`, scalar `value`, every start's final `values` `(s,)`, and accepted-step counts `iterations` `(s,)`; ties select the first start. Sine-transformed BFGS uses weak Wolfe bisection, at most 500 steps and 60 line-search trials; zero desirability, zero/nonfinite gradient or line-search failure stops a start. Nonsmooth convergence is observed; no global guarantee, timing, GPU or plotting claim. See the [guide](industrial.md#desirability-and-multiple-responses) and [published comparison](https://github.com/JohnnyZPiggy/TorchOED/tree/main/reports/w18-desirability).

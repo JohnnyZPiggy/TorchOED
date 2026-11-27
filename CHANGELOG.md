@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add Derringer–Suich desirabilities and a CPU float64 autograd BFGS box maximiser (§140–§142).
+
 - Add `predict_least_squares` intervals and `prediction_trace` effect data using the saved OLS QR factor (§139).
 
 - Add `fit_reml` for CPU float64 random-intercept REML: coefficients, SEs, Satterthwaite df and variance components (§136–§138).

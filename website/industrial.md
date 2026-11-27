@@ -577,6 +577,25 @@ print('Centre prediction:', point['fit'], '95% confidence interval:', point['ci'
 
 CPU float64; no timing claim. Published warpbreaks and ChemReact predictions match frozen R `predict.lm` at 1e-8 (2/2; [evidence](https://github.com/JohnnyZPiggy/TorchOED/tree/main/reports/w18-predict)).
 
+## Desirability and multiple responses
+
+Map model predictions to individual desirabilities, then maximise their geometric mean. Use torch operations in the response models so autograd can supply the gradient. This example balances two competing responses on a one-factor box.
+
+```python
+from torchoed import d_max, d_min, d_overall, maximize_desirability
+
+def desirability(f):
+    response_a, response_b = f[:, 0], f[:, 0]
+    return d_overall(d_max(response_a, -1, 1), d_min(response_b, -1, 1))
+
+lower = torch.tensor([-1.], dtype=torch.float64)
+optimum = maximize_desirability(desirability, lower, -lower)
+assert abs(float(optimum['value'])-.5) < 1e-8
+print('Best setting:', optimum['x'], 'overall desirability:', optimum['value'])
+```
+
+`d_target` supports a preferred response value between low and high; shape exponents control each side. Default starts are the 5-per-factor midpoint grid. CPU float64, no timing or global-optimality claim. The published conversion/activity example passes both W18 G3 checks: 15 frozen R values at 1e-10 and a default-start optimum at least R's documented optimum and the 101³ grid maximum minus 1e-6 ([evidence](https://github.com/JohnnyZPiggy/TorchOED/tree/main/reports/w18-desirability)).
+
 ## Analysing blocked and split-plot results (REML)
 
 Supply the fixed-effect matrix and integer labels for each random-intercept grouping. For a split plot use block labels and labels unique to each whole plot across blocks; for a strip plot add both strip groupings. `variance` follows that order, with residual variance last. This CPU float64 fit reports Satterthwaite df from the observed information (§136–§138); boundary variances are outside its scope.

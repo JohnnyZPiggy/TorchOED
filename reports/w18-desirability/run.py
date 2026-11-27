@@ -49,7 +49,7 @@ if __name__ == '__main__':
                              within_1e6=int((result['values'] >= best-1e-6).sum()),
                              start_count=len(result['values']), values=result['values'].tolist(), iterations=result['iterations'].tolist()))
     dest = Path('reports/w18-desirability')
-    (dest/'results.json').write_text(json.dumps(data, indent=2)+'\n')
+    (dest/'results.json').write_text(json.dumps(data, indent=2)+'\n', encoding='utf-8')
     (dest/'summary.md').write_text(
         f'# Week 18 desirability — G3\n\n'
         f'- Check (a): {data["check_a"]["verdict"]}; 15 frozen-R individual/overall values, max absolute {error:.16g} (limit 1e-10).\n'
@@ -58,7 +58,7 @@ if __name__ == '__main__':
         f'- {data["check_b"]["within_1e6"]}/{len(result["values"])} starts within 1e-6 of best; all final values and accepted-step counts in results.json.\n'
         '- Frozen conversion/activity models transcribed from `reports/w18-r-refs/r.json` (R 4.5.2, desirability 2.1, workflow 45936707367).\n'
         '- CPU float64, one thread; no timing or global-optimality claim. No new R dispatch or held-out case.\n'
-        '- Reproduce from repository root: `PYTHONPATH=src python reports/w18-desirability/run.py`.\n')
+        '- Reproduce from repository root: `PYTHONPATH=src python reports/w18-desirability/run.py`.\n', encoding='utf-8')
     print(json.dumps(dict(check_a=check_a, check_b=check_b, best=best, grid_max=grid_max,
                           near_best=data['check_b']['within_1e6'])))
     assert check_a and check_b

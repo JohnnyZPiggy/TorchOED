@@ -559,6 +559,24 @@ assert lof['df_lof'] == 3 and lof['df_pe'] == 9
 
 See the [API entry](api.md); R `lm`/`anova` comparisons on published examples are tracked in the [capability matrix](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/CAPABILITY_MATRIX.md).
 
+## Prediction at new points and effect traces
+
+After the least-squares fit above, build new rows in the same column coding. Intervals use the fit's residual variance and Student quantile; `level` must lie in [0.5, 1).
+
+```python
+from torchoed import predict_least_squares, prediction_trace
+
+f0 = torch.zeros(2, dtype=torch.float64)
+point = predict_least_squares(r, polynomial_features(f0[None, :], 2))
+grid = torch.linspace(-1, 1, 11, dtype=torch.float64)
+trace = prediction_trace(r, lambda f: polynomial_features(f, 2), f0, 0, grid)
+assert point['ci'].shape == (1, 2) and trace['ci'].shape == (11, 2)
+assert (trace['pi'][:, 0] <= trace['ci'][:, 0]).all()
+print('Centre prediction:', point['fit'], '95% confidence interval:', point['ci'])
+```
+
+CPU float64; no timing claim. Published warpbreaks and ChemReact predictions match frozen R `predict.lm` at 1e-8 (2/2; [evidence](https://github.com/JohnnyZPiggy/TorchOED/tree/main/reports/w18-predict)).
+
 ## Analysing blocked and split-plot results (REML)
 
 Supply the fixed-effect matrix and integer labels for each random-intercept grouping. For a split plot use block labels and labels unique to each whole plot across blocks; for a strip plot add both strip groupings. `variance` follows that order, with residual variance last. This CPU float64 fit reports Satterthwaite df from the observed information (§136–§138); boundary variances are outside its scope.

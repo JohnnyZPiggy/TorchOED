@@ -7,6 +7,12 @@ if '--cell' in sys.argv:
     t.set_num_threads(os.cpu_count())
     kind,dev,size,seed=sys.argv[2:6]; N=int(size)
     dataset=sys.argv[6] if kind=='boot' else None
+    if kind=='d':
+        from bench_crossover import call
+        if dev=='cuda': t.cuda.reset_peak_memory_stats()
+        row=call(int(sys.argv[6]),N,dev)
+        row.update(threads=t.get_num_threads(),peak_gpu_bytes=t.cuda.max_memory_allocated() if dev=='cuda' else 0,peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024)
+        print(json.dumps(row)); sys.exit(0)
     a=(json.loads(pathlib.Path('reports/w19-bootstrap-refs/r.json').read_text())[dataset] if kind=='boot' else json.loads(pathlib.Path('reports/w15-glmpower-rd1b/skpr.json').read_text())['attributes'])
     if dev=='cuda': t.cuda.synchronize(); t.cuda.reset_peak_memory_stats()
     start=time.perf_counter()
@@ -28,7 +34,7 @@ checkpoint=pathlib.Path('/content/g1-crossover.json')
 if not checkpoint.exists(): checkpoint.write_text('{"status":"STARTED"}')
 log=open('/content/g1-driver.log','a',buffering=1); os.dup2(log.fileno(),1); os.dup2(log.fileno(),2)
 root=pathlib.Path('/content/torchoed-g1'); driver=pathlib.Path(__file__).read_bytes()
-sha='4b97ea1736707c1c095d398f698504026e542e92'
+sha='b9d4e50d56eeed862bfd431ce06aeef8f737631a'
 subprocess.run(['git','clone','https://github.com/JohnnyZPiggy/TorchOED.git',str(root)],check=True,capture_output=True)
 subprocess.run(['git','checkout',sha],cwd=root,check=True,capture_output=True)
 (root/'tools/g1_driver.py').write_bytes(driver)
@@ -38,7 +44,8 @@ data=dict(status='PASS',source_sha=sha,driver_sha=os.environ['SAE_CANDIDATE_SHA'
 data["host_ram_bytes"]=os.sysconf("SC_PAGE_SIZE")*os.sysconf("SC_PHYS_PAGES")
 start=time.monotonic()
 attempt_boot_w19=[('stackloss',10000,0,'cuda',True)]+[(ds,999,'oracle',dev,False) for ds in ('stackloss','ChemReact') for dev in ('cuda','cpu')]+[(ds,B,seed,dev,False) for ds in ('stackloss','ChemReact') for B in (10000,100000,1000000) for seed in range(5) for dev in ('cuda','cpu')]
-cells=attempt_boot_w19
+attempt_d1e6_w19=[('3',100000,0,'cuda',False),('3',100000,0,'cpu',False),('3',1000000,0,'cuda',False),('3',1000000,0,'cpu',False),('5',1000000,0,'cuda',False),('5',1000000,0,'cpu',False)]+[('3',1000000,i,'cuda',False) for i in (1,2)]
+cells=attempt_d1e6_w19
 completed={(r['dataset'],r['nsim'],r['seed'],r['method'],r['warmup']) for r in data['rows'] if r['status']!='NOT_RUN'}
 data['rows']=[r for r in data['rows'] if r['status']!='NOT_RUN']
 for dataset,N,seed,dev,warmup in cells:
@@ -47,7 +54,7 @@ for dataset,N,seed,dev,warmup in cells:
     row=dict(status='NOT_RUN',reason='internal wall budget exhausted')
     if remaining>0:
         try:
-            r=subprocess.run([sys.executable,'-B','tools/g1_driver.py','--cell','boot',dev,str(N),str(seed),dataset],cwd=root,capture_output=True,text=True,timeout=min(7200,remaining))
+            r=subprocess.run([sys.executable,'-B','tools/g1_driver.py','--cell','d',dev,str(N),str(seed),dataset],cwd=root,capture_output=True,text=True,timeout=min(7200,remaining))
             row=json.loads(r.stdout) if r.returncode==0 else dict(status='ERROR',returncode=r.returncode,error=r.stderr[-2000:])
         except subprocess.TimeoutExpired: row=dict(status='TIMEOUT')
     row.setdefault('status','PASS')

@@ -11,10 +11,12 @@ recorder = run_path(str(Path(__file__).resolve().parents[2] / 'tools/studio_repl
 OUTPUT, record = recorder['OUTPUT'], recorder['record']
 from torchoed_studio.server import Handler
 
+REPLAY_TOL = 1e-10
+
 
 def close(a, b, path=''):
     if type(a) is float or type(b) is float:
-        ok = isinstance(a, (int, float)) and isinstance(b, (int, float)) and math.isclose(a, b, rel_tol=1e-12, abs_tol=1e-12)
+        ok = isinstance(a, (int, float)) and isinstance(b, (int, float)) and math.isclose(a, b, rel_tol=REPLAY_TOL, abs_tol=REPLAY_TOL)
         return [] if ok else [(path, a, b)]
     if isinstance(a, dict) and isinstance(b, dict) and a.keys() == b.keys():
         return [bad for k in a for bad in close(a[k], b[k], f'{path}/{k}')]

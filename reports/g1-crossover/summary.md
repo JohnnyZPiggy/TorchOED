@@ -247,3 +247,21 @@ N=1000000 CPU/CUDA pooled agreement and median speedup: NOT_RUN (0/10 CPU cells 
 Cleanup 4/4 PASS; fresh sessions none, zero assignments, 0.00 CU/hr. Balance 321.17 CU; retry/task 0.17/60 CU; November >= 28.18 known since Nov19, full month NOT_VERIFIED. Prior history unchanged. No usage polling during cells.
 
 Next change to try: in a separate scoped task, retain failed subprocess return codes to diagnose the million-simulation CPU failure before considering chunking. Retain CPU default outside measured same-host cases.
+
+
+### G4-GLM high-RAM host — 2026-11-28 (#620)
+
+Library c72948fc815c5eac53a903ec1b8de4b7ab78ee78; driver e42f855aa211556a568e40d4ea3d41778d6c124e. A100 ALLOCATION_FAILED; L4 allocated. Observed NVIDIA L4 (23034 MiB), driver 580.82.07, torch 2.14.1+cu130, CUDA 13.0, Python 3.13.16. Host RAM 56863301632 bytes. CPU/CUDA float64 on this same host; excluded CUDA N=10000 warmup then N=1000000 seeds0–9 CUDA then CPU. One timed call per cell, transfer-inclusive with CUDA synchronization, no compilation. Internal wall cap8h, cell cap7200s; no retries/tuning.
+
+| method | PASS seeds | seconds min / median / max | pooled N | power +/- MC SE (3 coefficients) | peak RSS bytes | threads |
+|---|---|---|---|---|---|---|
+| cuda | 10/10 | 5.004875 / 5.014523 / 5.040341 | 10000000 | 0.993016700 +/- 0.000026334; 0.884667800 +/- 0.000101010; 0.878068000 +/- 0.000103472 | 1070608384 | [12] |
+| cpu | 10/10 | 33.141258 / 33.627583 / 33.914699 | 10000000 | 0.992942100 +/- 0.000026473; 0.884600800 +/- 0.000101036; 0.877904100 +/- 0.000103532 | 13169909760 | [12] |
+
+Median same-host CPU/CUDA speedup 6.706039x. Pooled coefficient agreement: {'delta': [7.459999999992473e-05, 6.700000000003925e-05, 0.0001638999999999946], 'four_se_band': [0.0001493592692467393, 0.0005714723556323893, 0.0005854954532075413], 'verdict': ['MATCH', 'MATCH', 'MATCH']}. Every PASS cell: power in [0,1] and MC SE independently recomputed locally at1e-12; 21 PASS0FAIL including warmup. Statuses: {'PASS': 21, 'ERROR': 0, 'TIMEOUT': 0, 'NOT_RUN': 0}.
+
+Compared with #614 Tesla T4 CUDA: quality only, different host; no cross-host speedup. {'prior_power': [0.9930167, 0.8846678, 0.878068], 'prior_mc_se': [2.6333502465699517e-05, 0.00010101023890832057, 0.00010347201910468358], 'delta': [0.0, 0.0, 0.0], 'four_se_band': [0.00014896478532711038, 0.0005714001992107738, 0.000585326130975886], 'verdict': ['MATCH', 'MATCH', 'MATCH']}. Prior CPU OOM hypothesis remains NOT_VERIFIED: no current cell failed; no SIGKILL reproduced. CPU peak RSS now measured above13GB on a56.9GB host. GPU peak bytes retained per cell.
+
+Cleanup2/2PASS; final sessions none, zero assignments, rate0.00CU/hr. Task 0.18/60CU; November known since Nov19 >= 28.36CU, full month NOT_VERIFIED. No usage polling during cells. All history retained. Initial local preflight failed (missing temp directory); created directory and used fresh output path before allocation.
+
+Next change to try: measure W19 bootstrap CPU/CUDA under a new Architect START; keep library CPU default outside measured workloads. No source/library, matrix, held-out, R or search changes.

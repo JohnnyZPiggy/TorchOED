@@ -265,3 +265,16 @@ Compared with #614 Tesla T4 CUDA: quality only, different host; no cross-host sp
 Cleanup2/2PASS; final sessions none, zero assignments, rate0.00CU/hr. Task 0.18/60CU; November known since Nov19 >= 28.36CU, full month NOT_VERIFIED. No usage polling during cells. All history retained. Initial local preflight failed (missing temp directory); created directory and used fresh output path before allocation.
 
 Next change to try: measure W19 bootstrap CPU/CUDA under a new Architect START; keep library CPU default outside measured workloads. No source/library, matrix, held-out, R or search changes.
+
+
+### G1-M resumable D retry — 2026-11-28 (#637), BLOCKED
+
+Library b9d4e50d56eeed862bfd431ce06aeef8f737631a; driver 58cb48436965d74d2f1d807953405dc1ded61762. H100 and A100 allocation failed. L4 allocated: NVIDIA L4, 23034 MiB, driver 580.82.07, torch 2.14.1+cu130, CUDA 13.0; kernel probe PASS. Controller work exec remained active but no g1-driver.log or g1-crossover.json existed; stopped by Engineer after 423.7 s session. No cell is claimed executed. Remote Python, CPU threads and host RAM NOT_VERIFIED; no timing or objective evidence. The CLI default is OAuth2; explicit OAuth2 diagnostics had the same failure. Cause NOT_VERIFIED.
+
+| host | cells | seconds | logdet | returned floor | peak GPU bytes |
+|---|---|---|---|---|---|
+| NVIDIA L4 | all 8 NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED |
+
+Largest completed m this attempt: none for CPU or CUDA (historical D maximum remains 100000). CPU/CUDA agreement, speedup and three-repeat timing spread NOT_RUN. Matrix unchanged. Cleanup 3/3 PASS; fresh zero sessions/assignments and rate 0. Task 0.11/60 CU; known November since Nov19 >=28.53 CU, full month NOT_VERIFIED. T4 not attempted after controller launch failure. Local first clone failed because WSL cannot resolve the Windows worktree pointer; used a Git bundle before allocation.
+
+Next change to try: diagnose/retry the unchanged controller launch on the next Engineer run, with no completed cells to rerun. No scientific tuning.

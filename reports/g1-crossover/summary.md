@@ -265,3 +265,44 @@ Compared with #614 Tesla T4 CUDA: quality only, different host; no cross-host sp
 Cleanup2/2PASS; final sessions none, zero assignments, rate0.00CU/hr. Task 0.18/60CU; November known since Nov19 >= 28.36CU, full month NOT_VERIFIED. No usage polling during cells. All history retained. Initial local preflight failed (missing temp directory); created directory and used fresh output path before allocation.
 
 Next change to try: measure W19 bootstrap CPU/CUDA under a new Architect START; keep library CPU default outside measured workloads. No source/library, matrix, held-out, R or search changes.
+
+
+### G1-M resumable D retry — 2026-11-28 (#637), BLOCKED
+
+Library b9d4e50d56eeed862bfd431ce06aeef8f737631a; driver 58cb48436965d74d2f1d807953405dc1ded61762. H100 and A100 allocation failed. L4 allocated: NVIDIA L4, 23034 MiB, driver 580.82.07, torch 2.14.1+cu130, CUDA 13.0; kernel probe PASS. Controller work exec remained active but no g1-driver.log or g1-crossover.json existed; stopped by Engineer after 423.7 s session. No cell is claimed executed. Remote Python, CPU threads and host RAM NOT_VERIFIED; no timing or objective evidence. The CLI default is OAuth2; explicit OAuth2 diagnostics had the same failure. Cause NOT_VERIFIED.
+
+| host | cells | seconds | logdet | returned floor | peak GPU bytes |
+|---|---|---|---|---|---|
+| NVIDIA L4 | all 8 NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED |
+
+Largest completed m this attempt: none for CPU or CUDA (historical D maximum remains 100000). CPU/CUDA agreement, speedup and three-repeat timing spread NOT_RUN. Matrix unchanged. Cleanup 3/3 PASS; fresh zero sessions/assignments and rate 0. Task 0.11/60 CU; known November since Nov19 >=28.53 CU, full month NOT_VERIFIED. T4 not attempted after controller launch failure. Local first clone failed because WSL cannot resolve the Windows worktree pointer; used a Git bundle before allocation.
+
+Next change to try: diagnose/retry the unchanged controller launch on the next Engineer run, with no completed cells to rerun. No scientific tuning.
+
+
+### G1-M unchanged retry — 2026-11-28 (#637), Tesla T4
+
+Architect-authorized retry: L4 allocation failed (cleanup PASS); T4 launch succeeded with unchanged driver 58cb48436965d74d2f1d807953405dc1ded61762 and library b9d4e50d56eeed862bfd431ce06aeef8f737631a. Frozen cells, 7200 s per-cell cap and 8 h internal wall unchanged. No completed cell rerun.
+
+Tesla T4, driver 580.82.07, torch 2.14.1+cu130, CUDA 13.0, Python 3.13.16; CPU 1 thread; host RAM 13605818368 bytes. All reported numbers float64, one restart, seed 0; transfer-inclusive synchronized CUDA timer.
+
+| k | m | method | repeat | status | seconds | logdet | returned floor | peak RSS bytes | peak GPU bytes |
+|---|---|---|---|---|---|---|---|---|---|
+| 3 | 100000 | cuda | 0 | PASS | 54.48100996000005 | 21.74694934757779 | 0.9733020143258417 | 1203433472 | 566679552 |
+| 3 | 100000 | cpu | 0 | PASS | 652.019211022 | 21.74694934757779 | 0.9733020143258417 | 1232072704 | 0 |
+| 3 | 1000000 | cuda | 0 | TIMEOUT | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 3 | 1000000 | cpu | 0 | TIMEOUT | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 5 | 1000000 | cuda | 0 | TIMEOUT | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 5 | 1000000 | cpu | 0 | TIMEOUT | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 3 | 1000000 | cuda | 1 | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 3 | 1000000 | cuda | 2 | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+
+Same-host pairs (CPU/CUDA; ratio >1 means CUDA faster): [{"k": 3, "m": 100000, "relative_difference": 0.0, "match": true, "cpu_over_cuda": 11.967825330343773, "ids_equal": true}].
+Largest completed m: cpu 100000, cuda 100000.
+Three-repeat million-candidate CUDA timing spread: NOT_RUN (0/3 complete).
+
+Every PASS objective independently rescored locally from saved ids with dense float64 slogdet at 1e-9 relative. Four million-candidate cells TIMEOUT; the final CPU cell used the remaining internal 8 h budget, so its cap was shorter than 7200 s. Both remaining CUDA timing repeats NOT_RUN after wall-budget exhaustion. No million pair, speedup or timing spread is claimed; matrix unchanged. Error/timeout rows are recorded as-is; their unobserved per-cell threads/peaks are NOT_VERIFIED. No scientific tuning.
+
+Cleanup 5/5 PASS including prior attempts; fresh zero sessions/assignments, rate0. Task 10.03/60 CU (including 0.10 CU settled after controller cleanup); known November since Nov19 >= 38.45 CU, full month NOT_VERIFIED. No usage polling during cells.
+
+Next change to try: Architect review of these unchanged-protocol measurements; no further tuning within #637.

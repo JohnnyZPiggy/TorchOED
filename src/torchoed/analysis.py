@@ -141,7 +141,8 @@ def fit_reml(X: torch.Tensor, y: torch.Tensor, groups: tuple[torch.Tensor, ...])
     """Dense CPU float64 REML for 1–3 identifiable random intercepts (§136–§138).
 
     Return coef, se, Satterthwaite df, t, variance (groups then residual),
-    loglik and iterations. Zero/boundary group variances are outside this API.
+    loglik, iterations, cov, cov_grad and variance_cov (§147).
+    Zero/boundary group variances are outside this API.
     """
     if X.ndim != 2 or X.dtype != torch.float64 or X.device.type != 'cpu':
         raise ValueError('X must be 2-D CPU float64')
@@ -228,11 +229,15 @@ def fit_reml(X: torch.Tensor, y: torch.Tensor, groups: tuple[torch.Tensor, ...])
     Ku = K @ u
     H = -.5 * torch.einsum('kij,lji->kl', PK, PK) + Ku @ P @ Ku.T
     T = WX @ C
-    g = torch.einsum('ij,kil,lj->jk', T, K, T)
+    cov_grad = T.T @ K @ T
+    g = cov_grad.diagonal(dim1=-2, dim2=-1).T
+    variance_cov = torch.linalg.inv(H)
+    order = list(range(1, len(K))) + [0]
     se = C.diag().sqrt()
     df = 2*C.diag().square() / (g * torch.linalg.solve(H, g.T).T).sum(1)
     return dict(coef=beta, se=se, df=df, t=beta/se, variance=torch.cat((variance[1:], variance[:1])),
-                loglik=ll, iterations=iteration)
+                loglik=ll, iterations=iteration, cov=C, cov_grad=cov_grad[order],
+                variance_cov=variance_cov[order][:, order])
 
 
 def predict_least_squares(fit: dict[str, torch.Tensor | int], X0: torch.Tensor, *, level: float = 0.95) -> dict[str, torch.Tensor]:
@@ -258,11 +263,57 @@ def predict_least_squares(fit: dict[str, torch.Tensor | int], X0: torch.Tensor, 
                 pi=torch.stack((mean-pi, mean+pi), -1), t=t)
 
 
+def _t_survival(t, nu):
+    """Two-sided real-df t survival via incomplete beta (§146 item 4)."""
+    x, xb = nu / (nu + t*t), t*t / (nu + t*t)
+    a, b = nu/2, nu.new_tensor(.5)
+    complement = x >= (a+1)/(a+b+2)
+    if complement:
+        a, b, x, xb = b, a, xb, x
+    def guard(v):
+        return torch.where(v.abs() < 1e-300, 1e-300, v)
+    c, d = torch.ones_like(x), 1/guard(1-(a+b)*x/(a+1))
+    h = d.clone()
+    for m in range(1, 301):
+        for aa in (m*(b-m)*x/((a+2*m-1)*(a+2*m)),
+                   -(a+m)*(a+b+m)*x/((a+2*m)*(a+2*m+1))):
+            d, c = 1/guard(1+aa*d), guard(1+aa/c)
+            delta = d*c
+            h = h*delta
+        if abs(delta-1) <= 1e-15:
+            break
+    value = ((a+b).lgamma()-a.lgamma()-b.lgamma()+a*x.log()+b*xb.log()).exp()*h/a
+    return 1-value if complement else value
+
+
+def predict_reml(fit: dict[str, torch.Tensor | int], X0: torch.Tensor, *, level: float = 0.95) -> dict[str, torch.Tensor]:
+    """Population REML predictions with Satterthwaite confidence intervals (§146–§147)."""
+    if not 0.5 <= level < 1:
+        raise ValueError('require 0.5 <= level < 1')
+    mean, q = X0 @ fit['coef'], (X0 @ fit['cov'] * X0).sum(1)
+    g = torch.einsum('mi,kij,mj->mk', X0, fit['cov_grad'], X0)
+    df = 2*q.square() / (g @ fit['variance_cov'] * g).sum(1)
+    quantiles = []
+    for nu in df:
+        lo, hi = nu.new_tensor(0.), nu.new_tensor(1.)
+        while _t_survival(hi, nu) > 1-level:
+            hi = 2*hi
+        for _ in range(200):
+            mid = (lo+hi)/2
+            if _t_survival(mid, nu) > 1-level:
+                lo = mid
+            else:
+                hi = mid
+        quantiles.append((lo+hi)/2)
+    t, se = torch.stack(quantiles), q.sqrt()
+    return dict(fit=mean, se=se, df=df, ci=torch.stack((mean-t*se, mean+t*se), -1), t=t)
+
+
 def prediction_trace(fit: dict[str, torch.Tensor | int], rows: object, f0: torch.Tensor, j: int, grid: torch.Tensor, *, level: float = 0.95) -> dict[str, torch.Tensor]:
     """Vary factor j on grid, holding the other factors at f0."""
     F = f0.repeat(len(grid), 1)
     F[:, j] = grid
-    return predict_least_squares(fit, rows(F), level=level)
+    return (predict_reml if 'cov_grad' in fit else predict_least_squares)(fit, rows(F), level=level)
 
 
 def d_max(y: torch.Tensor, low: float, high: float, scale: float = 1.0) -> torch.Tensor:

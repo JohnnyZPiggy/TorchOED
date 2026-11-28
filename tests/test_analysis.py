@@ -142,6 +142,21 @@ def test_reml_fraction_ems():
             errors[key] = float(((out[key]-ref).abs()/ref.abs()).max())
             torch.testing.assert_close(out[key], ref, rtol=1e-10, atol=0)
         close(out['t'], out['coef']/out['se'])
+        if not crossed:
+            from torchoed import predict_reml
+            cells = [x[next(i for i in range(n) if a[i] == v and c[i] == w)] for v in av for w in cv]
+            means = [[sum(row[j] for row in rr)/len(rr) for j in range(p)] for rr in
+                     [cells[i*D:(i+1)*D] for i in range(A)] + [cells[j::D] for j in range(D)] + [cells]]
+            L = cells + means
+            expected = []
+            for row in L:
+                ws = [sum(row[j]*weights[j][i] for j in range(p)) for i in range(n)]
+                terms = [sum(v*v for v in part)*lam for part, lam in zip(strata(ws), ms)]
+                expected.append([float(sum(v*w for v, w in zip(ws, y))), math.sqrt(sum(terms)),
+                                 float(sum(terms)**2/sum(t*t/d for t, d in zip(terms, dfs)))])
+            prediction = predict_reml(out, torch.tensor(L, dtype=torch.float64))
+            for j, key in enumerate(('fit', 'se', 'df')):
+                torch.testing.assert_close(prediction[key], torch.tensor([r[j] for r in expected], dtype=torch.float64), rtol=1e-10, atol=0)
         print(name, 'exact relative errors', errors, 'iterations', out['iterations'])
         # Frozen R is external, under W18's measured reference rule, never refit.
         r = {}
@@ -168,6 +183,16 @@ def test_reml_unbalanced_score():
     y += 2*torch.randn(15, generator=rng, dtype=torch.float64)[3*b+a] + .5*torch.randn(45, generator=rng, dtype=torch.float64)
     X, y, groups = X[1:-1], y[1:-1], (b[1:-1], (3*b+a)[1:-1])
     out = fit_reml(X, y, groups)
+    from torchoed import predict_reml, prediction_trace
+    unit = predict_reml(out, torch.eye(X.shape[1], dtype=torch.float64))
+    close(unit['se'], out['se'])
+    close(unit['df'], out['df'])
+    close(predict_reml(out, X)['fit'], X @ out['coef'])
+    trace = prediction_trace(out, lambda f: f, X[0], 1, X[:3, 1])
+    trace_rows = X[0].repeat(3, 1)
+    trace_rows[:, 1] = X[:3, 1]
+    for key, value in predict_reml(out, trace_rows).items():
+        close(trace[key], value)
     assert (out['variance'][:-1]/out['variance'][-1] > .1).all()
     K = torch.stack([torch.eye(len(y), dtype=torch.float64)] + [(g[:, None] == g).double() for g in groups])
     variance = torch.cat((out['variance'][-1:], out['variance'][:-1]))
@@ -257,3 +282,26 @@ def test_desirability_closed_form():
         out = maximize_desirability(objective, lo, hi)
         assert abs(float(out['value'])-value) <= 1e-8
         assert abs(float(out['x'][0])-x) <= 1e-5
+
+
+def test_reml_prediction_quantile():
+    from torchoed import predict_reml
+    for nu, level in product((1, 2, 3, 18, 45), (.5, .9, .95, .99)):
+        one = torch.ones((1, 1), dtype=torch.float64)
+        fit = dict(coef=one[:, 0], cov=one, cov_grad=one[None], variance_cov=2*one/nu)
+        actual = predict_reml(fit, one, level=level)['t'][0]
+        alpha = 1-level
+        if nu in (1, 2):
+            expected = math.tan(math.pi*level/2) if nu == 1 else math.sqrt(2/(alpha*(2-alpha))-2)
+        else:
+            lo, hi = one.new_tensor(0.), one.new_tensor(1.)
+            while _f_survival(hi.square(), 1, nu) > alpha:
+                hi = 2*hi
+            for _ in range(200):
+                mid = (lo+hi)/2
+                if _f_survival(mid.square(), 1, nu) > alpha:
+                    lo = mid
+                else:
+                    hi = mid
+            expected = float((lo+hi)/2)
+        assert math.isclose(float(actual), expected, rel_tol=1e-12)

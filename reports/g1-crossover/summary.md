@@ -278,3 +278,31 @@ Library b9d4e50d56eeed862bfd431ce06aeef8f737631a; driver 58cb48436965d74d2f1d807
 Largest completed m this attempt: none for CPU or CUDA (historical D maximum remains 100000). CPU/CUDA agreement, speedup and three-repeat timing spread NOT_RUN. Matrix unchanged. Cleanup 3/3 PASS; fresh zero sessions/assignments and rate 0. Task 0.11/60 CU; known November since Nov19 >=28.53 CU, full month NOT_VERIFIED. T4 not attempted after controller launch failure. Local first clone failed because WSL cannot resolve the Windows worktree pointer; used a Git bundle before allocation.
 
 Next change to try: diagnose/retry the unchanged controller launch on the next Engineer run, with no completed cells to rerun. No scientific tuning.
+
+
+### G1-M unchanged retry — 2026-11-28 (#637), Tesla T4
+
+Architect-authorized retry: L4 allocation failed (cleanup PASS); T4 launch succeeded with unchanged driver 58cb48436965d74d2f1d807953405dc1ded61762 and library b9d4e50d56eeed862bfd431ce06aeef8f737631a. Frozen cells, 7200 s per-cell cap and 8 h internal wall unchanged. No completed cell rerun.
+
+Tesla T4, driver 580.82.07, torch 2.14.1+cu130, CUDA 13.0, Python 3.13.16; CPU 1 thread; host RAM 13605818368 bytes. All reported numbers float64, one restart, seed 0; transfer-inclusive synchronized CUDA timer.
+
+| k | m | method | repeat | status | seconds | logdet | returned floor | peak RSS bytes | peak GPU bytes |
+|---|---|---|---|---|---|---|---|---|---|
+| 3 | 100000 | cuda | 0 | PASS | 54.48100996000005 | 21.74694934757779 | 0.9733020143258417 | 1203433472 | 566679552 |
+| 3 | 100000 | cpu | 0 | PASS | 652.019211022 | 21.74694934757779 | 0.9733020143258417 | 1232072704 | 0 |
+| 3 | 1000000 | cuda | 0 | TIMEOUT | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 3 | 1000000 | cpu | 0 | TIMEOUT | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 5 | 1000000 | cuda | 0 | TIMEOUT | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 5 | 1000000 | cpu | 0 | TIMEOUT | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 3 | 1000000 | cuda | 1 | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+| 3 | 1000000 | cuda | 2 | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_VERIFIED | NOT_VERIFIED |
+
+Same-host pairs (CPU/CUDA; ratio >1 means CUDA faster): [{"k": 3, "m": 100000, "relative_difference": 0.0, "match": true, "cpu_over_cuda": 11.967825330343773, "ids_equal": true}].
+Largest completed m: cpu 100000, cuda 100000.
+Three-repeat million-candidate CUDA timing spread: NOT_RUN (0/3 complete).
+
+Every PASS objective independently rescored locally from saved ids with dense float64 slogdet at 1e-9 relative. Error/timeout rows are recorded as-is; no scientific tuning.
+
+Cleanup 5/5 PASS including prior attempts; fresh zero sessions/assignments, rate0. Task 9.93/60 CU; known November since Nov19 >= 38.35 CU, full month NOT_VERIFIED. No usage polling during cells.
+
+Next change to try: Architect review of these unchanged-protocol measurements; no further tuning within #637.

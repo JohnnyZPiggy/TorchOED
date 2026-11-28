@@ -12,14 +12,15 @@ OUTPUT, record = recorder['OUTPUT'], recorder['record']
 from torchoed_studio.server import Handler
 
 
-def close(a, b):
+def close(a, b, path=''):
     if type(a) is float or type(b) is float:
-        return isinstance(a, (int, float)) and isinstance(b, (int, float)) and math.isclose(a, b, rel_tol=1e-12, abs_tol=1e-12)
-    if isinstance(a, dict):
-        return isinstance(b, dict) and a.keys() == b.keys() and all(close(a[k], b[k]) for k in a)
-    if isinstance(a, list):
-        return isinstance(b, list) and len(a) == len(b) and all(map(close, a, b))
-    return type(a) is type(b) and a == b
+        ok = isinstance(a, (int, float)) and isinstance(b, (int, float)) and math.isclose(a, b, rel_tol=1e-12, abs_tol=1e-12)
+        return [] if ok else [(path, a, b)]
+    if isinstance(a, dict) and isinstance(b, dict) and a.keys() == b.keys():
+        return [bad for k in a for bad in close(a[k], b[k], f'{path}/{k}')]
+    if isinstance(a, list) and isinstance(b, list) and len(a) == len(b):
+        return [bad for i, (x, y) in enumerate(zip(a, b)) for bad in close(x, y, f'{path}/{i}')]
+    return [] if type(a) is type(b) and a == b else [(path, a, b)]
 
 
 def test_recordings_and_regeneration():
@@ -30,7 +31,8 @@ def test_recordings_and_regeneration():
                            if (example, step) != ('Oats', 'profile')}
     fresh = json.loads(record())
     assert {key: entry['request'] for key, entry in fresh.items()} == {key: entry['request'] for key, entry in entries.items()}
-    assert close(fresh, entries)
+    bad = close(fresh, entries)
+    assert not bad, bad
 
 
 def test_static_assets_http():

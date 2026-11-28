@@ -255,6 +255,10 @@ Return the same predictions along factor `j` on `grid`, holding the other factor
 
 Fit a CPU float64 random-intercept REML model (§136–§138): full-rank `(n, p)` X with `n > p`, response `(n,)`, and a tuple of 1–3 integer grouping label tensors `(n,)`. Labels may be noncontiguous. Returns `coef`, `se`, Satterthwaite `df`, `t`, `variance` (groupings in input order, then residual), `loglik` (lme4 REML convention) and `iterations`. Dense autograd Newton with Fisher-scoring fallback; no timing claim. Duplicate partitions, one row per level, and groupings spanned by X raise `ValueError`; a group variance approaching zero raises `ValueError` naming the grouping. Nonconvergence raises `RuntimeError` with the gradient norm. No random slopes, boundary estimates, Kenward–Roger df, ML, p-values or GPU support. See the [REML guide](industrial.md#analysing-blocked-and-split-plot-results-reml).
 
+`predict_reml(fit, X0, *, level=0.95)`
+
+Population-level fixed-effect predictions from `fit_reml` for float64 `(m, p)` rows in the fit's column coding (§146–§148, #640). Returns `fit`, `se`, Satterthwaite `df`, two-column `ci` and rowwise t critical values `t`; requires `0.5 ≤ level < 1`. Confidence intervals are Satterthwaite approximations; no BLUPs or new-observation prediction intervals. `fit_reml` also returns `cov` `(p, p)`, `cov_grad` `(G+1, p, p)` and `variance_cov` `(G+1, G+1)`, indexed in `variance` order (groupings, then residual). `prediction_trace` dispatches to this function for REML fits. CPU float64; t-quantile relative accuracy is observed at 1e-12 for df 0.5–300 and level 0.5–0.999; no claim beyond df 10⁴ or above level 0.999.
+
 ### `orthogonal_array(levels, *, device=None, max_elements=1_000_000)`
 
 Strength-2 integer orthogonal arrays with factor levels in input order: one prime power, optionally mixed with its prime, using GF(q) replacement or two-level Plackett–Burman. Returns int64 labels starting at zero; run size is minimal within the family, not globally. Mixed primes and strength ≥ 3 are unsupported. See [gate §128–§130](https://github.com/JohnnyZPiggy/TorchOED/blob/main/docs/P2_GATE.md).

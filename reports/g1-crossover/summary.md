@@ -301,8 +301,8 @@ Same-host pairs (CPU/CUDA; ratio >1 means CUDA faster): [{"k": 3, "m": 100000, "
 Largest completed m: cpu 100000, cuda 100000.
 Three-repeat million-candidate CUDA timing spread: NOT_RUN (0/3 complete).
 
-Every PASS objective independently rescored locally from saved ids with dense float64 slogdet at 1e-9 relative. Error/timeout rows are recorded as-is; no scientific tuning.
+Every PASS objective independently rescored locally from saved ids with dense float64 slogdet at 1e-9 relative. Four million-candidate cells TIMEOUT; the final CPU cell used the remaining internal 8 h budget, so its cap was shorter than 7200 s. Both remaining CUDA timing repeats NOT_RUN after wall-budget exhaustion. No million pair, speedup or timing spread is claimed; matrix unchanged. Error/timeout rows are recorded as-is; their unobserved per-cell threads/peaks are NOT_VERIFIED. No scientific tuning.
 
-Cleanup 5/5 PASS including prior attempts; fresh zero sessions/assignments, rate0. Task 9.93/60 CU; known November since Nov19 >= 38.35 CU, full month NOT_VERIFIED. No usage polling during cells.
+Cleanup 5/5 PASS including prior attempts; fresh zero sessions/assignments, rate0. Task 10.03/60 CU (including 0.10 CU settled after controller cleanup); known November since Nov19 >= 38.45 CU, full month NOT_VERIFIED. No usage polling during cells.
 
 Next change to try: Architect review of these unchanged-protocol measurements; no further tuning within #637.
